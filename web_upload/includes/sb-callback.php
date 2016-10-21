@@ -1831,10 +1831,10 @@ function ServerHostPlayers($sid, $type="servers", $obId="", $tplsid="", $open=""
 			$objResponse->addAssign("host_$sid", "innerHTML", trunc($info['hostname'], $trunchostname, false));
 			$objResponse->addAssign("players_$sid", "innerHTML", $info['numplayers'] . "/" . $info['maxplayers']);
 			$objResponse->addAssign("os_$sid", "innerHTML", "<img src='images/" . (!empty($info['os'])?$info['os']:'server_small') . ".png'>");
-			if( $info['secure'] == 1 )
-			{
+			if ($info['secure'] == 1)
 				$objResponse->addAssign("vac_$sid", "innerHTML", "<img src='images/shield.png'>");
-			}
+            else
+                $objResponse->addAssign("vac_$sid", "innerHTML", "<img src='images/noshield.png'>");
 			$objResponse->addAssign("map_$sid", "innerHTML", basename($info['map'])); // Strip Steam Workshop folder
 			if(!$inHome) {
 				$objResponse->addScript("$('mapimg_$sid').setProperty('src', '".GetMapImage($info['map'])."').setProperty('alt', '".$info['map']."').setProperty('title', '".basename($info['map'])."');");
