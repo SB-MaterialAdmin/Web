@@ -1,0 +1,45 @@
+*************************************************************
+*** Обновление, Добавление файлов с версии 1.1.1 до 1.1.2 ***
+** 17.10.2016 **
+
+sb_1547/images/favicon_black.ico
+sb_1547/images/favicon_white.ico
+sb_1547/includes/CSystemLog.php
+sb_1547/includes/sb-callback.php
+sb_1547/includes/smarty/plugins/function.help_icon.php
+sb_1547/includes/system-functions.php
+sb_1547/init.php
+sb_1547/install/template/page.3.php
+sb_1547/install/template/page.5.php
+sb_1547/pages/admin.admins.php
+sb_1547/pages/admin.bans.php
+sb_1547/pages/admin.edit.admingroup.php
+sb_1547/pages/admin.settings.php
+sb_1547/pages/footer.php
+sb_1547/pages/header.php
+sb_1547/pages/page.adminlist.php
+sb_1547/pages/page.banlist.php
+sb_1547/pages/page.home.php
+sb_1547/pages/page.youraccount.php
+sb_1547/themes/new_box/theme.conf.php
+sb_1547/updater/data/504.php
+sb_1547/updater/data/505.php
+sb_1547/updater/data/506.php
+sb_1547/updater/data/507.php
+sb_1547/updater/store.php
+sb_1547/themes/new_box/box_admin_log_search.tpl
+sb_1547/themes/new_box/page_admin_settings_logs.tpl
+sb_1547/themes/new_box/page_admin_settings_features.tpl
+sb_1547/themes/new_box/page_admin_settings_settings.tpl
+sb_1547/themes/new_box/page_admin.tpl
+sb_1547/themes/new_box/page_adminlist.tpl
+sb_1547/themes/new_box/page_admin_admins_list.tpl
+sb_1547/themes/new_box/page_bans.tpl
+sb_1547/themes/new_box/page_dashboard.tpl
+sb_1547/themes/new_box/page_header.tpl
+sb_1547/themes/new_box/page_youraccount.tpl
+
+
+** 17.10.2016 **
+*** Обновление, Добавление файлов с версии 1.1.1 до 1.1.2 ***
+*************************************************************
