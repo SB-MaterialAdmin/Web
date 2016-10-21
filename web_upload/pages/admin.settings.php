@@ -99,9 +99,9 @@ if(!defined("IN_SB")){echo "You should not be here. Only follow links!";die();}
 		
 	$pages = (round($log_count/intval($GLOBALS['config']['banlist.bansperpage']))==0)?1:round($log_count/intval($GLOBALS['config']['banlist.bansperpage']));
 	if($pages>1)
-		$page_numbers =  'Page ' . $page . ' of ' . $pages . " - " . $prev . " | " . $next;
+		$page_numbers =  'Страница ' . $page . ' из ' . $pages . " - " . $prev . " | " . $next;
 	else
-		$page_numbers = 'Page ' . $page . ' of ' . $pages;
+		$page_numbers = 'Страница ' . $page . ' из ' . $pages;
 		
 		
 	$pages = ceil($log_count/intval($GLOBALS['config']['banlist.bansperpage']));
@@ -373,7 +373,7 @@ else
 	#########[Logs Page]###############
 	echo '<div id="2" style="display:none;">';
 		if($userbank->HasAccess(ADMIN_OWNER))
-			$theme->assign('clear_logs', "( <a href='javascript:ClearLogs();'>Clear Log</a> )");
+			$theme->assign('clear_logs', "( <a href='javascript:ClearLogs();'>Очистить лог</a> )");
 		$theme->assign('page_numbers', 			$page_numbers);
 		$theme->assign('log_items',				$log_list);
 				
