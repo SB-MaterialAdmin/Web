@@ -1835,6 +1835,11 @@ function ServerHostPlayers($sid, $type="servers", $obId="", $tplsid="", $open=""
 				$objResponse->addAssign("vac_$sid", "innerHTML", "<img src='images/shield.png'>");
             else
                 $objResponse->addAssign("vac_$sid", "innerHTML", "<img src='images/noshield.png'>");
+            // Костыль для $info['map'] и Воркшопа (ммм, костыльчики, мои родные)
+            if (strpos($info['map'], '/') !== FALSE) {
+                $tmp = explode('/', $info['map']);
+                $info['map'] = $tmp[count($tmp)-1];
+            }
 			$objResponse->addAssign("map_$sid", "innerHTML", basename($info['map'])); // Strip Steam Workshop folder
 			if(!$inHome) {
 				$objResponse->addScript("$('mapimg_$sid').setProperty('src', '".GetMapImage($info['map'])."').setProperty('alt', '".$info['map']."').setProperty('title', '".basename($info['map'])."');");
