@@ -16,7 +16,7 @@
 * [SourceBans Final Night](http://final-night.ru/bans/)
 
 *Установка:*
-+ Скачать архив последней версии [отсюда](https://drive.google.com/open?id=0Bx2BMgLluKoQUjhlcWk2VWpxWTQ).
++ Скачать архив последней версии [отсюда](https://github.com/CrazyHackGUT/SB_Material_Design/releases).
 + Загрузить все файлы из папки web_upload на веб-сервер по любому удобному протоколу (например, **FTP**).
 + Переименовать файл на веб-сервере *config.php.temple* в *config.php*
 + Установить права **777** на папки */demos/*, */images/maps/*, */images/games/*, */themes_c/* и на файл */config.php*
@@ -26,7 +26,7 @@
 + После успешного обновления, удалить папку **/updater/** с веб-сервера.
 
 *Обновление:*
-- Скачать архив последней версии [отсюда](https://drive.google.com/open?id=0Bx2BMgLluKoQUjhlcWk2VWpxWTQ).
+- Скачать архив последней версии [отсюда](https://github.com/CrazyHackGUT/SB_Material_Design/releases).
 - Удалить все файлы с веб-сервера, кроме *config.php* и папок *images*, *demos*
 - Закинуть **ВСЕ ПАПКИ и ФАЙЛЫ** в корень СБ с заменой, кроме папки *install*.
 - Открыть SourceBans, вас перекинет на страницу с обновлением.
