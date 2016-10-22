@@ -1,8 +1,8 @@
-<h3>Admins on this server ({$admin_count})</h3>
+<h3>Админы сервера ({$admin_count})</h3>
 <table width="100%" cellpadding="1" cellspacing="1" class="listtable">
 <tr >
-            <td width="50%" height='16' class="listtable_top"><strong>Admin Name</strong></td>
-            <td width="50%" height='16' class="listtable_top"><strong>Admin SteamID</strong></td>
+            <td width="50%" height='16' class="listtable_top"><strong>Имя админа</strong></td>
+            <td width="50%" height='16' class="listtable_top"><strong>STEAM ID админа</strong></td>
 </tr>
 
 {foreach from=$admin_list item=admin}
@@ -22,11 +22,11 @@
 						</td>
 					</tr>
 					<tr align="left">
-						<td width="30%" height="16" class="listtable_1">Name</td>
+						<td width="30%" height="16" class="listtable_1">Ник</td>
 						<td width="20%" height="16" class="listtable_1">Steam ID</td>
 						<td width="20%" height="16" class="listtable_1">IP</td>
-						<td width="20%" height="16" class="listtable_1">Time</td>
-						<td width="20%" height="16" class="listtable_1">Ping</td>
+						<td width="20%" height="16" class="listtable_1">Время</td>
+						<td width="20%" height="16" class="listtable_1">Пинг</td>
 					</tr>
 					<tr align="left">
 						<td height="16" class="listtable_1">

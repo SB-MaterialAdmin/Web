@@ -269,7 +269,7 @@
 														</a>
 								 
 														<div class="media-body">
-															<a href="#" class="a-title">{if !empty($commenta.comname)}{$commenta.comname|escape:'html'}{else}<i>Admin deleted</i>{/if}</a> {if !empty($commenta.edittime)}<small class="c-gray m-l-10">last edit {$commenta.edittime} by {if !empty($commenta.editname)}{$commenta.editname}{else}<i>Admin deleted</i>{/if}</small>{/if}
+															<a href="#" class="a-title">{if !empty($commenta.comname)}{$commenta.comname|escape:'html'}{else}<i>Админ удален</i>{/if}</a> {if !empty($commenta.edittime)}<small class="c-gray m-l-10">last edit {$commenta.edittime} by {if !empty($commenta.editname)}{$commenta.editname}{else}<i>Admin deleted</i>{/if}</small>{/if}
 															<p class="m-t-5 m-b-0" style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">{$commenta.commenttxt}</p>
 														</div>
 														
