@@ -56,7 +56,7 @@
 		</div>
 	</div>
 	
-	<div class="alert alert-info" role="alert" id="bans_hidden" style="display:none;">Вам был виведен список банов, которые активны на данный момент.</div>
+	<div class="alert alert-info" role="alert" id="bans_hidden" style="display:none;">Вам был выведен список банов, которые активны на данный момент.</div>
 	<div class="alert" role="alert" id="tickswitchlink" style="display:none;"></div>
 	
 	<div class="table-responsive">

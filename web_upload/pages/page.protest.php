@@ -28,7 +28,7 @@
 global $userbank, $theme;
 if($GLOBALS['config']['config.enableprotest']!="1")
 {
-	CreateRedBox("Error", "This page is disabled. You should not be here.");
+	CreateRedBox("Ошибка", "Страница отключена.");
 	PageDie();
 }
 if(!defined("IN_SB")){echo "You should not be here. Only follow links!"; die();}
@@ -58,7 +58,7 @@ else
 
 	if($Type == 0 && !validate_steam($SteamID))
 	{
-		$errors .= '* Please type a valid STEAM ID.<br>';
+		$errors .= '* Введите действительный STEAM ID.<br>';
 		$validsubmit = false;
 	}
 	elseif($Type==0)
@@ -67,7 +67,7 @@ else
 		$res = $GLOBALS['db']->Execute($pre,array($SteamID));
 		if ($res->RecordCount() == 0)
 		{
-			$errors .=  '* That Steam ID is not banned!<br>';
+			$errors .=  '* Этот STEAM ID не забанен!<br>';
 			$validsubmit = false;
 		}
 		else
@@ -76,14 +76,14 @@ else
 			$res = $GLOBALS['db']->Execute("SELECT pid FROM ".DB_PREFIX."_protests WHERE bid=$BanId");
 			if ($res->RecordCount() > 0)
 			{
-				$errors .=  '* A protest is already pending for this Steam ID.<br>';
+				$errors .=  '* Бан этого STEAM ID уже был опротестован.<br>';
 				$validsubmit = false;
 			}
 		}
 	}
 	if($Type == 1 && !validate_ip($IP))
 	{
-		$errors .= '* Please type a valid IP.<br>';
+		$errors .= '* Введите действительныйd IP.<br>';
 		$validsubmit = false;
 	}
 	elseif($Type==1)
@@ -92,7 +92,7 @@ else
 		$res = $GLOBALS['db']->Execute($pre,array($IP));
 		if ($res->RecordCount() == 0)
 		{
-			$errors .=  '* That IP is not banned!<br>';
+			$errors .=  '* Этот IP не забанен!<br>';
 			$validsubmit = false;
 		}
 		else
@@ -101,29 +101,29 @@ else
 			$res = $GLOBALS['db']->Execute("SELECT pid FROM ".DB_PREFIX."_protests WHERE bid=$BanId");
 			if ($res->RecordCount() > 0)
 			{
-				$errors .=  '* A protest is already pending for this IP.<br>';
+				$errors .=  '* Бан этого IP уже был опротестован.<br>';
 				$validsubmit = false;
 			}
 		}
 	}
 	if (strlen($PlayerName) == 0)
 	{
-		$errors .=  '* You must include a player name<br>';
+		$errors .=  '* Введите ник игрока<br>';
 		$validsubmit = false;
 	}
 	if (strlen($UnbanReason) == 0)
 	{
-		$errors .=  '* You must include comments<br>';
+		$errors .=  '* Напишите пару строк коментария<br>';
 		$validsubmit = false;
 	}
 	if (!check_email($Email))
 	{
-		$errors .=  '* You must include a valid email address<br>';
+		$errors .=  '* Введите действительный адрес электронной почты<br>';
 		$validsubmit = false;
 	}
 
 	if(!$validsubmit)
-		CreateRedBox("Error", $errors);
+		CreateRedBox("Ошибка", $errors);
 
 	if ($validsubmit && $BanId != -1)
 	{
@@ -153,15 +153,15 @@ else
 		foreach($admins AS $admin)
 		{
 			$message = "";
-			$message .= "Hello " . $admin['user'] . ",\n\n";
-			$message .= "A new ban protest has been posted on your SourceBans page.\n\n";
-			$message .= "Player: ".$_POST['PlayerName']." (".$_POST['SteamID'].")\nBanned by: ".$protadmin['user']."\nMessage: ".$_POST['BanReason']."\n\n";
-			$message .= "Click the link below to view the current ban protests.\n\nhttp://" . $_SERVER['HTTP_HOST'] . $requri . "?p=admin&c=bans#^1";
+			$message .= "Здравствуйте " . $admin['user'] . ",\n\n";
+			$message .= "Новый протест бана был опубликован на вашей странице SourceBans.\n\n";
+			$message .= "Игрок: ".$_POST['PlayerName']." (".$_POST['SteamID'].")\nЗабаненый: ".$protadmin['user']."\nСообщение: ".$_POST['BanReason']."\n\n";
+			$message .= "Кликните по ссылке чтобы увидеть протест бана.\n\nhttp://" . $_SERVER['HTTP_HOST'] . $requri . "?p=admin&c=bans#^1";
 			if($userbank->HasAccess(ADMIN_OWNER|ADMIN_BAN_PROTESTS, $admin['aid']) && $userbank->HasAccess(ADMIN_NOTIFY_PROTEST, $admin['aid']))
-				mail($admin['email'], "[SourceBans] Ban Protest Added", $message, $headers);
+				mail($admin['email'], "[SourceBans] Добавлен протест бана", $message, $headers);
 		}
 
-		CreateGreenBox("Successful", "Your protest has been sent.");
+		CreateGreenBox("Успешно", "Ваш протест был отправлен.");
 	}
 }
 

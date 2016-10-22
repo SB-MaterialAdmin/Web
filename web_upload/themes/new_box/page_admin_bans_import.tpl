@@ -1,7 +1,7 @@
 {if NOT $permission_import}
 	Доступ запрещен!
 {else}
-	    <h3>Import Bans</h3>
+	    <h3>Импорт банов</h3>
 	    За дополнительной информацией или помощью наведите курсор мыши на знак вопроса.<br /><br />
 	    <form action="" method="post" enctype="multipart/form-data">
 	    <input type="hidden" name="action" value="importBans" />

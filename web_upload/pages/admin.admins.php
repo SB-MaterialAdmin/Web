@@ -28,7 +28,7 @@
 
 <div class="tab-content p-0" id="admin-page-content">
 <?php
-if(!defined("IN_SB")){echo "You should not be here. Only follow links!";die();}
+if(!defined("IN_SB")){echo "Ошибка доступа!";die();}
 global $userbank, $ui;
 
 if (isset($_GET['page']) && $_GET['page'] > 0)

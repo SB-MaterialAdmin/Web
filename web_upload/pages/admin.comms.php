@@ -25,7 +25,7 @@
 //
 // *************************************************************************
 
-global $userbank, $theme; if(!defined("IN_SB")){echo "You should not be here. Only follow links!";die();}if(isset($GLOBALS['IN_ADMIN']))define('CUR_AID', $userbank->GetAid());
+global $userbank, $theme; if(!defined("IN_SB")){echo "Ошибка доступа!";die();}if(isset($GLOBALS['IN_ADMIN']))define('CUR_AID', $userbank->GetAid());
 
 
 if(isset($_GET["rebanid"]))
@@ -35,7 +35,7 @@ if(isset($_GET["rebanid"]))
 {
 	echo '<script type="text/javascript">xajax_PrepareBlockFromBan("'.$_GET["blockfromban"].'");</script>';
 }elseif((isset($_GET['action']) && $_GET['action'] == "pasteBan") && isset($_GET['pName']) && isset($_GET['sid'])) {
-	echo "<script type=\"text/javascript\">setTimeout(\"ShowBox('Loading..','<i>Please Wait!</i>', 'blue', '', false, 5000);\", 800);xajax_PasteBlock('".(int)$_GET['sid']."', '".addslashes($_GET['pName'])."');</script>";
+	echo "<script type=\"text/javascript\">setTimeout(\"ShowBox('Загрузка..','<i>Подождите!</i>', 'blue', '', false, 5000);\", 800);xajax_PasteBlock('".(int)$_GET['sid']."', '".addslashes($_GET['pName'])."');</script>";
 }
 
 echo '<div id="admin-page-content">';
@@ -62,7 +62,7 @@ function ProcessBan()
 
 	if(!$('nickname').value)
 	{
-		$('nick.msg').setHTML('You must enter the nickname of the person you are banning');
+		$('nick.msg').setHTML('Введите ник игрока, которому хотите добавить блокировку');
 		$('nick.msg').setStyle('display', 'block');
 		err++;
 	}else
@@ -73,7 +73,7 @@ function ProcessBan()
 
 	if($('steam').value.length < 10)
 	{
-		$('steam.msg').setHTML('You must enter a valid STEAM ID or Community ID');
+		$('steam.msg').setHTML('Введите реальный STEAM ID или Community ID');
 		$('steam.msg').setStyle('display', 'block');
 		err++;
 	}else
@@ -84,7 +84,7 @@ function ProcessBan()
 
 	if(!reason)
 	{
-		$('reason.msg').setHTML('You must select or enter a reason for this block.');
+		$('reason.msg').setHTML('Выберите причину блокировки.');
 		$('reason.msg').setStyle('display', 'block');
 		err++;
 	}else

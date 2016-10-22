@@ -82,37 +82,37 @@ while (!$srvgroup_list->EOF)
 }
 
 //webpermissions
-$webflag[] = array("name" => "Root Admin", "flag"=>"ADMIN_OWNER");
-$webflag[] = array("name" => "View admins", "flag"=>"ADMIN_LIST_ADMINS");
-$webflag[] = array("name" => "Add admins", "flag"=>"ADMIN_ADD_ADMINS");
-$webflag[] = array("name" => "Edit admins", "flag"=>"ADMIN_EDIT_ADMINS");
-$webflag[] = array("name" => "Delete admins", "flag"=>"ADMIN_DELETE_ADMINS");
-$webflag[] = array("name" => "View servers", "flag"=>"ADMIN_LIST_SERVERS");
-$webflag[] = array("name" => "Add servers", "flag"=>"ADMIN_ADD_SERVER");
-$webflag[] = array("name" => "Edit servers", "flag"=>"ADMIN_EDIT_SERVERS");
-$webflag[] = array("name" => "Delete servers", "flag"=>"ADMIN_DELETE_SERVERS");
-$webflag[] = array("name" => "Add bans", "flag"=>"ADMIN_ADD_BAN");
-$webflag[] = array("name" => "Edit own bans", "flag"=>"ADMIN_EDIT_OWN_BANS");
-$webflag[] = array("name" => "Edit groups bans", "flag"=>"ADMIN_EDIT_GROUP_BANS");
-$webflag[] = array("name" => "Edit all bans", "flag"=>"ADMIN_EDIT_ALL_BANS");
-$webflag[] = array("name" => "Ban protests", "flag"=>"ADMIN_BAN_PROTESTS");
-$webflag[] = array("name" => "Ban submissions", "flag"=>"ADMIN_BAN_SUBMISSIONS");
-$webflag[] = array("name" => "Delete bans", "flag"=>"ADMIN_DELETE_BAN");
-$webflag[] = array("name" => "Unban own bans", "flag"=>"ADMIN_UNBAN_OWN_BANS");
-$webflag[] = array("name" => "Unban group bans", "flag"=>"ADMIN_UNBAN_GROUP_BANS");
-$webflag[] = array("name" => "Unban all bans", "flag"=>"ADMIN_UNBAN");
-$webflag[] = array("name" => "Import bans", "flag"=>"ADMIN_BAN_IMPORT");
-$webflag[] = array("name" => "Submission email notifying", "flag"=>"ADMIN_NOTIFY_SUB");
-$webflag[] = array("name" => "Protest email notifying", "flag"=>"ADMIN_NOTIFY_PROTEST");
-$webflag[] = array("name" => "List groups", "flag"=>"ADMIN_LIST_GROUPS");
-$webflag[] = array("name" => "Add groups", "flag"=>"ADMIN_ADD_GROUP");
-$webflag[] = array("name" => "Edit groups", "flag"=>"ADMIN_EDIT_GROUPS");
-$webflag[] = array("name" => "Delete groups", "flag"=>"ADMIN_DELETE_GROUPS");
-$webflag[] = array("name" => "Web settings", "flag"=>"ADMIN_WEB_SETTINGS");
-$webflag[] = array("name" => "List mods", "flag"=>"ADMIN_LIST_MODS");
-$webflag[] = array("name" => "Add mods", "flag"=>"ADMIN_ADD_MODS");
-$webflag[] = array("name" => "Edit mods", "flag"=>"ADMIN_EDIT_MODS");
-$webflag[] = array("name" => "Delete mods", "flag"=>"ADMIN_DELETE_MODS");
+$webflag[] = array("name" => "Главный админ", "flag"=>"ADMIN_OWNER");
+$webflag[] = array("name" => "Просмотр админов", "flag"=>"ADMIN_LIST_ADMINS");
+$webflag[] = array("name" => "Добавление админов", "flag"=>"ADMIN_ADD_ADMINS");
+$webflag[] = array("name" => "Редактирование админов", "flag"=>"ADMIN_EDIT_ADMINS");
+$webflag[] = array("name" => "Удаление админов", "flag"=>"ADMIN_DELETE_ADMINS");
+$webflag[] = array("name" => "Просмотр серверов", "flag"=>"ADMIN_LIST_SERVERS");
+$webflag[] = array("name" => "Добавление серверов", "flag"=>"ADMIN_ADD_SERVER");
+$webflag[] = array("name" => "Редактирование серверов", "flag"=>"ADMIN_EDIT_SERVERS");
+$webflag[] = array("name" => "Удаление серверов", "flag"=>"ADMIN_DELETE_SERVERS");
+$webflag[] = array("name" => "Добавление банов", "flag"=>"ADMIN_ADD_BAN");
+$webflag[] = array("name" => "Редактирование своих банов", "flag"=>"ADMIN_EDIT_OWN_BANS");
+$webflag[] = array("name" => "Редактирование банов групп", "flag"=>"ADMIN_EDIT_GROUP_BANS");
+$webflag[] = array("name" => "Редактирование всех банов", "flag"=>"ADMIN_EDIT_ALL_BANS");
+$webflag[] = array("name" => "Протесты банов", "flag"=>"ADMIN_BAN_PROTESTS");
+$webflag[] = array("name" => "Предложение банов", "flag"=>"ADMIN_BAN_SUBMISSIONS");
+$webflag[] = array("name" => "Удаление банов", "flag"=>"ADMIN_DELETE_BAN");
+$webflag[] = array("name" => "Разбан своих банов", "flag"=>"ADMIN_UNBAN_OWN_BANS");
+$webflag[] = array("name" => "Разбан банов групп", "flag"=>"ADMIN_UNBAN_GROUP_BANS");
+$webflag[] = array("name" => "Разбан всех банов", "flag"=>"ADMIN_UNBAN");
+$webflag[] = array("name" => "Импорт банов", "flag"=>"ADMIN_BAN_IMPORT");
+$webflag[] = array("name" => "Уведомление по e-mail о предложении бана", "flag"=>"ADMIN_NOTIFY_SUB");
+$webflag[] = array("name" => "Уведомление по e-mail о протесте бана", "flag"=>"ADMIN_NOTIFY_PROTEST");
+$webflag[] = array("name" => "Просмотр групп", "flag"=>"ADMIN_LIST_GROUPS");
+$webflag[] = array("name" => "Добавление групп", "flag"=>"ADMIN_ADD_GROUP");
+$webflag[] = array("name" => "Редактирование групп", "flag"=>"ADMIN_EDIT_GROUPS");
+$webflag[] = array("name" => "УДаление групп", "flag"=>"ADMIN_DELETE_GROUPS");
+$webflag[] = array("name" => "Настройки ВЕБ", "flag"=>"ADMIN_WEB_SETTINGS");
+$webflag[] = array("name" => "Просмотр МОДов", "flag"=>"ADMIN_LIST_MODS");
+$webflag[] = array("name" => "Добавление МОДов", "flag"=>"ADMIN_ADD_MODS");
+$webflag[] = array("name" => "Редактирование МОДов", "flag"=>"ADMIN_EDIT_MODS");
+$webflag[] = array("name" => "Удаление МОДов", "flag"=>"ADMIN_DELETE_MODS");
 $webflags = array();
 foreach($webflag AS $flag)
 {
@@ -123,27 +123,27 @@ foreach($webflag AS $flag)
 }
 
 //server permissions
-$serverflag[] = array("name" => "Full Admin", "flag" => "SM_ROOT");
-$serverflag[] = array("name" => "Reserved slot", "flag" => "SM_RESERVED_SLOT");
-$serverflag[] = array("name" => "Generic admin", "flag" => "SM_GENERIC");
-$serverflag[] = array("name" => "Kick", "flag" => "SM_KICK");
-$serverflag[] = array("name" => "Ban", "flag" => "SM_BAN");
-$serverflag[] = array("name" => "Un-ban", "flag" => "SM_UNBAN");
-$serverflag[] = array("name" => "Slay", "flag" => "SM_SLAY");
-$serverflag[] = array("name" => "Map change", "flag" => "SM_MAP");
-$serverflag[] = array("name" => "Change cvars", "flag" => "SM_CVAR");
-$serverflag[] = array("name" => "Run configs", "flag" => "SM_CONFIG");
-$serverflag[] = array("name" => "Admin chat", "flag" => "SM_CHAT");
-$serverflag[] = array("name" => "Start votes", "flag" => "SM_VOTE");
-$serverflag[] = array("name" => "Password server", "flag" => "SM_PASSWORD");
-$serverflag[] = array("name" => "RCON", "flag" => "SM_RCON");
-$serverflag[] = array("name" => "Enable Cheats", "flag" => "SM_CHEATS");
-$serverflag[] = array("name" => "Custom flag 1", "flag" => "SM_CUSTOM1");
-$serverflag[] = array("name" => "Custom flag 2", "flag" => "SM_CUSTOM2");
-$serverflag[] = array("name" => "Custom flag 3", "flag" => "SM_CUSTOM3");
-$serverflag[] = array("name" => "Custom flag 4", "flag" => "SM_CUSTOM4");
-$serverflag[] = array("name" => "Custom flag 5", "flag" => "SM_CUSTOM5");
-$serverflag[] = array("name" => "Custom flag 6", "flag" => "SM_CUSTOM6");
+$serverflag[] = array("name" => "[z] Главный админ", "flag" => "SM_ROOT");
+$serverflag[] = array("name" => "[a] Резервный слот", "flag" => "SM_RESERVED_SLOT");
+$serverflag[] = array("name" => "[b] Админ", "flag" => "SM_GENERIC");
+$serverflag[] = array("name" => "[c] Кик", "flag" => "SM_KICK");
+$serverflag[] = array("name" => "[d] Бан", "flag" => "SM_BAN");
+$serverflag[] = array("name" => "[e] Разбан", "flag" => "SM_UNBAN");
+$serverflag[] = array("name" => "[f] Слэй", "flag" => "SM_SLAY");
+$serverflag[] = array("name" => "[g] Смена карты", "flag" => "SM_MAP");
+$serverflag[] = array("name" => "[h] Изменение КВАРов", "flag" => "SM_CVAR");
+$serverflag[] = array("name" => "[i] Исполнение конфигов", "flag" => "SM_CONFIG");
+$serverflag[] = array("name" => "[j] Админский чат", "flag" => "SM_CHAT");
+$serverflag[] = array("name" => "[k] Голосования", "flag" => "SM_VOTE");
+$serverflag[] = array("name" => "[l] Пароль сервера", "flag" => "SM_PASSWORD");
+$serverflag[] = array("name" => "[m] РКОН", "flag" => "SM_RCON");
+$serverflag[] = array("name" => "[n] Включение читов", "flag" => "SM_CHEATS");
+$serverflag[] = array("name" => "[o] Дополнительный флаг 1", "flag" => "SM_CUSTOM1");
+$serverflag[] = array("name" => "[p] Дополнительный флаг 2", "flag" => "SM_CUSTOM2");
+$serverflag[] = array("name" => "[q] Дополнительный флаг 3", "flag" => "SM_CUSTOM3");
+$serverflag[] = array("name" => "[r] Дополнительный флаг 4", "flag" => "SM_CUSTOM4");
+$serverflag[] = array("name" => "[s] Дополнительный флаг 5", "flag" => "SM_CUSTOM5");
+$serverflag[] = array("name" => "[t] Дополнительный флаг 6", "flag" => "SM_CUSTOM6");
 $serverflags = array();
 foreach($serverflag AS $flag)
 {

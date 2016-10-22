@@ -148,7 +148,7 @@ function AddTab($title, $url, $desc, $active=false)
 	$tab_arr[2] = "Список банов";
 	$tab_arr[3] = "Список мутов\гагов";
 	$tab_arr[4] = "Пожаловаться на игрока";
-	$tab_arr[5] = "Аппеляция бана";
+	$tab_arr[5] = "Апелляция бана";
 	$tab_arr[6] = "Список админов";
 
 	$tabs = array();

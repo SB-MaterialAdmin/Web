@@ -25,7 +25,7 @@
 //
 // *************************************************************************
 
-global $userbank, $theme; if(!defined("IN_SB")){echo "You should not be here. Only follow links!";die();}if(isset($GLOBALS['IN_ADMIN']))define('CUR_AID', $userbank->GetAid());
+global $userbank, $theme; if(!defined("IN_SB")){echo "Ошибка доступа!";die();}if(isset($GLOBALS['IN_ADMIN']))define('CUR_AID', $userbank->GetAid());
 
 if(isset($_POST['action']) && $_POST['action'] == "importBans")
 {
@@ -47,7 +47,7 @@ if(isset($_POST['action']) && $_POST['action'] == "importBans")
 					$bancnt++;
 					$pre = $GLOBALS['db']->Prepare("INSERT INTO ".DB_PREFIX."_bans(created,authid,ip,name,ends,length,reason,aid,adminIp,type) VALUES
 										(UNIX_TIMESTAMP(),?,?,?,(UNIX_TIMESTAMP() + ?),?,?,?,?,?)");
-					$GLOBALS['db']->Execute($pre, array("", $line[2], "Imported Ban", 0, 0, "banned_ip.cfg import", $_COOKIE['aid'], $_SERVER['REMOTE_ADDR'], 1));
+					$GLOBALS['db']->Execute($pre, array("", $line[2], "Импортированный бан", 0, 0, "Импорт из banned_ip.cfg", $_COOKIE['aid'], $_SERVER['REMOTE_ADDR'], 1));
 				}
 			} else { // if its an banned_user.cfg
 				if (!validate_steam($line[2])) {
@@ -63,20 +63,20 @@ if(isset($_POST['action']) && $_POST['action'] == "importBans")
 				if($check->RecordCount() == 0)
 				{
 					if(!isset($_POST['friendsname']) || $_POST['friendsname'] != "on" || ($pname = GetCommunityName($steam)) == "")
-						$pname = "Imported Ban";
+						$pname = "Импортированный бан";
 					
 					$bancnt++;
 					$pre = $GLOBALS['db']->Prepare("INSERT INTO ".DB_PREFIX."_bans(created,authid,ip,name,ends,length,reason,aid,adminIp,type) VALUES
 										(UNIX_TIMESTAMP(),?,?,?,(UNIX_TIMESTAMP() + ?),?,?,?,?,?)");
-					$GLOBALS['db']->Execute($pre, array($steam, "", $pname, 0, 0, "banned_user.cfg import", $_COOKIE['aid'], $_SERVER['REMOTE_ADDR'], 0));
+					$GLOBALS['db']->Execute($pre, array($steam, "", $pname, 0, 0, "Импорт из banned_user.cfg", $_COOKIE['aid'], $_SERVER['REMOTE_ADDR'], 0));
 				}
 			}
 		}
 	}
 	if($bancnt > 0)
-		$log = new CSystemLog("m", "Bans imported", "$bancnt Ban(s) imported");
+		$log = new CSystemLog("m", "Баны импортированы", "$bancnt Бан(ы) импортированы");
 
-	echo "<script>setTimeout(\"ShowBox('Bans Import', '$bancnt ban".($bancnt!=1?"s have":" has")." been imported and posted.', 'green', '', false, 5000)\", 800);</script>";
+	echo "<script>setTimeout(\"ShowBox('Импорт банов', '$bancnt бан".($bancnt!=1?"s have":" был")." импортирован.', 'green', '', false, 5000)\", 800);</script>";
 }
 
 if(isset($_GET["rebanid"]))
@@ -84,7 +84,7 @@ if(isset($_GET["rebanid"]))
 	echo '<script type="text/javascript">xajax_PrepareReban("'.(int)$_GET["rebanid"].'");</script>';
 }
 if((isset($_GET['action']) && $_GET['action'] == "pasteBan") && isset($_GET['pName']) && isset($_GET['sid'])) {
-	echo "<script type=\"text/javascript\">setTimeout(\"ShowBox('Loading..','<i>Please Wait!</i>', 'blue', '', false, 5000);\", 800);xajax_PasteBan('".(int)$_GET['sid']."', '".addslashes($_GET['pName'])."');</script>";
+	echo "<script type=\"text/javascript\">setTimeout(\"ShowBox('Загрузка..','<i>Ждите!</i>', 'blue', '', false, 5000);\", 800);xajax_PasteBan('".(int)$_GET['sid']."', '".addslashes($_GET['pName'])."');</script>";
 }
 
 echo '<div id="admin-page-content">';
@@ -101,10 +101,10 @@ echo '<div id="admin-page-content">';
     <div id="tabs">
 	<ul>
 		<li id="utab-p0" class="active">
-			<a href="index.php?p=admin&c=bans#^1~p0" id="admin_utab_p0" onclick="Swap2ndPane(0,\'p\');" class="tip" title="Show Protests :: Show current protests." target="_self">Current</a>
+			<a href="index.php?p=admin&c=bans#^1~p0" id="admin_utab_p0" onclick="Swap2ndPane(0,\'p\');" class="tip" title="Показать протесты :: Показать активные протесты." target="_self">Активные</a>
 		</li>
 		<li id="utab-p1" class="nonactive">
-			<a href="index.php?p=admin&c=bans#^1~p1" id="admin_utab_p1" onclick="Swap2ndPane(1,\'p\');" class="tip" title="Show Archive :: Show the protest archive." target="_self">Archive</a>
+			<a href="index.php?p=admin&c=bans#^1~p1" id="admin_utab_p1" onclick="Swap2ndPane(1,\'p\');" class="tip" title="Показать архивы :: Показать архив протестов." target="_self">Архив</a>
 		</li>
 	</ul>
 	</div>
@@ -125,7 +125,7 @@ echo '<div id="admin-page-content">';
         if ($PageEnd > $page_count) $PageEnd = $page_count;
         if ($page > 1)
         {
-            $prev = CreateLinkR('<- prev',"index.php?p=admin&c=bans&ppage=" .($page-1). "#^1");
+            $prev = CreateLinkR('<- Предыдущие',"index.php?p=admin&c=bans&ppage=" .($page-1). "#^1");
         }
         else
         {
@@ -133,12 +133,12 @@ echo '<div id="admin-page-content">';
         }
         if ($PageEnd < $page_count)
         {
-            $next = CreateLinkR('next ->',"index.php?p=admin&c=bans&ppage=" .($page+1). "#^1");
+            $next = CreateLinkR('Следующие ->',"index.php?p=admin&c=bans&ppage=" .($page+1). "#^1");
         }
         else
             $next = "";
 
-        $page_nav = 'displaying&nbsp;'.$PageStart.'&nbsp;-&nbsp;'.$PageEnd.'&nbsp;of&nbsp;'.$page_count.'&nbsp;results';
+        $page_nav = 'Показано&nbsp;'.$PageStart.'&nbsp;-&nbsp;'.$PageEnd.'&nbsp;из&nbsp;'.$page_count.'&nbsp;результатов';
 
         if (strlen($prev) > 0)
             $page_nav .= ' | <b>'.$prev.'</b>';
@@ -187,7 +187,7 @@ echo '<div id="admin-page-content">';
 
             $prot['admin'] = $protestb[11];
             if(!$protestb[12])
-                $prot['server'] = "Web Ban";
+                $prot['server'] = "ВЕБ бан";
             else
                 $prot['server'] = $protestb[12];
 			$prot['datesubmitted'] = SBDate($dateformat, $prot['datesubmitted']);
@@ -207,7 +207,7 @@ echo '<div id="admin-page-content">';
 					$cdata = array();
 					$cdata['morecom'] = ($morecom==1?true:false);
 					if($commentres->fields['aid'] == $userbank->GetAid() || $userbank->HasAccess(ADMIN_OWNER)) {
-						$cdata['editcomlink'] = CreateLinkR('<img src=\'images/edit.gif\' border=\'0\' alt=\'\' style=\'vertical-align:middle\' />','index.php?p=banlist&comment='.(int)$prot['pid'].'&ctype=P&cid='.$commentres->fields['cid'],'Edit Comment');
+						$cdata['editcomlink'] = CreateLinkR('<img src=\'images/edit.gif\' border=\'0\' alt=\'\' style=\'vertical-align:middle\' />','index.php?p=banlist&comment='.(int)$prot['pid'].'&ctype=P&cid='.$commentres->fields['cid'],'Редактировать комментарий');
 						if($userbank->HasAccess(ADMIN_OWNER)) {
 							$cdata['delcomlink'] = "<a href=\"#\" class=\"tip\" title=\"<img src='images/delete.gif' border='0' alt='' style='vertical-align:middle' /> :: Delete Comment\" target=\"_self\" onclick=\"RemoveComment(".$commentres->fields['cid'].",'P',-1);\"><img src='images/delete.gif' border='0' alt='' style='vertical-align:middle' /></a>";
 						}
@@ -278,7 +278,7 @@ echo '<div id="admin-page-content">';
         if ($PageEnd > $page_count) $PageEnd = $page_count;
         if ($page > 1)
         {
-            $prev = CreateLinkR('<- prev',"index.php?p=admin&c=bans&papage=" .($page-1). "#^1~p1");
+            $prev = CreateLinkR('<- предыдущая',"index.php?p=admin&c=bans&papage=" .($page-1). "#^1~p1");
         }
         else
         {
@@ -286,12 +286,12 @@ echo '<div id="admin-page-content">';
         }
         if ($PageEnd < $page_count)
         {
-            $next = CreateLinkR('next ->',"index.php?p=admin&c=bans&papage=" .($page+1). "#^1~p1");
+            $next = CreateLinkR('следующая ->',"index.php?p=admin&c=bans&papage=" .($page+1). "#^1~p1");
         }
         else
             $next = "";
 
-        $page_nav = 'displaying&nbsp;'.$PageStart.'&nbsp;-&nbsp;'.$PageEnd.'&nbsp;of&nbsp;'.$page_count.'&nbsp;results';
+        $page_nav = 'Показано&nbsp;'.$PageStart.'&nbsp;-&nbsp;'.$PageEnd.'&nbsp;из&nbsp;'.$page_count.'&nbsp;результатов';
 
         if (strlen($prev) > 0)
             $page_nav .= ' | <b>'.$prev.'</b>';
@@ -326,7 +326,7 @@ echo '<div id="admin-page-content">';
 				if(!$protestb) {
 					$GLOBALS['db']->Execute("UPDATE `".DB_PREFIX."_protests` SET archiv = '2' WHERE pid = '". (int)$prot['pid'] . "';");
 					$prot['archiv'] = "2";
-					$prot['archive'] = "ban has been deleted.";
+					$prot['archive'] = "бан был удален.";
 				} else {
 					$prot['name'] = $protestb[3];
 					$prot['authid'] = $protestb[2];
@@ -340,18 +340,18 @@ echo '<div id="admin-page-content">';
                     $prot['ban_reason'] = htmlspecialchars($protestb['reason']);
                     $prot['admin'] = $protestb[11];
                     if(!$protestb[12])
-                        $prot['server'] = "Web Ban";
+                        $prot['server'] = "ВЕБ бан";
                     else
                         $prot['server'] = $protestb[12];
 					if($prot['archiv'] == "1")
-						$prot['archive'] = "protest has been archived.";
+						$prot['archive'] = "протест отправлен в архив.";
 					else if($prot['archiv'] == "3")
-						$prot['archive'] = "ban has expired.";
+						$prot['archive'] = "срок бана истек.";
 					else if($prot['archiv'] == "4")
-						$prot['archive'] = "ban has been unbanned.";
+						$prot['archive'] = "игрок был разбанен.";
 				}
 			} else {
-				$prot['archive'] = "ban has been deleted.";
+				$prot['archive'] = "бан был удален.";
 			}
 			$prot['datesubmitted'] = SBDate($dateformat, $prot['datesubmitted']);
 			//COMMENT STUFF
@@ -403,7 +403,7 @@ echo '<div id="admin-page-content">';
 				$comment = "None";
 
 			$prot['commentdata'] = $comment;
-			$prot['protaddcomment'] = CreateLinkR('<img src="images/details.gif" border="0" alt="" style="vertical-align:middle" /> Add Comment','index.php?p=banlist&comment='.(int)$prot['pid'].'&ctype=P');
+			$prot['protaddcomment'] = CreateLinkR('<img src="images/details.gif" border="0" alt="" style="vertical-align:middle" /> Добавить комментарий','index.php?p=banlist&comment='.(int)$prot['pid'].'&ctype=P');
 			//-----------------------------------------
 
             array_push($protest_list_archiv, $prot);
@@ -427,10 +427,10 @@ echo '<div id="admin-page-content">';
     <div id="tabs">
 	<ul>
 		<li id="utab-s0" class="active">
-			<a href="index.php?p=admin&c=bans#^2~s0" id="admin_utab_s0" onclick="Swap2ndPane(0,\'s\');" class="tip" title="Show Submissions :: Show current submissions." target="_self">Current</a>
+			<a href="index.php?p=admin&c=bans#^2~s0" id="admin_utab_s0" onclick="Swap2ndPane(0,\'s\');" class="tip" title="Show Submissions :: Show current submissions." target="_self">Активные</a>
 		</li>
 		<li id="utab-s1" class="nonactive">
-			<a href="index.php?p=admin&c=bans#^2~s1" id="admin_utab_s1" onclick="Swap2ndPane(1,\'s\');" class="tip" title="Show Archive :: Show the submission archive." target="_self">Archive</a>
+			<a href="index.php?p=admin&c=bans#^2~s1" id="admin_utab_s1" onclick="Swap2ndPane(1,\'s\');" class="tip" title="Show Archive :: Show the submission archive." target="_self">Архив</a>
 		</li>
 	</ul>
 	</div>
@@ -463,7 +463,7 @@ echo '<div id="admin-page-content">';
             else
                 $next = "";
 
-            $page_nav = 'displaying&nbsp;'.$PageStart.'&nbsp;-&nbsp;'.$PageEnd.'&nbsp;of&nbsp;'.$page_count.'&nbsp;results';
+            $page_nav = 'Показано&nbsp;'.$PageStart.'&nbsp;-&nbsp;'.$PageEnd.'&nbsp;из&nbsp;'.$page_count.'&nbsp;результатов';
 
             if (strlen($prev) > 0)
                 $page_nav .= ' | <b>'.$prev.'</b>';
@@ -601,7 +601,7 @@ echo '<div id="admin-page-content">';
             else
                 $next = "";
 
-            $page_nav = 'displaying&nbsp;'.$PageStart.'&nbsp;-&nbsp;'.$PageEnd.'&nbsp;of&nbsp;'.$page_count.'&nbsp;results';
+            $page_nav = 'Показано&nbsp;'.$PageStart.'&nbsp;-&nbsp;'.$PageEnd.'&nbsp;из&nbsp;'.$page_count.'&nbsp;результатов';
 
             if (strlen($prev) > 0)
                 $page_nav .= ' | <b>'.$prev.'</b>';
@@ -770,7 +770,7 @@ function ProcessBan()
 
 	if(!$('nickname').value)
 	{
-		$('nick.msg').setHTML('You must enter the nickname of the person you are banning');
+		$('nick.msg').setHTML('Введите ник игрока, которому хотите дать бан');
 		$('nick.msg').setStyle('display', 'block');
 		err++;
 	}else
@@ -781,7 +781,7 @@ function ProcessBan()
 
 	if($('steam').value.length < 10 && !$('ip').value)
 	{
-		$('steam.msg').setHTML('You must enter a valid STEAM ID or Community ID');
+		$('steam.msg').setHTML('Введите реальный STEAM ID или Community ID');
 		$('steam.msg').setStyle('display', 'block');
 		err++;
 	}else
@@ -792,7 +792,7 @@ function ProcessBan()
 
 	if($('ip').value.length < 7 && !$('steam').value)
 	{
-		$('ip.msg').setHTML('You must enter a valid IP address');
+		$('ip.msg').setHTML('Введите реальный IP адрес');
 		$('ip.msg').setStyle('display', 'block');
 		err++;
 	}else
@@ -804,7 +804,7 @@ function ProcessBan()
 
 	if(!reason)
 	{
-		$('reason.msg').setHTML('You must select or enter a reason for this ban.');
+		$('reason.msg').setHTML('Выберите причину бана.');
 		$('reason.msg').setStyle('display', 'block');
 		err++;
 	}else
@@ -830,7 +830,7 @@ function ProcessGroupBan()
 {
 	if(!$('groupurl').value)
 	{
-		$('groupurl.msg').setHTML('You must enter the group link of the group you are banning');
+		$('groupurl.msg').setHTML('Введите ссылку на группу, которую баните');
 		$('groupurl.msg').setStyle('display', 'block');
 	}else
 	{
