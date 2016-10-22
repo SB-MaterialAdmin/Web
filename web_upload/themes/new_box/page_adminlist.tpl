@@ -41,9 +41,9 @@
 										<tr>
 											<td><img src="{$admin.avatar}" style="width: 20px; height: 20px; border-radius: 25px;" /> <a href="https://steamcommunity.com/profiles/{$admin.authid}">{$admin.user}</a></td>
 											<td>{if $admin.srv_group != ""}{$admin.srv_group}{else}Нет группы\Индивид. права{/if}</td>
-											<td>{if $admin.skype != ""}<a href="skype:{$admin.skype}?userinfo" title="Просмотреть информацию о профиле Skype">{$admin.skype}</a>{else}Неизвестно{/if}</td>
-											<td>{if $admin.vk != ""}<a href="https://vk.com/{$admin.vk}" title="Перейти в профиль ВК">{$admin.vk}</a>{else}Неизвестно{/if}</td>
-											<td>{if $admin.comment != ""}{$admin.comment}{else}Нет данных. Обычный рядовой, контролирует порядок на серверах.{/if}</td>
+											<td>{if $admin.skype != ""}<a href="skype:{$admin.skype|escape}?userinfo" title="Просмотреть информацию о профиле Skype">{$admin.skype|escape}</a>{else}Неизвестно{/if}</td>
+											<td>{if $admin.vk != ""}<a href="https://vk.com/{$admin.vk|escape}" title="Перейти в профиль ВК">{$admin.vk|escape}</a>{else}Неизвестно{/if}</td>
+											<td>{if $admin.comment != ""}{$admin.comment|escape}{else}Нет данных. Обычный рядовой, контролирует порядок на серверах.{/if}</td>
 										</tr>
 										{/foreach}
 									</tbody>

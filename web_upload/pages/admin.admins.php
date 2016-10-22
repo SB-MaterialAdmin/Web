@@ -60,7 +60,8 @@ foreach($admins AS $admin)
 	if($admin['vk_profile'] == ""){
 		$admin['vk_profile'] = "Нет данных";
 	}else{
-		$admin['vk_profile'] = "<a href='https://vk.com/" . $admin['vk_profile'] . "'>" . $admin['vk_profile'] . "</a>";
+		$admin['vk_profile'] = htmlspecialchars($admin['vk_profile']);
+		$admin['vk_profile'] = "<a href='https://vk.com/" .$admin['vk_profile'] . "'>" . $admin['vk_profile'] . "</a>";
 	}
 	
 	$admin['sk_profile'] = $userbank->GetProperty("skype", $admin['aid']);
