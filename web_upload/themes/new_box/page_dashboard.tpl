@@ -79,7 +79,7 @@
 	<div class="col-sm-12">
 		<div class="card">
 			<div class="card-header ch-alt">
-				<h2>Бокировки коммуникаций<small>Общее количество: {$total_comms}</small></h2>
+				<h2>Блокировки коммуникаций<small>Общее количество: {$total_comms}</small></h2>
 			</div>
 		<div class="card-body m-t-0">
 				<table class="table table-inner table-vmiddle">

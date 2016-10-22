@@ -4,8 +4,8 @@
 	</tr>
 </table>
 <div id="submit-main">
-	Здесь вы сможете подать жалобу на игрока, который нарушает правила игрового сервера. При подаче жалобы мы просим Вас заполнить все поля, и быть максимально информативным в комментариях. Это гарантирует, что ваша жалоба обработается гораздо быстрее.<br /><br />
-    Чтобы узнать как записывать Демо нажмите <a href="javascript:void(0)" onclick="ShowBox('Как записать демо', 'В то время как вы наблюдаете за нарушителем, нажмите клавишу "~(ё)" на клавиатуре чтобы вызвать консоль. В консоли введите record [имя_записи] и нажмите клавишу Enter. Файл записи будет находиться в папке с Модом', 'blue', '', true);">здесь</a><br /><br />
+	Здесь Вы можете подать заявку на бан игрока, нарушающего правила сервера. Когда подаёте заявку, заполняйте все поля, и донесите Ваш комментарий максимально информативно. Это послужит залогом скорейшего рассмотрения Вашей заявки.<br /><br />
+    Краткая инструкция по записи демо <a href="javascript:void(0)" onclick="ShowBox('Как записать Демку?', 'В тот момент, когда Вы наблюдаете за нужным игроком, нажмите <b>~</b> (</b>`</b>/<b>Ё</b>) на Вашей клавиатуре. В открывшуюся консоль введите <b>record [demoname]</b> и нажмите <b>Enter</b>. Также пропишите команду <b>status</b> для получения дополнительной информации о сервере. Чтобы остановить запись, введите <b>stop</b>. Файл демки будет лежать в папке <b>cstrike</b>.', 'blue', '', true);">здесь</a><br /><br />
 <form action="index.php?p=submit" method="post" enctype="multipart/form-data">
 <input type="hidden" name="subban" value="1">
 <table cellspacing='10' width='100%' align='center'>
@@ -15,40 +15,40 @@
 </tr>
 <tr>
 	<td width="20%">
-		SteamID игрока:</td>
+		SteamID нарушителя:</td>
 	<td>
 		<input type="text" name="SteamID" size="40" maxlength="64" value="{$STEAMID}" class="textbox" style="width: 250px;" />
 	</td>
 </tr>
 <tr>
 	<td width="20%">
-		IP игрока:</td>
+		IP нарушителя:</td>
 	<td>
 		<input type="text" name="BanIP" size="40" maxlength="64" value="{$ban_ip}" class="textbox" style="width: 250px;" />
 	</td>
 </tr>
 <tr>
 	<td width="20%">
-        Ник игрока<span class="mandatory">*</span>:</td>
+        Никнейм нарушителя<span class="mandatory">*</span>:</td>
 	<td>
         <input type="text" size="40" maxlength="70" name="PlayerName" value="{$player_name}" class="textbox" style="width: 250px;" /></td>
 </tr>
 <tr>
 	<td width="20%" valign="top">
-		Причина бана<span class="mandatory">*</span>:<br />
-		(Введите расширенный комментарий к бану. Никаких комментариев типа: "Читак")	</td>
+		Комментарий<span class="mandatory">*</span>:<br />
+		(Пожалуйста, пишите информативные комментарии. Комментарии типа "читер" не рассматриваются.)	</td>
 	<td><textarea name="BanReason" cols="30" rows="5" class="textbox" style="width: 250px;">{$ban_reason}</textarea></td>
     </tr>
 <tr>
 	<td width="20%">
-		Ваше имя:	</td>
+		Ваш ник:	</td>
 	<td>
 		<input type="text" size="40" maxlength="70" name="SubmitName" value="{$subplayer_name}" class="textbox" style="width: 250px;" />	</td>
     </tr>
 
 <tr>
 	<td width="20%">
-		Ваш E-mail<span class="mandatory">*</span>:	</td>
+		Ваш Email<span class="mandatory">*</span>:	</td>
 	<td>
 		<input type="text" size="40" maxlength="70" name="EmailAddr" value="{$player_email}" class="textbox" style="width: 250px;" />	</td>
     </tr>
@@ -61,26 +61,26 @@
 			{foreach from="$server_list" item="server}
 				<option value="{$server.sid}" {if $server_selected == $server.sid}selected{/if}>{$server.hostname}</option>
 			{/foreach}
-			<option value="0">Другой сервер / Нет в списке</option>
+			<option value="0">Другой сервер, не представленный здесь</option>
 		</select> 
     </td>
     </tr>
 <tr>
 	<td width="20%">
-		Загрузить демо:	</td>
+		Загрузка демо:	</td>
 	<td>
 		<input name="demo_file" type="file" size="25" class="file" style="width: 268px;" /><br />
-		Предупреждение: Разрешено загружать файлы только в формате <a href="http://www.winzip.com" target="_blank">ZIP</a>, <a href="http://www.rarlab.com" target="_blank">RAR</a>, <a href="http://www.7-zip.org" target="_blank">7Z</a>, <a href="http://www.bzip.org" target="_blank">BZ2</a> или <a href="http://www.gzip.org" target="_blank">GZ</a> </td>
+		Примечание: Только форматы <b>.dem<b>, <a href="http://www.winzip.com" target="_blank">.zip</a>, <a href="http://www.rarlab.com" target="_blank">.rar</a>, <a href="http://www.7-zip.org" target="_blank">.7z</a>, <a href="http://www.bzip.org" target="_blank">.bz2</a> или <a href="http://www.gzip.org" target="_blank">.gz</a>.	</td>
     </tr>
 <tr>
 	<td width="20%"><span class="mandatory">*</span> = Обязательные поля</td>
 	<td>
-		{sb_button text=Подтвердить onclick="" class=ok id=save submit=true}
+		{sb_button text=Отправить onclick="" class=ok id=save submit=true}
 	</td>
     <td>&nbsp;</td>
 </tr>
 </table>
 </form>
-<b>Что случиться если кого-то забанят?</b><br />
-Если кого-то забанят, то его STEAMID или IP адрес будут включены в эту базу данных SourceBans, и каждый раз этот игрок пытается подключиться к одному из наших серверов он / она будет заблокирован и получит сообщение о том, что заблокирован в SourceBans. 
+<b>Что случится, если кто-то окажется забаненным?</b><br />
+Если кто-то получает бан, то его уникальный STEAMID или IP заносятся в Базу Данных SourceBans, и каждый раз, когда игрок попытается подключиться к серверу, он/она будут блокироваться с уведомлением о бане. 
 </div>

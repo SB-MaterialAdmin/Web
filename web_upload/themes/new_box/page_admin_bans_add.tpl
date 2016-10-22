@@ -7,6 +7,7 @@
 		<div class="card-header">
 			<h2>Добавление бана <small>За дополнительной информацией или помощью наведите курсор мыши на знак вопроса.</small></h2>
 		</div>
+		<div class="alert alert-info" role="alert">При добавлении демо используйте что-то одно! Если ссылка на демо будет указана через "Demo Link" и будет "загружен файл демо", то "Demo Link" будет игнорирован при добавлении бана и добавится только "загруженное демо".</div>
 		<div class="card-body card-padding p-b-0" id="group.details">
 			<div class="form-group m-b-5">
 				<label for="nickname" class="col-sm-3 control-label">{help_icon title="Ник" message="Введите ник игрока, которого желаете забанить."} Ник</label>
@@ -132,6 +133,14 @@
 					</select>
 				</div>
 				<div id="length.msg"></div>
+			</div>
+			<div class="form-group m-b-5">
+				<label for="demo_link" class="col-sm-3 control-label">{help_icon title="Demo Link" message="Введите ссылку на скачивание Демо файла через GoogleDisk или YandexDisk или любом другом хранилище. Использовать http:// или https:// в ссылке - обязательно!"} Demo Link</label>
+				<div class="col-sm-9">
+					<div class="fg-line">
+						<input type="text" TABINDEX=1 class="form-control" id="demo_link" name="demo_link" placeholder="Укажите ссылку(При необходимости)">
+					</div>
+				</div>
 			</div>
 			<div class="form-group m-b-5">
 				<label class="col-sm-3 control-label">{help_icon title="Загрузить демо" message="Кликните тут, чтобы загрузить демо."} Загрузить демо</label>

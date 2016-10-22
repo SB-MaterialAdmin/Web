@@ -1818,7 +1818,8 @@ function ServerHostPlayers($sid, $type="servers", $obId="", $tplsid="", $open=""
 	
 	$sid = (int)$sid;
 
-	$res = $GLOBALS['db']->GetRow("SELECT sid, ip, port FROM ".DB_PREFIX."_servers WHERE sid = $sid");
+	//$res = $GLOBALS['db']->GetRow("SELECT sid, ip, port FROM ".DB_PREFIX."_servers WHERE sid = $sid");
+	$res = $GLOBALS['db']->GetRow("SELECT se.sid, se.ip, se.port, se.modid, md.modfolder FROM ".DB_PREFIX."_servers se LEFT JOIN ".DB_PREFIX."_mods md ON md.mid=se.modid WHERE se.sid = $sid");
 	if(empty($res[1]) || empty($res[2]))
 		return $objResponse;
 	$info = array();
@@ -1831,18 +1832,16 @@ function ServerHostPlayers($sid, $type="servers", $obId="", $tplsid="", $open=""
 			$objResponse->addAssign("host_$sid", "innerHTML", trunc($info['hostname'], $trunchostname, false));
 			$objResponse->addAssign("players_$sid", "innerHTML", $info['numplayers'] . "/" . $info['maxplayers']);
 			$objResponse->addAssign("os_$sid", "innerHTML", "<img src='images/" . (!empty($info['os'])?$info['os']:'server_small') . ".png'>");
-			if ($info['secure'] == 1)
-				$objResponse->addAssign("vac_$sid", "innerHTML", "<img src='images/shield.png'>");
-            else
-                $objResponse->addAssign("vac_$sid", "innerHTML", "<img src='images/noshield.png'>");
-            // Костыль для $info['map'] и Воркшопа (ммм, костыльчики, мои родные)
-            if (strpos($info['map'], '/') !== FALSE) {
-                $tmp = explode('/', $info['map']);
-                $info['map'] = $tmp[count($tmp)-1];
-            }
+			if( $info['secure'] == 1 )
+			{
+				$objResponse->addAssign("vac_$sid", "innerHTML", "<img src='images/shield.png' style='width: 16px;height: 16px;'>");
+			}else{
+				$objResponse->addAssign("vac_$sid", "innerHTML", "<img src='images/noshield.png' style='width: 16px;height: 16px;'>");
+			}
 			$objResponse->addAssign("map_$sid", "innerHTML", basename($info['map'])); // Strip Steam Workshop folder
 			if(!$inHome) {
-				$objResponse->addScript("$('mapimg_$sid').setProperty('src', '".GetMapImage($info['map'])."').setProperty('alt', '".$info['map']."').setProperty('title', '".basename($info['map'])."');");
+				$objResponse->addScript("$('mapimg_$sid').setProperty('src', '".GetMapImage($info['map'], $res[4])."').setProperty('alt', '".$info['map']."').setProperty('title', '".basename($info['map'])."');");
+				$objResponse->addAssign("mapimg_$sid", "innerHTML", GetMapImage($info['map'], $res[4]));
 				if($info['numplayers'] == 0 || empty($info['numplayers']))
 				{
 					$objResponse->addScript("$('sinfo_$sid').setStyle('display', 'none');");
@@ -2274,7 +2273,7 @@ function PasteBan($sid, $name, $type=0)
 	return $objResponse;
 }
 
-function AddBan($nickname, $type, $steam, $ip, $length, $dfile, $dname, $reason, $fromsub)
+function AddBan($nickname, $type, $steam, $ip, $length, $dfile, $dname, $reason, $fromsub, $udemo)
 {
 	$objResponse = new xajaxResponse();
 	global $userbank, $username;
@@ -2332,6 +2331,9 @@ function AddBan($nickname, $type, $steam, $ip, $length, $dfile, $dname, $reason,
 	$nickname = RemoveCode($nickname);
 	$ip = preg_replace('#[^\d\.]#', '', $ip);//strip ip of all but numbers and dots
 	$dname = RemoveCode($dname);
+	if (!checkdnsrr($udemo,'A') && !get_headers($udemo, 1)){
+		$udemo = '';
+	}
 	$reason = RemoveCode($reason);
 	if(!$length)
 		$len = 0;
@@ -2388,6 +2390,9 @@ function AddBan($nickname, $type, $steam, $ip, $length, $dfile, $dname, $reason,
 	{
 		$GLOBALS['db']->Execute("INSERT INTO ".DB_PREFIX."_demos(demid,demtype,filename,origname)
 						     VALUES(?,'B', ?, ?)", array((int)$subid, $dfile, $dname));
+	}elseif(!$dname && !$dfile && $udemo){
+		$GLOBALS['db']->Execute("INSERT INTO ".DB_PREFIX."_demos(demid,demtype,filename,origname)
+						     VALUES(?,'U', '', ?)", array((int)$subid, $udemo));
 	}
 	if($fromsub) {
 		$submail = $GLOBALS['db']->Execute("SELECT name, email FROM ".DB_PREFIX."_submissions WHERE subid = '" . (int)$fromsub . "'");

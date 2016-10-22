@@ -312,8 +312,10 @@ require(INCLUDES_PATH . '/smarty/Smarty.class.php');
 
 global $theme, $userbank;
 
-$theme_name = isset($GLOBALS['config']['config.theme'])?$GLOBALS['config']['config.theme']:'default';
-
+$theme_name = isset($GLOBALS['config']['config.theme'])?$GLOBALS['config']['config.theme']:'new_box';
+if(defined("IS_UPDATE")){
+	$theme_name = "new_box";
+}
 define('SB_THEME', $theme_name);
 
 if(!@file_exists(SB_THEMES . $theme_name . "/theme.conf.php"))

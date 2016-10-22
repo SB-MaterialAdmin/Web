@@ -187,9 +187,9 @@ function BuildPageTabs()
 	AddTab("<i class='zmdi zmdi-lock-outline zmdi-hc-fw'></i> Список банов", "index.php?p=banlist", "Список всех когда-либо выданных банов.");
 	AddTab("<i class='zmdi zmdi-mic-off zmdi-hc-fw'></i> Список мутов/гагов", "index.php?p=commslist", "Список всех когда-либо выданных мутов и гагов.");
 	if($GLOBALS['config']['config.enablesubmit']=="1")
-		AddTab("<i class='zmdi zmdi-plus-circle-o-duplicate zmdi-hc-fw'></i>Пожаловаться на игрока", "index.php?p=submit", "Здесь вы можете оставить жалобу на игрока.");
+		AddTab("<i class='zmdi zmdi-plus-circle-o-duplicate zmdi-hc-fw'></i> Пожаловаться на игрока", "index.php?p=submit", "Здесь вы можете оставить жалобу на игрока.");
 	if($GLOBALS['config']['config.enableprotest']=="1")
-		AddTab("<i class='zmdi zmdi-comment-edit zmdi-hc-fw'></i> Аппеляция бана", "index.php?p=protest", "Вы можете подать аппеляцию вашего бана, предоставив доказательства невиновности.");
+		AddTab("<i class='zmdi zmdi-comment-edit zmdi-hc-fw'></i> Апелляция бана", "index.php?p=protest", "Вы можете подать аппеляцию вашего бана, предоставив доказательства невиновности.");
 	if($GLOBALS['config']['page.adminlist']=="1")
 		AddTab("<i class='zmdi zmdi-accounts zmdi-hc-fw'></i> Админлист", "index.php?p=adminlist", "Список администраторов на доступных серверах.");
 	if ($userbank->is_admin())
@@ -744,6 +744,27 @@ function PageDie()
 	die();
 }
 
+function GetMapImage($map, $game=false)
+{
+	if($game){
+		if(@file_exists(SB_MAP_LOCATION . "/".$game."/" . $map . ".jpg"))
+			$map_icon = "images/maps/".$game."/" . $map . ".jpg";
+		else{
+			if(@file_exists(SB_MAP_LOCATION . "/" . $map . ".jpg"))
+				$map_icon = "images/maps/" . $map . ".jpg";
+			else
+				$map_icon = "images/maps/nomap.jpg";
+		}
+	}else{
+		if(@file_exists(SB_MAP_LOCATION . "/" . $map . ".jpg"))
+			$map_icon = "images/maps/" . $map . ".jpg";
+		else
+			$map_icon = "images/maps/nomap.jpg";
+	}
+	return $map_icon;
+}
+
+/*
 function GetMapImage($map)
 {
 	if(@file_exists(SB_MAP_LOCATION . "/" . $map . ".jpg"))
@@ -751,7 +772,7 @@ function GetMapImage($map)
 	else
 		return "images/maps/nomap.jpg";
 }
-
+*/
 function CheckExt($filename, $ext)
 {
 	$filename = str_replace(chr(0), '', $filename);

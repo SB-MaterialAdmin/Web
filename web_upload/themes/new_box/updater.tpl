@@ -86,31 +86,11 @@
             </section>
         </section>
         <footer id="footer">
-            <ul class="f-menu">
-                <li>Создано <a class="footer_link" href="http://www.sourcemod.net" target="_blank">SourceMod</a><li>
-                &nbsp;/&nbsp;
-                <li><a href="http://www.sourcebans.net" target="_blank" class="footer_link">Команда SourceBans</a></li>
-            </ul>
+            <div id="sm">
+                Создано <a class="footer_link" href="http://www.sourcemod.net" target="_blank">SourceMod</a>
+            </div>
         </footer>
-        <script type="text/javascript">
-window.addEvent('domready', function() {
-	var Tips2 = new Tips($$('.tip'), {
-		initialize:function(){
-			this.fx = new Fx.Style(this.toolTip, 'opacity', {duration: 300, wait: false}).set(0);
-		},
-		onShow: function(toolTip) {
-			this.fx.start(1);
-		},
-		onHide: function(toolTip) {
-			this.fx.start(0);
-		}
-	});
-	var Tips4 = new Tips($$('.perm'), {
-		className: 'perm'
-	});
-}); 
-$('content_title').setHTML('<?php echo $GLOBALS['TitleRewrite'] ?>');
-        </script>
+
         <!--[if lt IE 7]>
         <script defer type="text/javascript" src="./scripts/pngfix.js"></script>
         <![endif]-->

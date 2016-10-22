@@ -76,6 +76,17 @@
 						</div>
 					</div>
 				</div>
+				<div class="form-group m-b-5">
+					<label for="allow_admininfo" class="col-sm-3 control-label">{help_icon title="Смена информации админом" message="Разрешить пользователю самому менять VK или Skype в своем профиле?"} Смена своей информации Админом</label>
+					<div class="col-sm-9">
+						<div class="checkbox m-b-15">
+							<label for="allow_admininfo">
+								<input type="checkbox" name="allow_admininfo" id="allow_admininfo" hidden="hidden" />
+								<i class="input-helper"></i> Включить?
+							</label>
+						</div>
+					</div>
+				</div>
 			</div>
 			<div class="card-body card-padding text-center">
 				{sb_button text="Сохранить" icon="<i class='zmdi zmdi-check-all'></i>" class="bgm-green btn-icon-text" id="fsettings" submit=true}

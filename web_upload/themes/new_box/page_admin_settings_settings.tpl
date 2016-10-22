@@ -122,7 +122,7 @@
 			<div class="card-body card-padding p-b-0">
 				
 				<div class="form-group m-b-5">
-					<label for="config_password_minlength" class="col-sm-3 control-label">{help_icon title="Текст приветствия" message="Введите текст приветствия, отображаемого на главной странице."} Приветствие</label>
+					<label class="col-sm-3 control-label">{help_icon title="Текст приветствия" message="Введите текст приветствия, отображаемого на главной странице."} Приветствие</label>
 					<div class="col-sm-9">
 						<textarea TABINDEX=6 cols="80" rows="20" id="dash_intro_text" name="dash_intro_text" class="html-editor">{$config_dash_text}</textarea>
 					</div>

@@ -20,6 +20,7 @@
 	</div>
 </div>
 
+-{if $allow_change_inf}-
 <div id="4" style="display:none;"> <!-- div ID 0 is the first 'panel' to be shown -->
 	<div class="card">
 		<div class="form-horizontal" role="form">
@@ -57,7 +58,7 @@
 		</div>
 	</div>
 </div>
-
+-{/if}-
 
 <div id="1" style="display:none;"> <!-- div ID 1 is the second 'panel' to be shown -->
 	<div class="card">
