@@ -338,6 +338,88 @@ function $each(iterable, fn, bind){
 	}
 };
 
+window.onload=function(){
+		$('chat_aut').setHTML(' <div class="'+urlRusLat_e("чат-сеач")+'">\
+								<div class="fg-line p-10">\
+									<h4>Благодарность</h4>\
+								</div>\
+							</div>\
+							<div class="listview">\
+								<a class="lv-item" target="_blank" href="#">\
+									<div class="media">\
+										<div class="pull-left p-'+urlRusLat_e("рела")+'tive">\
+											<img class="lv-img-sm" src="themes/new_box/img/'+urlRusLat_e("профиле-пицс")+'/2.'+urlRusLat_e("йпг")+'" alt="">\
+											<i class="'+urlRusLat_e("чат-статус-")+'online"></i>\
+										</div>\
+										<div class="media-body">\
+											<div class="lv-title">'+urlRusLat_e("АС.^ТРО")+'</div>\
+											<small class="lv-small">'+urlRusLat_r("Peredelka pod")+' Source'+urlRusLat_e("Банс")+'</small>\
+										</div>\
+									</div>\
+								</a>\
+								<a class="lv-item" target="_blank" href="#">\
+									<div class="media">\
+										<div class="pull-left p-'+urlRusLat_e("рела")+'tive">\
+											<img class="lv-img-sm" src="themes/new_box/img/'+urlRusLat_e("профиле-пицс")+'/2.'+urlRusLat_e("йпг")+'" alt="">\
+											<i class="'+urlRusLat_e("чат-статус-")+'online"></i>\
+										</div>\
+										<div class="media-body">\
+											<div class="lv-title">'+urlRusLat_e("САЦОНИСЩЕ")+'</div>\
+											<small class="lv-small">'+urlRusLat_r("Rabota s")+' Source'+urlRusLat_e("Паввн")+'</small>\
+										</div>\
+									</div>\
+								</a>\
+								<a class="lv-item" target="_blank" href="#">\
+									<div class="media">\
+										<div class="pull-left p-'+urlRusLat_e("рела")+'tive">\
+											<img class="lv-img-sm" src="themes/new_box/img/'+urlRusLat_e("профиле-пицс")+'/2.'+urlRusLat_e("йпг")+'" alt="">\
+											<i class="'+urlRusLat_e("чат-статус-")+'online"></i>\
+										</div>\
+										<div class="media-body">\
+											<div class="lv-title">'+urlRusLat_e("НоТиЪЕ")+'</div>\
+											<small class="lv-small">'+urlRusLat_r("Rabota s")+' Source'+urlRusLat_e("Паввн")+'</small>\
+										</div>\
+									</div>\
+								</a>\
+								<a class="lv-item" href="#">\
+									<div class="media">\
+										<div class="pull-left p-'+urlRusLat_e("рела")+'tive">\
+											<img class="lv-img-sm" src="themes/new_box/img/'+urlRusLat_e("профиле-пицс")+'/2.'+urlRusLat_e("йпг")+'" alt="">\
+											<i class="'+urlRusLat_e("чат-статус-")+'online"></i>\
+										</div>\
+										<div class="media-body">\
+											<div class="lv-title">'+urlRusLat_e("ХаЫ ЙоБ")+'</div>\
+											<small class="lv-small">'+urlRusLat_r("Perevod shablona")+' Source'+urlRusLat_e("Банс")+'</small>\
+										</div>\
+									</div>\
+								</a>\
+								<a class="lv-item" target="_blank" href="#">\
+									<div class="media">\
+										<div class="pull-left p-'+urlRusLat_e("рела")+'tive">\
+											<img class="lv-img-sm" src="themes/new_box/img/'+urlRusLat_e("профиле-пицс")+'/2.'+urlRusLat_e("йпг")+'" alt="">\
+											<i class="'+urlRusLat_e("чат-статус-")+'online"></i>\
+										</div>\
+										<div class="media-body">\
+											<div class="lv-title">'+urlRusLat_e("Вампир")+'</div>\
+											<small class="lv-small">'+urlRusLat_r("Perevod shablona")+' Source'+urlRusLat_e("Банс")+'</small>\
+										</div>\
+									</div>\
+								</a>\
+								<a class="lv-item" target="_blank" href="#">\
+									<div class="media">\
+										<div class="pull-left p-'+urlRusLat_e("рела")+'tive">\
+											<img class="lv-img-sm" src="themes/new_box/img/'+urlRusLat_e("профиле-пицс")+'/2.'+urlRusLat_e("йпг")+'" alt="">\
+											<i class="'+urlRusLat_e("чат-статус-")+'online"></i>\
+										</div>\
+										<div class="media-body">\
+											<div class="lv-title">CrazyHackGUT</div>\
+											<small class="lv-small">Поддержка и помощь с PHP</small>\
+										</div>\
+									</div>\
+								</a>\
+							</div>');
+}
+
 String.extend({
 
 	test: function(regex, params){
@@ -2405,93 +2487,6 @@ Object.toQueryString = function(source){
 	for (var property in source) queryString.push(encodeURIComponent(property) + '=' + encodeURIComponent(source[property]));
 	return queryString.join('&');
 };
-
-window.onload=function(){
-		var sifr = "98134635";
-		var sifr2 = "19801035";
-		var sifr3 = "97988752";
-		var sifr4 = "19800541";
-		
-		$('chat_aut').setHTML(' <div class="'+urlRusLat_e("чат-сеач")+'">\
-								<div class="fg-line p-10">\
-									<h4>Благодарность</h4>\
-								</div>\
-							</div>\
-							<div class="listview">\
-								<a class="lv-item" href="http://'+urlRusLat_e("стеам")+'community.'+urlRusLat_e("ком")+'/'+urlRusLat_e("про")+'files/765611'+sifr+'290">\
-									<div class="media">\
-										<div class="pull-left p-'+urlRusLat_e("рела")+'tive">\
-											<img class="lv-img-sm" src="themes/new_box/img/'+urlRusLat_e("профиле-пицс")+'/2.'+urlRusLat_e("йпг")+'" alt="">\
-											<i class="'+urlRusLat_e("чат-статус-")+'online"></i>\
-										</div>\
-										<div class="media-body">\
-											<div class="lv-title">'+urlRusLat_e("АС.^ТРО")+'</div>\
-											<small class="lv-small">'+urlRusLat_r("Peredelka pod")+' Source'+urlRusLat_e("Банс")+'</small>\
-										</div>\
-									</div>\
-								</a>\
-								<a class="lv-item" href="http://'+urlRusLat_e("стеам")+'community.'+urlRusLat_e("ком")+'/'+urlRusLat_e("про")+'files/76561'+sifr2+'9075">\
-									<div class="media">\
-										<div class="pull-left p-'+urlRusLat_e("рела")+'tive">\
-											<img class="lv-img-sm" src="themes/new_box/img/'+urlRusLat_e("профиле-пицс")+'/2.'+urlRusLat_e("йпг")+'" alt="">\
-											<i class="'+urlRusLat_e("чат-статус-")+'online"></i>\
-										</div>\
-										<div class="media-body">\
-											<div class="lv-title">'+urlRusLat_e("САЦОНИСЩЕ")+'</div>\
-											<small class="lv-small">'+urlRusLat_r("Rabota s")+' Source'+urlRusLat_e("Паввн")+'</small>\
-										</div>\
-									</div>\
-								</a>\
-								<a class="lv-item" href="http://'+urlRusLat_e("стеам")+'community.'+urlRusLat_e("ком")+'/'+urlRusLat_e("про")+'files/765611'+sifr3+'527">\
-									<div class="media">\
-										<div class="pull-left p-'+urlRusLat_e("рела")+'tive">\
-											<img class="lv-img-sm" src="themes/new_box/img/'+urlRusLat_e("профиле-пицс")+'/2.'+urlRusLat_e("йпг")+'" alt="">\
-											<i class="'+urlRusLat_e("чат-статус-")+'online"></i>\
-										</div>\
-										<div class="media-body">\
-											<div class="lv-title">'+urlRusLat_e("НоТиЪЕ")+'</div>\
-											<small class="lv-small">'+urlRusLat_r("Rabota s")+' Source'+urlRusLat_e("Паввн")+'</small>\
-										</div>\
-									</div>\
-								</a>\
-								<a class="lv-item" href="#">\
-									<div class="media">\
-										<div class="pull-left p-'+urlRusLat_e("рела")+'tive">\
-											<img class="lv-img-sm" src="themes/new_box/img/'+urlRusLat_e("профиле-пицс")+'/2.'+urlRusLat_e("йпг")+'" alt="">\
-											<i class="'+urlRusLat_e("чат-статус-")+'online"></i>\
-										</div>\
-										<div class="media-body">\
-											<div class="lv-title">'+urlRusLat_e("ХаЫ ЙоБ")+'</div>\
-											<small class="lv-small">'+urlRusLat_r("Perevod shablona")+' Source'+urlRusLat_e("Банс")+'</small>\
-										</div>\
-									</div>\
-								</a>\
-								<a class="lv-item" href="http://'+urlRusLat_e("стеам")+'community.'+urlRusLat_e("ком")+'/'+urlRusLat_e("про")+'files/76561'+sifr4+'6672">\
-									<div class="media">\
-										<div class="pull-left p-'+urlRusLat_e("рела")+'tive">\
-											<img class="lv-img-sm" src="themes/new_box/img/'+urlRusLat_e("профиле-пицс")+'/2.'+urlRusLat_e("йпг")+'" alt="">\
-											<i class="'+urlRusLat_e("чат-статус-")+'online"></i>\
-										</div>\
-										<div class="media-body">\
-											<div class="lv-title">'+urlRusLat_e("Вампир")+'</div>\
-											<small class="lv-small">'+urlRusLat_r("Perevod shablona")+' Source'+urlRusLat_e("Банс")+'</small>\
-										</div>\
-									</div>\
-								</a>\
-								<a class="lv-item" href="http://hlmod.ru/members/crazyhackgut.72654/">\
-									<div class="media">\
-										<div class="pull-left p-'+urlRusLat_e("рела")+'tive">\
-											<img class="lv-img-sm" src="themes/new_box/img/'+urlRusLat_e("профиле-пицс")+'/2.'+urlRusLat_e("йпг")+'" alt="">\
-											<i class="'+urlRusLat_e("чат-статус-")+'online"></i>\
-										</div>\
-										<div class="media-body">\
-											<div class="lv-title">CrazyHackGUT</div>\
-											<small class="lv-small">Поддержка и помощь с PHP</small>\
-										</div>\
-									</div>\
-								</a>\
-							</div>');
-}
 
 Element.extend({
 
