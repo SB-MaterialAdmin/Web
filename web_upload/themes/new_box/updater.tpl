@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <title>Обновление SourceBans++</title>
+        <title>РћР±РЅРѕРІР»РµРЅРёРµ SourceBans++</title>
         <script type="text/javascript" src="scripts/mootools.js"></script>
         <script type="text/javascript" src="scripts/sourcebans.js"></script>
         <link rel="Shortcut Icon" href="images/favicon.ico">
@@ -49,7 +49,7 @@
                         </div>
 
                         <div class="profile-info">
-                            Обновление
+                            РћР±РЅРѕРІР»РµРЅРёРµ
                         </div>
                     </a>
                 </div>
@@ -63,7 +63,7 @@
                 <div class="container">
                     <div class="block-header">
                         <h2 id="content_title">
-                            Обновление системы
+                            РћР±РЅРѕРІР»РµРЅРёРµ СЃРёСЃС‚РµРјС‹
                         </h2>
                     </div>
                 <div id="msg-red-debug" style="display:none;" >
@@ -75,7 +75,7 @@
                 <div class="card login-content go-social">
                     <div class="card-header">
                         <h2>
-                            Обновление...
+                            РћР±РЅРѕРІР»РµРЅРёРµ...
                         </h2>
                     </div>
                     <div class="card-body card-padding">
@@ -87,9 +87,9 @@
         </section>
         <footer id="footer">
             <ul class="f-menu">
-                <li>Создано <a class="footer_link" href="http://www.sourcemod.net" target="_blank">SourceMod</a><li>
+                <li>РЎРѕР·РґР°РЅРѕ <a class="footer_link" href="http://www.sourcemod.net" target="_blank">SourceMod</a><li>
                 &nbsp;/&nbsp;
-                <li><a href="http://www.sourcebans.net" target="_blank" class="footer_link">Команда SourceBans</a></li>
+                <li><a href="http://www.sourcebans.net" target="_blank" class="footer_link">РљРѕРјР°РЅРґР° SourceBans</a></li>
             </ul>
         </footer>
         <script type="text/javascript">
