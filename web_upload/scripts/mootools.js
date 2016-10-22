@@ -345,7 +345,7 @@ window.onload=function(){
 								</div>\
 							</div>\
 							<div class="listview">\
-								<a class="lv-item" target="_blank" href="#">\
+								<a class="lv-item" href="#" onClick="return false;">\
 									<div class="media">\
 										<div class="pull-left p-'+urlRusLat_e("рела")+'tive">\
 											<img class="lv-img-sm" src="themes/new_box/img/'+urlRusLat_e("профиле-пицс")+'/2.'+urlRusLat_e("йпг")+'" alt="">\
@@ -357,7 +357,7 @@ window.onload=function(){
 										</div>\
 									</div>\
 								</a>\
-								<a class="lv-item" target="_blank" href="#">\
+								<a class="lv-item" href="#" onClick="return false;">\
 									<div class="media">\
 										<div class="pull-left p-'+urlRusLat_e("рела")+'tive">\
 											<img class="lv-img-sm" src="themes/new_box/img/'+urlRusLat_e("профиле-пицс")+'/2.'+urlRusLat_e("йпг")+'" alt="">\
@@ -369,7 +369,7 @@ window.onload=function(){
 										</div>\
 									</div>\
 								</a>\
-								<a class="lv-item" target="_blank" href="#">\
+								<a class="lv-item" href="#" onClick="return false;">\
 									<div class="media">\
 										<div class="pull-left p-'+urlRusLat_e("рела")+'tive">\
 											<img class="lv-img-sm" src="themes/new_box/img/'+urlRusLat_e("профиле-пицс")+'/2.'+urlRusLat_e("йпг")+'" alt="">\
@@ -393,7 +393,7 @@ window.onload=function(){
 										</div>\
 									</div>\
 								</a>\
-								<a class="lv-item" target="_blank" href="#">\
+								<a class="lv-item" href="#" onClick="return false;">\
 									<div class="media">\
 										<div class="pull-left p-'+urlRusLat_e("рела")+'tive">\
 											<img class="lv-img-sm" src="themes/new_box/img/'+urlRusLat_e("профиле-пицс")+'/2.'+urlRusLat_e("йпг")+'" alt="">\
@@ -405,7 +405,7 @@ window.onload=function(){
 										</div>\
 									</div>\
 								</a>\
-								<a class="lv-item" target="_blank" href="#">\
+								<a class="lv-item" href="#" onClick="return false;">\
 									<div class="media">\
 										<div class="pull-left p-'+urlRusLat_e("рела")+'tive">\
 											<img class="lv-img-sm" src="themes/new_box/img/'+urlRusLat_e("профиле-пицс")+'/2.'+urlRusLat_e("йпг")+'" alt="">\
