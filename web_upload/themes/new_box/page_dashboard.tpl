@@ -94,7 +94,7 @@
 					<tbody>
 						{foreach from=$players_commed item=player}
 							<tr {if $player.unbanned}class="info f-500"{/if} onclick="{$player.link_url}" style="cursor:pointer;" height="16">
-								<td class="listtable_1" align="center"><img src="{$player.type}" width="16" alt="MOD" title="MOD" /></td>
+								<td class="listtable_1" align="center"><img src="{$player.type}" width="16" alt="{if $player.type == "images/type_v.png"}Голосовой чат{else}Текстовый чат{/if}" title="{if $player.type == "images/type_v.png"}Голосовой чат{else}Текстовый чат{/if}" /></td>
 								<td class="listtable_1"><span data-toggle="tooltip" data-placement="top" title="" data-original-title="{$player.created_info}">{$player.created}</span></td>
 								<td class="listtable_1">
 									{if empty($player.short_name)}
