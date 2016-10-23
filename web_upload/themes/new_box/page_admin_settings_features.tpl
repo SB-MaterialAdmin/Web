@@ -66,7 +66,7 @@
 					</div>
 				</div>
 				<div class="form-group m-b-5">
-					<label for="enable_admininfo" class="col-sm-3 control-label">{help_icon title="Информация об Администраторе" message="Показывает информацию(скайп, вк, STEAMID) о забанившем игрока Администраторе в банлисте или мут/гаг листе."} Информация об адмнистраторе</label>
+					<label for="enable_admininfo" class="col-sm-3 control-label">{help_icon title="Информация об Администраторе" message="Показывает информацию(скайп, вк, STEAMID) о забанившем игрока Администраторе в банлисте или мут/гаг листе."} Информация об администраторе</label>
 					<div class="col-sm-9">
 						<div class="checkbox m-b-15">
 							<label for="enable_admininfo">
