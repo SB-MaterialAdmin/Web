@@ -102,7 +102,7 @@
 							</div>
 						{/if}
 						{if $view_comments && $ban.commentdata != "None" && $ban.commentdata|@count > 0}
-							<div style="float:right;">
+							<div style="float:right;padding-right: 5px;">
 								{$ban.commentdata|@count} <img src="themes/new_box/img/comm.png" alt="Comments" title="Comments" style="height:14px;width:14px;" />
 							</div>
 						{/if}
