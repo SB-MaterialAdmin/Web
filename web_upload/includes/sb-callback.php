@@ -1980,7 +1980,7 @@ function ServerHostPlayers($sid, $type="servers", $obId="", $tplsid="", $open=""
 			}
 		}else{
 			if($userbank->HasAccess(ADMIN_OWNER))
-				$objResponse->addAssign("host_$sid", "innerHTML", "<b>Ошибка соединения</b> (<i>" . $res[1] . ":" . $res[2]. "</i>) <small><a href=\"https://sarabveer.github.io/SourceBans-Fork/faq\" title=\"Какие порты должны быть открыты в ВЕБ панели SourceBans?\">Помощь</a></small>");
+				$objResponse->addAssign("host_$sid", "innerHTML", "<b>Ошибка соединения</b> (<i>" . $res[1] . ":" . $res[2]. "</i>) <small><a href=\"https://sbpp.github.io/faq\" title=\"Какие порты должны быть открыты в ВЕБ панели SourceBans?\">Помощь</a></small>");
 			else
 				$objResponse->addAssign("host_$sid", "innerHTML", "<b>Ошибка соединения</b> (<i>" . $res[1] . ":" . $res[2]. "</i>)");
 			$objResponse->addAssign("players_$sid", "innerHTML", "Н/Д");
