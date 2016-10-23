@@ -25,7 +25,7 @@
 //
 // *************************************************************************
 
-if(!defined("IN_SB")){echo "You should not be here. Only follow links!";die();}
+if(!defined("IN_SB")){echo "Ошибка доступа!";die();}
 	global $userbank, $theme;
 	
 	//Log stuff
@@ -42,7 +42,7 @@ if(!defined("IN_SB")){echo "You should not be here. Only follow links!";die();}
 		}
         else
         {
-            $log = new CSystemLog("w", "Hacking Attempt", $userbank->GetProperty('user') . " tried to clear the logs, but doesn't have access.");
+            $log = new CSystemLog("w", "Попытка взлома", $userbank->GetProperty('user') . " tried to clear the logs, but doesn't have access.");
         }
 	}
 	
@@ -200,7 +200,7 @@ else
 												(?, 'theme.bg.att'),
 												(?, 'theme.bg.pos'),
 												(?, 'theme.bg.size')", array($_POST['yvedom_1'], $_POST['yvedom_2'], $_POST['yvedom_3'], $_POST['yvedom_4'], $_POST['dash_textik'], $_POST['dash_textik_p'], $_POST['dash_link_vk'], $_POST['dash_link_steam'], $_POST['dash_link_yout'], $_POST['dash_link_faceb'], $_POST['color_theme_result'], $_POST['theme_color_p'], $_POST['bg_scr'], $_POST['bg_scr_rep'], $_POST['bg_scr_att'], $_POST['bg_pos'], $_POST['bg_size']));
-			?><script>setTimeout("ShowBox('Настройка шаблона', 'Настройки были обновлены!', 'green', 'index.php?p=admin&c=settings', false, 2500);", 1500);</script><?php 
+			?><script>setTimeout("ShowBox('Настройка шаблона', 'Изменения были успешно применены!', 'green', 'index.php?p=admin&c=settings', false, 2500);", 1500);</script><?php 
 		}
 		if ($_POST['settingsGroup'] == "mainsettings")
 		{
@@ -276,7 +276,7 @@ else
 												(".(int)$admin_list_en.", 'page.adminlist'),
 												(".(int)$vay4_en.", 'page.vay4er')", array($_POST['template_title'], $_POST['template_logo'], $_POST['config_dateformat'], $_POST['config_dateformat2'], $_POST['dash_intro_text'], $tz_string, $summertime, $cureason));
 
-				?><script>setTimeout("ShowBox('Settings updated', 'The changes have been successfully updated', 'green', 'index.php?p=admin&c=settings', false, 2500);", 1200);</script><?php 
+				?><script>setTimeout("ShowBox('Главные настройки изменены', 'Изменения были успешно применены!', 'green', 'index.php?p=admin&c=settings', false, 2500);", 1200);</script><?php 
 			}else{
 				CreateRedBox("Error", $errors); 
 			}
@@ -307,7 +307,7 @@ else
 											(" . (int)$adminrehash . ", 'config.enableadminrehashing')");
 											
 
-			?><script>setTimeout("ShowBox('Settings updated', 'The changes have been successfully updated', 'green', 'index.php?p=admin&c=settings');", 1200);</script><?php 
+			?><script>setTimeout("ShowBox('Настройки опций изменены', 'Изменения были успешно применены!', 'green', 'index.php?p=admin&c=settings');", 1200);</script><?php 
 		}
 	}
 
