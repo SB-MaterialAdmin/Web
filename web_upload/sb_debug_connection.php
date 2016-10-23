@@ -112,7 +112,7 @@ else
             if(!$size)
                 echo '[-] Ошибка чтения.'.PHP_EOL;
             else {
-                echo '[+] Got an response!'.PHP_EOL;
+                echo '[+] Ответ получен!'.PHP_EOL;
                 $size = unpack('V1Size', $size);
                 $packet = fread($sock, $size["Size"]);
                 $size = fread($sock, 4);
