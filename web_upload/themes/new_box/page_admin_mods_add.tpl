@@ -56,7 +56,7 @@
 		    	</td>
 		    	<td>
 		    		<div align="left">
-		      			{sb_button text="Загрузить икнку МОДа" onclick="childWindow=open('pages/admin.uploadicon.php','upload','resizable=yes,width=300,height=130');" class="save" id="upload"}
+		      			{sb_button text="Загрузить иконку МОДа" onclick="childWindow=open('pages/admin.uploadicon.php','upload','resizable=yes,width=300,height=130');" class="save" id="upload"}
 		    		</div>
 		    		<div id="icon.msg" style="color:#CC0000;"></div>
 		    	</td>
