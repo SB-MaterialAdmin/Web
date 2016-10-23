@@ -132,7 +132,15 @@
 					</div>
 					<div id="length.msg"></div>
 				</div>
-				
+				<div class="form-group m-b-5">
+					<label for="demo_link" class="col-sm-3 control-label">-{help_icon title="Demo Link" message="Введите ссылку на скачивание Демо файла через GoogleDisk или YandexDisk или любом другом хранилище. Использовать http:// или https:// в ссылке - обязательно!"}- Demo Link</label>
+					<div class="col-sm-9">
+						<div class="fg-line">
+							<input type="text" TABINDEX=1 class="form-control" id="demo_link" name="demo_link" -{if $demo_link_val}- value="-{$demo_link_val}-" -{else}- placeholder="Укажите ссылку(При необходимости)" -{/if}- />
+						</div>
+						<div id="demo_link.msg"></div>
+					</div>
+				</div>
 				<div class="form-group m-b-5">
 					<label class="col-sm-3 control-label">-{help_icon title="Загрузить демо" message="Кликните тут, чтобы загрузить демо."}- Загрузить демо</label>
 					<div class="col-sm-9 p-t-10">
