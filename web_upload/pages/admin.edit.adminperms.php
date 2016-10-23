@@ -31,10 +31,10 @@ global $userbank;
 if(!isset($_GET['id']))
 {
 	echo '<div id="msg-red" >
-	<i><img src="./images/warning.png" alt="Warning" /></i>
-	<b>Error</b>
+	<i><img src="./images/warning.png" alt="Внимание" /></i>
+	<b>Ошибка</b>
 	<br />
-	No admin id specified. Please only follow links
+	Ошибка доступа
 </div>';
 	PageDie();
 }
@@ -45,10 +45,10 @@ if(!$userbank->GetProperty("user", $_GET['id']))
 {
 	$log = new CSystemLog("e", "Getting admin data failed", "Can't find data for admin with id '".$_GET['id']."'");
 	echo '<div id="msg-red" >
-	<i><img src="./images/warning.png" alt="Warning" /></i>
-	<b>Error</b>
+	<i><img src="./images/warning.png" alt="Внимание" /></i>
+	<b>Ошибка</b>
 	<br />
-	Error getting current data.
+	Ошибка получения текущих данных.
 </div>';
 	PageDie();
 }
@@ -56,12 +56,12 @@ if(!$userbank->GetProperty("user", $_GET['id']))
 $_GET['id'] = (int)$_GET['id'];
 if(!$userbank->HasAccess(ADMIN_OWNER|ADMIN_EDIT_ADMINS))
 {
-	$log = new CSystemLog("w", "Hacking Attempt", $userbank->GetProperty("user") . " tried to edit ".$userbank->GetProperty('user', $_GET['id'])."'s permissions, but doesn't have access.");
+	$log = new CSystemLog("w", "Попытка взлома", $userbank->GetProperty("user") . " пытался редактировать разрешения ".$userbank->GetProperty('user', $_GET['id'])." , не имея на это прав.");
 	echo '<div id="msg-red" >
-	<i><img src="./images/warning.png" alt="Warning" /></i>
-	<b>Error</b>
+	<i><img src="./images/warning.png" alt="Внимание" /></i>
+	<b>Ошибка</b>
 	<br />
-	You are not allowed to edit other permissions.
+	Вы не можете редактировать другие разрешения.
 </div>';
 	PageDie();
 }
@@ -73,11 +73,11 @@ $name = $userbank->GetProperty("user", $_GET['id']);
 ?>
 <div id="admin-page-content">
 <div id="add-group">
-<h3>Web Admin Permissions</h3>
+<h3>ВЕБ разрешения</h3>
 <input type="hidden" id="admin_id" value=<?php echo $_GET['id']?> />
 <?php echo str_replace("{title}", $name, file_get_contents(TEMPLATES_PATH . "/groups.web.perm.php")) ;?>
 <br />
-<h3>Server Admin Permissions</h3>
+<h3>Серверные разрешения</h3>
 
 <?php echo str_replace("{title}", $name, file_get_contents(TEMPLATES_PATH . "/groups.server.perm.php")) ;?>
 
@@ -88,8 +88,8 @@ $name = $userbank->GetProperty("user", $_GET['id']);
     <td>&nbsp;</td>
     <td>
     <div align="center">
-       <?php echo $ui->drawButton("Save Changes", "ProcessEditAdminPermissions();", "ok", "editadmingroup");?>
-      &nbsp;<?php echo $ui->drawButton("Back", "history.go(-1)", "cancel", "back");?>
+       <?php echo $ui->drawButton("Сохранить", "ProcessEditAdminPermissions();", "ok", "editadmingroup");?>
+      &nbsp;<?php echo $ui->drawButton("Назад", "history.go(-1)", "cancel", "back");?>
       
       </div>	</td>
   </tr>

@@ -5,10 +5,10 @@ if(!defined("IN_SB")){echo "You should not be here. Only follow links!";die();}
 if(!isset($_GET['id']))
 {
 	echo '<div id="msg-red" >
-	<i><img src="./images/warning.png" alt="Warning" /></i>
-	<b>Error</b>
+	<i><img src="./images/warning.png" alt="Внимание" /></i>
+	<b>Ошибка</b>
 	<br />
-	No server id specified. Please only follow links
+	Ошибка доступа
 </div>';
 	die();
 }
@@ -16,10 +16,10 @@ if(!isset($_GET['id']))
 if(!isset($_GET['type']) || ($_GET['type'] != 'web' && $_GET['type'] != 'srv' && $_GET['type'] != 'server'))
 {
 	echo '<div id="msg-red" >
-	<i><img src="./images/warning.png" alt="Warning" /></i>
-	<b>Error</b>
+	<i><img src="./images/warning.png" alt="Внимание" /></i>
+	<b>Ошибка</b>
 	<br />
-	No valid group type specified. Please only follow links
+	Ошибка доступа
 </div>';
 	die();
 }
@@ -37,11 +37,11 @@ $name = $userbank->GetProperty("user", $_GET['id']);
 ?>
 <div id="admin-page-content">
 <div id="add-group">
-<h3> Edit Group</h3><br />
+<h3> Редактирование групп</h3><br />
 <input type="hidden" id="group_id" value=<?php echo $_GET['id']?> />
 <table width="90%" style="border-collapse:collapse;" id="group.details" cellpadding="3">
   <tr>
-    <td valign="top" width="35%"><div class="rowdesc"><?php echo HelpIcon("Group Name", "Type the name of the new group you want to create.");?>Group Name </div></td>
+    <td valign="top" width="35%"><div class="rowdesc"><?php echo HelpIcon("Имя группы", "Введите имя новой группы, которую вы хотите создать.");?>Имя группы </div></td>
     <td><div align="left">
       <input type="text" TABINDEX=1 class="inputbox" id="groupname" name="groupname" />
     </div><div id="groupname.msg" style="color:#CC0000;"></div></td>
@@ -49,10 +49,10 @@ $name = $userbank->GetProperty("user", $_GET['id']);
 </table>
 <?php if($_GET['type'] == "web")
 {?>
-<h3>Web Admin Permissions</h3>
+<h3>ВЕБ права</h3>
 <?php echo str_replace("{title}", $name, @file_get_contents(TEMPLATES_PATH . "/groups.web.perm.php")) ;?>
 <br /><?php }elseif($_GET['type'] == "srv"){?>
-<h3>Server Admin Permissions</h3>
+<h3>Серверные права</h3>
 <?php  $permissions = str_replace("{title}", $name, @file_get_contents(TEMPLATES_PATH . "/groups.server.perm.php")) ;
 echo $permissions;
 
@@ -64,15 +64,15 @@ $overrides_list = $GLOBALS['db']->GetAll("SELECT * FROM `" . DB_PREFIX . "_srvgr
 ?>
 <br />
 <form action="" method="post" name="group_overrides_form">
-<div class="rowdesc">Group Overrides</div>
-Group Overrides allow specific commands or groups of commands to be completely allowed or denied to members of the group.<br />
-<i>Read about <b><a href="http://wiki.alliedmods.net/Adding_Groups_%28SourceMod%29" title="Adding Groups (SourceMod)" target="_blank">group overrides</a></b> in the AlliedModders Wiki!</i><br /><br />
-Blanking out an overrides' name will delete it.<br /><br />
+<div class="rowdesc">Групповое переопределение</div>
+Групповое переопределение позволяет создать специальные команды или группы команд, которые должны полностью разрешить или запретить членам группы.<br />
+<i>Почитайте о <b><a href="http://wiki.alliedmods.net/Adding_Groups_%28SourceMod%29" title="Adding Groups (SourceMod)" target="_blank">групповом переопределении</a></b> на AlliedModders Wiki!</i><br /><br />
+Выключение переопределения удалит его.<br /><br />
 <table align="center" cellspacing="0" cellpadding="4" id="overrides" width="90%">
 	<tr>
-		<td class="tablerow4">Type</td>
-		<td class="tablerow4">Name</td>
-		<td class="tablerow4">Access</td>
+		<td class="tablerow4">Тип</td>
+		<td class="tablerow4">Имя</td>
+		<td class="tablerow4">Доступ</td>
 	</tr>
 <?php
 	foreach($overrides_list as $override) {
@@ -80,16 +80,16 @@ Blanking out an overrides' name will delete it.<br /><br />
 	<tr>
 		<td class="tablerow1">
 			<select name="override_type[]">
-				<option value="command" <?php echo $override['type']=="command"?"selected=\"selected\"":""; ?>>Command</option>
-				<option value="group"<?php echo $override['type']=="group"?"selected=\"selected\"":""; ?>>Group</option>
+				<option value="command" <?php echo $override['type']=="command"?"selected=\"selected\"":""; ?>>Команда</option>
+				<option value="group"<?php echo $override['type']=="group"?"selected=\"selected\"":""; ?>>Группа</option>
 			</select>
 			<input type="hidden" name="override_id[]" value="<?php echo $override['id']; ?>" />
 		</td>
 		<td class="tablerow1"><input name="override_name[]" value="<?php echo htmlspecialchars($override['name']); ?>" /></td>
 		<td class="tablerow1">
 			<select name="override_access[]">
-				<option value="allow"<?php echo $override['access']=="allow"?"selected=\"selected\"":""; ?>>Allow</option>
-				<option value="deny"<?php echo $override['access']=="deny"?"selected=\"selected\"":""; ?>>Deny</option>
+				<option value="allow"<?php echo $override['access']=="allow"?"selected=\"selected\"":""; ?>>Разрешить</option>
+				<option value="deny"<?php echo $override['access']=="deny"?"selected=\"selected\"":""; ?>>Запретить</option>
 			</select>
 		</td>
 	</tr>
@@ -97,15 +97,15 @@ Blanking out an overrides' name will delete it.<br /><br />
 	<tr>
 		<td class="tablerow1">
 			<select id="new_override_type">
-				<option value="command">Command</option>
-				<option value="group">Group</option>
+				<option value="command">Команда</option>
+				<option value="group">Группа</option>
 			</select>
 		</td>
 		<td class="tablerow1"><input id="new_override_name" /></td>
 		<td class="tablerow1">
 			<select id="new_override_access">
-				<option value="allow">Allow</option>
-				<option value="deny">Deny</option>
+				<option value="allow">Разрешить</option>
+				<option value="deny">Запретить</option>
 			</select>
 		</td>
 	</tr>
@@ -119,8 +119,8 @@ Blanking out an overrides' name will delete it.<br /><br />
     <td>&nbsp;</td>
     <td>
     <div align="center">
-      <?php echo $ui->drawButton("Save Changes", "ProcessEditGroup('".$_GET['type']."', $('groupname').value);", "ok", "editgroup", true);?>
-      &nbsp;<?php echo $ui->drawButton("Back", "history.go(-1)", "cancel", "back");?>  
+      <?php echo $ui->drawButton("Сохранить", "ProcessEditGroup('".$_GET['type']."', $('groupname').value);", "ok", "editgroup", true);?>
+      &nbsp;<?php echo $ui->drawButton("Назад", "history.go(-1)", "cancel", "back");?>  
       </div>	</td>
   </tr>
 </table>
