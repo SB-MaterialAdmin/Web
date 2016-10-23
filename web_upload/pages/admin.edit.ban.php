@@ -63,7 +63,11 @@ if(isset($_POST['name']))
 {
 	$_POST['steam'] = trim($_POST['steam']);
 	$_POST['type'] = (int)$_POST['type'];
-	
+	$demo_linker = $_POST['demo_link'];
+	if($demo_linker != "")
+		preg_match("@^(?:http://)?([^/]+)@i", $_SERVER['HTTP_HOST'], $demo_linker_dns);
+
+
 	// Form Validation
 	$error = 0;
 	// If they didn't type a steamid
@@ -93,20 +97,20 @@ if(isset($_POST['name']))
 	}
 	else if ($_POST['type'] == 1 && !validate_ip($_POST['ip']))
 	{
-		$error++;
+		$error++; 
 		$errorScript .= "$('ip.msg').innerHTML = 'You must type a valid IP';";
 		$errorScript .= "$('ip.msg').setStyle('display', 'block');";
 	}
-	// DemoLink != url
-	elseif(isset($demo_linker) && !checkdnsrr($demo_linker,'A') && !get_headers($demo_linker, 1))
-	{
-		$error++;
-		$errorScript .= "$('demo_link.msg').innerHTML = 'Введите корректный адрес!';";
-		$errorScript .= "$('demo_link.msg').setStyle('display', 'block');";
-	}else{
-		$demo_linker = false;
+
+	if($demo_linker != ""){
+		if(checkdnsrr($demo_linker_dns[0],'A') && @get_headers($demo_linker)){
+			echo "";
+		}else{
+			$error++;
+			$errorScript .= "$('demo_link.msg').innerHTML = 'Не могу получить заголовок данного веб-сервера! Совет: Прочтите <img src=\"images/help.png\" />';";
+			$errorScript .= "$('demo_link.msg').setStyle('display', 'block');";
+		}
 	}
-	
 	// Didn't type a custom reason
 	if($_POST['listReason'] == "other" && empty($_POST['txtReason']))
 	{
@@ -177,7 +181,6 @@ if(isset($_POST['name']))
 	$res['ip'] = $_POST['ip'];
 	$res['length'] = $_POST['banlength'];
 	$res['type'] = $_POST['type'];
-	$res['origname'] = $_POST['demo_link'];
 	$res['reason'] = $reason;
 	
 	// Only process if there are still no errors
@@ -197,17 +200,7 @@ if(isset($_POST['name']))
 		// Set all submissions to archived for that steamid
 		$GLOBALS['db']->Execute("UPDATE `".DB_PREFIX."_submissions` SET archiv = '3', archivedby = '".$userbank->GetAid()."' WHERE SteamId = ?;", array($_POST['steam']));
 				
-		if($demo_linker and empty($_POST['dname'])){
-			
-			$edit = $GLOBALS['db']->Execute("REPLACE INTO ".DB_PREFIX."_demos
-											(`demid`, `demtype`, `filename`, `origname`)
-											VALUES
-											(?,
-											'U',
-											?,
-											?)", array((int)$_GET['id'], '', $demo_linker));
-			
-		}elseif(!empty($_POST['dname']))
+		if(!empty($_POST['dname']) and !$demo_linker)
 		{
 			$demoid = $GLOBALS['db']->GetRow("SELECT filename FROM `" . DB_PREFIX . "_demos` WHERE demid = '" . $_GET['id'] . "';");
 			@unlink(SB_DEMOS."/".$demoid['filename']);
@@ -219,6 +212,20 @@ if(isset($_POST['name']))
 											?,
 											?)", array((int)$_GET['id'], $_POST['did'], $_POST['dname']));
 			$res['dname'] = RemoveCode($_POST['dname']);
+		}
+		
+		if($demo_linker != "" && empty($_POST['dname'])){
+				
+			$edit = $GLOBALS['db']->Execute("REPLACE INTO ".DB_PREFIX."_demos
+												(`demid`, `demtype`, `filename`, `origname`)
+												VALUES
+												(?,
+												'U',
+												?,
+												?)", array((int)$_GET['id'], '', $demo_linker));
+		}else{
+			if($res['origname'])
+				$edit = $GLOBALS['db']->Execute("DELETE FROM `".DB_PREFIX."_demos` WHERE `demid` = '?';", array((int)$_GET['id']));
 		}
 		
 		if($_POST['banlength'] != $lengthrev->fields['length'])
