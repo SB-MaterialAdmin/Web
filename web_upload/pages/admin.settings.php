@@ -295,6 +295,7 @@ else
 			$adminrehash = (isset($_POST['enable_adminrehashing']) && $_POST['enable_adminrehashing'] == "on" ? 1 : 0);
 			
 			$admininfos = (isset($_POST['enable_admininfo']) && $_POST['enable_admininfo'] == "on" ? 1 : 0);
+			$alladmininfos = (isset($_POST['allow_admininfo']) && $_POST['allow_admininfo'] == "on" ? 1 : 0);
 			
 			$edit = $GLOBALS['db']->Execute("REPLACE INTO ".DB_PREFIX."_settings (`value`, `setting`) VALUES
 											(" . (int)$exportpub . ", 'config.exportpublic'),
@@ -302,6 +303,7 @@ else
 											(" . (int)$groupban . ", 'config.enablegroupbanning'),
 											(" . (int)$friendsban . ", 'config.enablefriendsbanning'),
 											(" . (int)$admininfos . ", 'config.enableadmininfos'),
+											(" . (int)$alladmininfos . ", 'config.changeadmininfos'),
 											(" . (int)$adminrehash . ", 'config.enableadminrehashing')");
 											
 
@@ -410,6 +412,7 @@ $('banlist_hideplayerips').checked = <?php echo $GLOBALS['config']['banlist.hide
 $('enable_groupbanning').checked = <?php echo $GLOBALS['config']['config.enablegroupbanning']?>;
 $('enable_friendsbanning').checked = <?php echo $GLOBALS['config']['config.enablefriendsbanning']?>;
 $('enable_admininfo').checked = <?php echo $GLOBALS['config']['config.enableadmininfos']?>;
+$('allow_admininfo').checked = <?php echo $GLOBALS['config']['config.changeadmininfos']?>;
 $('enable_adminrehashing').checked = <?php echo $GLOBALS['config']['config.enableadminrehashing']?>;
 <?php
 if(ini_get('safe_mode')==1) {
