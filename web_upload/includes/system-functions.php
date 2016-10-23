@@ -1249,4 +1249,44 @@ function GetUserAvatar($sid = -1) {
     return $AvatarFile;
 }
 
+function normalize_files_array($files = []) {
+    $normalized_array = [];
+    foreach($files as $index => $file) {
+        if (!is_array($file['name'])) {
+            $normalized_array[$index][] = $file;
+            continue;
+        }
+        foreach($file['name'] as $idx => $name) {
+            $normalized_array[$index][$idx] = [
+                'name' => $name,
+                'type' => $file['type'][$idx],
+                'tmp_name' => $file['tmp_name'][$idx],
+                'error' => $file['error'][$idx],
+                'size' => $file['size'][$idx]
+            ];
+        }
+    }
+    return $normalized_array;
+}
+
+function getReasonByCode($code, $frmt) {
+        switch ($code) {
+                case 1:      return "Размер файла превысил допустимый размер";
+                case 2:      return "Размер файла превысил допустимый размер";
+                case 3:      return "Файл был получен лишь частично";
+                case 4:      return "Файл не был загружен";
+                case 6:      return "Отсутствует временная папка для загрузок";
+                case 7:      return "Нет прав на запись";
+                case 8:      return "Расширение PHP остановило загрузку файла принудительно";
+                case 100500: return "Файл должен быть в формате ".$frmt;
+                default:     return "Неизвестно";
+        }
+}
+
+function prepareSize($bytes, $precision = 2) {
+    $base = log($size, 1024);
+    $suffixes = array('', 'K', 'M', 'G', 'T');
+
+    return round(pow(1024, $base - floor($base)), $precision) .' '. $suffixes[floor($base)] .'b';
+}
 ?>
