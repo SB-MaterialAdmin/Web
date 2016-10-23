@@ -81,12 +81,12 @@ if(isset($_POST['wg']) || isset($_GET['wg']) || isset($_GET['sg']))
 	$email = $GLOBALS['userbank']->GetProperty('email', $_GET['id']);
 	if($_POST['wg'] > 0 && (empty($password) || empty($email)))
 	{
-		echo '<script>setTimeout(\'ShowBox("Error", "Admins have to have a password and email set in order to get web permissions.<br /><a href=\"index.php?p=admin&c=admins&o=editdetails&id=' . $_GET['id'] . '\" title=\"Edit Admin Details\">Set the details</a> first and try again.", "red");\', 800);</script>';
+		echo '<script>setTimeout(\'ShowBox("Error", "Admins have to have a password and email set in order to get web permissions.<br /><a href=\"index.php?p=admin&c=admins&o=editdetails&id=' . $_GET['id'] . '\" title=\"Edit Admin Details\">Set the details</a> first and try again.", "red");\', 1350);</script>';
 	}
 	else
 	{
 		if(isset($_POST['wg']) && $_POST['wg'] != "-2")	{
-			if($_POST['wg'] == -1)
+			if($_POST['wg'] == "-1")
 				$_POST['wg'] = 0;
 			
 			// Edit the web group
@@ -129,10 +129,10 @@ if(isset($_POST['wg']) || isset($_GET['wg']) || isset($_GET['sg']))
 					$allservers[] = $access['sid'];
 				}
 			}
-			echo '<script>setTimeout(\'ShowRehashBox("'.implode(",", $allservers).'", "Admin updated", "The admin has been updated successfully", "green", "index.php?p=admin&c=admins");TabToReload();\', 800);</script>';
+			echo '<script>setTimeout(\'ShowRehashBox("'.implode(",", $allservers).'", "Admin updated", "The admin has been updated successfully", "green", "index.php?p=admin&c=admins");TabToReload();\', 1350);</script>';
 		}
 		else
-			echo '<script>setTimeout(\'ShowBox("Admin updated", "The admin has been updated successfully", "green", "index.php?p=admin&c=admins");TabToReload();\', 800);</script>';
+			echo '<script>setTimeout(\'ShowBox("Admin updated", "The admin has been updated successfully", "green", "index.php?p=admin&c=admins");TabToReload();\', 1350);</script>';
 		
 		$admname = $GLOBALS['db']->GetRow("SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = ?", array((int)$_GET['id']));
 		$log = new CSystemLog("m", "Admin's Groups Updated", "Admin (" . $admname['user'] . ") groups has been updated");
