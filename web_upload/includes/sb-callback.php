@@ -1834,9 +1834,9 @@ function ServerHostPlayers($sid, $type="servers", $obId="", $tplsid="", $open=""
 			$objResponse->addAssign("os_$sid", "innerHTML", "<img src='images/" . (!empty($info['os'])?$info['os']:'server_small') . ".png'>");
 			if( $info['secure'] == 1 )
 			{
-				$objResponse->addAssign("vac_$sid", "innerHTML", "<img src='images/shield.png' style='width: 16px;height: 16px;'>");
+				$objResponse->addAssign("vac_$sid", "innerHTML", "<img src='images/shield.png' />");
 			}else{
-				$objResponse->addAssign("vac_$sid", "innerHTML", "<img src='images/noshield.png' style='width: 16px;height: 16px;'>");
+				$objResponse->addAssign("vac_$sid", "innerHTML", "<img src='images/noshield.png' />");
 			}
 			$objResponse->addAssign("map_$sid", "innerHTML", basename($info['map'])); // Strip Steam Workshop folder
 			if(!$inHome) {
