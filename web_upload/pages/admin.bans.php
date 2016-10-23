@@ -824,7 +824,8 @@ function ProcessBan()
 				 did,
 				 dname,
 				 reason,
-				 $('fromsub').value);
+				 $('fromsub').value,
+				 $('demo_link').value);
 }
 function ProcessGroupBan()
 {
