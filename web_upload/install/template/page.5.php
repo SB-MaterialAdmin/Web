@@ -22,7 +22,6 @@ define('DB_PREFIX', '{prefix}');					// The table prefix for SourceBans
 define('DB_PORT','{port}');							// The SQL port (Default: 3306)
 define('STEAMAPIKEY','{steamapikey}');				// Steam API Key for Shizz
 define('SB_WP_URL','{sbwpurl}');       				//URL of SourceBans Site
-define('AVATAR_LIFETIME', 86400); // Avatar lifetime in cache (seconds). (Default: 86400)
 
 //define('DEVELOPER_MODE', true);			// Use if you want to show debugmessages
 //define('SB_MEM', '128M'); 				// Override php memory limit, if isn't enough (Banlist is just a blank page)

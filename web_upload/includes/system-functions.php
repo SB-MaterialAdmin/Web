@@ -1230,20 +1230,20 @@ function GetUserAvatar($sid = -1) {
     $sid = ($sid==-1)?($userbank->is_logged_in()?$userbank->getProperty("authid"):0):$sid;
     if ($sid) $communityid = GetCommunityIDFromSteamID2($sid);
     if ($communityid) {
-        $res = $GLOBALS['db']->GetRow(sprintf("SELECT url, expires FROM `%s_avatars` WHERE `authid` = '%s'", DB_PREFIX, $communityid));
+        $res = $GLOBALS['db']->GetRow(sprintf("SELECT url FROM `%s_avatars` WHERE `authid` = '%s'", DB_PREFIX, $communityid));
         $success = count($res)>0?true:false;
     }
-    if ($success && $res['expires'] > time())
+    if ($success)
         $AvatarFile = $res['url'];
     else if ($communityid) {
         $SteamResponse = @json_decode(file_get_contents(sprintf("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=%s&steamids=%s", STEAMAPIKEY, $communityid)));
         if (isset($SteamResponse->response->players[0]->avatarfull))
             $AvatarFile = $SteamResponse->response->players[0]->avatarfull;
-        $ExpireTime = time()+AVATAR_LIFETIME;
+        $inserted = time();
         $query = null;
         $AF = $GLOBALS['db']->qstr($AvatarFile);
-        if ($success) $query = sprintf("UPDATE `%s_avatars` SET `url` = %s, `expires` = %d", DB_PREFIX, $AF, $ExpireTime);
-        else $query = sprintf("INSERT INTO `%s_avatars` (`authid`, `url`, `expires`) VALUES ('%s', %s, %d)", DB_PREFIX, $communityid, $AF, $ExpireTime);
+        if ($success) $query = sprintf("UPDATE `%s_avatars` SET `url` = %s, `expires` = %d", DB_PREFIX, $AF, $inserted);
+        else $query = sprintf("INSERT INTO `%s_avatars` (`authid`, `url`, `expires`) VALUES ('%s', %s, %d)", DB_PREFIX, $communityid, $AF, $inserted);
         $GLOBALS['db']->Execute($query);
     }
     return $AvatarFile;
