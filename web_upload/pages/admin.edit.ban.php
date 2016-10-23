@@ -41,10 +41,11 @@ if(!isset($_GET['id']) || !is_numeric($_GET['id']))
 }
 
 $res = $GLOBALS['db']->GetRow("
-    				SELECT bid, ba.ip, ba.type, ba.authid, ba.name, created, ends, length, reason, ba.aid, ba.sid, ad.user, ad.gid, CONCAT(se.ip,':',se.port), se.sid, mo.icon, (SELECT origname FROM ".DB_PREFIX."_demos WHERE demtype = 'b' AND demid = {$_GET['id']})
+    				SELECT bid, ba.ip, ba.type, ba.authid, ba.name, created, ends, length, reason, ba.aid, ba.sid, ad.user, ad.gid, CONCAT(se.ip,':',se.port), se.sid, mo.icon, dm.origname 
     				FROM ".DB_PREFIX."_bans AS ba
     				LEFT JOIN ".DB_PREFIX."_admins AS ad ON ba.aid = ad.aid
     				LEFT JOIN ".DB_PREFIX."_servers AS se ON se.sid = ba.sid
+    				LEFT JOIN ".DB_PREFIX."_demos AS dm ON dm.demid = {$_GET['id']}
     				LEFT JOIN ".DB_PREFIX."_mods AS mo ON mo.mid = se.modid
     				WHERE bid = {$_GET['id']}");
 
@@ -95,6 +96,15 @@ if(isset($_POST['name']))
 		$error++;
 		$errorScript .= "$('ip.msg').innerHTML = 'You must type a valid IP';";
 		$errorScript .= "$('ip.msg').setStyle('display', 'block');";
+	}
+	// DemoLink != url
+	elseif(isset($demo_linker) && !checkdnsrr($demo_linker,'A') && !get_headers($demo_linker, 1))
+	{
+		$error++;
+		$errorScript .= "$('demo_link.msg').innerHTML = 'Введите корректный адрес!';";
+		$errorScript .= "$('demo_link.msg').setStyle('display', 'block');";
+	}else{
+		$demo_linker = false;
 	}
 	
 	// Didn't type a custom reason
@@ -167,6 +177,7 @@ if(isset($_POST['name']))
 	$res['ip'] = $_POST['ip'];
 	$res['length'] = $_POST['banlength'];
 	$res['type'] = $_POST['type'];
+	$res['origname'] = $_POST['demo_link'];
 	$res['reason'] = $reason;
 	
 	// Only process if there are still no errors
@@ -186,7 +197,17 @@ if(isset($_POST['name']))
 		// Set all submissions to archived for that steamid
 		$GLOBALS['db']->Execute("UPDATE `".DB_PREFIX."_submissions` SET archiv = '3', archivedby = '".$userbank->GetAid()."' WHERE SteamId = ?;", array($_POST['steam']));
 				
-		if(!empty($_POST['dname']))
+		if($demo_linker and empty($_POST['dname'])){
+			
+			$edit = $GLOBALS['db']->Execute("REPLACE INTO ".DB_PREFIX."_demos
+											(`demid`, `demtype`, `filename`, `origname`)
+											VALUES
+											(?,
+											'U',
+											?,
+											?)", array((int)$_GET['id'], '', $demo_linker));
+			
+		}elseif(!empty($_POST['dname']))
 		{
 			$demoid = $GLOBALS['db']->GetRow("SELECT filename FROM `" . DB_PREFIX . "_demos` WHERE demid = '" . $_GET['id'] . "';");
 			@unlink(SB_DEMOS."/".$demoid['filename']);
@@ -202,15 +223,16 @@ if(isset($_POST['name']))
 		
 		if($_POST['banlength'] != $lengthrev->fields['length'])
 			$log = new CSystemLog("m", "Ban length edited", "Ban length for (" . $lengthrev->fields['authid'] . ") has been updated, before: ".$lengthrev->fields['length'].", now: ".$_POST['banlength']);
-		echo '<script>ShowBox("Ban updated", "The ban has been updated successfully", "green", "index.php?p=banlist'.$pagelink.'");</script>';
+		echo "<script>setTimeout(\"ShowBox('Ban updated', 'The ban has been updated successfully', 'green', 'index.php?p=banlist".$pagelink."', false, 5000)\", 1000);</script>";
 	}
 }
 
 if(!$res)
 {
-	echo '<script>ShowBox("Error", "There was an error getting details. Maybe the ban has been deleted?", "red", "index.php?p=banlist'.$pagelink.'");</script>';
+	echo "<script>setTimeout(\"ShowBox('Error', 'There was an error getting details. Maybe the ban has been deleted?', 'red', 'index.php?p=banlist".$pagelink."', false, 5000)\", 1000);</script>";
 }
 
+$theme->assign('demo_link_val', $res['origname']);
 $theme->assign('ban_name', $res['name']);
 $theme->assign('ban_reason', $res['reason']);
 $theme->assign('ban_authid', trim($res['authid']));
