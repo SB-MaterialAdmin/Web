@@ -2324,6 +2324,11 @@ function AddBan($nickname, $type, $steam, $ip, $length, $dfile, $dname, $reason,
 		$objResponse->addAssign("ip.msg", "innerHTML", "");
 		$objResponse->addScript("$('ip.msg').setStyle('display', 'none');");
 	}
+	if ($udemo && ! checkdnsrr($udemo,'A') && ! @get_headers($udemo, 1)){
+		$error++;
+		$objResponse->addAssign("demo_link.msg", "innerHTML", "Введите действительный URL к демо файлу, либо оставьте поле пустым!");
+		$objResponse->addScript("$('demo_link.msg').setStyle('display', 'block');");
+	}
 	
 	if($error > 0)
 		return $objResponse;
@@ -2331,9 +2336,6 @@ function AddBan($nickname, $type, $steam, $ip, $length, $dfile, $dname, $reason,
 	$nickname = RemoveCode($nickname);
 	$ip = preg_replace('#[^\d\.]#', '', $ip);//strip ip of all but numbers and dots
 	$dname = RemoveCode($dname);
-	if ($udemo && !checkdnsrr($udemo,'A') && !get_headers($udemo, 1)){
-		$udemo = '';
-	}
 	$reason = RemoveCode($reason);
 	if(!$length)
 		$len = 0;
