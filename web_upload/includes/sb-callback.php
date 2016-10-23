@@ -2273,7 +2273,7 @@ function PasteBan($sid, $name, $type=0)
 	return $objResponse;
 }
 
-function AddBan($nickname, $type, $steam, $ip, $length, $dfile, $dname, $reason, $fromsub, $udemo)
+function AddBan($nickname, $type, $steam, $ip, $length, $dfile, $dname, $reason, $fromsub, $udemo=false)
 {
 	$objResponse = new xajaxResponse();
 	global $userbank, $username;
@@ -2331,7 +2331,7 @@ function AddBan($nickname, $type, $steam, $ip, $length, $dfile, $dname, $reason,
 	$nickname = RemoveCode($nickname);
 	$ip = preg_replace('#[^\d\.]#', '', $ip);//strip ip of all but numbers and dots
 	$dname = RemoveCode($dname);
-	if (!checkdnsrr($udemo,'A') && !get_headers($udemo, 1)){
+	if ($udemo && !checkdnsrr($udemo,'A') && !get_headers($udemo, 1)){
 		$udemo = '';
 	}
 	$reason = RemoveCode($reason);
