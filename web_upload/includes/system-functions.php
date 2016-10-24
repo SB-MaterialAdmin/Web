@@ -1230,23 +1230,63 @@ function GetUserAvatar($sid = -1) {
     $sid = ($sid==-1)?($userbank->is_logged_in()?$userbank->getProperty("authid"):0):$sid;
     if ($sid) $communityid = GetCommunityIDFromSteamID2($sid);
     if ($communityid) {
-        $res = $GLOBALS['db']->GetRow(sprintf("SELECT url, expires FROM `%s_avatars` WHERE `authid` = '%s'", DB_PREFIX, $communityid));
+        $res = $GLOBALS['db']->GetRow(sprintf("SELECT url FROM `%s_avatars` WHERE `authid` = '%s'", DB_PREFIX, $communityid));
         $success = count($res)>0?true:false;
     }
-    if ($success && $res['expires'] > time())
+    if ($success)
         $AvatarFile = $res['url'];
     else if ($communityid) {
         $SteamResponse = @json_decode(file_get_contents(sprintf("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=%s&steamids=%s", STEAMAPIKEY, $communityid)));
         if (isset($SteamResponse->response->players[0]->avatarfull))
             $AvatarFile = $SteamResponse->response->players[0]->avatarfull;
-        $ExpireTime = time()+AVATAR_LIFETIME;
+        $inserted = time();
         $query = null;
         $AF = $GLOBALS['db']->qstr($AvatarFile);
-        if ($success) $query = sprintf("UPDATE `%s_avatars` SET `url` = %s, `expires` = %d", DB_PREFIX, $AF, $ExpireTime);
-        else $query = sprintf("INSERT INTO `%s_avatars` (`authid`, `url`, `expires`) VALUES ('%s', %s, %d)", DB_PREFIX, $communityid, $AF, $ExpireTime);
+        if ($success) $query = sprintf("UPDATE `%s_avatars` SET `url` = %s, `expires` = %d", DB_PREFIX, $AF, $inserted);
+        else $query = sprintf("INSERT INTO `%s_avatars` (`authid`, `url`, `expires`) VALUES ('%s', %s, %d)", DB_PREFIX, $communityid, $AF, $inserted);
         $GLOBALS['db']->Execute($query);
     }
     return $AvatarFile;
 }
 
+function normalize_files_array($files = []) {
+    $normalized_array = [];
+    foreach($files as $index => $file) {
+        if (!is_array($file['name'])) {
+            $normalized_array[$index][] = $file;
+            continue;
+        }
+        foreach($file['name'] as $idx => $name) {
+            $normalized_array[$index][$idx] = [
+                'name' => $name,
+                'type' => $file['type'][$idx],
+                'tmp_name' => $file['tmp_name'][$idx],
+                'error' => $file['error'][$idx],
+                'size' => $file['size'][$idx]
+            ];
+        }
+    }
+    return $normalized_array;
+}
+
+function getReasonByCode($code, $frmt) {
+        switch ($code) {
+                case 1:      return "Размер файла превысил допустимый размер";
+                case 2:      return "Размер файла превысил допустимый размер";
+                case 3:      return "Файл был получен лишь частично";
+                case 4:      return "Файл не был загружен";
+                case 6:      return "Отсутствует временная папка для загрузок";
+                case 7:      return "Нет прав на запись";
+                case 8:      return "Расширение PHP остановило загрузку файла принудительно";
+                case 100500: return "Файл должен быть в формате ".$frmt;
+                default:     return "Неизвестно";
+        }
+}
+
+function prepareSize($bytes, $precision = 2) {
+    $base = log($size, 1024);
+    $suffixes = array('', 'K', 'M', 'G', 'T');
+
+    return round(pow(1024, $base - floor($base)), $precision) .' '. $suffixes[floor($base)] .'b';
+}
 ?>

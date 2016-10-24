@@ -32,7 +32,9 @@ if($userbank->GetAid() == -1){echo "You shoudnt be here. looks like we messed up
 		
 $groupsTabMenu = new CTabsMenu();
 $groupsTabMenu->addMenuItem("Информация", 0);
-$groupsTabMenu->addMenuItem("Связь", 4);
+$allow_change_infos = $GLOBALS['config']['config.changeadmininfos'];
+if($allow_change_infos)
+	$groupsTabMenu->addMenuItem("Связь", 4);
 $groupsTabMenu->addMenuItem("Сменить пароль", 1);
 $groupsTabMenu->addMenuItem("Серверный пароль", 2);
 $groupsTabMenu->addMenuItem("Сменить E-mail", 3);
@@ -50,6 +52,7 @@ if($user_time == '' || $user_time == '0') {
 	$user_time = "Истекла";
 }
 
+$theme->assign('allow_change_inf',		$allow_change_infos);
 $theme->assign('srvpwset',				$srvpwset);
 $theme->assign('email',					$res->fields['email']);
 $theme->assign('vk',					$userbank->GetProperty("vk", $userbank->GetAid()));

@@ -30,131 +30,102 @@
  */
 
 /** 
- * Config part
- * Change to IP and port of the gameserver you want to test
+ * Конфиг
+ * Смените IP и порт, если хотите протестировать соединение.
  */
 $serverip = "";
 $serverport = 27015;
-$serverrcon = ""; // You only need to specify this, if you want to test the rcon tcp connection either! Leave blank if it's only the serverinfo erroring.
+$serverrcon = ""; // Указывайте RCON-пароль, если хотите проверить так же возможность управления сервером из веб-панели SourceBans
 
 
-/******* Don't change below here *******/
+/******* Ничего не изменяйте после этой линии *******/
+header("Content-Type: text/plain");
 
 if(empty($serverip) || empty($serverport))
-	die('[-] No server information set. Open up this file and specify your gameserver\'s IP and port.');
+	die('[-] Не указана информация о сервере. Откройте текстовым редактором этот файл, пропишите в нём IP и порт, сохраните и загрузите обратно на сервер.');
 
-echo '[+] SourceBans "Error Connecting()" Debug starting for server ' . $serverip . ':' . $serverport . '<br /><br />';
+echo '[+] SourceBans "DebugConnection()" запущен для сервера ' . $serverip . ':' . $serverport . "\n\n";
 
-// Check for UDP connection being available and writable
-echo '[+] Trying to establish UDP connection<br />';
+// Попытаемся установить соединение
+echo '[+] Открываю UDP-сокет...'.PHP_EOL;
 $sock = @fsockopen("udp://" . $serverip, $serverport, $errno, $errstr, 2);
 
 $isBanned = false;
 
 if(!$sock)
-{
-	echo '[-] Error connecting #' . $errno . ': ' . $errstr . '<br />';
-}
-else
-{
-	echo '[+] UDP connection successfull!<br />';
-	
-	stream_set_timeout($sock, 1);
-	// Try to get serverinformation
-	echo '[+] Trying to write to the socket<br />';
-	$written = fwrite($sock, "\xFF\xFF\xFF\xFF\x54Source Engine Query\0");
-	if($written === false)
-	{
-		echo '[-] Error writing.<br />';
-	}
-	else
-	{
-		echo '[+] Successfully requested server info. (That doesn\'t mean anything on an UDP stream.) Reading...<br />';
-		$packet = fread($sock, 1480);
-		
-		if(empty($packet))
-		{
-			echo '[-] Error getting server info. Can\'t read from UDP stream. Port is possibly blocked.<br />';
-		}
-		else
-		{
-            if(substr($packet, 5, (strpos(substr($packet, 5), "\0")-1)) == "Banned by server")
-            {
-                echo '[-] Got an response, but this webserver\'s ip is banned by the server.<br />';
+    echo '[-] Ошибка соединения. #' . $errno . ': ' . $errstr . PHP_EOL;
+else {
+    echo '[+] UDP-соединение успешно установлено!'.PHP_EOL;
+
+    stream_set_timeout($sock, 1);
+
+    // Попытаемся получить информацию у сервера
+    echo '[+] Записываю запрос в сокет..'.PHP_EOL;
+    if(fwrite($sock, "\xFF\xFF\xFF\xFF\x54Source Engine Query\0") === false)
+        echo '[-] Ошибка записи.'.PHP_EOL;
+    else {
+        echo '[+] Запрос успешно записан в сокет. (Это не означает, что с соединением всё в порядке.) Читаю ответ...'.PHP_EOL;
+        $packet = fread($sock, 1480);
+
+        if(empty($packet))
+            echo '[-] Ошибка при получении информации о сервере. Не удаётся прочитать UDP-соединение. Порт заблокирован.'.PHP_EOL;
+        else {
+            if(substr($packet, 5, (strpos(substr($packet, 5), "\0")-1)) == "Banned by server") {
+                printf('[-] Ответ получен, но веб-сервер заблокирован. Удалите блокировку с сервера (removeip %s), и повторите попытку.%s', $_SERVER['SERVER_ADDR'], PHP_EOL);
                 $isBanned = true;
-            }
-            else
-            {
+            } else {
                 $packet = substr($packet, 6);
                 $hostname = substr($packet, 0, strpos($packet, "\0"));
-                echo '[+] Got an response! Server: ' . $hostname . ' <br />';
+                echo '[+] Ответ получен! Сервер: ' . $hostname . PHP_EOL;
             }
-		}
-	}
-	fclose($sock);
+        }
+    }
+    fclose($sock);
 }
 
-echo '<br />';
+echo PHP_EOL;
 
-// Check for TCP connection being available and writeable
-echo '[+] Trying to establish TCP connection<br />';
+// Проверим на доступность и записываемость TCP-соединения
+echo '[+] Попытка установить TCP-соединение...'.PHP_EOL;
 $sock = @fsockopen($serverip, $serverport, $errno, $errstr, 2);
 if(!$sock)
-{
-	echo '[-] Error connecting #' . $errno . ': ' . $errstr . '<br />';
-}
+    echo '[-] Ошибка соединения. #' . $errno . ': ' . $errstr . PHP_EOL;
 else
 {
-	echo '[+] TCP connection successfull!<br />';
-	if(empty($serverrcon))
-	{
-		echo '[o] Stopping here since no rcon password specified.';
-	}
+    echo '[+] TCP-соединение успешно установлено!'.PHP_EOL;
+    if(empty($serverrcon))
+        echo '[o] Прерываю работу. RCON-пароль не установлен.';
     else if($isBanned)
-    {
-        echo '[o] Stopping here since this ip is banned by the gameserver.';
+        echo '[o] Прерываю работу. Сервер находится в блокировке.';
+    else {
+        stream_set_timeout($sock, 2);
+        $data = pack("VV", 0, 03) . $serverrcon . chr(0) . '' . chr(0);
+        $data = pack("V", strlen($data)) . $data;
+
+        echo '[+] Пытаюсь записать в TCP-сокет и произвести авторизацию...'.PHP_EOL;
+
+        if(fwrite($sock, $data, strlen($data)) === false)
+            echo '[-] Ошибка записи.'.PHP_EOL;
+        else {
+            echo '[+] Запрос авторизации успешно записан. Читаю ответ...'.PHP_EOL;
+            $size = fread($sock, 4);
+            if(!$size)
+                echo '[-] Ошибка чтения.'.PHP_EOL;
+            else {
+                echo '[+] Ответ получен!'.PHP_EOL;
+                $size = unpack('V1Size', $size);
+                $packet = fread($sock, $size["Size"]);
+                $size = fread($sock, 4);
+                $size = unpack('V1Size', $size);
+                $packet = fread($sock, $size["Size"]);
+                $ret = unpack("V1ID/V1Reponse/a*S1/a*S2", $packet);
+                if(empty($ret) || (isset($ret['ID']) && $ret['ID'] == -1))
+                    echo '[-] RCON-пароль задан неверный ;) Не пытайтесь и дальше производить попытки, иначе ваш веб-сервер "улетит" в бан.';
+                else
+                    echo '[+] Пароль задан правильно!';
+            }
+        }
     }
-	else
-	{
-		stream_set_timeout($sock, 2);
-		$data = pack("VV", 0, 03) . $serverrcon . chr(0) . '' . chr(0);
-		$data = pack("V", strlen($data)) . $data;
-		
-		echo '[+] Trying to write to TCP socket and authenticate via rcon<br />';
-		$written = fwrite($sock, $data, strlen($data));
-		
-		if($written === false)
-		{
-			echo '[-] Error writing.<br />';
-		}
-		else
-		{
-			echo '[+] Successfully sent authentication request. Reading...<br />';
-			$size = fread($sock, 4);
-			if(!$size)
-			{
-				echo '[-] Error reading.<br />';
-			}
-			else
-			{
-				echo '[+] Got an response! <br />';
-				$size = unpack('V1Size', $size);
-				$packet = fread($sock, $size["Size"]);
-				$size = fread($sock, 4);
-				$size = unpack('V1Size', $size);
-				$packet = fread($sock, $size["Size"]);
-				$ret = unpack("V1ID/V1Reponse/a*S1/a*S2", $packet);
-				if(empty($ret) || (isset($ret['ID']) && $ret['ID'] == -1))
-				{
-					echo '[-] Bad password ;) Don\'t try this too often or your webserver will get banned by the gameserver.<br />';
-				}
-				else
-				{
-					echo '[+] Password correct!';
-				}
-			}
-		}
-	}
-	fclose($sock);
+    fclose($sock);
 }
 ?>

@@ -456,12 +456,12 @@ while (!$res->EOF)
 	else if ($res->fields['ban_length'] == 0)
 	{
 		$data['ban_length'] = 'Навсегда';
-		$data['expires'] = 'never';
+		$data['expires'] = 'Никогда';
 	}
 	else
 	{
 		$data['ban_length'] = 'Сессия';
-		$data['expires'] = 'n/a';
+		$data['expires'] = 'н/д';
 	}
 
 	// Что за тип разбана - D? Я такой не видел, но оставлю так и быть.. for feature use...
@@ -553,7 +553,7 @@ while (!$res->EOF)
     if($history_count > 1)
         $data['prevoff_link'] = $history_count . " " . CreateLinkR("(Поиск)","index.php?p=commslist&searchText=" .$data['steamid']. "&Submit");
     else
-        $data['prevoff_link'] = "No previous blocks";
+        $data['prevoff_link'] = "Нет предыдущих блокировок";
 
     $mutes = "";
     $gags = "";

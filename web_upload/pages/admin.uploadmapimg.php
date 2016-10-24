@@ -36,26 +36,31 @@ if (!$userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_SERVER))
 	die();
 }
 
-$message = "";
+$message = sprintf("<br /><strong>Обратите внимание!</strong><br />Максимальный размер файла: %s<br />Максимальное кол-во файлов для загрузки: %s<br /><br />", ini_get('upload_max_filesize'), ini_get('max_file_uploads'));
 if(isset($_POST['upload']))
 {
-	if(CheckExt($_FILES['mapimg_file']['name'], "jpg"))
-	{
-		move_uploaded_file($_FILES['mapimg_file']['tmp_name'],SB_MAP_LOCATION."/".$_FILES['mapimg_file']['name']);
-		$message =  "<script>window.opener.mapimg('" . $_FILES['mapimg_file']['name'] . "');self.close()</script>";
-		$log = new CSystemLog("m", "Map Image Uploaded", "A new map image has been uploaded: ".htmlspecialchars($_FILES['mapimg_file']['name']));
+	$fls = normalize_files_array($_FILES);
+
+	$message = '<script>alert("';
+	$fcount = count($fls['mapimg_file']);
+	foreach ($fls['mapimg_file'] as $curfile) {
+		if ($curfile['error'] != 0 || $curfile['type'] != "image/jpeg")
+			$message .= sprintf("Не удалось загрузить файл %s. Причина: %s.", $curfile['name'], getReasonByCode(($curfile['type'] != "image/jpeg")?100500:$curfile['error'], "JPG"));
+		else {
+			move_uploaded_file($curfile['tmp_name'], SB_MAP_LOCATION."/".$curfile['name']);
+			$log = new CSystemLog("m", "Изображение карты загружено", "Новое изображение карты загружено: ".htmlspecialchars($curfile['name']));
+			$message .= sprintf("Файл %s загружен.", $curfile['name']); // $curfile['name']
+		}
+		$message .= "\\n";
 	}
-	else 
-	{
-		$message =  "<b> File must be jpg filetype.</b><br><br>";
-	}
+	$message .= '"); self.close();</script>';
 }
 
 $theme->assign("title", "Загрузить изображение карты");
 $theme->assign("message", $message);
-$theme->assign("input_name", "mapimg_file");
+$theme->assign("input_name", "mapimg_file[]");
 $theme->assign("form_name", "mapimgup");
-$theme->assign("formats", "a JPG");
+$theme->assign("formats", "JPG");
 
 $theme->display('page_uploadfile.tpl');
 ?>

@@ -403,7 +403,7 @@ else
 	// ADM TIME //
 }
 
-$theme->assign('change_pass', ($userbank->HasAccess(ADMIN_OWNER) || $_GET['id'] == $userbank->GetAid()));
+$theme->assign('change_pass', ($userbank->HasAccess(ADMIN_OWNER|ADMIN_EDIT_ADMINS|ADMIN_DELETE_ADMINS) || $_GET['id'] == $userbank->GetAid()));
 $theme->assign('user', $a_name);
 $theme->assign('authid', $a_steam);
 $theme->assign('email', $a_email);

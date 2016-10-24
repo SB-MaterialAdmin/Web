@@ -1834,9 +1834,9 @@ function ServerHostPlayers($sid, $type="servers", $obId="", $tplsid="", $open=""
 			$objResponse->addAssign("os_$sid", "innerHTML", "<img src='images/" . (!empty($info['os'])?$info['os']:'server_small') . ".png'>");
 			if( $info['secure'] == 1 )
 			{
-				$objResponse->addAssign("vac_$sid", "innerHTML", "<img src='images/shield.png' style='width: 16px;height: 16px;'>");
+				$objResponse->addAssign("vac_$sid", "innerHTML", "<img src='images/shield.png' />");
 			}else{
-				$objResponse->addAssign("vac_$sid", "innerHTML", "<img src='images/noshield.png' style='width: 16px;height: 16px;'>");
+				$objResponse->addAssign("vac_$sid", "innerHTML", "<img src='images/noshield.png' />");
 			}
 			$objResponse->addAssign("map_$sid", "innerHTML", basename($info['map'])); // Strip Steam Workshop folder
 			if(!$inHome) {
@@ -2273,7 +2273,7 @@ function PasteBan($sid, $name, $type=0)
 	return $objResponse;
 }
 
-function AddBan($nickname, $type, $steam, $ip, $length, $dfile, $dname, $reason, $fromsub, $udemo)
+function AddBan($nickname, $type, $steam, $ip, $length, $dfile, $dname, $reason, $fromsub, $udemo=false)
 {
 	$objResponse = new xajaxResponse();
 	global $userbank, $username;
@@ -2324,6 +2324,11 @@ function AddBan($nickname, $type, $steam, $ip, $length, $dfile, $dname, $reason,
 		$objResponse->addAssign("ip.msg", "innerHTML", "");
 		$objResponse->addScript("$('ip.msg').setStyle('display', 'none');");
 	}
+	if ($udemo && ! checkdnsrr($udemo,'A') && ! @get_headers($udemo, 1)){
+		$error++;
+		$objResponse->addAssign("demo_link.msg", "innerHTML", "Введите действительный URL к демо файлу, либо оставьте поле пустым!");
+		$objResponse->addScript("$('demo_link.msg').setStyle('display', 'block');");
+	}
 	
 	if($error > 0)
 		return $objResponse;
@@ -2331,9 +2336,6 @@ function AddBan($nickname, $type, $steam, $ip, $length, $dfile, $dname, $reason,
 	$nickname = RemoveCode($nickname);
 	$ip = preg_replace('#[^\d\.]#', '', $ip);//strip ip of all but numbers and dots
 	$dname = RemoveCode($dname);
-	if (!checkdnsrr($udemo,'A') && !get_headers($udemo, 1)){
-		$udemo = '';
-	}
 	$reason = RemoveCode($reason);
 	if(!$length)
 		$len = 0;

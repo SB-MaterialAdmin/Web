@@ -224,7 +224,7 @@ if (isset($_GET['searchText']))
 	"SELECT BA.bid ban_id, BA.type, BA.ip ban_ip, BA.authid, BA.name player_name, created ban_created, ends ban_ends, length ban_length, reason ban_reason, BA.ureason unban_reason, BA.aid, AD.gid AS gid, adminIp, BA.sid ban_server, country ban_country, RemovedOn, RemovedBy, RemoveType row_type,
 			SE.ip server_ip, AD.user admin_name, AD.comment admin_comm, AD.skype admin_skype, AD.vk admin_vk, AD.authid admin_authid, AD.gid, MO.icon as mod_icon,
 			CAST(MID(BA.authid, 9, 1) AS UNSIGNED) + CAST('76561197960265728' AS UNSIGNED) + CAST(MID(BA.authid, 11, 10) * 2 AS UNSIGNED) AS community_id,
-			(SELECT count(*) FROM ".DB_PREFIX."_demos as DM WHERE DM.demtype='B' and DM.demid = BA.bid) as demo_count,
+			(SELECT count(*) FROM ".DB_PREFIX."_demos as DM WHERE (DM.demtype='B' or DM.demtype='U') and DM.demid = BA.bid) as demo_count,
 			(SELECT count(*) FROM ".DB_PREFIX."_bans as BH WHERE (BH.type = BA.type AND BH.type = 0 AND BH.authid = BA.authid AND BH.authid != '' AND BH.authid IS NOT NULL) OR (BH.type = BA.type AND BH.type = 1 AND BH.ip = BA.ip AND BH.ip != '' AND BH.ip IS NOT NULL)) as history_count
 	   FROM ".DB_PREFIX."_bans AS BA
   LEFT JOIN ".DB_PREFIX."_servers AS SE ON SE.sid = BA.sid
@@ -245,7 +245,7 @@ elseif(!isset($_GET['advSearch']))
 	"SELECT bid ban_id, BA.type, BA.ip ban_ip, BA.authid, BA.name player_name, created ban_created, ends ban_ends, length ban_length, reason ban_reason, BA.ureason unban_reason, BA.aid, AD.gid AS gid, adminIp, BA.sid ban_server, country ban_country, RemovedOn, RemovedBy, RemoveType row_type,
 			SE.ip server_ip, AD.user admin_name, AD.comment admin_comm, AD.skype admin_skype, AD.vk admin_vk, AD.authid admin_authid, AD.gid, MO.icon as mod_icon,
 			CAST(MID(BA.authid, 9, 1) AS UNSIGNED) + CAST('76561197960265728' AS UNSIGNED) + CAST(MID(BA.authid, 11, 10) * 2 AS UNSIGNED) AS community_id,
-			(SELECT count(*) FROM ".DB_PREFIX."_demos as DM WHERE DM.demtype='B' and DM.demid = BA.bid) as demo_count,
+			(SELECT count(*) FROM ".DB_PREFIX."_demos as DM WHERE (DM.demtype='B' or DM.demtype='U') and DM.demid = BA.bid) as demo_count,
 			(SELECT count(*) FROM ".DB_PREFIX."_bans as BH WHERE (BH.type = BA.type AND BH.type = 0 AND BH.authid = BA.authid AND BH.authid != '' AND BH.authid IS NOT NULL) OR (BH.type = BA.type AND BH.type = 1 AND BH.ip = BA.ip AND BH.ip != '' AND BH.ip IS NOT NULL)) as history_count
 	   FROM ".DB_PREFIX."_bans AS BA
   LEFT JOIN ".DB_PREFIX."_servers AS SE ON SE.sid = BA.sid
@@ -389,7 +389,7 @@ if(isset($_GET['advSearch']))
 				    	"SELECT BA.bid ban_id, BA.type, BA.ip ban_ip, BA.authid, BA.name player_name, created ban_created, ends ban_ends, length ban_length, reason ban_reason, BA.ureason unban_reason, BA.aid, AD.gid AS gid, adminIp, BA.sid ban_server, country ban_country, RemovedOn, RemovedBy, RemoveType row_type,
 			SE.ip server_ip, AD.user admin_name, AD.comment admin_comm, AD.skype admin_skype, AD.vk admin_vk, AD.authid admin_authid, AD.gid, MO.icon as mod_icon,
 			CAST(MID(BA.authid, 9, 1) AS UNSIGNED) + CAST('76561197960265728' AS UNSIGNED) + CAST(MID(BA.authid, 11, 10) * 2 AS UNSIGNED) AS community_id,
-			(SELECT count(*) FROM ".DB_PREFIX."_demos as DM WHERE DM.demtype='B' and DM.demid = BA.bid) as demo_count,
+			(SELECT count(*) FROM ".DB_PREFIX."_demos as DM WHERE (DM.demtype='B' or DM.demtype='U') and DM.demid = BA.bid) as demo_count,
 			(SELECT count(*) FROM ".DB_PREFIX."_bans as BH WHERE (BH.type = BA.type AND BH.type = 0 AND BH.authid = BA.authid AND BH.authid != '' AND BH.authid IS NOT NULL) OR (BH.type = BA.type AND BH.type = 1 AND BH.ip = BA.ip AND BH.ip != '' AND BH.ip IS NOT NULL)) as history_count
 	   FROM ".DB_PREFIX."_bans AS BA
   LEFT JOIN ".DB_PREFIX."_servers AS SE ON SE.sid = BA.sid
@@ -581,9 +581,10 @@ while (!$res->EOF)
 	}
 	else
 	{
+		$demtype = $GLOBALS['db']->GetRow("SELECT demtype FROM `".DB_PREFIX."_demos` WHERE demid = '".$data['ban_id']."'");
 		$data['demo_available'] = true;
-		$data['demo_quick'] = CreateLinkR('Демо',"getdemo.php?type=B&id=".$data['ban_id']);
-		$data['demo_link'] = CreateLinkR('Демка',"getdemo.php?type=B&id=".$data['ban_id']);
+		$data['demo_quick'] = CreateLinkR('Демо',"getdemo.php?type=".$demtype['demtype']."&id=".$data['ban_id']);
+		$data['demo_link'] = CreateLinkR('Демка',"getdemo.php?type=".$demtype['demtype']."&id=".$data['ban_id']);
 	}
 
 	$data['server_id'] = $res->fields['ban_server'];

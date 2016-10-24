@@ -41,10 +41,11 @@ if(!isset($_GET['id']) || !is_numeric($_GET['id']))
 }
 
 $res = $GLOBALS['db']->GetRow("
-    				SELECT bid, ba.ip, ba.type, ba.authid, ba.name, created, ends, length, reason, ba.aid, ba.sid, ad.user, ad.gid, CONCAT(se.ip,':',se.port), se.sid, mo.icon, (SELECT origname FROM ".DB_PREFIX."_demos WHERE demtype = 'b' AND demid = {$_GET['id']})
+    				SELECT bid, ba.ip, ba.type, ba.authid, ba.name, created, ends, length, reason, ba.aid, ba.sid, ad.user, ad.gid, CONCAT(se.ip,':',se.port), se.sid, mo.icon, dm.origname 
     				FROM ".DB_PREFIX."_bans AS ba
     				LEFT JOIN ".DB_PREFIX."_admins AS ad ON ba.aid = ad.aid
     				LEFT JOIN ".DB_PREFIX."_servers AS se ON se.sid = ba.sid
+    				LEFT JOIN ".DB_PREFIX."_demos AS dm ON dm.demid = {$_GET['id']}
     				LEFT JOIN ".DB_PREFIX."_mods AS mo ON mo.mid = se.modid
     				WHERE bid = {$_GET['id']}");
 
@@ -62,7 +63,11 @@ if(isset($_POST['name']))
 {
 	$_POST['steam'] = trim($_POST['steam']);
 	$_POST['type'] = (int)$_POST['type'];
-	
+	$demo_linker = $_POST['demo_link'];
+	if($demo_linker != "")
+		preg_match("@^(?:http://)?([^/]+)@i", $_SERVER['HTTP_HOST'], $demo_linker_dns);
+
+
 	// Form Validation
 	$error = 0;
 	// If they didn't type a steamid
@@ -92,11 +97,20 @@ if(isset($_POST['name']))
 	}
 	else if ($_POST['type'] == 1 && !validate_ip($_POST['ip']))
 	{
-		$error++;
+		$error++; 
 		$errorScript .= "$('ip.msg').innerHTML = 'You must type a valid IP';";
 		$errorScript .= "$('ip.msg').setStyle('display', 'block');";
 	}
-	
+
+	if($demo_linker != ""){
+		if(checkdnsrr($demo_linker_dns[0],'A') && @get_headers($demo_linker)){
+			echo "";
+		}else{
+			$error++;
+			$errorScript .= "$('demo_link.msg').innerHTML = 'Не могу получить заголовок данного веб-сервера! Совет: Прочтите <img src=\"images/help.png\" />';";
+			$errorScript .= "$('demo_link.msg').setStyle('display', 'block');";
+		}
+	}
 	// Didn't type a custom reason
 	if($_POST['listReason'] == "other" && empty($_POST['txtReason']))
 	{
@@ -186,7 +200,7 @@ if(isset($_POST['name']))
 		// Set all submissions to archived for that steamid
 		$GLOBALS['db']->Execute("UPDATE `".DB_PREFIX."_submissions` SET archiv = '3', archivedby = '".$userbank->GetAid()."' WHERE SteamId = ?;", array($_POST['steam']));
 				
-		if(!empty($_POST['dname']))
+		if(!empty($_POST['dname']) and !$demo_linker)
 		{
 			$demoid = $GLOBALS['db']->GetRow("SELECT filename FROM `" . DB_PREFIX . "_demos` WHERE demid = '" . $_GET['id'] . "';");
 			@unlink(SB_DEMOS."/".$demoid['filename']);
@@ -200,17 +214,32 @@ if(isset($_POST['name']))
 			$res['dname'] = RemoveCode($_POST['dname']);
 		}
 		
+		if($demo_linker != "" && empty($_POST['dname'])){
+				
+			$edit = $GLOBALS['db']->Execute("REPLACE INTO ".DB_PREFIX."_demos
+												(`demid`, `demtype`, `filename`, `origname`)
+												VALUES
+												(?,
+												'U',
+												?,
+												?)", array((int)$_GET['id'], '', $demo_linker));
+		}else{
+			if($res['origname'])
+				$edit = $GLOBALS['db']->Execute("DELETE FROM `".DB_PREFIX."_demos` WHERE `demid` = '?';", array((int)$_GET['id']));
+		}
+		
 		if($_POST['banlength'] != $lengthrev->fields['length'])
 			$log = new CSystemLog("m", "Ban length edited", "Ban length for (" . $lengthrev->fields['authid'] . ") has been updated, before: ".$lengthrev->fields['length'].", now: ".$_POST['banlength']);
-		echo '<script>ShowBox("Ban updated", "The ban has been updated successfully", "green", "index.php?p=banlist'.$pagelink.'");</script>';
+		echo "<script>setTimeout(\"ShowBox('Ban updated', 'The ban has been updated successfully', 'green', 'index.php?p=banlist".$pagelink."', false, 5000)\", 1000);</script>";
 	}
 }
 
 if(!$res)
 {
-	echo '<script>ShowBox("Error", "There was an error getting details. Maybe the ban has been deleted?", "red", "index.php?p=banlist'.$pagelink.'");</script>';
+	echo "<script>setTimeout(\"ShowBox('Error', 'There was an error getting details. Maybe the ban has been deleted?', 'red', 'index.php?p=banlist".$pagelink."', false, 5000)\", 1000);</script>";
 }
 
+$theme->assign('demo_link_val', $res['origname']);
 $theme->assign('ban_name', $res['name']);
 $theme->assign('ban_reason', $res['reason']);
 $theme->assign('ban_authid', trim($res['authid']));
