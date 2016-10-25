@@ -29,7 +29,7 @@ include_once '../init.php';
 
 if(!$userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_BAN))
 {
-	echo "No Access";
+	echo "Нет доступа";
 	die();
 }
 require_once(INCLUDES_PATH . '/xajax.inc.php');
@@ -47,7 +47,7 @@ function LoadServers($check, $type) {
 	if(!$userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_BAN))
 	{
 		$objResponse->redirect("index.php?p=login&m=no_access", 0);
-		$log = new CSystemLog("w", "Hacking Attempt", $username . " tried to use kickit, but doesnt have access.");
+		$log = new CSystemLog("w", "Попытка взлома", $username . " пытался использовать кик, не имея на это прав.");
 		return $objResponse;
 	}
 	$id = 0;
@@ -77,7 +77,7 @@ function KickPlayer($check, $sid, $num, $type) {
 	if(!$userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_BAN))
 	{
 		$objResponse->redirect("index.php?p=login&m=no_access", 0);
-		$log = new CSystemLog("w", "Hacking Attempt", $username . " tried to process a playerkick, but doesnt have access.");
+		$log = new CSystemLog("w", "Попытка взлома", $username . " пытался обработать кик игрока, не имея на это прав.");
 		return $objResponse;
 	}
 	
@@ -119,9 +119,9 @@ function KickPlayer($check, $sid, $num, $type) {
 					$requri = substr($_SERVER['REQUEST_URI'], 0, strrpos($_SERVER['REQUEST_URI'], "pages/admin.kickit.php"));
 					
 					if(strpos($match, "[U:") === 0) {
-						$kick = $r->sendCommand("kickid \"".$match."\" \"You have been banned by this server, check http://" . $_SERVER['HTTP_HOST'].$requri." for more info.\"");
+						$kick = $r->sendCommand("кикнут \"".$match."\" \"вы были кикнуты. За более подробной информацией зайдите на http://" . $_SERVER['HTTP_HOST'].$requri." for more info.\"");
 					} else {
-						$kick = $r->sendCommand("kickid ".$match." \"You have been banned by this server, check http://" . $_SERVER['HTTP_HOST'].$requri." for more info.\"");
+						$kick = $r->sendCommand("кикнут ".$match." \"вы были кикнуты. За более подробной информацией зайдите на http://" . $_SERVER['HTTP_HOST'].$requri." for more info.\"");
 					}
 					
 					$objResponse->addAssign("srv_$num", "innerHTML", "<font color='green' size='1'><b><u>Найден. Кикаю...</u></b></font>");
@@ -140,7 +140,7 @@ function KickPlayer($check, $sid, $num, $type) {
 					$gothim = true;
 					$GLOBALS['db']->Execute("UPDATE `".DB_PREFIX."_bans` SET sid = '".$sid."' WHERE ip = '".$check."' AND RemovedBy IS NULL;");
 					$requri = substr($_SERVER['REQUEST_URI'], 0, strrpos($_SERVER['REQUEST_URI'], "pages/admin.kickit.php"));
-					$kick = $r->sendCommand("kickid ".$userid." \"You have been banned by this server, check http://" . $_SERVER['HTTP_HOST'].$requri." for more info.\"");
+					$kick = $r->sendCommand("кикнут ".$userid." \"вы были кикнуты. За более подробной информацией зайдите на http://" . $_SERVER['HTTP_HOST'].$requri." for more info.\"");
 					$objResponse->addAssign("srv_$num", "innerHTML", "<font color='green' size='1'><b><u>Найден. Кикаю...</u></b></font>");
 					$objResponse->addScript("set_counter('-1');");
 					return $objResponse;

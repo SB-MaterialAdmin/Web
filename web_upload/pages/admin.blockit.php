@@ -47,7 +47,7 @@ function LoadServers2($check, $type, $length) {
 	if(!$userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_BAN))
 	{
 		$objResponse->redirect("index.php?p=login&m=no_access", 0);
-		$log = new CSystemLog("w", "Hacking Attempt", $username . " tried to use blockit, but doesn't have access.");
+		$log = new CSystemLog("w", "Попытка взлома", $username . " пытался использовать блокировку, не имея на это прав.");
 		return $objResponse;
 	}
 	$id = 0;
@@ -78,7 +78,7 @@ function BlockPlayer($check, $sid, $num, $type, $length) {
 	if(!$userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_BAN))
 	{
 		$objResponse->redirect("index.php?p=login&m=no_access", 0);
-		$log = new CSystemLog("w", "Hacking Attempt", $username . " tried to process a playerblock, but doesnt have access.");
+		$log = new CSystemLog("w", "Попытка взлома", $username . " пытался обработать блокировку игрока, не имея на это прав.");
 		return $objResponse;
 	}
 	

@@ -54,12 +54,12 @@ if(!$userbank->GetProperty("user", $_GET['id']))
 $aid = (int)$_GET['id'];
 if(!$userbank->HasAccess(ADMIN_OWNER|ADMIN_EDIT_ADMINS))
 {
-	$log = new CSystemLog("w", "Hacking Attempt", $userbank->GetProperty("user") . " tried to edit ".$userbank->GetProperty('user', $_GET['id'])."'s server access, but doesnt have access.");
+	$log = new CSystemLog("w", "Попытка взлома", $userbank->GetProperty("user") . " пытался изменить доступ к серверу админа ".$userbank->GetProperty('user', $_GET['id']).", не имея на это прав.");
 	echo '<div id="msg-red" >
-	<i><img src="./images/warning.png" alt="Warning" /></i>
-	<b>Error</b>
+	<i><img src="./images/warning.png" alt="Внимание" /></i>
+	<b>Ошибка</b>
 	<br />
-	You are not allowed to edit admins server access.
+	Вы не имеете прав редактирования доступа админа к серверу.
 </div>';
 	PageDie();
 }

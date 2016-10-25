@@ -31,8 +31,8 @@ global $theme, $userbank;
 
 if (!$userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_SERVER))
 {
-    $log = new CSystemLog("w", "Hacking Attempt", $userbank->GetProperty('user') . " tried to upload a mapimage, but doesn't have access.");
-	echo 'You don\'t have access to this!';
+    $log = new CSystemLog("w", "Попытка взлома", $userbank->GetProperty('user') . " пытался загрузить изображение карты, не имея на это прав.");
+	echo 'У вас нет доступа к этому!';
 	die();
 }
 

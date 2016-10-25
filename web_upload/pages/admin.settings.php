@@ -42,7 +42,7 @@ if(!defined("IN_SB")){echo "Ошибка доступа!";die();}
 		}
         else
         {
-            $log = new CSystemLog("w", "Попытка взлома", $userbank->GetProperty('user') . " tried to clear the logs, but doesn't have access.");
+            $log = new CSystemLog("w", "Попытка взлома", $userbank->GetProperty('user') . " пытался очистить лог, не имея на это прав.");
         }
 	}
 	
@@ -164,7 +164,7 @@ if(!defined("IN_SB")){echo "Ошибка доступа!";die();}
 <div id="admin-page-content">
 <?php if(!$userbank->HasAccess(ADMIN_OWNER|ADMIN_WEB_SETTINGS))
 {
-	echo '<div id="0" style="display:none;">Access Denied!</div>';
+	echo '<div id="0" style="display:none;">Доступ запрещен!</div>';
 }
 else
 {
@@ -205,9 +205,9 @@ else
 		if ($_POST['settingsGroup'] == "mainsettings")
 		{
 			if(!is_numeric($_POST['config_password_minlength']))
-				$errors .= "Min password length must be a number<br />";
+				$errors .= "Минимальная длина пароля<br />";
 			if(!is_numeric($_POST['banlist_bansperpage']))
-				$errors .= "Bans per page must be a number";
+				$errors .= "Количество банов на странице должно быть числом";
 			if(empty($errors))
 			{
 				if(isset($_POST['enable_submit']) && $_POST['enable_submit'] == "on") {
@@ -276,9 +276,13 @@ else
 												(".(int)$admin_list_en.", 'page.adminlist'),
 												(".(int)$vay4_en.", 'page.vay4er')", array($_POST['template_title'], $_POST['template_logo'], $_POST['config_dateformat'], $_POST['config_dateformat2'], $_POST['dash_intro_text'], $tz_string, $summertime, $cureason));
 
+<<<<<<< HEAD
+				?><script>setTimeout("ShowBox('Настройки обновлены', 'Изменения были успешно применены', 'green', 'index.php?p=admin&c=settings', false, 2500);", 1200);</script><?php 
+=======
 				?><script>setTimeout("ShowBox('Главные настройки изменены', 'Изменения были успешно применены!', 'green', 'index.php?p=admin&c=settings', false, 2500);", 1200);</script><?php 
+>>>>>>> origin/master
 			}else{
-				CreateRedBox("Error", $errors); 
+				CreateRedBox("Ошибка", $errors); 
 			}
 		}
 		
@@ -307,7 +311,11 @@ else
 											(" . (int)$adminrehash . ", 'config.enableadminrehashing')");
 											
 
+<<<<<<< HEAD
+			?><script>setTimeout("ShowBox('Настройки обновлены', 'Изменения были успешно применены', 'green', 'index.php?p=admin&c=settings');", 1200);</script><?php 
+=======
 			?><script>setTimeout("ShowBox('Настройки опций изменены', 'Изменения были успешно применены!', 'green', 'index.php?p=admin&c=settings');", 1200);</script><?php 
+>>>>>>> origin/master
 		}
 	}
 

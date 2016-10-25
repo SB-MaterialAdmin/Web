@@ -26,7 +26,7 @@
 // *************************************************************************
 
 global $theme;
-if(!defined("IN_SB")){echo "You should not be here. Only follow links!";die();}
+if(!defined("IN_SB")){echo "Ошибка доступа!";die();}
 $BansPerPage = SB_BANS_PER_PAGE;
 $servers = array();
 global $userbank;
@@ -57,7 +57,7 @@ if (version_compare($GLOBALS['db_version'], "5.6.0") >= 0 && version_compare($GL
 if (isset($_GET['a']) && $_GET['a'] == "unban" && isset($_GET['id']))
 {
 	if ($_GET['key'] != $_SESSION['banlist_postkey'])
-		die("Possible hacking attempt (URL Key mismatch)");
+		die("Возможная попытка взлома (Несоответствие URL-ключа)");
 	//we have a multiple unban asking
 	if(isset($_GET['bulk']))
 		$bids = explode(",",$_GET['id']);
@@ -74,7 +74,7 @@ if (isset($_GET['a']) && $_GET['a'] == "unban" && isset($_GET['id']))
 		{
 			$fail++;
 			if(!isset($_GET['bulk']))
-				die("You don't have access to this");
+				die("У вас нет доступа к этому");
 			continue;
 		}
 
@@ -87,7 +87,7 @@ if (isset($_GET['a']) && $_GET['a'] == "unban" && isset($_GET['id']))
 		if(empty($row) || !$row) {
 			$fail++;
 			if(!isset($_GET['bulk'])) {
-				echo "<script>setTimeout('ShowBox(\"Player Not Unbanned\", \"The player was not unbanned, either already unbanned or not a valid ban.<br><br><font color=\'green\' class=\'f-15\'><b>Переадресация...</b></font>\", \"red\", \"index.php?p=banlist$pagelink'\", false);', 1350);</script>";
+				echo "<script>setTimeout('ShowBox(\"Игрок не разбанен\", \"Игрок не был разбанен. Либо был разбанен ранее, либо бан некорректен.<br><br><font color=\'green\' class=\'f-15\'><b>Переадресация...</b></font>\", \"red\", \"index.php?p=banlist$pagelink'\", false);', 1350);</script>";
 				PageDie();
 			}
 			continue;
@@ -113,26 +113,26 @@ if (isset($_GET['a']) && $_GET['a'] == "unban" && isset($_GET['id']))
 
 		if($res){
 			if(!isset($_GET['bulk']))
-				echo "<script>setTimeout('ShowBox(\"Player Unbanned\", \"<b>".StripQuotes($row['name'])."</b> (<b>" . ($row['type']==0?$row['authid']:$row['ip']) . "</b>) has been unbanned from SourceBans.<br><br><font color=\'green\' class=\'f-15\'><b>Переадресация...</b></font>\", \"green\", \"index.php?p=banlist$pagelink\", false);', 1350);</script>";
-			$log = new CSystemLog("m", "Player Unbanned", "'".StripQuotes($row['name'])."' (" . ($row['type']==0?$row['authid']:$row['ip']) . ") has been unbanned");
+				echo "<script>setTimeout('ShowBox(\"Игрок разбанен\", \"<b>".StripQuotes($row['name'])."</b> (<b>" . ($row['type']==0?$row['authid']:$row['ip']) . "</b>) был разбанен.<br><br><font color=\'green\' class=\'f-15\'><b>Переадресация...</b></font>\", \"green\", \"index.php?p=banlist$pagelink\", false);', 1350);</script>";
+			$log = new CSystemLog("m", "Игрок разбанен", "'".StripQuotes($row['name'])."' (" . ($row['type']==0?$row['authid']:$row['ip']) . ") был зазбанен");
 			$ucount++;
 		}else{
 			if(!isset($_GET['bulk']))
-				echo "<script>setTimeout('ShowBox(\"Player NOT Unbanned\", \"There was an error unbanning <b>".StripQuotes($row['name'])."</b><br><br><font color=\'green\' class=\'f-15\'><b>Переадресация...</b></font>\", \"red\", \"index.php?p=banlist$pagelink\", false);', 1350);</script>";
+				echo "<script>setTimeout('ShowBox(\"Игрок не разбанен\", \"Произошла ошибка <b>".StripQuotes($row['name'])."</b><br><br><font color=\'green\' class=\'f-15\'><b>Переадресация...</b></font>\", \"red\", \"index.php?p=banlist$pagelink\", false);', 1350);</script>";
 			$fail++;
 		}
 	}
 	if(isset($_GET['bulk']))
-		echo "<script>setTimeout('ShowBox(\"Players Unbanned\", \"$ucount players has been unbanned from SourceBans.<br>$fail failed.<br><br><font color=\'green\' class=\'f-15\'><b>Переадресация...</b></font>\", \"green\", \"index.php?p=banlist$pagelink\", false);', 1350);</script>";
+		echo "<script>setTimeout('ShowBox(\"Игрок разбанен\", \"$ucount был разбанен.<br>$fail failed.<br><br><font color=\'green\' class=\'f-15\'><b>Переадресация...</b></font>\", \"green\", \"index.php?p=banlist$pagelink\", false);', 1350);</script>";
 }
 else if(isset($_GET['a']) && $_GET['a'] == "delete")
 {
 	if ($_GET['key'] != $_SESSION['banlist_postkey'])
-		die("Possible hacking attempt (URL Key mismatch)");
+		die("Возможная попытка взлома (Несоответствие URL-ключа)");
 
 	if (!$userbank->HasAccess(ADMIN_OWNER|ADMIN_DELETE_BAN))
 	{
-		echo "<script>setTimeout('ShowBox(\"Error\", \"You do not have access to this.<br><br><font color=\'green\' class=\'f-15\'><b>Переадресация...</b></font>\", \"red\", \"index.php?p=banlist$pagelink\", false);', 1350);</script>";
+		echo "<script>setTimeout('ShowBox(\"Ошибка\", \"У вас нет доступа к этому.<br><br><font color=\'green\' class=\'f-15\'><b>Переадресация...</b></font>\", \"red\", \"index.php?p=banlist$pagelink\", false);', 1350);</script>";
 		PageDie();
 	}
 	//we have a multiple ban delete asking
@@ -173,12 +173,12 @@ else if(isset($_GET['a']) && $_GET['a'] == "delete")
 			$dcount++;
 		}else{
 			if(!isset($_GET['bulk']))
-				echo "<script>setTimeout('ShowBox(\"Ban NOT Deleted\", \"The ban for <b>".StripQuotes($steam['name'])."</b> had an error while being removed.<br><br><font color=\'green\' class=\'f-15\'><b>Переадресация...</b></font>\", \"red\", \"index.php?p=banlist$pagelink\", false);', 1350);</script>";
+				echo "<script>setTimeout('ShowBox(\"Бан не удален\", \"При удалении бана игрока <b>".StripQuotes($steam['name'])."</b> произошла ошибка.<br><br><font color=\'green\' class=\'f-15\'><b>Переадресация...</b></font>\", \"red\", \"index.php?p=banlist$pagelink\", false);', 1350);</script>";
 			$fail++;
 		}
 	}
 	if(isset($_GET['bulk']))
-		echo "<script>setTimeout('ShowBox(\"Players Deleted\", \"$dcount players has been deleted from SourceBans.<br>$fail failed.<br><br><font color=\'green\' class=\'f-15\'><b>Переадресация...</b></font>\", \"green\", \"index.php?p=banlist$pagelink\", false);', 1350);</script>";
+		echo "<script>setTimeout('ShowBox(\"Игроки удалены\", \"$dcount игроки удалены из SourceBans.<br>$fail failed.<br><br><font color=\'green\' class=\'f-15\'><b>Переадресация...</b></font>\", \"green\", \"index.php?p=banlist$pagelink\", false);', 1350);</script>";
 }
 
 $BansStart = intval(($page-1) * $BansPerPage);
@@ -409,7 +409,7 @@ $BanCount = $res_count->fields[0];
 if ($BansEnd > $BanCount) $BansEnd = $BanCount;
 if (!$res)
 {
-	echo "No Bans Found.";
+	echo "Баны не найдены.";
 	PageDie();
 }
 
@@ -576,7 +576,7 @@ while (!$res->EOF)
 	if ($res->fields['demo_count'] == 0)
 	{
 		$data['demo_available'] = false;
-		$data['demo_quick'] = 'N/A';
+		$data['demo_quick'] = 'Н/Д';
 		$data['demo_link'] = CreateLinkR('Нет Демо',"#");
 	}
 	else
@@ -595,7 +595,7 @@ while (!$res->EOF)
 	foreach($banlog AS $logged) {
 		if(!empty($logstring))
 			$logstring .= "  <span class=\"c-red\">//</span>  ";
-		$logstring .= '<strong><i><span data-toggle="tooltip" data-placement="top" title="" data-original-title="'.$logged["ip"].':'.$logged["port"].', Date: '.SBDate($dateformat,$logged["time"]).'">'.($logged["name"]!=""?htmlspecialchars($logged["name"]):"<i>no name</i>").'</span></i></strong>';
+		$logstring .= '<strong><i><span data-toggle="tooltip" data-placement="top" title="" data-original-title="'.$logged["ip"].':'.$logged["port"].', Дата: '.SBDate($dateformat,$logged["time"]).'">'.($logged["name"]!=""?htmlspecialchars($logged["name"]):"<i>без имени</i>").'</span></i></strong>';
 	}
 	$data['banlog'] = $logstring;
 

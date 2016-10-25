@@ -25,21 +25,21 @@
 //
 // *************************************************************************
 
-if(!defined("IN_SB")){echo "You should not be here. Only follow links!";die();} 
+if(!defined("IN_SB")){echo "Ошибка доступа!";die();} 
 global $theme, $userbank;
 if(!isset($_GET['id']))
 {
-	echo '<script>ShowBox("Error", "No mod ID set. Only follow links", "red", "", true);</script>';	
+	echo '<script>ShowBox("Ошибка", "Нет модов для редактирования", "red", "", true);</script>';	
 	PageDie();
 }
 if(!$userbank->HasAccess(ADMIN_OWNER|ADMIN_EDIT_MODS))
 {
-	$log = new CSystemLog("w", "Hacking Attempt", $userbank->GetProperty("user") . " tried to edit a mod, but doesnt have access.");
+	$log = new CSystemLog("w", "Попытка взлома", $userbank->GetProperty("user") . " пытался изменить МОД, не имея на это прав.");
 	echo '<div id="msg-red" >
-	<i><img src="./images/warning.png" alt="Warning" /></i>
-	<b>Error</b>
+	<i><img src="./images/warning.png" alt="Внимание" /></i>
+	<b>Ошибка</b>
 	<br />
-	You are not allowed to edit mods.
+	У вас нет прав редактирования МОДов.
 </div>';
 	PageDie();
 }
@@ -60,7 +60,7 @@ if(isset($_POST['name']))
 	if(empty($_POST['name']))
 	{
 		$error++;
-		$errorScript .= "$('name.msg').innerHTML = 'You must type a name for the mod.';";
+		$errorScript .= "$('name.msg').innerHTML = 'Введите имя МОДа.';";
 		$errorScript .= "$('name.msg').setStyle('display', 'block');";
 	}
 	else
@@ -70,14 +70,14 @@ if(isset($_POST['name']))
 		if(!empty($check))
 		{
 			$error++;
-			$errorScript .= "$('name.msg').innerHTML = 'A mod with that name already exists.';";
+			$errorScript .= "$('name.msg').innerHTML = 'МОД с таким именем уже существует.';";
 			$errorScript .= "$('name.msg').setStyle('display', 'block');";
 		}
 	}
 	if(empty($_POST['folder']))
 	{
 		$error++;
-		$errorScript .= "$('folder.msg').innerHTML = 'You must enter mod\'s folder name.';";
+		$errorScript .= "$('folder.msg').innerHTML = 'Введите имя папки МОДа.';";
 		$errorScript .= "$('folder.msg').setStyle('display', 'block');";
 	}
 	else
@@ -87,7 +87,7 @@ if(isset($_POST['name']))
 		if(!empty($check))
 		{
 			$error++;
-			$errorScript .= "$('folder.msg').innerHTML = 'A mod using that folder already exists.';";
+			$errorScript .= "$('folder.msg').innerHTML = 'Мод использующий эту папку уже существует.';";
 			$errorScript .= "$('folder.msg').setStyle('display', 'block');";
 		}
 	}
@@ -106,7 +106,7 @@ if(isset($_POST['name']))
 		$edit = $GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_mods SET
 										`name` = ?, `modfolder` = ?, `icon` = ?, `enabled` = ?, `steam_universe` = ?
 										WHERE `mid` = ?", array($name, $folder, $icon, $enabled, $steam_universe, $_GET['id']));
-		echo '<script>ShowBox("Mod updated", "The mod has been updated successfully", "green", "index.php?p=admin&c=mods");</script>';
+		echo '<script>ShowBox("МОД обновлен", "МОД был успешно обновлен", "green", "index.php?p=admin&c=mods");</script>';
 	}
 	
 	// put into array to display new values after submit
@@ -117,7 +117,7 @@ if(isset($_POST['name']))
 	$res['steam_universe'] = $steam_universe;
 }
 if(!$res)
-	echo '<script>ShowBox("Error", "There was an error getting details. Maybe the mod has been deleted?", "red", "index.php?p=admin&c=mod");</script>';
+	echo '<script>ShowBox("Ошибка", "Возникла ошибка получения деталей. Возможно мод был удален?", "red", "index.php?p=admin&c=mod");</script>';
 
 $theme->assign('mod_icon', $res['icon']);
 $theme->assign('folder', $res['modfolder']);

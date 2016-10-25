@@ -31,8 +31,8 @@ global $theme, $userbank;
 
 if (!$userbank->HasAccess(ADMIN_OWNER|ADMIN_EDIT_MODS|ADMIN_ADD_MODS))
 {
-    $log = new CSystemLog("w", "Hacking Attempt", $userbank->GetProperty('user') . " tried to upload a mod icon, but doesn't have access.");
-	echo 'You don\'t have access to this!';
+    $log = new CSystemLog("w", "Попытка взлома", $userbank->GetProperty('user') . " пытался загрузить иконку МОДа, не имея на это прав.");
+	echo 'У вас нет доступа к этому!';
 	die();
 }
 
@@ -43,15 +43,15 @@ if(isset($_POST['upload']))
 	{
 		move_uploaded_file($_FILES['icon_file']['tmp_name'],SB_ICONS."/".$_FILES['icon_file']['name']);
 		$message =  "<script>window.opener.icon('" . $_FILES['icon_file']['name'] . "');self.close()</script>";
-        $log = new CSystemLog("m", "Mod Icon Uploaded", "A new mod icon has been uploaded: ".htmlspecialchars($_FILES['icon_file']['name']));
+        $log = new CSystemLog("m", "Иконка МОДа загружена", "Новая иконка МОДа загружена: ".htmlspecialchars($_FILES['icon_file']['name']));
 	}
 	else 
 	{
-		$message =  "<b> File must be gif, jpg or png filetype.</b><br><br>";
+		$message =  "<b> Файл должен быть формата gif, jpg или png.</b><br><br>";
 	}
 }
 
-$theme->assign("title", "Upload Icon");
+$theme->assign("title", "Загрузить иконку");
 $theme->assign("message", $message);
 $theme->assign("input_name", "icon_file");
 $theme->assign("form_name", "iconup");

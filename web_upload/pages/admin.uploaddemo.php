@@ -32,8 +32,8 @@ global $theme, $userbank;
 
 if (!$userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_BAN|ADMIN_EDIT_OWN_BANS|ADMIN_EDIT_GROUP_BANS|ADMIN_EDIT_ALL_BANS))
 {
-    $log = new CSystemLog("w", "Hacking Attempt", $userbank->GetProperty('user') . " tried to upload a demo, but doesn't have access.");
-	echo 'You don\'t have access to this!';
+    $log = new CSystemLog("w", "Попытка взлома", $userbank->GetProperty('user') . " пытался загрузить демо, не имея на это прав.");
+	echo 'У вас нет доступа к этому!';
 	die();
 }
 
@@ -47,15 +47,15 @@ if(isset($_POST['upload']))
 		$filename = md5(time().rand(0, 1000));
 		move_uploaded_file($_FILES['demo_file']['tmp_name'],SB_DEMOS."/".$filename);
 		$message =  "<script>window.opener.demo('" . $filename . "','" . $_FILES['demo_file']['name'] . "');self.close()</script>";
-        $log = new CSystemLog("m", "Demo Uploaded", "A new demo has been uploaded: ".htmlspecialchars($_FILES['demo_file']['name']));
+        $log = new CSystemLog("m", "Демо загружено", "Новое демо было успешно загружено: ".htmlspecialchars($_FILES['demo_file']['name']));
 	}
 	else 
 	{
-		$message =  "<b> File must be dem, zip, rar, 7z, bz2 or gz filetype.</b><br><br>";
+		$message =  "<b> Файл должен быть формата dem, zip, rar, 7z, bz2 или gz.</b><br><br>";
 	}
 }
 
-$theme->assign("title", "Upload Demo");
+$theme->assign("title", "Загрузить демо");
 $theme->assign("message", $message);
 $theme->assign("input_name", "demo_file");
 $theme->assign("form_name", "demup");

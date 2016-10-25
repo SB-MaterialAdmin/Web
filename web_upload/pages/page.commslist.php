@@ -30,7 +30,7 @@
 //
 // *************************************************************************
 global $theme;
-if(!defined("IN_SB")){echo "You should not be here. Only follow links!";die();}
+if(!defined("IN_SB")){echo "Ошибка доступа!";die();}
 $BansPerPage = SB_BANS_PER_PAGE;
 $servers = array();
 global $userbank;
@@ -58,7 +58,7 @@ if (isset($_GET['page']) && $_GET['page'] > 0)
 if (isset($_GET['a']) && $_GET['a'] == "ungag" && isset($_GET['id']))
 {
 	if ($_GET['key'] != $_SESSION['banlist_postkey'])
-		die("Possible hacking attempt (URL Key mismatch)");
+		die("Возможная попытка взлома (Несоответствие URL-ключа)");
 	//we have a multiple unban asking
 	$bid = intval($_GET['id']);
 	$res = $GLOBALS['db']->Execute("SELECT a.aid, a.gid FROM `".DB_PREFIX."_comms` c INNER JOIN ".DB_PREFIX."_admins a ON a.aid = c.aid WHERE bid = '".$bid."' AND c.type = 2;");
@@ -66,7 +66,7 @@ if (isset($_GET['a']) && $_GET['a'] == "ungag" && isset($_GET['id']))
 			!($userbank->HasAccess(ADMIN_UNBAN_OWN_BANS) && $res->fields['aid'] == $userbank->GetAid()) &&
 			!($userbank->HasAccess(ADMIN_UNBAN_GROUP_BANS) && $res->fields['gid'] == $userbank->GetProperty('gid')))
 		{
-			die("You don't have access to this");
+			die("У вас нет доступа к этому");
 		}
 
 	$row = $GLOBALS['db']->GetRow("SELECT b.authid, b.name, b.created, b.sid, UNIX_TIMESTAMP() as now
@@ -75,7 +75,7 @@ if (isset($_GET['a']) && $_GET['a'] == "ungag" && isset($_GET['id']))
 										WHERE b.bid = ? AND b.RemoveType IS NULL AND b.type = 2 AND (b.length = '0' OR b.ends > UNIX_TIMESTAMP())",array($bid));
 	if(empty($row) || !$row)
 	{
-		echo "<script>setTimeout('ShowBox(\"Player Not UnGagged\", \"The player was not ungagged, either already ungagged or not a valid block.<br><br><font color=\'green\' class=\'f-15\'><b>Переадресация...</b></font>\", \"red\", \"index.php?p=commslist$pagelink\", false);', 1350);</script>";
+		echo "<script>setTimeout('ShowBox(\"Игроку не включен чат\", \"Игроку не был включен чат. Либо он был включен ранее, либо некорректный блок чата.<br><br><font color=\'green\' class=\'f-15\'><b>Переадресация...</b></font>\", \"red\", \"index.php?p=commslist$pagelink\", false);', 1350);</script>";
 		PageDie();
 	}
 
@@ -96,7 +96,7 @@ if (isset($_GET['a']) && $_GET['a'] == "ungag" && isset($_GET['id']))
 
 	if($res){
 		echo "<script>setTimeout('ShowBox(\"Включение чата\", \"Игроку <b>".StripQuotes($row['name'])."</b> (<b>" . $row['authid'] . "</b>) был включен чат.<br><br><font color=\'green\' class=\'f-15\'><b>Переадресация...</b></font>\", \"green\", \"index.php?p=commslist$pagelink\", false);', 1350);</script>";
-		$log = new CSystemLog("m", "Player UnGagged", "'".StripQuotes($row['name'])."' (" . $row['authid'] . ") has been ungagged");
+		$log = new CSystemLog("m", "Игроку включен чат", "'".StripQuotes($row['name'])."' (" . $row['authid'] . ") has been ungagged");
 	}else{
 		echo "<script>setTimeout('ShowBox(\"Чат не включен\", \"Возникла ошибка включения чата игроку <b>".StripQuotes($row['name'])."</b><br><br><font color=\'green\' class=\'f-15\'><b>Переадресация...</b></font>\", \"red\", \"index.php?p=commsist$pagelink\", false);', 1350);</script>";
 	}
@@ -104,7 +104,7 @@ if (isset($_GET['a']) && $_GET['a'] == "ungag" && isset($_GET['id']))
 else if(isset($_GET['a']) && $_GET['a'] == "unmute" && isset($_GET['id']))
 {
 	if ($_GET['key'] != $_SESSION['banlist_postkey'])
-		die("Possible hacking attempt (URL Key mismatch)");
+		die("Possible Попытка взлома (URL Key mismatch)");
 	//we have a multiple unban asking
 	$bid = intval($_GET['id']);
 	$res = $GLOBALS['db']->Execute("SELECT a.aid, a.gid FROM `".DB_PREFIX."_comms` c INNER JOIN ".DB_PREFIX."_admins a ON a.aid = c.aid WHERE bid = '".$bid."' AND c.type = 1;");
@@ -121,7 +121,7 @@ else if(isset($_GET['a']) && $_GET['a'] == "unmute" && isset($_GET['id']))
 										WHERE b.bid = ? AND b.RemoveType IS NULL AND b.type = 1 AND (b.length = '0' OR b.ends > UNIX_TIMESTAMP())",array($bid));
 	if(empty($row) || !$row)
 	{
-		echo "<script>setTimeout('ShowBox(\"Player Not UnGagged\", \"The player was not unmuted, either already unmuted or not a valid block.<br><br><font color=\'green\' class=\'f-15\'><b>Переадресация...</b></font>\", \"red\", \"index.php?p=commslist$pagelink\", false);', 1350);</script>";
+		echo "<script>setTimeout('ShowBox(\"Игроку не включен микро\", \"Игроку не был включен микрофон. Он либо был включен ранее, либо некорректный блок микрофона.<br><br><font color=\'green\' class=\'f-15\'><b>Переадресация...</b></font>\", \"red\", \"index.php?p=commslist$pagelink\", false);', 1350);</script>";
 		PageDie();
 	}
 
@@ -142,7 +142,7 @@ else if(isset($_GET['a']) && $_GET['a'] == "unmute" && isset($_GET['id']))
 
 	if($res){
 		echo "<script>setTimeout('ShowBox(\"Включение микрофона\", \"Игроку <b>".StripQuotes($row['name'])."</b> <b>(" . $row['authid'] . ")</b> был включен микрофон.<br><br><font color=\'green\' class=\'f-15\'><b>Переадресация...</b></font>\", \"green\", \"index.php?p=commslist$pagelink\", false);', 1350);</script>";
-		$log = new CSystemLog("m", "Player UnMuted", "'".StripQuotes($row['name'])."' (" . $row['authid'] . ") has been unmuted");
+		$log = new CSystemLog("m", "Игроку влючен микро", "'".StripQuotes($row['name'])."' (" . $row['authid'] . ") has been unmuted");
 	}else{
 		echo "<script>setTimeout('ShowBox(\"Микрофон не включен\", \"Возникла ошибка включения микрофона <b>".StripQuotes($row['name'])."</b><br><br><font color=\'green\' class=\'f-15\'><b>Переадресация...</b></font>\", \"red\", \"index.php?p=commsist$pagelink\", false);', 1350);</script>";
 	}
@@ -150,7 +150,7 @@ else if(isset($_GET['a']) && $_GET['a'] == "unmute" && isset($_GET['id']))
 else if(isset($_GET['a']) && $_GET['a'] == "delete")
 {
 	if ($_GET['key'] != $_SESSION['banlist_postkey'])
-		die("Possible hacking attempt (URL Key mismatch)");
+		die("Возможная попытка взлома (Несоответствие URL-ключа)");
 
 	if (!$userbank->HasAccess(ADMIN_OWNER|ADMIN_DELETE_BAN))
 	{
@@ -194,7 +194,7 @@ else if(isset($_GET['a']) && $_GET['a'] == "delete")
 	if($res)
 	{
 		echo "<script>setTimeout('ShowBox(\"Блокировка удалена\", \"Блокировка игрока <b>" .StripQuotes($steam['name']). "</b> (<b>".$steam['authid']."</b>) была удалена из SourceBans. <br><br> <font color=\'green\' class=\'f-15\'><b>Переадресация...</b></font>\", \"green\", \"index.php?p=commslist$pagelink\", false);', 1350);</script>";
-		$log = new CSystemLog("m", "Block Deleted", "Block '".StripQuotes($steam['name'])."' (" . $steam['authid'] . ") has been deleted.");
+		$log = new CSystemLog("m", "Блокировка удалена", "Блокировка игрока '".StripQuotes($steam['name'])."' (" . $steam['authid'] . ") была удалена.");
 	}else{
 		echo "<script>setTimeout('ShowBox(\"Блокировка НЕ удалена\", \"Блокировка игрока <b>".StripQuotes($steam['name'])."</b> не удалена из-за ошибки. <br><br><font color=\'green\' class=\'f-15\'><b>Переадресация...</b></font>\", \"red\", \"index.php?p=commslist$pagelink\", false);', 1350);</script>";
 	}
@@ -213,11 +213,11 @@ if(isset($_GET["hideinactive"]) && $_GET["hideinactive"] == "true") {// hide
 	//ShowBox('Show inactive bans', 'Inactive bans will be shown in the banlist.', 'green', 'index.php?p=banlist', true);
 }
 if(isset($_SESSION["hideinactive"])) {
-	$hidetext = "Show";
+	$hidetext = "Показать";
 	$hideinactive = " AND RemoveType IS NULL";
 	$hideinactiven = " WHERE RemoveType IS NULL";
 } else {
-	$hidetext = "Hide";
+	$hidetext = "Скрыть";
 	$hideinactive = "";
 	$hideinactiven = "";
 }
@@ -420,15 +420,15 @@ while (!$res->EOF)
 	switch((int)$data['type'])
 	{
 		case 1:
-			$data['type_icon'] = '<img src="images/type_v.png" alt="Mute" border="0" align="absmiddle" />';
+			$data['type_icon'] = '<img src="images/type_v.png" alt="Микрофон" border="0" align="absmiddle" />';
 			$mute_count = $mute_count - 1;
 			break;
 		case 2:
-			$data['type_icon'] = '<img src="images/type_c.png" alt="Chat" border="0" align="absmiddle" />';
+			$data['type_icon'] = '<img src="images/type_c.png" alt="Чат" border="0" align="absmiddle" />';
 			$gag_count = $gag_count - 1;
 			break;
 		default:
-			$data['type_icon'] = '<img src="images/country/zz.gif" alt="Unknown block type" border="0" align="absmiddle" />';
+			$data['type_icon'] = '<img src="images/country/zz.gif" alt="Неизвестный тип блока" border="0" align="absmiddle" />';
 			break;
 	}
 
@@ -486,7 +486,7 @@ while (!$res->EOF)
         if(isset($removedby[0]))
             $data['removedby'] = $removedby[0];
 	}
-	else if($data['ban_length'] == 'Permanent')
+	else if($data['ban_length'] == 'Навсегда')
 	{
 		$data['class'] = "listtable_1_permanent";
 	}
@@ -625,7 +625,7 @@ while (!$res->EOF)
 		$data['commentdata'] = $comment;
 	}
 
-	$data['addcomment'] = CreateLinkR('<img src="images/details.gif" border="0" alt="" style="vertical-align:middle" /> Add Comment','index.php?p=commslist&comment='.$data['ban_id'].'&ctype=C'.$pagelink);
+	$data['addcomment'] = CreateLinkR('<img src="images/details.gif" border="0" alt="" style="vertical-align:middle" /> Добавить комментарий','index.php?p=commslist&comment='.$data['ban_id'].'&ctype=C'.$pagelink);
 	$data['addcomment_link'] = "index.php?p=commslist&comment=".$data['ban_id']."&ctype=C".$pagelink;
 	//-----------------------------------
 	$data['counts'] = $delimiter.$mutes.$gags;

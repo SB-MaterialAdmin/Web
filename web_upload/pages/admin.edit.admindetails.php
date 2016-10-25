@@ -58,12 +58,12 @@ if(!$userbank->HasAccess(ADMIN_OWNER))
 {
 	if(!$userbank->HasAccess(ADMIN_EDIT_ADMINS) || ($userbank->HasAccess(ADMIN_OWNER, $_GET['id']) && $_GET['id'] != $userbank->GetAid()))
 	{
-		$log = new CSystemLog("w", "Hacking Attempt", $userbank->GetProperty("user") . " tried to edit ".$userbank->GetProperty('user', $_GET['id'])."'s details, but doesnt have access.");
+		$log = new CSystemLog("w", "Попытка взлома", $userbank->GetProperty("user") . " пытался редактировать детали ".$userbank->GetProperty('user', $_GET['id']).", не имея на это прав.");
 		echo '<div id="msg-red" >
-		<i><img src="./images/warning.png" alt="Warning" /></i>
-		<b>Error</b>
+		<i><img src="./images/warning.png" alt="Внимание" /></i>
+		<b>Ошибка</b>
 		<br />
-		You are not allowed to edit other profiles.
+		Вы не имеете прав редактирования других профилей.
 	</div>';
 		PageDie();
 	}
