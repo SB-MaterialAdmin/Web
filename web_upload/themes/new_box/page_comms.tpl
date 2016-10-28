@@ -190,7 +190,7 @@
 										</div>
 										{if $ban.unbanned}
 										<div class="form-group col-sm-12 m-b-10">
-											<label class="col-sm-4 control-label"><i class="zmdi zmdi-star text-left"></i> Причина блокировки</label>
+											<label class="col-sm-4 control-label"><i class="zmdi zmdi-star text-left"></i> Причина снятия</label>
 											<div class="col-sm-8">
 												{if $ban.ureason == ""}
 													<i>Причина разбана скрыта.</i>
@@ -200,7 +200,7 @@
 											</div>
 										</div>
 										<div class="form-group col-sm-12 m-b-10">
-											<label class="col-sm-4 control-label"><i class="zmdi zmdi-star text-left"></i> Выдал блокировку</label>
+											<label class="col-sm-4 control-label"><i class="zmdi zmdi-star text-left"></i> Блокировку снял</label>
 											<div class="col-sm-8">
 												 {if !empty($ban.removedby)}
 													{$ban.removedby|escape:'html'}
@@ -221,14 +221,14 @@
 											</div>
 										</div>
 										<div class="form-group col-sm-12 m-b-10">
-											<label class="col-sm-4 control-label"><i class="zmdi zmdi-star text-left"></i> Причина бана</label>
+											<label class="col-sm-4 control-label"><i class="zmdi zmdi-star text-left"></i> Причина блокировки</label>
 											<div class="col-sm-8">
 												{$ban.reason|escape:'html'}
 											</div>
 										</div>
 										{if !$hideadminname}
 										<div class="form-group col-sm-12 m-b-10">
-											<label class="col-sm-4 control-label"><i class="zmdi zmdi-star text-left"></i> Забанен админом</label>
+											<label class="col-sm-4 control-label"><i class="zmdi zmdi-star text-left"></i> Выдана админом</label>
 											<div class="col-sm-8">
 												{if !empty($ban.admin)}
 													{$ban.admin|escape:'html'}
@@ -249,7 +249,7 @@
 											</div>
 										</div>
 										<div class="form-group col-sm-12 m-b-10">
-											<label class="col-sm-4 control-label"><i class="zmdi zmdi-star text-left"></i> Предыдущие блокирвоки</label>
+											<label class="col-sm-4 control-label"><i class="zmdi zmdi-star text-left"></i> Предыдущие блокировки</label>
 											<div class="col-sm-8">
 												{$ban.prevoff_link}
 											</div>
