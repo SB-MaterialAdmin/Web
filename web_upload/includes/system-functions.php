@@ -1289,4 +1289,8 @@ function prepareSize($bytes, $precision = 2) {
 
     return round(pow(1024, $base - floor($base)), $precision) .' '. $suffixes[floor($base)] .'b';
 }
+
+function generateMsgBoxJS($title = "Успех!", $text = "Действие успешно выполнено", $color = "green", $redirect = "", $button = true) {
+    return sprintf('ShowBox("%s", "%s", "%s", "%s", %s)', $title, $text, $color, $redirect, $button?"true":"false");
+}
 ?>
