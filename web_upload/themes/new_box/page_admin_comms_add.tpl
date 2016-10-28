@@ -6,7 +6,7 @@
 <div class="card">
 	<div class="form-horizontal" role="form" id="add-group1">
 		<div class="card-header">
-			<h2>Добавление бана <small>За дополнительной информацией или помощью наведите курсор мыши на знак вопроса.</small></h2>
+			<h2>Добавление блокировки коммуникаций <small>За дополнительной информацией или помощью наведите курсор мыши на знак вопроса.</small></h2>
 		</div>
 		<div class="card-body card-padding p-b-0" id="group.details">
 			<div class="form-group m-b-5">
@@ -31,7 +31,7 @@
 			</div>
 			
 			<div class="form-group m-b-5">
-				<label for="type" class="col-sm-3 control-label">{help_icon title="Тип блокировки" message="Choose what to block - chat or voice"}Тип блокировки </label>
+				<label for="type" class="col-sm-3 control-label">{help_icon title="Тип блокировки" message="Выберите что блокировать-чат или микрофон"}Тип блокировки </label>
 				<div class="col-sm-2">
 					<select class="selectpicker" id="type" name="type">
 						<option value="1">Микрофон</option>
@@ -42,7 +42,7 @@
 			</div>
 			
 			<div class="form-group m-b-5">
-				<label for="listReason" class="col-sm-3 control-label">{help_icon title="Причина блокировки" message="Explain in detail, why this block is being made."} Причина блокировки</label>
+				<label for="listReason" class="col-sm-3 control-label">{help_icon title="Причина блокировки" message="Выберите причину, по которой хотите произвести блокировку."} Причина блокировки</label>
 				<div class="col-sm-6" id="dreason" style="display:none;">
 					<div class="fg-line">
 						<input type="text" TABINDEX=4 class="form-control" id="txtReason" name="txtReason" placeholder="Напишите свою причину бана...">
@@ -54,7 +54,7 @@
 						<optgroup label="Нарушение">
 							<option value="Непристойное общение">Непристойное общение</option>
 							<option value="Оскорбление игроков">Оскорбление игроков</option>
-							<option value="Admin disrespect">Неуважение администрации</option>
+							<option value="Неуважение администрации">Неуважение администрации</option>
 							<option value="Неприемлимое общение">Неприемлимое общение</option>
 							<option value="Торговля">Торговля</option>
 							<option value="Спам">Спам</option>
