@@ -1880,3 +1880,19 @@ function removeExpiredAdmins() {
 	
 	xajax_removeExpiredAdmins();
 }
+
+function ConvertSteamID_3to2(field) {
+	var f = document.getElementById(field);
+	if (f == undefined || f == null || f.value.indexOf("U:1:") == -1)
+		return;
+
+	var SID = f.value.split(":");
+	if (SID.length == 3) {
+		SID = SID[2];
+		SID = SID.replace("]", "");
+		SID = parseInt(SID);
+		var Ost = SID % 2;
+		SID = "STEAM_0:" + Ost + ":" + (SID-Ost)/2;
+		f.value = SID;
+	}
+}

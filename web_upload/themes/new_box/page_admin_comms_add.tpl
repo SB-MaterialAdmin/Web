@@ -114,7 +114,7 @@
 			
 		</div>
 		<div class="card-body card-padding text-center">
-			{sb_button text="Добавить блокировку" onclick="ProcessBan();" icon="<i class='zmdi zmdi-shield-security'></i>" class="bgm-green btn-icon-text" id="aban" submit=false}
+			{sb_button text="Добавить блокировку" onclick="ConvertSteamID_3to2('steam');ProcessBan();" icon="<i class='zmdi zmdi-shield-security'></i>" class="bgm-green btn-icon-text" id="aban" submit=false}
 				  &nbsp;
 			{sb_button text="Назад" onclick="history.go(-1)" icon="<i class='zmdi zmdi-undo'></i>" class="bgm-red btn-icon-text" id="aback"}
 		</div>
