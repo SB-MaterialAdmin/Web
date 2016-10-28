@@ -579,7 +579,7 @@ function StripQuotes($str)
 	return $str;
 }
 
-function CreateRedBox($title, $content)
+/*function CreateRedBox($title, $content)
 {
 	$text = '<div id="msg-red-debug" style="">
 	<i><img src="./images/warning.png" alt="Внимание" /></i>
@@ -599,6 +599,18 @@ function CreateGreenBox($title, $contnet)
 	' . $contnet . '</i>
 </div>';
 
+	echo $text;
+}
+*/
+function CreateRedBox($title, $content)
+{
+	$text = '<div class="alert alert-danger" id="msg-red-debug" role="alert"><h4>' . $title .'</h4><span class="p-l-10">' . $content . '</span></div>';
+	echo $text;
+}
+
+function CreateGreenBox($title, $content)
+{
+	$text = '<div class="alert alert-success" id="msg-green-dbg" role="alert"><h4>' . $title .'</h4><span class="p-l-10">' . $content . '</span></div>';
 	echo $text;
 }
 
