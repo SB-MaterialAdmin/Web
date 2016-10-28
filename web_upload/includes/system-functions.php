@@ -1291,6 +1291,6 @@ function prepareSize($bytes, $precision = 2) {
 }
 
 function generateMsgBoxJS($title = "Успех!", $text = "Действие успешно выполнено", $color = "green", $redirect = "", $button = true) {
-    return sprintf('ShowBox("%s", "%s", "%s", "%s", %s)', $title, $text, $color, $redirect, $button?"true":"false");
+    return sprintf('ShowBox("%s", "%s", "%s", "%s", %s)', htmlspecialchars($title), htmlspecialchars($text), $color, $redirect, $button?"true":"false");
 }
 ?>
