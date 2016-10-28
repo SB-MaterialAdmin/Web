@@ -3175,7 +3175,7 @@ function RemoveComment($cid, $ctype, $page)
 function ClearCache()
 {
 	$objResponse = new xajaxResponse();
-	global $userbank, $username;
+	global $userbank, $username, $theme;
 	if (!$userbank->HasAccess(ADMIN_OWNER|ADMIN_WEB_SETTINGS))
 	{
 		$objResponse->redirect("index.php?p=login&m=no_access", 0);
@@ -3183,13 +3183,7 @@ function ClearCache()
 		return $objResponse;
 	}
 
-	$cachedir = dir(SB_THEMES_COMPILE);
-	while (($entry = $cachedir->read()) !== false) {
-		if (is_file($cachedir->path.$entry)) {
-			unlink($cachedir->path.$entry);
-		}
-	}
-	$cachedir->close();
+	$theme->clear_compiled_tpl();
 
 	$objResponse->addScript("ShowBox('Кеш удалён', 'Кеш был успешно удалён!', 'green', '', true);");
 

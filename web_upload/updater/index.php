@@ -28,13 +28,8 @@
  define('IS_UPDATE', true);
  include "../init.php";
 //clear compiled themes
-$cachedir = dir(SB_THEMES_COMPILE);
-while (($entry = $cachedir->read()) !== false) {
-	if (is_file($cachedir->path.$entry)) {
-		unlink($cachedir->path.$entry);
-	}
-}
-$cachedir->close();
+$theme->clear_compiled_tpl();
+
  include INCLUDES_PATH . "/CUpdate.php";
  $updater = new CUpdater();
  
