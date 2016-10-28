@@ -775,6 +775,11 @@ function GetMapImage($map)
 */
 function CheckExt($filename, $ext)
 {
+	if (is_array($ext)) {
+		foreach ($ext as &$Ext)
+			if (CheckExt($filename, $Ext)) return true;
+		return false;
+	}
 	$filename = str_replace(chr(0), '', $filename);
 	$path_info = pathinfo($filename);
 	if(strtolower($path_info['extension']) == strtolower($ext))
