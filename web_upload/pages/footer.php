@@ -33,9 +33,7 @@ global $theme, $userbank;
 $theme->assign('UPDATE_NUM', $GLOBALS['config']['config.version']);
 $theme->assign('THEME_VERSION', theme_version);
 $theme->assign('THEME_LINK', theme_link);
-$theme->assign('SB_REV', 		defined('SB_GIT')?"-git".GetGITRev():'');
 $theme->assign('SB_VERSION', 	SB_VERSION);
-$theme->assign('SB_QUOTE', 		CreateQuote());
 $theme->display('page_footer.tpl');
 
 if(isset($_GET['p']))
