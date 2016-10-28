@@ -158,7 +158,7 @@ else
 			$message .= "Игрок: ".$_POST['PlayerName']." (".$_POST['SteamID'].")\nЗабаненый: ".$protadmin['user']."\nСообщение: ".$_POST['BanReason']."\n\n";
 			$message .= "Кликните по ссылке чтобы увидеть протест бана.\n\nhttp://" . $_SERVER['HTTP_HOST'] . $requri . "?p=admin&c=bans#^1";
 			if($userbank->HasAccess(ADMIN_OWNER|ADMIN_BAN_PROTESTS, $admin['aid']) && $userbank->HasAccess(ADMIN_NOTIFY_PROTEST, $admin['aid']))
-				mail($admin['email'], "[SourceBans] Добавлен протест бана", $message, $headers);
+				smtpmail($admin['email'], "[SourceBans] Добавлен протест бана", $message, $headers);
 		}
 
 		CreateGreenBox("Успешно", "Ваш протест был отправлен.");
