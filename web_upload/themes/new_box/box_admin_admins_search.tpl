@@ -88,7 +88,7 @@
 								</div>
 							</td>
 							<td class="p-b-5">
-								<div class="p-t-5"><label for="webgroup" onclick="$('webgroup_').checked = true">Web Group</label></div>
+								<div class="p-t-5"><label for="webgroup" onclick="$('webgroup_').checked = true">Группа ВЕБ разрешений</label></div>
 							</td>
 							<td class="p-b-5">
 								<div class="col-sm-12 p-r-0 p-l-0">
@@ -110,7 +110,7 @@
 								</div>
 							</td>
 							<td class="p-b-5">
-								<div class="p-t-5"><label for="srvadmgroup" onclick="$('srvadmgroup_').checked = true">Serveradmin Group</label></div>
+								<div class="p-t-5"><label for="srvadmgroup" onclick="$('srvadmgroup_').checked = true">Группа серверных разрешений</label></div>
 							</td>
 							<td class="p-b-5">
 								<div class="col-sm-12 p-r-0 p-l-0">
@@ -132,7 +132,7 @@
 								</div>
 							</td>
 							<td class="p-b-5">
-								<div class="p-t-5"><label for="srvgroup" onclick="$('srvgroup_').checked = true">Server Group</label></div>
+								<div class="p-t-5"><label for="srvgroup" onclick="$('srvgroup_').checked = true">Группа серверов</label></div>
 							</td>
 							<td class="p-b-5">
 								<div class="col-sm-12 p-r-0 p-l-0 select">
@@ -154,7 +154,7 @@
 								</div>
 							</td>
 							<td class="p-b-5">
-								<div class="p-t-5"><label for="admwebflag" onclick="$('admwebflags_').checked = true">Web Permissions</label></div>
+								<div class="p-t-5"><label for="admwebflag" onclick="$('admwebflags_').checked = true">ВЕБ разрешения</label></div>
 							</td>
 							<td class="p-b-5">
 								<div class="col-sm-12 p-r-0 p-l-0 select">
@@ -176,7 +176,7 @@
 								</div>
 							</td>
 							<td class="p-b-5">
-								<div class="p-t-5"><label for="admwebflag" onclick="$('admsrvflags_').checked = true">Server Permissions</label></div>
+								<div class="p-t-5"><label for="admwebflag" onclick="$('admsrvflags_').checked = true">Серверные разрешения</label></div>
 							</td>
 							<td class="p-b-5">
 								<div class="col-sm-12 p-r-0 p-l-0 select">
@@ -198,13 +198,13 @@
 								</div>
 							</td>
 							<td class="p-b-5">
-								<div class="p-t-5"><label for="admin_on_" onclick="$('admin_on_').checked = true">Server</label></div>
+								<div class="p-t-5"><label for="admin_on_" onclick="$('admin_on_').checked = true">Сервер</label></div>
 							</td>
 							<td class="p-b-5">
 								<div class="col-sm-12 p-r-0 p-l-0 select">
 									<select class="form-control" id="server" onmouseup="$('admin_on_').checked = true">
 										{foreach from="$server_list" item="server}
-											<option value="{$server.sid}" id="ss{$server.sid}">Retrieving Hostname... ({$server.ip}:{$server.port})</option>
+											<option value="{$server.sid}" id="ss{$server.sid}">Получение имени сервера... ({$server.ip}:{$server.port})</option>
 										{/foreach}
 									</select>
 								</div>
