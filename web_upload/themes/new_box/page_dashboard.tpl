@@ -4,7 +4,7 @@
 		<div class="card-header">
 			<h2>Главная<small>Ниже указана главная информация о данном ресурсе.</small></h2>
 		</div>
-		<div class="card-body card-padding">
+		<div class="card-body card-padding clearfix">
 			<div class="col-sm-8">
 				<blockquote class="m-b-25">
 					<p>
