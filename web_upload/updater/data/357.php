@@ -3,7 +3,7 @@
 			`expired` 	int(11) NULL,
 			`skype`		varchar(128) NULL,
 			`comment`	varchar(128) NULL,
-			`vk`		varchar(128) NULL";);
+			`vk`		varchar(128) NULL");
 
 	if(!$_admins)
 		return false;
