@@ -1,9 +1,9 @@
 <?php
-	$_admins = $GLOBALS['db']->Execute("ALTER TABLE `" . DB_PREFIX . "_admins` ADD 
-			`expired` 	int(11) NULL,
-			`skype`		varchar(128) NULL,
-			`comment`	varchar(128) NULL,
-			`vk`		varchar(128) NULL");
+	$_admins = $GLOBALS['db']->Execute("ALTER TABLE `" . DB_PREFIX . "_admins` 
+			ADD `expired` 	int(11) NULL,
+			ADD `skype`		varchar(128) NULL,
+			ADD `comment`	varchar(128) NULL,
+			ADD `vk`		varchar(128) NULL;");
 
 	if(!$_admins)
 		return false;
