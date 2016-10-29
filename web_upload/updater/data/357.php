@@ -38,7 +38,8 @@
             "UPDATE `" . DB_PREFIX . "_settings` SET `value` = '0' WHERE `setting` = 'config.enableprotest';",
             "UPDATE `" . DB_PREFIX . "_settings` SET `value` = '0' WHERE `setting` = 'config.enablesubmit';",
             "UPDATE `" . DB_PREFIX . "_settings` SET `value` = 'd.m.Y в H:i' WHERE `setting` = 'config.dateformat';",
-            "UPDATE `" . DB_PREFIX . "_settings` SET `value` = 'new_box' WHERE `setting` = 'config.theme';"];
+            "UPDATE `" . DB_PREFIX . "_settings` SET `value` = 'new_box' WHERE `setting` = 'config.theme';",
+            "UPDATE `" . DB_PREFIX . "_admins` SET `expired` = 0"];
 	foreach ($qs as &$query) {
         if (!$GLOBALS['db']->Execute($query)) return false;
 	}
