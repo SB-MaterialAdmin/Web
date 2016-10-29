@@ -1,4 +1,48 @@
 {if $dashboard_text == "<p><br></p>" || $dashboard_text == ""}
+{if $dashboard_info_block == "1"}
+	<div class="card go-social">
+		<div class="card-header">
+			<h2>Главная<small>Ниже указана главная информация о данном ресурсе.</small></h2>
+		</div>
+		<div class="card-body card-padding">
+			<div class="col-sm-8">
+				<blockquote class="m-b-25">
+					<p>
+						{if $dashboard_info_block_text != ""}{$dashboard_info_block_text}{else}Информация не указана. :({/if}
+					</p>
+					{if $dashboard_info_block_text_p != ""}<footer>{$dashboard_info_block_text_p}</footer>{/if}
+				</blockquote>
+			</div>
+			<div class="col-sm-4">
+				<blockquote class="m-b-25">
+					<p>Мы в социальных сетях:</p>
+				</blockquote>
+				<div class="col-sm-12">
+					{if $dashboard_info_steam !=""}
+						<a class="col-xs-3" href="{$dashboard_info_steam}">
+							<img src="themes/new_box/img/social/steam-128.png" class="img-responsive" alt="">
+						</a>
+					{/if}
+					{if $dashboard_info_vk !=""}
+						<a class="col-xs-3" href="{$dashboard_info_vk}">
+						<img src="themes/new_box/img/social/vk-128.png" class="img-responsive" alt="">
+					</a>
+					{/if}
+					{if $dashboard_info_yout !=""}
+						<a class="col-xs-3" href="{$dashboard_info_yout}">
+						<img src="themes/new_box/img/social/youtube-128.png" class="img-responsive" alt="">
+					</a>
+					{/if}
+					{if $dashboard_info_face !=""}
+						<a class="col-xs-3" href="{$dashboard_info_face}">
+						<img src="themes/new_box/img/social/facebook-128.png" class="img-responsive" alt="">
+					</a>
+					{/if}
+				</div>
+			</div>
+		</div>
+	</div>
+{/if}
 {else}
 	<div class="card go-social">
 		<div class="card-header">
