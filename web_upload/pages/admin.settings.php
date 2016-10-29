@@ -275,12 +275,7 @@ else
 												(" . (int)$_POST['block_home'] . ", 'config.home.comms'),
 												(".(int)$admin_list_en.", 'page.adminlist'),
 												(".(int)$vay4_en.", 'page.vay4er')", array($_POST['template_title'], $_POST['template_logo'], $_POST['config_dateformat'], $_POST['config_dateformat2'], $_POST['dash_intro_text'], $tz_string, $summertime, $cureason));
-
-<<<<<<< HEAD
-				?><script>setTimeout("ShowBox('Настройки обновлены', 'Изменения были успешно применены', 'green', 'index.php?p=admin&c=settings', false, 2500);", 1200);</script><?php 
-=======
 				?><script>setTimeout("ShowBox('Главные настройки изменены', 'Изменения были успешно применены!', 'green', 'index.php?p=admin&c=settings', false, 2500);", 1200);</script><?php 
->>>>>>> origin/master
 			}else{
 				CreateRedBox("Ошибка", $errors); 
 			}
@@ -310,12 +305,7 @@ else
 											(" . (int)$alladmininfos . ", 'config.changeadmininfos'),
 											(" . (int)$adminrehash . ", 'config.enableadminrehashing')");
 											
-
-<<<<<<< HEAD
-			?><script>setTimeout("ShowBox('Настройки обновлены', 'Изменения были успешно применены', 'green', 'index.php?p=admin&c=settings');", 1200);</script><?php 
-=======
-			?><script>setTimeout("ShowBox('Настройки опций изменены', 'Изменения были успешно применены!', 'green', 'index.php?p=admin&c=settings');", 1200);</script><?php 
->>>>>>> origin/master
+			?><script>setTimeout("ShowBox('Настройки опций изменены', 'Изменения были успешно применены!', 'green', 'index.php?p=admin&c=settings');", 1200);</script><?php
 		}
 	}
 
