@@ -37,6 +37,20 @@ if(isset($_GET['m']) && $_GET['m'] == "no_access")
 	
 //$theme->assign('redir', "DoLogin('".(isset($_SESSION['q'])?$_SESSION['q']:'')."');");
 $theme->assign('redir', "DoLogin('p=account'); '".(isset($_SESSION['q'])?$_SESSION['q']:'')."';");
+
+// === Authorization by type - START ===
+/**
+ * Available AuthType
+ *
+ * 0 - Default (login-password and Steam)
+ * 1 - Only login-password
+ * 2 - Only Steam
+ **/
+$at = isset($GLOBALS['config']['auth.type'])?$GLOBALS['config']['auth.type']:0;
+$theme->assign('steam_allowed', ($at != 1));
+$theme->assign('login_allowed', ($at != 2));
+// === Authorization by type -  END  ===
+
 $theme->left_delimiter = "-{";
 $theme->right_delimiter = "}-";
 $theme->display('page_login.tpl');
