@@ -36,6 +36,10 @@
 	
 	if(!$_settings)
 		return false;
+
+	$ret = $GLOBALS['db']->Execute("UPDATE `" . DB_PREFIX . "_admins` SET `expired` = '0' WHERE `aid` = '1'");
+	if(!$ret)
+		return false;
 	
 	return true;
 ?>
