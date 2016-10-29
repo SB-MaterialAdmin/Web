@@ -14,10 +14,6 @@ CREATE TABLE IF NOT EXISTS `{prefix}_admins` (
   `srv_flags` varchar(64) default NULL,
   `srv_password` varchar(128) default NULL,
   `lastvisit` int(11) NULL,
-  `expired` int(11) NULL,
-  `skype`	varchar(128) NULL,
-  `comment`	varchar(128) NULL,
-  `vk`	varchar(128) NULL,
   PRIMARY KEY  (`aid`),
   UNIQUE KEY `user` (`user`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
