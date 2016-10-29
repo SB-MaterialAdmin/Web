@@ -17,7 +17,7 @@
 									</div>
                                 
                                 <div class="lv-footer ms-reply">
-                                    <textarea id="cmd" placeholder="Комманда на выполнение...."></textarea>
+                                    <textarea id="cmd" placeholder="Команда на выполнение...."></textarea>
                                     <button onclick="SendRcon();" id="rcon_btn"><i class="zmdi zmdi-mail-send"></i></button>
                                 </div>
                             </div>
