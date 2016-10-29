@@ -2816,14 +2816,14 @@ function SendRcon($sid, $command, $output)
 	}
 	if($command == "clr")
 	{
-		$objResponse->addAssign("rcon_con", "innerHTML",  "");
+		$objResponse->addAssign("rcon_con", "innerHTML",  "<div class='lv-item media'><div class='lv-avatar bgm-red pull-left'>R</div><div class='media-body'><div class='ms-item' style='display: block;max-width: 100%;'>************************************************************<br />*&nbsp;SourceBans RCON console<br />*&nbsp;Type your comand in the box below and hit enter<br />*&nbsp;Type 'clr' to clear the console<br />************************************************************</div></div></div>");
 		$objResponse->addScript("scroll.toBottom(); $('cmd').value=''; $('cmd').disabled='';$('rcon_btn').disabled=''");
 		return $objResponse;
 	}
     
     if(stripos($command, "rcon_password") !== false)
 	{
-        $objResponse->addAppend("rcon_con", "innerHTML",  "> Ошибка: Вы используете консоль. Не пытайтесь подобрать RCON пароль!<br />");
+        $objResponse->addAppend("rcon_con", "innerHTML",  "<div class='lv-item media p-b-5 p-t-5'><div class='lv-avatar bgm-red pull-left'>R</div><div class='media-body'><div class='ms-item' style='display: block;max-width: 100%;'> > Ошибка: Вы используете консоль. Не пытайтесь подобрать RCON пароль!</div></div></div>");
 		$objResponse->addScript("scroll.toBottom(); $('cmd').value=''; $('cmd').disabled='';$('rcon_btn').disabled=''");
 		return $objResponse;
 	}
@@ -2833,14 +2833,14 @@ function SendRcon($sid, $command, $output)
 	$rcon = $GLOBALS['db']->GetRow("SELECT ip, port, rcon FROM `".DB_PREFIX."_servers` WHERE sid = ".$sid." LIMIT 1");
 	if(empty($rcon['rcon']))
 	{
-		$objResponse->addAppend("rcon_con", "innerHTML",  "> Ошибка: Нет RCON пароля!<br />Вы должны добавить RCON пароль для этого сервера на странице 'редактирования серверов' <br /> чтобы использовать консоль!<br />");
+		$objResponse->addAppend("rcon_con", "innerHTML", "<div class='lv-item media p-b-5 p-t-5'><div class='lv-avatar bgm-red pull-left'>R</div><div class='media-body'><div class='ms-item' style='display: block;max-width: 100%;'> > Ошибка: Нет RCON пароля!<br />Вы должны добавить RCON пароль для этого сервера на странице 'редактирования серверов' <br /> чтобы использовать консоль!</div></div></div>");
 		$objResponse->addScript("scroll.toBottom(); $('cmd').value='Задать РКОН пароль.'; $('cmd').disabled=true; $('rcon_btn').disabled=true");
 		return $objResponse;
 	}
     if(!$test = @fsockopen($rcon['ip'], $rcon['port'], $errno, $errstr, 2))
     {
         @fclose($test);
-		$objResponse->addAppend("rcon_con", "innerHTML",  "> Ошибка: невозможно соединиться с сервером!<br />");
+		$objResponse->addAppend("rcon_con", "innerHTML", "<div class='lv-item media p-b-5 p-t-5'><div class='lv-avatar bgm-red pull-left'>R</div><div class='media-body'><div class='ms-item' style='display: block;max-width: 100%;'> > Ошибка: невозможно соединиться с сервером!</div></div></div>");
 		$objResponse->addScript("scroll.toBottom(); $('cmd').value=''; $('cmd').disabled='';$('rcon_btn').disabled=''");
 		return $objResponse;
 	}
@@ -2850,7 +2850,7 @@ function SendRcon($sid, $command, $output)
 	if(!$r->Auth())
 	{
 		$GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_servers SET rcon = '' WHERE sid = '".$sid."';");
-		$objResponse->addAppend("rcon_con", "innerHTML",  "> Ошибка: неверный РКОН пароль!<br />Вы должны изменить РКОН пароль для этого сервера.<br /> Если Вы продолжите использовать консоль с неверным РКОН паролем, <br />сервер заблокирует соединение!<br />");
+		$objResponse->addAppend("rcon_con", "innerHTML", "<div class='lv-item media p-b-5 p-t-5'><div class='lv-avatar bgm-red pull-left'>R</div><div class='media-body'><div class='ms-item' style='display: block;max-width: 100%;'> > Ошибка: неверный РКОН пароль!<br />Вы должны изменить РКОН пароль для этого сервера.<br /> Если Вы продолжите использовать консоль с неверным РКОН паролем, <br />сервер заблокирует соединение!</div></div></div>");
 		$objResponse->addScript("scroll.toBottom(); $('cmd').value='Сменить РКОН пароль.'; $('cmd').disabled=true; $('rcon_btn').disabled=true");
 		return $objResponse;
 	}
@@ -2862,16 +2862,20 @@ function SendRcon($sid, $command, $output)
 	{
 		if($output)
 		{
-			$objResponse->addAppend("rcon_con", "innerHTML",  "-> $command<br />");
-			$objResponse->addAppend("rcon_con", "innerHTML",  "Команда выполнена.<br />");
+			//$objResponse->addAppend("rcon_con", "innerHTML",  "-> $command<br />");
+			//$objResponse->addAppend("rcon_con", "innerHTML",  "Команда выполнена.<br />");
+			$objResponse->addAppend("rcon_con", "innerHTML",  "<div class='lv-item media right p-b-5 p-t-5'><div class='lv-avatar bgm-orange pull-right'>A</div><div class='media-body'><div class='ms-item'> $command </div><small class='ms-date'><i class='zmdi zmdi-time'></i> ".date("d/m/Y в H:i")."</small></div></div>");
+			$objResponse->addAppend("rcon_con", "innerHTML",  "<div class='lv-item media p-b-5 p-t-5'><div class='lv-avatar bgm-red pull-left'>R</div><div class='media-body'><div class='ms-item' style='display: block;max-width: 100%;'> Комманда была отправлена, но ответа не последовало... :C </div></div></div>");
 		}
 	}
 	else
 	{
 		if($output)
 		{
-			$objResponse->addAppend("rcon_con", "innerHTML",  "-> $command<br />");
-			$objResponse->addAppend("rcon_con", "innerHTML",  "$ret<br />");
+			//$objResponse->addAppend("rcon_con", "innerHTML",  "-> $command<br />");
+			//$objResponse->addAppend("rcon_con", "innerHTML",  "$ret<br />");
+			$objResponse->addAppend("rcon_con", "innerHTML",  "<div class='lv-item media right p-b-5 p-t-5'><div class='lv-avatar bgm-orange pull-right'>A</div><div class='media-body'><div class='ms-item'> $command </div><small class='ms-date'><i class='zmdi zmdi-time'></i> ".date("d/m/Y в H:i")."</small></div></div>");
+			$objResponse->addAppend("rcon_con", "innerHTML",  "<div class='lv-item media p-b-5 p-t-5'><div class='lv-avatar bgm-red pull-left'>R</div><div class='media-body'><div class='ms-item' style='display: block;max-width: 100%;'> $ret </div></div></div>");
 		}
 	}
 	$objResponse->addScript("scroll.toBottom(); $('cmd').value=''; $('cmd').disabled=''; $('rcon_btn').disabled=''");
