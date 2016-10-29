@@ -10,7 +10,7 @@
 											<div class="lv-avatar bgm-red pull-left">R</div>
 											<div class="media-body">
 												<div class="ms-item" style="display: block;max-width: 100%;">
-													************************************************************<br />*&nbsp;SourceBans RCON console<br />*&nbsp;Type your comand in the box below and hit enter<br />*&nbsp;Type 'clr' to clear the console<br />************************************************************
+													************************************************************<br />*&nbsp;SourceBans РКОН консоль<br />*&nbsp;Введите команду в поле ниже и нажмите Enter<br />*&nbsp;Введите 'clr' для очистки консоли<br />************************************************************
 												</div>
 											</div>
 										</div>

@@ -2816,7 +2816,7 @@ function SendRcon($sid, $command, $output)
 	}
 	if($command == "clr")
 	{
-		$objResponse->addAssign("rcon_con", "innerHTML",  "<div class='lv-item media'><div class='lv-avatar bgm-red pull-left'>R</div><div class='media-body'><div class='ms-item' style='display: block;max-width: 100%;'>************************************************************<br />*&nbsp;SourceBans RCON console<br />*&nbsp;Type your comand in the box below and hit enter<br />*&nbsp;Type 'clr' to clear the console<br />************************************************************</div></div></div>");
+		$objResponse->addAssign("rcon_con", "innerHTML",  "<div class='lv-item media'><div class='lv-avatar bgm-red pull-left'>R</div><div class='media-body'><div class='ms-item' style='display: block;max-width: 100%;'>************************************************************<br />*&nbsp;SourceBans РКОН консоль<br />*&nbsp;Введите команду в поле ниже и нажмите Enter<br />*&nbsp;Введите 'clr' для очистки консоли<br />************************************************************</div></div></div>");
 		$objResponse->addScript("scroll.toBottom(); $('cmd').value=''; $('cmd').disabled='';$('rcon_btn').disabled=''");
 		return $objResponse;
 	}
@@ -2857,6 +2857,7 @@ function SendRcon($sid, $command, $output)
 	$ret = $r->rconCommand($command);
 
 
+	$textAppend = "<div class='lv-item media right p-b-5 p-t-5'><div class='lv-avatar bgm-orange pull-right'><img src='".GetUserAvatar($userbank->getProperty("authid"))."' /></div><div class='media-body'><div class='ms-item'> $command </div><small class='ms-date'><i class='zmdi zmdi-time'></i> ".date("d/m/Y в H:i")."</small></div></div>";
 	$ret = str_replace("\n", "<br />", $ret);
 	if(empty($ret))
 	{
@@ -2864,8 +2865,7 @@ function SendRcon($sid, $command, $output)
 		{
 			//$objResponse->addAppend("rcon_con", "innerHTML",  "-> $command<br />");
 			//$objResponse->addAppend("rcon_con", "innerHTML",  "Команда выполнена.<br />");
-			$objResponse->addAppend("rcon_con", "innerHTML",  "<div class='lv-item media right p-b-5 p-t-5'><div class='lv-avatar bgm-orange pull-right'>A</div><div class='media-body'><div class='ms-item'> $command </div><small class='ms-date'><i class='zmdi zmdi-time'></i> ".date("d/m/Y в H:i")."</small></div></div>");
-			$objResponse->addAppend("rcon_con", "innerHTML",  "<div class='lv-item media p-b-5 p-t-5'><div class='lv-avatar bgm-red pull-left'>R</div><div class='media-body'><div class='ms-item' style='display: block;max-width: 100%;'> Комманда была отправлена, но ответа не последовало... :C </div></div></div>");
+			$textAppend .= "<div class='lv-item media p-b-5 p-t-5'><div class='lv-avatar bgm-red pull-left'>R</div><div class='media-body'><div class='ms-item' style='display: block;max-width: 100%;'> Команда была отправлена, но ответа не последовало... :C </div></div></div>";
 		}
 	}
 	else
@@ -2874,12 +2874,12 @@ function SendRcon($sid, $command, $output)
 		{
 			//$objResponse->addAppend("rcon_con", "innerHTML",  "-> $command<br />");
 			//$objResponse->addAppend("rcon_con", "innerHTML",  "$ret<br />");
-			$objResponse->addAppend("rcon_con", "innerHTML",  "<div class='lv-item media right p-b-5 p-t-5'><div class='lv-avatar bgm-orange pull-right'>A</div><div class='media-body'><div class='ms-item'> $command </div><small class='ms-date'><i class='zmdi zmdi-time'></i> ".date("d/m/Y в H:i")."</small></div></div>");
-			$objResponse->addAppend("rcon_con", "innerHTML",  "<div class='lv-item media p-b-5 p-t-5'><div class='lv-avatar bgm-red pull-left'>R</div><div class='media-body'><div class='ms-item' style='display: block;max-width: 100%;'> $ret </div></div></div>");
+			$textAppend .= "<div class='lv-item media p-b-5 p-t-5'><div class='lv-avatar bgm-red pull-left'>R</div><div class='media-body'><div class='ms-item' style='display: block;max-width: 100%;'> $ret </div></div></div>";
 		}
 	}
+	$objResponse->addAppend("rcon_con", "innerHTML", $textAppend);
 	$objResponse->addScript("scroll.toBottom(); $('cmd').value=''; $('cmd').disabled=''; $('rcon_btn').disabled=''");
-	$log = new CSystemLog("m", "РКОН отправлен", "РКОН был отправлен на сервер (".$rcon['ip'].":".$rcon['port'].") Команда: $command", true, true);
+	$log = new CSystemLog("m", "РКОН отправлен", "РКОН был отправлен на сервер (".$rcon['ip'].":".$rcon['port']."). Команда: $command", true, true);
 	return $objResponse;
 }
 
