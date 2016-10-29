@@ -1,32 +1,28 @@
 -{if NOT $permission_rcon}-
-	Доступ запрещен!
+	Access Denied!
 -{else}-
-<div id="admin-page-content">
-<div id="1">
+<div class="card m-b-0" id="admin-page-content">
+                        
+                            <div class="listview lv-message" id="rcon">
 
-
-<h3>RCON консоль</h3>
-<div align="center" width="90%">
-<div id="rcon" style="overflow:auto;
-			background-color:#efefef;
-			border: 1px solid #999;
-			padding: 3px;
-			height: 250px;
-			width: 90%;" align="left">
-
-<pre>
-
-
-
-<div id="rcon_con">***********************************************************<br />**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**<br />*&nbsp;SourceBans RCON console&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />*&nbsp;Введите команду ниже и нажмите "Enter"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />*&nbsp;Введите 'clr' чтобы очистить консоль&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**<br />***********************************************************<br />
-</div>
-</pre>
-</div>
-<br />
-Команда: <input type="text" style="font-family:verdana, tahoma, arial;font-size:10px;width:500px" id="cmd"> 
-<input type="button" onclick="SendRcon();" id="rcon_btn" value="Отправить">
-</div>
-</div></div>
+									<div id="rcon_con" class="p-b-20">
+										<div class="lv-item media">
+											<div class="lv-avatar bgm-red pull-left">R</div>
+											<div class="media-body">
+												<div class="ms-item" style="display: block;max-width: 100%;">
+													************************************************************<br />*&nbsp;SourceBans RCON console<br />*&nbsp;Type your comand in the box below and hit enter<br />*&nbsp;Type 'clr' to clear the console<br />************************************************************
+												</div>
+											</div>
+										</div>
+									</div>
+                                
+                                <div class="lv-footer ms-reply">
+                                    <textarea id="cmd" placeholder="Комманда на выполнение...."></textarea>
+                                    <button onclick="SendRcon();" id="rcon_btn"><i class="zmdi zmdi-mail-send"></i></button>
+                                </div>
+                            </div>
+                    </div>
+					
 <script>
 
 $E('html').onkeydown = function(event){
@@ -37,7 +33,7 @@ $E('html').onkeydown = function(event){
 function SendRcon()
 {
 	xajax_SendRcon('-{$id}-', $('cmd').value, true);
-	 $('cmd').value='Выполнение, ждите...'; $('cmd').disabled='true'; $('rcon_btn').disabled='true';
+	 $('cmd').value='Выполняю, пожалуйста, подождите...'; $('cmd').disabled='true'; $('rcon_btn').disabled='true';
 	 
 }
 </script>
