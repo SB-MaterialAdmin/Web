@@ -95,7 +95,7 @@ if(isset($_POST['address']))
 	}
 	
 	// rcon
-	if($_POST['rcon'] != '+-#*_' && $_POST['rcon'] != $_POST['rcon2'])
+	if($_POST['rcon'] != '*Скрыт*' && $_POST['rcon'] != $_POST['rcon2'])
 	{
 		$error++;
 		$errorScript .= "$('rcon2.msg').innerHTML = 'The passwords don't match.';";
@@ -148,7 +148,7 @@ if(isset($_POST['address']))
 										WHERE `sid` = ?", array($ip, (int)$_POST['port'], (int)$_POST['mod'], $enabled, (int)$_GET['id']));
 
 	// don't change rcon password if not changed
-	if($_POST['rcon'] != '+-#*_')
+	if($_POST['rcon'] != '*Скрыт*')
 	{
 		$edit = $GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_servers SET
 										`rcon` = ?

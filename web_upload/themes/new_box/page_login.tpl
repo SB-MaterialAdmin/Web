@@ -2,7 +2,7 @@
 <div class="card">
                         <form class="form-horizontal" role="form">
                             <div class="card-header">
-                                <h2>Авторизация <small>-{if $steam_allowed && $login_allowed}-Используйте ваши данные для входа в панель управления, либо авторизируйтесь через стим.-{else}--{if $steam_allowed}-Авторизуйтесь через Steam.-{elseif $login_allowed}-Используйте ваши данные для входа в панель управления.-{/if}--{/if}-</small></h2>
+                                <h2>Авторизация <small>-{if $steam_allowed and $login_allowed}-Используйте ваши данные для входа в панель управления, либо авторизируйтесь через стим.-{else}--{if $steam_allowed}-Авторизуйтесь через Steam.-{elseif $login_allowed}-Используйте ваши данные для входа в панель управления.-{/if}--{/if}-</small></h2>
                             </div>
                             
                             <div class="card-body card-padding" >
@@ -43,13 +43,14 @@
 											-{sb_button text="Забыл пароль" onclick="window.location.href='index.php?p=lostpassword'" icon="<i class='zmdi zmdi-help-outline'></i>" class="btn-icon-text bgm-orange"}-
 										</div>
 									</div>
-									
+									-{if $steam_allowed}-
 									<div class="form-group">
-										<label class="col-sm-2 control-label">Другие способы</label>
+										-{if $login_allowed}-<label class="col-sm-2 control-label">Другие способы</label>-{/if}-
 										<div class="col-sm-10 p-t-10">
 											-{sb_button text="Войти через STEAM" onclick="window.location.href='steam_aut.php?login'" icon="<i class='zmdi zmdi-steam'></i>" class="btn-icon-text bgm-bluegray"}-
 										</div>
 									</div>
+									-{/if}-
 								</div>
                         </form>
 						</div>
