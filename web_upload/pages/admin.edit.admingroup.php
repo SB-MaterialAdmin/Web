@@ -25,16 +25,16 @@
 //
 // *************************************************************************
 
-if(!defined("IN_SB")){echo "You should not be here. Only follow links!";die();} 
+if(!defined("IN_SB")){echo "Ошибка доступа!";die();} 
 global $userbank, $theme;
 
 if(!isset($_GET['id']))
 {
 	echo '<div id="msg-red" >
 	<i><img src="./images/warning.png" alt="Warning" /></i>
-	<b>Error</b>
+	<b>Ошибка</b>
 	<br />
-	No admin id specified. Please only follow links
+	ID администратора не указан.
 </div>';
 	PageDie();
 }
@@ -54,12 +54,12 @@ if(!$userbank->HasAccess(ADMIN_OWNER|ADMIN_EDIT_ADMINS))
 
 if(!$userbank->GetProperty("user", $_GET['id']))
 {
-	$log = new CSystemLog("e", "Getting admin data failed", "Can't find data for admin with id '".$_GET['id']."'");
+	$log = new CSystemLog("e", "Получение данных администратора не удалось", "Не могу найти данные для администратора с идентификатором '".$_GET['id']."'");
 	echo '<div id="msg-red" >
 	<i><img src="./images/warning.png" alt="Warning" /></i>
-	<b>Error</b>
+	<b>Ошибка</b>
 	<br />
-	Error getting current data.</div>';
+	Ошибка получения текущих данных.</div>';
 	PageDie();
 }
 
@@ -81,7 +81,7 @@ if(isset($_POST['wg']) || isset($_GET['wg']) || isset($_GET['sg']))
 	$email = $GLOBALS['userbank']->GetProperty('email', $_GET['id']);
 	if($_POST['wg'] > 0 && (empty($password) || empty($email)))
 	{
-		echo '<script>setTimeout(\'ShowBox("Error", "Admins have to have a password and email set in order to get web permissions.<br /><a href=\"index.php?p=admin&c=admins&o=editdetails&id=' . $_GET['id'] . '\" title=\"Edit Admin Details\">Set the details</a> first and try again.", "red");\', 1350);</script>';
+		echo '<script>setTimeout(\'ShowBox("Ошибка", "Администраторы должны иметь пароль и адрес электронной почты для того, чтобы получить веб-разрешения.<br /><a href=\"index.php?p=admin&c=admins&o=editdetails&id=' . $_GET['id'] . '\" title=\"Редактировать детали Администратора\">Измените детали</a> сначала и попробуйте снова.", "red");\', 1350);</script>';
 	}
 	else
 	{
@@ -129,13 +129,13 @@ if(isset($_POST['wg']) || isset($_GET['wg']) || isset($_GET['sg']))
 					$allservers[] = $access['sid'];
 				}
 			}
-			echo '<script>setTimeout(\'ShowRehashBox("'.implode(",", $allservers).'", "Admin updated", "The admin has been updated successfully", "green", "index.php?p=admin&c=admins");TabToReload();\', 1350);</script>';
+			echo '<script>setTimeout(\'ShowRehashBox("'.implode(",", $allservers).'", "Администратор обновлен", "Детали админа были успешно обновлены", "green", "index.php?p=admin&c=admins");TabToReload();\', 1350);</script>';
 		}
 		else
-			echo '<script>setTimeout(\'ShowBox("Admin updated", "The admin has been updated successfully", "green", "index.php?p=admin&c=admins");TabToReload();\', 1350);</script>';
+			echo '<script>setTimeout(\'ShowBox("Администратор обновлен", "Детали админа были успешно обновлены", "green", "index.php?p=admin&c=admins");TabToReload();\', 1350);</script>';
 		
 		$admname = $GLOBALS['db']->GetRow("SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = ?", array((int)$_GET['id']));
-		$log = new CSystemLog("m", "Admin's Groups Updated", "Admin (" . $admname['user'] . ") groups has been updated");
+		$log = new CSystemLog("m", "Группа админа обновлена", "Группа админа (" . $admname['user'] . ") была обновлена");
 	}
 }
 
