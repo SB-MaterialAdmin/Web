@@ -650,7 +650,7 @@ while (!$res->EOF)
 			}
 		}
 		else
-			$comment = "None";
+			$comment = "Нет";
 
 		$data['commentdata'] = $comment;
 	}
