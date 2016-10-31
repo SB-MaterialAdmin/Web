@@ -32,7 +32,7 @@ define('theme_name', "SourceBans Theme (DeluxeEdition)");
 define('theme_author', "ASTRO & XaH JoB & Vampir & SAZONISCHE & NoTiCE & CrazyHackGUT");
 
 // Set the version of the theme here
-define('theme_version', "1.1.4");
+define('theme_version', "1.1.5 Not Stabled(In developing)");
 
 // Set the link of the theme here
 define('theme_link', "http://hlmod.ru/threads/alpha-material-admin-refork-na-osnove-sb-1-5-4-7-bootstrap-3.36382/");
