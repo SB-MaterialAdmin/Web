@@ -42,7 +42,6 @@ INSERT INTO `{prefix}_settings` (`setting`, `value`) VALUES
 ('config.exportpublic', '0'),
 ('config.enablekickit', '1'),
 ('config.dateformat', 'd.m.Y в H:i'),
-('config.dateformat_ver2', 'd.m.Y'),
 ('config.theme', 'new_box'),
 ('config.defaultpage', '0'),
 ('config.timezone', '0'),
@@ -51,23 +50,7 @@ INSERT INTO `{prefix}_settings` (`setting`, `value`) VALUES
 ('config.enablefriendsbanning', '0'),
 ('config.enableadminrehashing', '1'),
 ('protest.emailonlyinvolved', '0'),
-('config.text_home', 'Добро пожаловать на сайт игрового портала: AZAZA'),
-('config.text_mon', 'У вас есть возможность управлять игроками через мониторинг(test)'),
-('config.text_acc', 'Успешный вход в систему!'),
-('config.text_acc2', 'Подробно ознакомьтесь с данными на это странице!'),
-('template.global', '0'),
-('dash.info_block',	'1'),
-('dash.info_block_text',	'<h1>Медовое сообщество</h1><br><center><img src=\"themes/new_box/img/pchelka.jpg\" class=\"img-responsive\" alt=\"\"></center>Дополнительная инфа о нас. ТЕСТ. текстик: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.<br />Дополнительная инфа о нас. ТЕСТ. текстик: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.<br />Дополнительная инфа о нас. ТЕСТ. текстик: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.<br /><b>Все указывается в настройках!</b>'),
-('dash.info_vk',	'http://vk.com/'),
-('dash.info_steam',	'http://steam.com/'),
-('dash.info_yout',	'http://youtube.com'),
-('dash.info_face',	'http://facebock.com/'),
-('dash.info_block_text_t',	'С уважением, главная администрация.'),
-('page.adminlist',	'0'),
-('page.xleb',	'1'),
-('config.version', '356'),
-('theme.style', 'lightblue'),
-('theme.style.color', '');
+('config.version', '356');
 
 
 INSERT INTO `{prefix}_admins` (
