@@ -132,7 +132,7 @@
 										</div>
 										<div class="pmbb-body p-l-30">
 											<div class="pmbb-view">
-												{$admin.comment_profile|escape}
+												{$admin.comment_profile}
 											</div>
 										</div>
 									</div>

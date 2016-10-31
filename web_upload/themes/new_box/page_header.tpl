@@ -156,7 +156,7 @@
 									</div>
 									<div class="media-body">
 										<div class="lv-title"><span target="_blank" onclick="window.open('http://steamcommunity.com/profiles/{$supp.authid}', '_blank');" style="color: #2196f3;text-decoration: none;cursor: pointer;">{$supp.user}</span></div>
-										<small class="lv-small">{if NOT empty($supp.vk) AND NOT empty($supp.skype)}({/if}{if NOT empty($supp.vk)}<span onclick="window.open('https://vk.com/{$supp.vk}', '_blank');" style="color: #2196f3;text-decoration: none;cursor: pointer;">VK</span>{/if} {if NOT empty($supp.vk) AND NOT empty($supp.skype)}/{/if} {if NOT empty($supp.skype)}<span onclick="window.open('skype:{$supp.skype}?userinfo', '_self');" style="color: #2196f3;text-decoration: none;cursor: pointer;">SKYPE</span>{/if}{if NOT empty($supp.vk) AND NOT empty($supp.skype)}){/if} {if NOT empty($supp.comment)}- {$supp.comment}{/if}</small>
+										<small class="lv-small">{if NOT empty($supp.vk) AND NOT empty($supp.skype)}({/if}{if NOT empty($supp.vk)}<span onclick="window.open('https://vk.com/{$supp.vk|escape}', '_blank');" style="color: #2196f3;text-decoration: none;cursor: pointer;">VK</span>{/if} {if NOT empty($supp.vk) AND NOT empty($supp.skype)}/{/if} {if NOT empty($supp.skype)}<span onclick="window.open('skype:{$supp.skype|escape}?userinfo', '_self');" style="color: #2196f3;text-decoration: none;cursor: pointer;">SKYPE</span>{/if}{if NOT empty($supp.vk) AND NOT empty($supp.skype)}){/if} {if NOT empty($supp.comment)}- {$supp.comment}{/if}</small>
 									</div>
 								</div>
 							</a>
