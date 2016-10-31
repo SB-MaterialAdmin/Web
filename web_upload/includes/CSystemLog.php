@@ -158,12 +158,13 @@ class CSystemLog {
 		if ($type == "string") return 0;
 		if ($type == "array") return 2;
 		if ($type == "NULL") return 5;
+		if ($type == "object") return 3;
 		return -1;
 	}
 	
 	function FormatArgument($arg) {
 		$et = $this->GetEntryType($arg);
-		return ($et==2)?$this->PrepareArray($arg):(($et == 0)?"'".$arg."'":$arg);
+		return ($et==2)?$this->PrepareArray($arg):(($et == 0)?"'".$arg."'":($et==3?sprintf("Object %s", get_class($arg)):$arg));
 	}
 	
 	function PrepareArray($array) {
