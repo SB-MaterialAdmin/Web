@@ -110,11 +110,9 @@ class CSystemLog {
 	{
 		$bt = debug_backtrace();
 	
-		$functions = isset($bt[2]['file'])?$bt[2]['file'] . " - " . $bt[2]['line'] . "<br />":'';
-		$functions .= isset($bt[3]['file'])?$bt[3]['file'] . " - " . $bt[3]['line'] . "<br />":'';
-		$functions .= isset($bt[4]['file'])?$bt[4]['file'] . " - " . $bt[4]['line'] . "<br />":''; 
-		$functions .= isset($bt[5]['file'])?$bt[5]['file'] . " - " . $bt[5]['line'] . "<br />":'';
-		$functions .= isset($bt[6]['file'])?$bt[6]['file'] . " - " . $bt[6]['line'] . "<br />":'';
+		$functions = "";
+		for ($idx = 2; $idx<count($bt); $idx++)
+			$functions .= str_replace(ROOT, "/", $bt[$idx]['file']) . "::".$bt[$idx]['function']."(".$this->FormatArguments($bt[$idx]['args']).") - " . $bt[$idx]['line'] . "<br />";
 		return $functions;
 	}
 	
@@ -145,6 +143,38 @@ class CSystemLog {
 		return count($this->log_list);
 	}
 	
+	/* Log Helpers for args logger */
+	function FormatArguments($args) {
+		$argsV2 = [];
+		foreach ($args as $arg)
+			$argsV2[] = $this->FormatArgument($arg);
+		return implode(", ", $argsV2);
+	}
+	
+	function GetEntryType($entry) {
+		$type = gettype($entry);
+		if ($type == "boolean") return 4;
+		if ($type == "integer" || $type == "double") return 1;
+		if ($type == "string") return 0;
+		if ($type == "array") return 2;
+		if ($type == "NULL") return 5;
+		return -1;
+	}
+	
+	function FormatArgument($arg) {
+		$et = $this->GetEntryType($arg);
+		return ($et==2)?$this->PrepareArray($arg):(($et == 0)?"'".$arg."'":$arg);
+	}
+	
+	function PrepareArray($array) {
+		if (gettype($array) != "array") return $array;
+		$result = "[";
+		foreach ($array as $Key => $Entry) {
+			$result .= $this->FormatArgument($Entry);
+			$result .= ", ";
+		}
+		return str_replace(", ]", "]", $result."]");
+	}
 }
 
 ?>
