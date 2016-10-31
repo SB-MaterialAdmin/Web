@@ -31,7 +31,7 @@ if($GLOBALS['config']['config.enableprotest']!="1")
 	CreateRedBox("Ошибка", "Страница отключена.");
 	PageDie();
 }
-if(!defined("IN_SB")){echo "You should not be here. Only follow links!"; die();}
+if(!defined("IN_SB")){echo "Ошибка доступа!"; die();}
 if (!isset($_POST['subprotest']) || $_POST['subprotest'] != 1)
 {
 	$Type = 0;

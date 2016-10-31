@@ -25,7 +25,7 @@
 //
 // *************************************************************************
 
-if(!defined("IN_SB")){echo "You should not be here. Only follow links!";die();} 
+if(!defined("IN_SB")){echo "Ошибка доступа!";die();} 
 
 global $theme, $userbank;
 
@@ -53,15 +53,15 @@ if(defined('DEVELOPER_MODE'))
 		$time = $time[1] + $time[0];
 		$finish = $time;
 		$totaltime = ($finish - $start);
-		printf ("<h3>Page took %f seconds to load.</h3>", $totaltime);
+		printf ("<h3>Страница загружена за %f секунд.</h3>", $totaltime);
 		
-		echo '<h3>User Manager Data</h3><pre>';
+		echo '<h3>Менеджер данных пользователя</h3><pre>';
 		PrintArray($userbank); 
-		echo '</pre><h3>Post Data</h3><pre>';
+		echo '</pre><h3>Сообщение данных</h3><pre>';
 		print_r($_POST); 
-		echo '</pre><h3>Session Data</h3><pre>'; 
+		echo '</pre><h3>Данные сеанса</h3><pre>'; 
 	 	print_r($_SESSION); echo'</pre> ';
-	 	echo '</pre><h3>Cookie Data</h3><pre>'; 
+	 	echo '</pre><h3>Данные Cookie</h3><pre>'; 
 	 	print_r($_COOKIE); echo'</pre> ';
 }
 ?>
@@ -93,7 +93,7 @@ if(defined('DEVELOPER_MODE'))
 			template: '<div data-growl="container" class="alert" role="alert">' +
                                         '<button type="button" class="close" data-growl="dismiss">' +
                                             '<span aria-hidden="true">&times;</span>' +
-                                            '<span class="sr-only">Close</span>' +
+                                            '<span class="sr-only">Закрыть</span>' +
                                         '</button>' +
                                         '<span data-growl="icon"></span>' +
                                         '<span data-growl="title"></span>' +

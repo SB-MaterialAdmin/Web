@@ -370,9 +370,9 @@ echo '<div id="admin-page-content">';
 					$cdata = array();
 					$cdata['morecom'] = ($morecom==1?true:false);
 					if($commentres->fields['aid'] == $userbank->GetAid() || $userbank->HasAccess(ADMIN_OWNER)) {
-						$cdata['editcomlink'] = CreateLinkR('<img src=\'images/edit.gif\' border=\'0\' alt=\'\' style=\'vertical-align:middle\' />','index.php?p=banlist&comment='.(int)$prot['pid'].'&ctype=P&cid='.$commentres->fields['cid'],'Edit Comment');
+						$cdata['editcomlink'] = CreateLinkR('<img src=\'images/edit.gif\' border=\'0\' alt=\'\' style=\'vertical-align:middle\' />','index.php?p=banlist&comment='.(int)$prot['pid'].'&ctype=P&cid='.$commentres->fields['cid'],'Редактировать комментарий');
 						if($userbank->HasAccess(ADMIN_OWNER)) {
-							$cdata['delcomlink'] = "<a href=\"#\" class=\"tip\" title=\"<img src='images/delete.gif' border='0' alt='' style='vertical-align:middle' /> :: Delete Comment\" target=\"_self\" onclick=\"RemoveComment(".$commentres->fields['cid'].",'P',-1);\"><img src='images/delete.gif' border='0' alt='' style='vertical-align:middle' /></a>";
+							$cdata['delcomlink'] = "<a href=\"#\" class=\"tip\" title=\"<img src='images/delete.gif' border='0' alt='' style='vertical-align:middle' /> :: Удалить комментарий\" target=\"_self\" onclick=\"Удалить комментарий(".$commentres->fields['cid'].",'P',-1);\"><img src='images/delete.gif' border='0' alt='' style='vertical-align:middle' /></a>";
 						}
 					}
 					else {
@@ -427,10 +427,10 @@ echo '<div id="admin-page-content">';
     <div id="tabs">
 	<ul>
 		<li id="utab-s0" class="active">
-			<a href="index.php?p=admin&c=bans#^2~s0" id="admin_utab_s0" onclick="Swap2ndPane(0,\'s\');" class="tip" title="Show Submissions :: Show current submissions." target="_self">Активные</a>
+			<a href="index.php?p=admin&c=bans#^2~s0" id="admin_utab_s0" onclick="Swap2ndPane(0,\'s\');" class="tip" title="Показать жалобы :: Показать активные жалобы." target="_self">Активные</a>
 		</li>
 		<li id="utab-s1" class="nonactive">
-			<a href="index.php?p=admin&c=bans#^2~s1" id="admin_utab_s1" onclick="Swap2ndPane(1,\'s\');" class="tip" title="Show Archive :: Show the submission archive." target="_self">Архив</a>
+			<a href="index.php?p=admin&c=bans#^2~s1" id="admin_utab_s1" onclick="Swap2ndPane(1,\'s\');" class="tip" title="Показать архив :: Показать жалобы в архиве." target="_self">Архив</a>
 		</li>
 	</ul>
 	</div>
@@ -450,7 +450,7 @@ echo '<div id="admin-page-content">';
             if ($PageEnd > $page_count) $PageEnd = $page_count;
             if ($page > 1)
             {
-                $prev = CreateLinkR('<- prev',"index.php?p=admin&c=bans&spage=" .($page-1). "#^2");
+                $prev = CreateLinkR('<- предыдущая',"index.php?p=admin&c=bans&spage=" .($page-1). "#^2");
             }
             else
             {
@@ -458,7 +458,7 @@ echo '<div id="admin-page-content">';
             }
             if ($PageEnd < $page_count)
             {
-                $next = CreateLinkR('next ->',"index.php?p=admin&c=bans&spage=" .($page+1). "#^2");
+                $next = CreateLinkR('следующая ->',"index.php?p=admin&c=bans&spage=" .($page+1). "#^2");
             }
             else
                 $next = "";
@@ -496,9 +496,9 @@ echo '<div id="admin-page-content">';
 												WHERE demtype = \"S\" AND demid = " .(int)$sub['subid']);
 
 			    if($dem && !empty($dem['filename']) && @file_exists(SB_DEMOS . "/" . $dem['filename']))
-			    	$sub['demo'] =  "<a href=\"getdemo.php?id=". $sub['subid'] . "&type=S\"><img src=\"images/demo.gif\" border=\"0\" style=\"vertical-align:middle\" /> Get Demo</a>";
+			    	$sub['demo'] =  "<a href=\"getdemo.php?id=". $sub['subid'] . "&type=S\"><img src=\"images/demo.gif\" border=\"0\" style=\"vertical-align:middle\" /> Получить демо</a>";
 			    else
-			    	$sub['demo'] = "<a href=\"#\"><img src=\"images/demo.gif\" border=\"0\" style=\"vertical-align:middle\" /> No Demo</a>";
+			    	$sub['demo'] = "<a href=\"#\"><img src=\"images/demo.gif\" border=\"0\" style=\"vertical-align:middle\" /> Нет демо</a>";
 
 			    $sub['submitted'] = SBDate($dateformat, $sub['submitted']);
 
@@ -508,7 +508,7 @@ echo '<div id="admin-page-content">';
 			    $sub['mod'] = $mod['name'];
 
 				if(empty($sub['server']))
-					$sub['hostname'] = '<i><font color="#677882">Other server...</font></i>';
+					$sub['hostname'] = '<i><font color="#677882">Другой сервер...</font></i>';
                 else
                     $sub['hostname'] = "";
                     
@@ -529,9 +529,9 @@ echo '<div id="admin-page-content">';
 							$cdata = array();
 							$cdata['morecom'] = ($morecom==1?true:false);
 							if($commentres->fields['aid'] == $userbank->GetAid() || $userbank->HasAccess(ADMIN_OWNER)) {
-								$cdata['editcomlink'] = CreateLinkR('<img src=\'images/edit.gif\' border=\'0\' alt=\'\' style=\'vertical-align:middle\' />','index.php?p=banlist&comment='.(int)$sub['subid'].'&ctype=S&cid='.$commentres->fields['cid'],'Edit Comment');
+								$cdata['editcomlink'] = CreateLinkR('<img src=\'images/edit.gif\' border=\'0\' alt=\'\' style=\'vertical-align:middle\' />','index.php?p=banlist&comment='.(int)$sub['subid'].'&ctype=S&cid='.$commentres->fields['cid'],'Редактировать комментарий');
 								if($userbank->HasAccess(ADMIN_OWNER)) {
-									$cdata['delcomlink'] = "<a href=\"#\" class=\"tip\" title=\"<img src='images/delete.gif' border='0' alt='' style='vertical-align:middle' /> :: Delete Comment\" target=\"_self\" onclick=\"RemoveComment(".$commentres->fields['cid'].",'S',-1);\"><img src='images/delete.gif' border='0' alt='' style='vertical-align:middle' /></a>";
+									$cdata['delcomlink'] = "<a href=\"#\" class=\"tip\" title=\"<img src='images/delete.gif' border='0' alt='' style='vertical-align:middle' /> :: Удалить комментарий\" target=\"_self\" onclick=\"Удалить комментарий(".$commentres->fields['cid'].",'S',-1);\"><img src='images/delete.gif' border='0' alt='' style='vertical-align:middle' /></a>";
 								}
 							}
 							else {
@@ -562,7 +562,7 @@ echo '<div id="admin-page-content">';
 						$comment = "None";
 
 					$sub['commentdata'] = $comment;
-					$sub['subaddcomment'] = CreateLinkR('<img src="images/details.gif" border="0" alt="" style="vertical-align:middle" /> Add Comment','index.php?p=banlist&comment='.(int)$sub['subid'].'&ctype=S');
+					$sub['subaddcomment'] = CreateLinkR('<img src="images/details.gif" border="0" alt="" style="vertical-align:middle" /> Добавить комментарий','index.php?p=banlist&comment='.(int)$sub['subid'].'&ctype=S');
 				//----------------------------------------
 
 			    array_push($submission_list, $sub);
@@ -634,9 +634,9 @@ echo '<div id="admin-page-content">';
 												WHERE demtype = \"S\" AND demid = " .(int)$sub['subid']);
 
 			    if($dem && !empty($dem['filename']) && @file_exists(SB_DEMOS . "/" . $dem['filename']))
-			    	$sub['demo'] =  "<a href=\"getdemo.php?id=". $sub['subid'] . "&type=S\"><img src=\"images/demo.gif\" border=\"0\" style=\"vertical-align:middle\" /> Get Demo</a>";
+			    	$sub['demo'] =  "<a href=\"getdemo.php?id=". $sub['subid'] . "&type=S\"><img src=\"images/demo.gif\" border=\"0\" style=\"vertical-align:middle\" /> Получить демо</a>";
 			    else
-			    	$sub['demo'] = "<a href=\"#\"><img src=\"images/demo.gif\" border=\"0\" style=\"vertical-align:middle\" /> No Demo</a>";
+			    	$sub['demo'] = "<a href=\"#\"><img src=\"images/demo.gif\" border=\"0\" style=\"vertical-align:middle\" /> Нет демо</a>";
 
 			    $sub['submitted'] = SBDate($dateformat, $sub['submitted']);
 
@@ -645,15 +645,15 @@ echo '<div id="admin-page-content">';
 												WHERE s.subid = ".(int)$sub['subid']);
 			    $sub['mod'] = $mod['name'];
                 if(empty($sub['server']))
-                    $sub['hostname'] = '<i><font color="#677882">Other server...</font></i>';
+                    $sub['hostname'] = '<i><font color="#677882">Другой сервер...</font></i>';
                 else
                     $sub['hostname'] = "";
 				if($sub['archiv'] == "3")
-					$sub['archive'] = "player has been banned.";
+					$sub['archive'] = "игрок был забанен.";
 				else if($sub['archiv'] == "2")
-					$sub['archive'] = "submission has been accepted.";
+					$sub['archive'] = "жалоба была подтверждена.";
 				else if($sub['archiv'] == "1")
-					$sub['archive'] = "submission has been archived.";
+					$sub['archive'] = "жалоба была отправлена в архив.";
 				//COMMENT STUFF
 				//-----------------------------------
 				$view_comments = true;
@@ -671,9 +671,9 @@ echo '<div id="admin-page-content">';
 							$cdata = array();
 							$cdata['morecom'] = ($morecom==1?true:false);
 							if($commentres->fields['aid'] == $userbank->GetAid() || $userbank->HasAccess(ADMIN_OWNER)) {
-								$cdata['editcomlink'] = CreateLinkR('<img src=\'images/edit.gif\' border=\'0\' alt=\'\' style=\'vertical-align:middle\' />','index.php?p=banlist&comment='.(int)$sub['subid'].'&ctype=S&cid='.$commentres->fields['cid'],'Edit Comment');
+								$cdata['editcomlink'] = CreateLinkR('<img src=\'images/edit.gif\' border=\'0\' alt=\'\' style=\'vertical-align:middle\' />','index.php?p=banlist&comment='.(int)$sub['subid'].'&ctype=S&cid='.$commentres->fields['cid'],'Редактировать комментарий');
 								if($userbank->HasAccess(ADMIN_OWNER)) {
-									$cdata['delcomlink'] = "<a href=\"#\" class=\"tip\" title=\"<img src='images/delete.gif' border='0' alt='' style='vertical-align:middle' /> :: Delete Comment\" target=\"_self\" onclick=\"RemoveComment(".$commentres->fields['cid'].",'S',-1);\"><img src='images/delete.gif' border='0' alt='' style='vertical-align:middle' /></a>";
+									$cdata['delcomlink'] = "<a href=\"#\" class=\"tip\" title=\"<img src='images/delete.gif' border='0' alt='' style='vertical-align:middle' /> :: Удалить комментарий\" target=\"_self\" onclick=\"Удалить комментарий(".$commentres->fields['cid'].",'S',-1);\"><img src='images/delete.gif' border='0' alt='' style='vertical-align:middle' /></a>";
 								}
 							}
 							else {
@@ -704,7 +704,7 @@ echo '<div id="admin-page-content">';
 						$comment = "None";
 
 					$sub['commentdata'] = $comment;
-					$sub['subaddcomment'] = CreateLinkR('<img src="images/details.gif" border="0" alt="" style="vertical-align:middle" /> Add Comment','index.php?p=banlist&comment='.(int)$sub['subid'].'&ctype=S');
+					$sub['subaddcomment'] = CreateLinkR('<img src="images/details.gif" border="0" alt="" style="vertical-align:middle" /> Добавить комментарий','index.php?p=banlist&comment='.(int)$sub['subid'].'&ctype=S');
 				//----------------------------------------
 
 			    array_push($submission_list_archiv, $sub);

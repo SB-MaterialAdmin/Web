@@ -25,12 +25,12 @@
 //
 // *************************************************************************
 
-if(!defined("IN_SB")){echo "You should not be here. Only follow links!";die();} 
+if(!defined("IN_SB")){echo "Ошибка доступа!";die();} 
 global $userbank, $theme;
 
 if(!$userbank->HasAccess(ADMIN_OWNER))
 {
-	echo "Access Denied!";
+	echo "Доступ запрещен!";
 }
 else
 {
@@ -66,7 +66,7 @@ $srv_cfg = str_replace("{port}", DB_PORT, $srv_cfg);
 	
 if(strtolower(DB_HOST) == "localhost")
 {
-	ShowBox("Local server warning", "You have said your MySQL server is running on the same box as the webserver, this is fine, but you may need to alter the following config to set the remote domain/ip of your MySQL server. Unless your gameserver is on the same box as your webserver." , "blue", "", true);
+	ShowBox("Предупреждение локального сервера", "Вы указали, что ваш сервер MySQL работает на той же машине, что и веб-сервер, это хорошо, но, возможно, потребуется изменить следующий конфигурационный файл, чтобы установить удаленный доступ к вашему серверу MySQL." , "blue", "", true);
 }
 
 $theme->assign('conf', $srv_cfg);

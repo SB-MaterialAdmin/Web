@@ -55,7 +55,7 @@ $theme->assign("title", "Загрузить иконку");
 $theme->assign("message", $message);
 $theme->assign("input_name", "icon_file");
 $theme->assign("form_name", "iconup");
-$theme->assign("formats", "a GIF, PNG or JPG");
+$theme->assign("formats", "GIF, PNG или JPG");
 
 $theme->display('page_uploadfile.tpl');
 ?>

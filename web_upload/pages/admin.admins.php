@@ -124,7 +124,7 @@ foreach($admins AS $admin)
 	
 	$lastvisit = $userbank->GetProperty("lastvisit", $admin['aid']);
 	if(!$lastvisit)
-		$admin['lastvisit'] = "Never";
+		$admin['lastvisit'] = "Никогда";
 	else
 		$admin['lastvisit'] = SBDate($dateformat,$userbank->GetProperty("lastvisit", $admin['aid']));
 	$admin['avatar'] = GetUserAvatar($userbank->GetProperty('authid', $admin['aid']));

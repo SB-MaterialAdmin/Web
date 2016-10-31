@@ -55,11 +55,11 @@ function LoadServers2($check, $type, $length) {
 	while(!$servers->EOF) {
 		//search for player
 		if(!empty($servers->fields["rcon"])) {
-			$text = '<font size="1">Searching...</font>';
+			$text = '<font size="1">Поиск...</font>';
 			$objResponse->addScript("xajax_BlockPlayer('".$check."', '".$servers->fields["sid"]."', '".$id."', '".$type."', '".$length."');");
 		}
 		else { //no rcon = servercount + 1 ;)
-			$text = '<font size="1">No rcon password.</font>';
+			$text = '<font size="1">Нет RCON пароля.</font>';
 			$objResponse->addScript('set_counter(1);');
 		}		
 		$objResponse->addAssign("srv_".$id, "innerHTML", $text);
@@ -95,7 +95,7 @@ function BlockPlayer($check, $sid, $num, $type, $length) {
 		if(!$r->Auth())
 		{
 			$GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_servers SET rcon = '' WHERE sid = '".$sid."' LIMIT 1;");		
-			$objResponse->addAssign("srv_$num", "innerHTML", "<font color='red' size='1'>Wrong RCON Password, please change!</font>");
+			$objResponse->addAssign("srv_$num", "innerHTML", "<font color='red' size='1'>Неправильный RCON пароль, измените!</font>");
 			$objResponse->addScript('set_counter(1);');
 			return $objResponse;
 		}
@@ -118,19 +118,19 @@ function BlockPlayer($check, $sid, $num, $type, $length) {
 				$GLOBALS['db']->Execute("UPDATE `".DB_PREFIX."_comms` SET sid = '".$sid."' WHERE authid = '".$check."' AND RemovedBy IS NULL;");
 				$requri = substr($_SERVER['REQUEST_URI'], 0, strrpos($_SERVER['REQUEST_URI'], "pages/admin.blockit.php"));
 				$kick = $r->sendCommand("sc_fw_block ".$type." ".$length." ".$match);
-				$objResponse->addAssign("srv_$num", "innerHTML", "<font color='green' size='1'><b><u>Player Found & blocked!!!</u></b></font>");
+				$objResponse->addAssign("srv_$num", "innerHTML", "<font color='green' size='1'><b><u>Игрок найден и заблокирован!!!</u></b></font>");
 				$objResponse->addScript("set_counter('-1');");
 				return $objResponse;
 			}
 		}
 
 		if(!$gothim) {
-			$objResponse->addAssign("srv_$num", "innerHTML", "<font size='1'>Player not found.</font>");
+			$objResponse->addAssign("srv_$num", "innerHTML", "<font size='1'>Игрок не найден.</font>");
 			$objResponse->addScript('set_counter(1);');
 			return $objResponse;
 		}
 	} else {
-		$objResponse->addAssign("srv_$num", "innerHTML", "<font color='red' size='1'><i>Can't connect to server.</i></font>");
+		$objResponse->addAssign("srv_$num", "innerHTML", "<font color='red' size='1'><i>Не могу соединиться с сервером.</i></font>");
 		$objResponse->addScript('set_counter(1);');
 		return $objResponse;
 	}

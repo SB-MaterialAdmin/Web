@@ -1,11 +1,11 @@
 <?php
-if(!defined("IN_SB")){echo "You should not be here. Only follow links!";die();}
+if(!defined("IN_SB")){echo "YОшибка доступа!";die();}
 
 error_reporting(E_ALL & ~E_DEPRECATED);
 global $userbank, $theme;
 	
 if($GLOBALS['config']['page.adminlist']!="1"){
-    CreateRedBox("Error", "This page is disabled. You should not be here.");
+    CreateRedBox("Ошибка", "Страница отключена.");
     PageDie();
 }
 

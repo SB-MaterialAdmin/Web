@@ -26,15 +26,15 @@
 //
 // *************************************************************************
 
-if(!defined("IN_SB")){echo "You should not be here. Only follow links!";die();} 
+if(!defined("IN_SB")){echo "Ошибка доступа!";die();} 
 global $theme;
 if(!isset($_GET['id']))
 {
 	echo '<div id="msg-red" >
 	<i><img src="./images/warning.png" alt="Warning" /></i>
-	<b>Error</b>
+	<b>Ошибка</b>
 	<br />
-	No server id specified. Please only follow links
+	Идентефикатор сервера не указан
 </div>';
 	die();
 }
@@ -43,12 +43,12 @@ $_GET['id'] = (int)$_GET['id'];
 $server = $GLOBALS['db']->GetRow("SELECT * FROM ".DB_PREFIX."_servers WHERE sid = {$_GET['id']}");
 if(!$server)
 {
-	$log = new CSystemLog("e", "Getting server data failed", "Can't find data for server with id '".$_GET['id']."'");
+	$log = new CSystemLog("e", "Получение данных сервера не удалось", "Не удается найти данные для сервера с идентификатором '".$_GET['id']."'");
 	echo '<div id="msg-red" >
 	<i><img src="./images/warning.png" alt="Warning" /></i>
-	<b>Error</b>
+	<b>Ошибка</b>
 	<br />
-	Error getting current data.
+	Ошибка получения текущих данных .
 </div></div>';
 	PageDie();
 }
@@ -64,7 +64,7 @@ if(isset($_POST['address']))
 	if((empty($_POST['address'])))
 	{
 		$error++;
-		$errorScript .= "$('address.msg').innerHTML = 'You must type the server address.';";
+		$errorScript .= "$('address.msg').innerHTML = 'Ведите IP сервера.';";
 		$errorScript .= "$('address.msg').setStyle('display', 'block');";
 	}
 	else
@@ -72,7 +72,7 @@ if(isset($_POST['address']))
 		if(!validate_ip($_POST['address']) && !is_string($_POST['address']))
 		{
 			$error++;
-			$errorScript .= "$('address.msg').innerHTML = 'You must type a valid IP.';";
+			$errorScript .= "$('address.msg').innerHTML = 'Введите реальный IP.';";
 			$errorScript .= "$('address.msg').setStyle('display', 'block');";
 		}
 	}
@@ -81,7 +81,7 @@ if(isset($_POST['address']))
 	if((empty($_POST['port'])))
 	{
 		$error++;
-		$errorScript .= "$('port.msg').innerHTML = 'You must type the server port.';";
+		$errorScript .= "$('port.msg').innerHTML = 'Введите порт сервера.';";
 		$errorScript .= "$('port.msg').setStyle('display', 'block');";
 	}
 	else
@@ -89,7 +89,7 @@ if(isset($_POST['address']))
 		if(!is_numeric($_POST['port']))
 		{
 			$error++;
-			$errorScript .= "$('port.msg').innerHTML = 'You must type a valid port <b>number</b>.';";
+			$errorScript .= "$('port.msg').innerHTML = 'Введите реальный порт <b>номер</b>.';";
 			$errorScript .= "$('port.msg').setStyle('display', 'block');";
 		}
 	}
@@ -98,7 +98,7 @@ if(isset($_POST['address']))
 	if($_POST['rcon'] != '*Скрыт*' && $_POST['rcon'] != $_POST['rcon2'])
 	{
 		$error++;
-		$errorScript .= "$('rcon2.msg').innerHTML = 'The passwords don't match.';";
+		$errorScript .= "$('rcon2.msg').innerHTML = 'Пароли не совпадают.';";
 		$errorScript .= "$('rcon2.msg').setStyle('display', 'block');";
 	}
 	
@@ -111,7 +111,7 @@ if(isset($_POST['address']))
 		if($chk)
 		{
 			$error++;
-			$errorScript .= "ShowBox('Error', 'There already is a server with that IP:Port combination.', 'red');";
+			$errorScript .= "ShowBox('Ошибка', 'Сервер с такой комбинацией IP:Port уже существует.', 'red');";
 		}
 	}
 	
@@ -155,7 +155,7 @@ if(isset($_POST['address']))
 										WHERE `sid` = ?", array($_POST['rcon'], (int)$_GET['id']));
 	}
 										
-		echo "<script>setTimeout(\"ShowBox('Server updated', 'The server has been updated successfully', 'green', 'index.php?p=admin&c=servers');TabToReload();\", 1200);</script>";
+		echo "<script>setTimeout(\"ShowBox('Сервер обновлен', 'Данные сервера были успешно обновлены', 'green', 'index.php?p=admin&c=servers');TabToReload();\", 1200);</script>";
 	}
 }
 

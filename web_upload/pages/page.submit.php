@@ -26,10 +26,10 @@
 // *************************************************************************
 
 global $userbank, $ui, $theme;
-if(!defined("IN_SB")){echo "You should not be here. Only follow links!";die();}
+if(!defined("IN_SB")){echo "Ошибка доступа!";die();}
 if($GLOBALS['config']['config.enablesubmit']!="1")
 {
-	CreateRedBox("Error", "This page is disabled. You should not be here.");
+	CreateRedBox("Ошибка", "Страница отключена.");
 	PageDie();
 }
 if (!isset($_POST['subban']) || $_POST['subban'] != 1)

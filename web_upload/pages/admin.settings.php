@@ -87,12 +87,12 @@ if(!defined("IN_SB")){echo "Ошибка доступа!";die();}
 	$log_count = $logs->LogCount($where);
 	$log = $logs->getAll($list_start, intval($GLOBALS['config']['banlist.bansperpage']), $where);
 	if(($page > 1))
-		$prev = CreateLinkR('<- prev',"index.php?p=admin&c=settings" . $searchlink . "&page=" .($page-1) . "#^2");
+		$prev = CreateLinkR('<- пред',"index.php?p=admin&c=settings" . $searchlink . "&page=" .($page-1) . "#^2");
 	else 
 		$prev = "";
 		
 	if($list_end < $log_count)
-		$next = CreateLinkR('next ->',"index.php?p=admin&c=settings" . $searchlink . "&page=" .($page+1)."#^2");
+		$next = CreateLinkR('след ->',"index.php?p=admin&c=settings" . $searchlink . "&page=" .($page+1)."#^2");
 	else 
 		$next = "";
 

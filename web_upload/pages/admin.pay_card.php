@@ -1,5 +1,5 @@
 <?php
-if(!defined("IN_SB")){echo "You should not be here. Only follow links!";die();}
+if(!defined("IN_SB")){echo "Ошибка доступа!";die();}
 global $userbank, $theme;
 
 	echo '<div id="admin-page-content">';
@@ -10,7 +10,7 @@ global $userbank, $theme;
 		
 		if(($_GET['o'] == "del") && isset($_GET['o'])){
 			if(!isset($_GET['id']) || !is_numeric($_GET['id'])){
-				echo '<script>setTimeout(\'ShowBox("Error", "No ban id specified. Please only follow links!", "red", "index.php");\', 1200);</script>';
+				echo '<script>setTimeout(\'ShowBox("Ошибка", "ID бана не указан!", "red", "index.php");\', 1200);</script>';
 				PageDie();
 			}else{
 				$qwer = $GLOBALS['db']->GetRow("SELECT * FROM `" . DB_PREFIX . "_vay4er` WHERE aid = '".(int)$_GET['id']."'");
@@ -20,7 +20,7 @@ global $userbank, $theme;
 						echo '<script>setTimeout(\'ShowBox("Успешно", "Ваучер был успешно удален!", "green", "index.php?p=admin&c=pay_card");\', 1200);</script>';
 					}
 				}else{
-					echo '<script>setTimeout(\'ShowBox("Error", "No ban id specified. Please only follow links!", "red", "index.php");\', 1200);</script>';
+					echo '<script>setTimeout(\'ShowBox("Ошибка", "ID бана не указан!", "red", "index.php");\', 1200);</script>';
 				}
 			}
 		}

@@ -28,7 +28,7 @@
 
 <div id="admin-page-content">
 	<?php  
-		if(!defined("IN_SB")){echo "You should not be here. Only follow links!";die();} 
+		if(!defined("IN_SB")){echo "Ошибка доступа!";die();} 
 		global $userbank, $theme;
 		
 			$servers = $GLOBALS['db']->GetAll("SELECT srv.ip ip, srv.port port, srv.sid sid, mo.icon icon, srv.enabled enabled FROM `" . DB_PREFIX . "_servers` AS srv

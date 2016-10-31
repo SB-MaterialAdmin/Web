@@ -25,16 +25,16 @@
 //
 // *************************************************************************
 
-if(!defined("IN_SB")){echo "You should not be here. Only follow links!";die();}
+if(!defined("IN_SB")){echo "Ошибка доступа!";die();}
 global $userbank, $theme;
 
 if(!isset($_GET['id']))
 {
 	echo '<div id="msg-red" >
 	<i><img src="./images/warning.png" alt="Warning" /></i>
-	<b>Error</b>
+	<b>Ошибка</b>
 	<br />
-	No admin id specified. Please only follow links
+	ID администратора не указан
 </div>';
 	PageDie();
 }
@@ -42,12 +42,12 @@ $_GET['id'] = (int)$_GET['id'];
 
 if(!$userbank->GetProperty("user", $_GET['id']))
 {
-	$log = new CSystemLog("e", "Getting admin data failed", "Can't find data for admin with id '".$_GET['id']."'");
+	$log = new CSystemLog("e", "Получение данных администратора не удалось", "Не могу найти данные для администратора с идентификатором '".$_GET['id']."'");
 	echo '<div id="msg-red" >
 	<i><img src="./images/warning.png" alt="Warning" /></i>
-	<b>Error</b>
+	<b>Ошибка</b>
 	<br />
-	Error getting current data.
+	Ошибка получения текущих данных.
 </div>';
 	PageDie();
 }
@@ -106,14 +106,14 @@ if(isset($_POST['adminname']))
 	if(empty($a_name))
 	{
 		$error++;
-		$errorScript .= "$('adminname.msg').innerHTML = 'You must type a name for the admin.';";
+		$errorScript .= "$('adminname.msg').innerHTML = 'Введите имя администратора.';";
 		$errorScript .= "$('adminname.msg').setStyle('display', 'block');";
 	}
 	else{
         if(strstr($a_name, "'"))
 		{
 			$error++;
-			$errorScript .= "$('adminname.msg').innerHTML = 'An admin name can not contain a \" \' \".';";
+			$errorScript .= "$('adminname.msg').innerHTML = 'Имя администратора не может содержать \" \' \".';";
 			$errorScript .= "$('adminname.msg').setStyle('display', 'block');";
 		}
 		else
@@ -121,7 +121,7 @@ if(isset($_POST['adminname']))
             if($a_name != $userbank->GetProperty('user', $_GET['id']) && is_taken("admins", "user", $a_name))
             {
                 $error++;
-				$errorScript .= "$('adminname.msg').innerHTML = 'An admin with this name already exists.';";
+				$errorScript .= "$('adminname.msg').innerHTML = 'Администратор с таким именем уже существует.';";
 				$errorScript .= "$('adminname.msg').setStyle('display', 'block');";
             }
 		}
@@ -131,7 +131,7 @@ if(isset($_POST['adminname']))
 	if((empty($a_steam) || strlen($a_steam) < 10))
 	{
 		$error++;
-		$errorScript .= "$('steam.msg').innerHTML = 'You must type a Steam ID or Community ID for the admin.';";
+		$errorScript .= "$('steam.msg').innerHTML = 'Введите Steam ID или Community ID администратора.';";
 		$errorScript .= "$('steam.msg').setStyle('display', 'block');";
 	}
 	else
@@ -144,7 +144,7 @@ if(isset($_POST['adminname']))
 		|| !validate_steam($a_steam = FriendIDToSteamID($a_steam)))))
 		{
 			$error++;
-			$errorScript .= "$('steam.msg').innerHTML = 'Please enter a valid Steam ID or Community ID.';";
+			$errorScript .= "$('steam.msg').innerHTML = 'Введите реальный Steam ID или Community ID.';";
 			$errorScript .= "$('steam.msg').setStyle('display', 'block');";
 		}
 		else
@@ -162,7 +162,7 @@ if(isset($_POST['adminname']))
 					}
 				}
 				$error++;
-				$errorScript .= "$('steam.msg').innerHTML = 'Admin ".htmlspecialchars(addslashes($name))." already uses this Steam ID.';";
+				$errorScript .= "$('steam.msg').innerHTML = 'Администратор ".htmlspecialchars(addslashes($name))." уже использует этот Steam ID.';";
 				$errorScript .= "$('steam.msg').setStyle('display', 'block');";
 			}
 		}
@@ -175,7 +175,7 @@ if(isset($_POST['adminname']))
 		if($GLOBALS['userbank']->GetProperty('extraflags', $_GET['id']) != 0 || $GLOBALS['userbank']->GetProperty('gid', $_GET['id']) > 0)
 		{
 			$error++;
-			$errorScript .= "$('email.msg').innerHTML = 'You must type an e-mail address.';";
+			$errorScript .= "$('email.msg').innerHTML = 'Введите e-mail.';";
 			$errorScript .= "$('email.msg').setStyle('display', 'block');";
 		}
 	}
@@ -193,7 +193,7 @@ if(isset($_POST['adminname']))
 				}
 			}
 			$error++;
-			$errorScript .= "$('email.msg').innerHTML = 'This email address is already being used by ".htmlspecialchars(addslashes($name)).".';";
+			$errorScript .= "$('email.msg').innerHTML = 'Этот email уже используется ".htmlspecialchars(addslashes($name)).".';";
 			$errorScript .= "$('email.msg').setStyle('display', 'block');";
 		}
 		/*else if(!validate_email($a_email))
@@ -215,7 +215,7 @@ if(isset($_POST['adminname']))
 			if(strlen($_POST['password']) < MIN_PASS_LENGTH)
 			{
 				$error++;
-				$errorScript .= "$('password.msg').innerHTML = 'Your password must be at-least " . MIN_PASS_LENGTH . " characters long.';";
+				$errorScript .= "$('password.msg').innerHTML = 'Ваш пароль должен быть длиной по меньшей мере " . MIN_PASS_LENGTH . " символов.';";
 				$errorScript .= "$('password.msg').setStyle('display', 'block');";
 			}
 			else 
@@ -224,14 +224,14 @@ if(isset($_POST['adminname']))
 				if(empty($_POST['password2']))
 				{
 					$error++;
-					$errorScript .= "$('password2.msg').innerHTML = 'You must confirm the password.';";
+					$errorScript .= "$('password2.msg').innerHTML = 'подтвердите пароль.';";
 					$errorScript .= "$('password2.msg').setStyle('display', 'block');";
 				}
 				// Passwords match?
 				else if($_POST['password'] != $_POST['password2'])
 				{
 					$error++;
-					$errorScript .= "$('password2.msg').innerHTML = 'Your passwords don't match.';";
+					$errorScript .= "$('password2.msg').innerHTML = 'Пароли не совпадают.';";
 					$errorScript .= "$('password2.msg').setStyle('display', 'block');";
 				}
 			}
@@ -248,14 +248,14 @@ if(isset($_POST['adminname']))
 			if(empty($_POST['a_serverpass']) && empty($srvpw))
 			{
 				$error++;
-				$errorScript .= "$('a_serverpass.msg').innerHTML = 'You must type a server password or uncheck the box.';";
+				$errorScript .= "$('a_serverpass.msg').innerHTML = 'Необходимо ввести пароль сервера или снимите флажок.';";
 				$errorScript .= "$('a_serverpass.msg').setStyle('display', 'block');";
 			}
 			// Password too short?
 			else if(strlen($_POST['a_serverpass']) < MIN_PASS_LENGTH)
 			{
 				$error++;
-				$errorScript .= "$('a_serverpass.msg').innerHTML = 'Your password must be at-least " . MIN_PASS_LENGTH . " characters long.';";
+				$errorScript .= "$('a_serverpass.msg').innerHTML = 'Ваш пароль должен быть длиной по меньшей мере " . MIN_PASS_LENGTH . " символов.';";
 				$errorScript .= "$('a_serverpass.msg').setStyle('display', 'block');";
 			}
 		}

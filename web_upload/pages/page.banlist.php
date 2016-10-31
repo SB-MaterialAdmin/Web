@@ -441,12 +441,12 @@ while (!$res->EOF)
 		}
 		else
 		{
-			$data['country'] = '<img src="images/country/zz.gif" alt="Unknown Country" border="0" align="absmiddle" />';
+			$data['country'] = '<img src="images/country/zz.gif" alt="Страна неизвестна" border="0" align="absmiddle" />';
 		}
 	}
 	else
 	{
-		$data['country'] = '<img src="images/country/zz.gif" alt="Unknown Country" border="0" align="absmiddle" />';
+		$data['country'] = '<img src="images/country/zz.gif" alt="Страна неизвестна" border="0" align="absmiddle" />';
 	}
 
 	//$data['ban_date'] = SBDate($dateformat,$res->fields['ban_created']);

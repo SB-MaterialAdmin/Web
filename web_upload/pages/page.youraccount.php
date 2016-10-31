@@ -27,8 +27,8 @@
 
 global $userbank, $theme;
 
-if(!defined("IN_SB")){echo "You should not be here. Only follow links!";die();}
-if($userbank->GetAid() == -1){echo "You shoudnt be here. looks like we messed up ><";die();}
+if(!defined("IN_SB")){echo "Ошибка доступа!";die();}
+if($userbank->GetAid() == -1){echo "Вы не должны быть здесь ><";die();}
 		
 $groupsTabMenu = new CTabsMenu();
 $groupsTabMenu->addMenuItem("Информация", 0);

@@ -25,7 +25,7 @@
 //
 // *************************************************************************
 
-if(!defined("IN_SB")){echo "You should not be here. Only follow links!";die();} 
+if(!defined("IN_SB")){echo "Ошибка доступа!";die();} 
 
 global $theme, $userbank;
 
@@ -33,9 +33,9 @@ if(!isset($_GET['id']))
 {
 	echo '<div id="msg-red" >
 	<i><img src="./images/warning.png" alt="Warning" /></i>
-	<b>Error</b>
+	<b>Ошибка</b>
 	<br />
-	No submission or protest id specified. Please only follow links
+	Идентификатор жалобы или протеста не указан
 </div>';
 	PageDie();
 }
@@ -44,9 +44,9 @@ if(!isset($_GET['type']) || ($_GET['type'] != 's' && $_GET['type'] != 'p'))
 {
 	echo '<div id="msg-red" >
 	<i><img src="./images/warning.png" alt="Warning" /></i>
-	<b>Error</b>
+	<b>Ошибка</b>
 	<br />
-	Invalid type. Please only follow links
+	Неверный тип.
 </div>';
 	PageDie();
 }
@@ -67,9 +67,9 @@ if(empty($email))
 {
 	echo '<div id="msg-red" >
 	<i><img src="./images/warning.png" alt="Warning" /></i>
-	<b>Error</b>
+	<b>Ошибка</b>
 	<br />
-	There is no email to send to supplied.
+	Нет E-mail чтобы отправить письмо.
 </div>';
 	PageDie();
 }

@@ -25,14 +25,14 @@
 //
 // *************************************************************************
 
-if(!defined("IN_SB")){echo "You should not be here. Only follow links!";die();}
-RewritePageTitle("Admin Login");
+if(!defined("IN_SB")){echo "Ошибка доступа!";die();}
+RewritePageTitle("Вход администратора");
 
 global $userbank, $theme;
 //$submenu = array( array( "title" => 'Забыл пароль?', "url" => 'index.php?p=lostpassword' ) );
 //SubMenu( $submenu );
 if(isset($_GET['m']) && $_GET['m'] == "no_access")
-	echo "<script>setTimeout(\"ShowBox('Error - No Access', 'You dont have permission to access this page.<br />Please login with an account that has access.', 'red', '', false);\", 1200);</script>";
+	echo "<script>setTimeout(\"ShowBox('Ошибка - Нет доступа', 'У вас нет доступа к этой странице.<br />Войдите в аккаунт.', 'red', '', false);\", 1200);</script>";
 
 	
 //$theme->assign('redir', "DoLogin('".(isset($_SESSION['q'])?$_SESSION['q']:'')."');");

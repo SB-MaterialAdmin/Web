@@ -25,28 +25,28 @@
 //
 // *************************************************************************
 
-if(!defined("IN_SB")){echo "You should not be here. Only follow links!";die();} 
+if(!defined("IN_SB")){echo "Ошибка доступа!";die();} 
 require INCLUDES_PATH.'/CServerInfo.php';
 global $theme;
 if(!isset($_GET['id']))
 {
 	echo '<div id="msg-red" >
 	<i><img src="./images/warning.png" alt="Warning" /></i>
-	<b>Error</b>
+	<b>Ошибка</b>
 	<br />
-	No admin id specified. Please only follow links
+	ID администратора не указан
 </div>';
 	PageDie();
 }
 
 if(!$userbank->GetProperty("user", $_GET['id']))
 {
-	$log = new CSystemLog("e", "Getting admin data failed", "Can't find data for admin with id '".$_GET['id']."'");
+	$log = new CSystemLog("e", "Получение данных администратора не удалось", "Не могу найти данные для администратора с идентификатором '".$_GET['id']."'");
 	echo '<div id="msg-red" >
 	<i><img src="./images/warning.png" alt="Warning" /></i>
-	<b>Error</b>
+	<b>Ошибка</b>
 	<br />
-	Error getting current data.
+	Ошибка получения текущих данных.
 </div>';
 	PageDie();
 }
@@ -129,12 +129,12 @@ if(isset($_POST['editadminserver']))
 			}
 		}
 		
-		echo '<script>setTimeout(\'ShowRehashBox("'.implode(",", $allservers).'", "Admin server access updated", "The admin server access has been updated successfully", "green", "index.php?p=admin&c=admins");TabToReload();\', 1200);</script>';
+		echo '<script>setTimeout(\'ShowRehashBox("'.implode(",", $allservers).'", "Серверный доступ администратора обновлен", "Серверный доступ администратора был успешно обновлен", "green", "index.php?p=admin&c=admins");TabToReload();\', 1200);</script>';
 	} else
-		echo '<script>setTimeout(\'ShowBox("Admin server access updated", "The admin server access has been updated successfully", "green", "index.php?p=admin&c=admins");TabToReload();\', 1200);</script>';
+		echo '<script>setTimeout(\'ShowBox("Серверный доступ администратора обновлен", "Серверный доступ администратора был успешно обновлен", "green", "index.php?p=admin&c=admins");TabToReload();\', 1200);</script>';
 	
 	$admname = $GLOBALS['db']->GetRow("SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = ?", array((int)$aid));
-	$log = new CSystemLog("m", "Admin Servers Updated", "Admin (" . $admname['user'] . ") server access has been changed");
+	$log = new CSystemLog("m", "Администратор сервера обновлен", "Серверный доступ администратора (" . $admname['user'] . ") был изменен");
 }
 
 
