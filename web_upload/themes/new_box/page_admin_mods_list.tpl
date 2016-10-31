@@ -7,7 +7,7 @@
 			<td width="50%" height='16' class="listtable_top"><strong>Имя</strong></td>
 			<td width="25%" height='16' class="listtable_top"><strong>Папка</strong></td>
 			<td width="10%" height='16' class="listtable_top"><strong>Иконка</strong></td>
-			<td width="2%" height='16' class="listtable_top"><strong><span title="Универсальный SteamID(X of STEAM_X:Y:Z)">SU</span></strong></td>
+			<td width="2%" height='16' class="listtable_top"><strong><span title="Универсальный SteamID(X of STEAM_X:Y:Z)">Универсальный SteamID</span></strong></td>
 			{if $permission_editmods || $permission_deletemods}
 			<td height='16' class="listtable_top"><strong>Действия</strong></td>
 			{/if}

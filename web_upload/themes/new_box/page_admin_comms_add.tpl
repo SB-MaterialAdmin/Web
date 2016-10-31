@@ -1,5 +1,5 @@
 {if NOT $permission_addban}
-	Access Denied!
+	Доступ запрещен!
 {else}
 
 
@@ -10,7 +10,7 @@
 		</div>
 		<div class="card-body card-padding p-b-0" id="group.details">
 			<div class="form-group m-b-5">
-				<label for="nickname" class="col-sm-3 control-label">{help_icon title="Ник" message="Введите ник игрока, которого желаете забанить."} Ник</label>
+				<label for="nickname" class="col-sm-3 control-label">{help_icon title="Ник" message="Введите ник игрока, которому дать блокировку."} Ник</label>
 				<div class="col-sm-9">
 					<div class="fg-line">
 						<input type="hidden" id="fromsub" value="" />
@@ -21,7 +21,7 @@
 			</div>
 			
 			<div class="form-group m-b-5">
-				<label for="steam" class="col-sm-3 control-label">{help_icon title="Steam ID / Community ID" message="Steam ID или Community ID игрока, которого желаете забанить."} Steam ID / Community ID</label>
+				<label for="steam" class="col-sm-3 control-label">{help_icon title="Steam ID / Community ID" message="Steam ID или Community ID игрока, которому дать блокировку."} Steam ID / Community ID</label>
 				<div class="col-sm-9">
 					<div class="fg-line">
 						<input type="text" TABINDEX=1 class="form-control" id="steam" name="steam" placeholder="Введите данные">
@@ -67,7 +67,7 @@
 			</div>
 			
 			<div class="form-group m-b-5">
-				<label for="banlength" class="col-sm-3 control-label">{help_icon title="Срок бана" message="Выберите, на какой срок Вы хотите его забанить."} Срок бана</label>
+				<label for="banlength" class="col-sm-3 control-label">{help_icon title="Срок блокировки" message="Выберите, на какой срок Вы хотите его заблокировать."} Срок блока</label>
 				<div class="col-sm-3">
 					<select id="banlength" TABINDEX=4 class="selectpicker">
 						<option value="0">Навсегда</option>

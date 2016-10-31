@@ -16,7 +16,7 @@
 					</div>
 				</div>
 				<div class="form-group m-b-5">
-					<label for="xleb_kroxi_t" class="col-sm-3 control-label">{help_icon title="Хлобные крошки" message="Позволяет отключать панель навигации 'Главная/Админ-Центр'"} Хлебные крошки</label>
+					<label for="xleb_kroxi_t" class="col-sm-3 control-label">{help_icon title="Хлебные крошки" message="Позволяет отключать панель навигации 'Главная/Админ-Центр'"} Хлебные крошки</label>
 					<div class="col-sm-9 p-t-10">
 						<div class="toggle-switch p-b-5" data-ts-color="red">
 							<input type="checkbox" id="xleb_kroxi_t" name="xleb_kroxi_t" hidden="hidden" /> 

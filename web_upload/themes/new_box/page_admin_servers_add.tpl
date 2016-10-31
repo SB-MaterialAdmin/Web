@@ -104,7 +104,7 @@
 				{sb_button text=$submit_text onclick="process_add_server();" icon="<i class='zmdi zmdi-plus'></i>" class="bgm-green btn-icon-text" id="aserver" submit=true}
 			{/if}
 			    &nbsp;
-				{sb_button text="Back" onclick="history.go(-1)" icon="<i class='zmdi zmdi-undo'></i>" class="bgm-red btn-icon-text" id="aback"}
+				{sb_button text="Назад" onclick="history.go(-1)" icon="<i class='zmdi zmdi-undo'></i>" class="bgm-red btn-icon-text" id="aback"}
 		</div>
 	</div>
 </div>

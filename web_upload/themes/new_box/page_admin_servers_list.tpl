@@ -23,7 +23,7 @@
 				{foreach from="$server_list" item="server"}
 				
 				<script>xajax_ServerHostPlayers({$server.sid});</script>
-				<tr id="sid_{$server.sid}" {if $server.enabled==0}style="background-color:#eaeaea" title="Disabled"{/if}>
+				<tr id="sid_{$server.sid}" {if $server.enabled==0}style="background-color:#eaeaea" title="Отключен"{/if}>
 					<td style="border-bottom: solid 1px #ccc" height='16'>{$server.sid}</td>
 					<td style="border-bottom: solid 1px #ccc" height='16' id="host_{$server.sid}"><i>Запрашиваем данные с сервера...</i></td>
 					<td style="border-bottom: solid 1px #ccc" height='16' id="players_{$server.sid}">Н/Д</td>

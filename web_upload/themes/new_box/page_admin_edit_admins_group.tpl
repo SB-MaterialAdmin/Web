@@ -6,7 +6,7 @@
 		Выберите новые группы, в которые <b>{$group_admin_name}</b> будет включен.<br /><br />
 		<table width="90%" border="0" style="border-collapse:collapse;" id="group.details" cellpadding="3">
 		  <tr>
-		    <td valign="middle"><div class="rowdesc">{help_icon title="ВЕБ группа" message="Выберите группу"}Группа ВЕб разрешений</div></td>
+		    <td valign="middle"><div class="rowdesc">{help_icon title="ВЕБ группа" message="Выберите группу"}Группа ВЕБ разрешений</div></td>
 		    <td>
 		    	<div align="left" id="wadmingroup">
 			      	<select name="wg" id="wg" class="select">

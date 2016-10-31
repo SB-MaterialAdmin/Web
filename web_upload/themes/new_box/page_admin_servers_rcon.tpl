@@ -1,5 +1,5 @@
 -{if NOT $permission_rcon}-
-	Access Denied!
+	Доступ запрещен!
 -{else}-
 <div class="card m-b-0" id="admin-page-content">
                         

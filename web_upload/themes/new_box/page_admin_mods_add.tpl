@@ -8,7 +8,7 @@
 			<tr>
 		    	<td valign="top" width="35%">
 		    		<div class="rowdesc">
-		    			{help_icon title="Имя МОДа" message="TВведите имя для МОДа."}Имя МОДа
+		    			{help_icon title="Имя МОДа" message="Введите имя для МОДа."}Имя МОДа
 		    		</div>
 		    	</td>
 		    	<td>

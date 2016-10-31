@@ -35,7 +35,7 @@
 					{/if}
 					<input type="hidden" name="page" id="page" value="{$page}">
 					{sb_button text="$commenttype Комментарий" onclick="ProcessComment();" class="m-t-15 btn-primary btn-sm" id="acom" submit=false}&nbsp;
-					{sb_button text="Back" onclick="history.go(-1)" class="m-t-15 btn btn-sm" id="aback"}
+					{sb_button text="Назад" onclick="history.go(-1)" class="m-t-15 btn btn-sm" id="aback"}
 				</li>
 			</ul>
 		</div>
@@ -103,7 +103,7 @@
 						{/if}
 						{if $view_comments && $ban.commentdata != "None" && $ban.commentdata|@count > 0}
 							<div style="float:right;padding-right: 5px;">
-								{$ban.commentdata|@count} <img src="themes/new_box/img/comm.png" alt="Comments" title="Comments" style="height:14px;width:14px;" />
+								{$ban.commentdata|@count} <img src="themes/new_box/img/comm.png" alt="Comments" title="Комментарии" style="height:14px;width:14px;" />
 							</div>
 						{/if}
 					</td>
@@ -391,7 +391,7 @@
 																</a>
 										 
 																<div class="media-body">
-																	<a href="#" class="a-title">{if !empty($commenta.comname)}{$commenta.comname|escape:'html'}{else}<i>Admin deleted</i>{/if}</a> {if !empty($commenta.edittime)}<small class="c-gray m-l-10">last edit {$commenta.edittime} by {if !empty($commenta.editname)}{$commenta.editname}{else}<i>Admin deleted</i>{/if}</small>{/if}
+																	<a href="#" class="a-title">{if !empty($commenta.comname)}{$commenta.comname|escape:'html'}{else}<i>Админ удален</i>{/if}</a> {if !empty($commenta.edittime)}<small class="c-gray m-l-10">last edit {$commenta.edittime} by {if !empty($commenta.editname)}{$commenta.editname}{else}<i>Админ удален</i>{/if}</small>{/if}
 																	<p class="m-t-5 m-b-0" style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">{$commenta.commenttxt}</p>
 																</div>
 																
@@ -508,8 +508,8 @@
 				</div>
 				{if $can_export }
 					<div class="col-sm-7 p-t-10 text-center">
-						Скачать перманентные&nbsp;(&nbsp;<a href="./exportbans.php?type=steam" title="Export Permanent SteamID Bans">SteamID</a>&nbsp;/&nbsp;
-						<a href="./exportbans.php?type=ip" title="Export Permanent IP Bans">IP</a>&nbsp;)&nbsp; баны.
+						Скачать перманентные&nbsp;(&nbsp;<a href="./exportbans.php?type=steam" title="Экспорт перманентных SteamID банов">SteamID</a>&nbsp;/&nbsp;
+						<a href="./exportbans.php?type=ip" title="Экспорт перманентных IP банов">IP</a>&nbsp;)&nbsp; баны.
 					</div>
 				{/if}
 				<div class="col-sm-3 p-r-0 text-right" style="float:right;">

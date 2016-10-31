@@ -50,7 +50,7 @@
 							{sb_button text="Сохранить" icon="<i class='zmdi zmdi-check-all'></i>" class="bgm-green btn-icon-text" id="editadminserver" submit=true}
 							&nbsp;
 						{/if}
-		      			{sb_button text="Back" onclick="history.go(-1)" icon="<i class='zmdi zmdi-undo'></i>" class="bgm-red btn-icon-text" id="aback"}
+		      			{sb_button text="Назад" onclick="history.go(-1)" icon="<i class='zmdi zmdi-undo'></i>" class="bgm-red btn-icon-text" id="aback"}
 			</div>
 			<script>
 			{foreach from="$assigned_servers" item="asrv"}

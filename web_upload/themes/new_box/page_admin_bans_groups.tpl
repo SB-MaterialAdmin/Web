@@ -40,7 +40,7 @@
 			<td>
 				{sb_button text="Забанить группу" onclick="ProcessGroupBan();" class="ok" id="agban" submit=false}
 					  &nbsp;
-				{sb_button text="Back" onclick="history.go(-1)" class="cancel" id="aback"}
+				{sb_button text="Назад" onclick="history.go(-1)" class="cancel" id="aback"}
 			</td>
 		</tr>
 		</table>

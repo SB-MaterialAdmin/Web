@@ -60,7 +60,7 @@
 								</td>
       						</tr>
 							<tr align="left">
-            					<td width="20%" height="16" class="listtable_1">IP</td>
+            					<td width="20%" height="16" class="listtable_1">IP адрес</td>
             					<td height="16" class="listtable_1">
 								{if $sub.sip == ""}
 									<i><font color="#677882">IP адрес не предоставлен</font></i>

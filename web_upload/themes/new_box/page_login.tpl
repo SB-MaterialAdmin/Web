@@ -2,7 +2,7 @@
 <div class="card">
                         <form class="form-horizontal" role="form">
                             <div class="card-header">
-                                <h2>Авторизация <small>-{if $steam_allowed and $login_allowed}-Используйте ваши данные для входа в панель управления, либо авторизируйтесь через стим.-{else}--{if $steam_allowed}-Авторизуйтесь через Steam.-{elseif $login_allowed}-Используйте ваши данные для входа в панель управления.-{/if}--{/if}-</small></h2>
+                                <h2>Авторизация <small>-{if $steam_allowed and $login_allowed}-Используйте ваши данные для входа в панель управления, либо авторизируйтесь через Steam.-{else}--{if $steam_allowed}-Авторизуйтесь через Steam.-{elseif $login_allowed}-Используйте ваши данные для входа в панель управления.-{/if}--{/if}-</small></h2>
                             </div>
                             
                             <div class="card-body card-padding" >

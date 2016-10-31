@@ -1,5 +1,5 @@
 {if not $permission_listadmin}
-	Access Denied
+	Доступ запрещен
 {else}
 	<button onclick="window.location.href='{$btn_href}'" class="btn btn-float btn-danger m-btn" {$btn_helpa}><i class="zmdi {$btn_icon}"></i></button>
 	<div class="card-header">
@@ -132,7 +132,7 @@
 										</div>
 										<div class="pmbb-body p-l-30">
 											<div class="pmbb-view">
-												{$admin.comment_profile}
+												{$admin.comment_profile|escape}
 											</div>
 										</div>
 									</div>

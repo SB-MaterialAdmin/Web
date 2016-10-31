@@ -2,7 +2,7 @@
 <table width="100%" cellpadding="1" cellspacing="1" class="listtable">
 <tr >
             <td width="50%" height='16' class="listtable_top"><strong>Имя админа</strong></td>
-            <td width="50%" height='16' class="listtable_top"><strong>STEAM ID админа</strong></td>
+            <td width="50%" height='16' class="listtable_top"><strong>SteamID админа</strong></td>
 </tr>
 
 {foreach from=$admin_list item=admin}
@@ -18,7 +18,7 @@
 				<table width="80%" cellspacing="0" cellpadding="0" class="listtable">
 					<tr>
 						<td height="16" align="left" class="listtable_top" colspan="5">
-							<b>Admin Details Ingame</b>            
+							<b>Детали администратора</b>            
 						</td>
 					</tr>
 					<tr align="left">

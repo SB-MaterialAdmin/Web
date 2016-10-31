@@ -3,8 +3,8 @@
 		<div class="card-header">
 			<h2>Восстановление пароля <small>Впишите в поле ваш E-mail, чтобы на него отправилось подтверждение о сбросе пароля.</small></h2>
 		</div>
-		<div class="alert alert-success" role="alert" id="msg-blue" style="display:none;">Please check your email inbox (and spam) for a link which will help you reset your password.</div>
-		<div class="alert alert-danger" role="alert" id="msg-red" style="display:none;">The email address you supplied is not registered on the system.</div>
+		<div class="alert alert-success" role="alert" id="msg-blue" style="display:none;">Пожалуйста, проверьте свой почтовый ящик (и папку спам) для получения ссылки, которая поможет вам сбросить пароль.</div>
+		<div class="alert alert-danger" role="alert" id="msg-red" style="display:none;">Адрес электронной почты не зарегистрирован в системе.</div>
 		<div class="card-body card-padding p-b-0">
 			<div class="form-group m-b-5" id="loginPasswordDiv">
 				<label for="email" class="col-sm-3 control-label">E-Mail</label>

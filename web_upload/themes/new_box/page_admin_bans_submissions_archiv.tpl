@@ -70,7 +70,7 @@
 								</td>
       						</tr>
 							<tr align="left">
-            					<td width="20%" height="16" class="listtable_1">IP</td>
+            					<td width="20%" height="16" class="listtable_1">IP адрес</td>
             					<td height="16" class="listtable_1">
 								{if $sub.sip == ""}
 									<i><font color="#677882">IP адрес не предоставлен</font></i>
@@ -151,7 +151,7 @@
                                             {if !empty($commenta.edittime)}
                                             <tr>
                                             <td colspan="3">
-                                              <span style="font-size:6pt;color:grey;">оследнее редактирование: {$commenta.edittime} админом {if !empty($commenta.editname)}{$commenta.editname}{else}<i><font color="#677882">Админ удалён</font></i>{/if}</span>
+                                              <span style="font-size:6pt;color:grey;">последнее редактирование: {$commenta.edittime} админом {if !empty($commenta.editname)}{$commenta.editname}{else}<i><font color="#677882">Админ удалён</font></i>{/if}</span>
                                             </td>
                                             </tr>
                                             {/if}
