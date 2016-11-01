@@ -198,7 +198,7 @@ define('SB_WP_URL','{sbwpurl}');       				//URL of SourceBans Site
 								<?php
 									if(strtolower($_POST['server']) == "localhost")
 									{
-										echo '<script>setTimeout(\'ShowBox("Ошибка локального сервера", "Вы сказали, что Ваш сервер MySQL запущен на той же машине, что и вебсервер. После вставки кода в Ваш databases.cfg замените значение localhost на IP адрес веб сервера." , "blue", "", true);\', 1200);</script>';
+										echo '<script>setTimeout(\'ShowBox("Предупреждение локального сервера", "Вы указали, что Ваш сервер MySQL запущен на той же машине, что и вебсервер. Если это не так, то в databases.cfg замените значение localhost на IP адрес веб сервера." , "blue", "", true);\', 1200);</script>';
 									}
 									if(!is_writable("../config.php"))
 									{
