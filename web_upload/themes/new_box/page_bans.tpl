@@ -356,20 +356,22 @@
 																{/if}
 														</li>
 														{if $ban.admin != "CONSOLE"}
-															{if $admininfos}
-																<li class="p-b-5"><i class="zmdi zmdi-steam"></i> {if !empty($ban.admin_authid)}{$ban.admin_authid} (<a href="http://steamcommunity.com/profiles/{$ban.admin_authid_link}" target="_blank">Профиль</a>){else}Нет данных...{/if}</li>
-																<li class="p-b-5"><i class="zmdi zmdi-vk"></i> {if !empty($ban.admin_vk)}<a href="https://vk.com/{$ban.admin_vk}" target="_blank">Линк</a>{else}Нет данных...{/if}</li>
-																<li class="p-b-5"><i class="zmdi zmdi-account-box-o" data-toggle="tooltip" data-placement="top" title="" data-original-title="Skype"></i> {if !empty($ban.admin_skype)}{$ban.admin_skype}{else}Нет данных...{/if}</li>
-																<li class="p-b-5">
-																	<i class="zmdi zmdi-info-outline" data-toggle="tooltip" data-placement="top" title="" data-original-title="Характеристика"></i>
-																	<address class="m-b-0 ng-binding">
-																		{if !empty($ban.admin_comm)}
-																			{$ban.admin_comm}
-																		{else}
-																			Нет данных. Обычный рядовой, контролирует порядок на серверах.
-																		{/if}
-																	</address>
-																</li>
+															{if !empty($ban.admin)}
+																{if $admininfos}
+																	<li class="p-b-5"><i class="zmdi zmdi-steam"></i> {if !empty($ban.admin_authid)}{$ban.admin_authid} (<a href="http://steamcommunity.com/profiles/{$ban.admin_authid_link}" target="_blank">Профиль</a>){else}Нет данных...{/if}</li>
+																	<li class="p-b-5"><i class="zmdi zmdi-vk"></i> {if !empty($ban.admin_vk)}<a href="https://vk.com/{$ban.admin_vk}" target="_blank">Линк</a>{else}Нет данных...{/if}</li>
+																	<li class="p-b-5"><i class="zmdi zmdi-account-box-o" data-toggle="tooltip" data-placement="top" title="" data-original-title="Skype"></i> {if !empty($ban.admin_skype)}{$ban.admin_skype}{else}Нет данных...{/if}</li>
+																	<li class="p-b-5">
+																		<i class="zmdi zmdi-info-outline" data-toggle="tooltip" data-placement="top" title="" data-original-title="Характеристика"></i>
+																		<address class="m-b-0 ng-binding">
+																			{if !empty($ban.admin_comm)}
+																				{$ban.admin_comm}
+																			{else}
+																				Нет данных. Обычный рядовой, контролирует порядок на серверах.
+																			{/if}
+																		</address>
+																	</li>
+																{/if}
 															{/if}
 														{/if}
 													</ul>
