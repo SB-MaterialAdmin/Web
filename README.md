@@ -1,7 +1,7 @@
 # SourceBans - Material Design
 ![Образец](http://s09.radikal.ru/i182/1610/5f/e56ed82e77f8t.jpg)
 #### Основан на [SourceBans++ 1.5.4.7](https://sbpp.github.io/)
-#### Последняя актуальная версия: **1.1.3** *(от 22.10.2016)*
+#### Последняя актуальная версия: **1.1.4** *(от 31.10.2016)*
 Официальная тема рефорка на *[HLmod.ru](http://hlmod.ru/threads/alpha-material-admin-refork-na-osnove-sb-1-5-4-7-bootstrap-3.36382/)* и на *[MyArena.ru](http://forum.myarena.ru/index.php?/topic/35781-alpha-material-admin-refork-sb-1547/)*
 
 Авторы: [AS.^TRO](http://hlmod.ru/members/79776/), [SAZONISCHE](http://hlmod.ru/members/57554/), [XaH JoB](http://hlmod.ru/members/81268/), [Vampir](http://hlmod.ru/members/17369/), [gibs](http://hlmod.ru/members/46233/), [CrazyHackGUT](http://hlmod.ru/members/72654/)
@@ -35,3 +35,9 @@
 - Если потребуется, выдать права **777** на файлы и папки (те же самые, которые обычно нужно изменить при установке) в корне сб.
 - Если обновляетесь с версии меньше 1.1.1, то запишите в файл config.php перед ?> вот это:
 `define('AVATAR_LIFETIME', 86400); // Avatar lifetime in cache (seconds). (Default: 86400)`
+
+*Установка поверх SourceBans версии не ниже 1.4.10:*
+- Скачиваем последную, релизную версию.
+- Заливаем файлы поверх уже установленного SourceBans с заменой, кроме файла: /config.php. Папку *install* заливать вообще не нужно.
+- Заходим на страницу обновлений: *http://ваш_домен/путь_до_sb/updater/*.
+- После успешных обновлений, удаляем папку updater.

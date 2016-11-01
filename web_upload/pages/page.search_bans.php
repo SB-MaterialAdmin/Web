@@ -1,9 +1,9 @@
 <?php 
 if(!defined("IN_SB"))
 {
-	echo "Îøèáêà äîñòóïà!";
+	echo "ÐžÑˆÐ¸Ð±ÐºÐ° Ð´Ð¾ÑÑ‚ÑƒÐ¿Ð°!";
 	die();
 }
-$GLOBALS['TitleRewrite'] = "Ïîäðîáíûé ïîèñê áàíîâ";
+$GLOBALS['TitleRewrite'] = "ÐŸÐ¾Ð´Ñ€Ð¾Ð±Ð½Ñ‹Ð¹ Ð¿Ð¾Ð¸ÑÐº Ð±Ð°Ð½Ð¾Ð²";
 require(TEMPLATES_PATH . "/admin.bans.search.php"); //Set theme vars from servers page
 ?>

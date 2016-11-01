@@ -237,7 +237,7 @@ echo '<div id="admin-page-content">';
 				}
 			}
 			else
-				$comment = "None";
+				$comment = "Нет";
 
 			$prot['commentdata'] = $comment;
 			$prot['protaddcomment'] = CreateLinkR('<img src="images/details.gif" border="0" alt="" style="vertical-align:middle" /> Add Comment','index.php?p=banlist&comment='.(int)$prot['pid'].'&ctype=P');
@@ -400,7 +400,7 @@ echo '<div id="admin-page-content">';
 				}
 			}
 			else
-				$comment = "None";
+				$comment = "Нет";
 
 			$prot['commentdata'] = $comment;
 			$prot['protaddcomment'] = CreateLinkR('<img src="images/details.gif" border="0" alt="" style="vertical-align:middle" /> Добавить комментарий','index.php?p=banlist&comment='.(int)$prot['pid'].'&ctype=P');
@@ -559,7 +559,7 @@ echo '<div id="admin-page-content">';
 						}
 					}
 					else
-						$comment = "None";
+						$comment = "Нет";
 
 					$sub['commentdata'] = $comment;
 					$sub['subaddcomment'] = CreateLinkR('<img src="images/details.gif" border="0" alt="" style="vertical-align:middle" /> Добавить комментарий','index.php?p=banlist&comment='.(int)$sub['subid'].'&ctype=S');
@@ -701,7 +701,7 @@ echo '<div id="admin-page-content">';
 						}
 					}
 					else
-						$comment = "None";
+						$comment = "Нет";
 
 					$sub['commentdata'] = $comment;
 					$sub['subaddcomment'] = CreateLinkR('<img src="images/details.gif" border="0" alt="" style="vertical-align:middle" /> Добавить комментарий','index.php?p=banlist&comment='.(int)$sub['subid'].'&ctype=S');
