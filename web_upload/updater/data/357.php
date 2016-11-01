@@ -1,11 +1,10 @@
 <?php
 	$_admins = $GLOBALS['db']->Execute("ALTER TABLE `" . DB_PREFIX . "_admins` 
 			ADD `expired` 	int(11) NULL,
-			ADD `skype`		varchar(128) NULL,
-			ADD `comment`	varchar(128) NULL,
-			ADD `vk`		varchar(128) NULL;");
-	
-	//,ADD `support`	int(6) NULL DEFAULT '0';
+			ADD `skype`		varchar(128) 	NULL,
+			ADD `comment`	varchar(128)	 NULL,
+			ADD `vk`		varchar(128) 	NULL,
+			ADD `support`	int(6) 			NULL DEFAULT '0';");
 
 	if(!$_admins)
 		return false;
@@ -14,8 +13,10 @@
 			('config.dateformat_ver2', 'd.m.Y'),
 			('config.text_home', 'Добро пожаловать на сайт игрового портала: AZAZA'),
 			('config.text_mon', 'У вас есть возможность управлять игроками через мониторинг(test)'),
+
 			('config.text_acc', 'Успешный вход в систему!'),
 			('config.text_acc2', 'Подробно ознакомьтесь с данными на это странице!'),
+
 			('template.global', '0'),
 			('dash.info_block',	'1'),
 			('dash.info_block_text',	'<h1>Медовое сообщество</h1><br><center><img src=\"themes/new_box/img/pchelka.jpg\" class=\"img-responsive\" alt=\"\"></center>Дополнительная инфа о нас. ТЕСТ. текстик: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.<br />Дополнительная инфа о нас. ТЕСТ. текстик: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.<br />Дополнительная инфа о нас. ТЕСТ. текстик: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.<br /><b>Все указывается в настройках!</b>'),
