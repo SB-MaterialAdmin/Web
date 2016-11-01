@@ -19,8 +19,7 @@
 	if($mysql){
 		echo "<html>";
 		
-		$qs  = ["DROP TABLE IF EXISTS `".DB_PREFIX."_vay4er`;",
-				"DROP TABLE IF EXISTS `".DB_PREFIX."_settings`;",
+		$qs  = ["DROP TABLE IF EXISTS `".DB_PREFIX."_settings`;",
 				"ALTER IGNORE TABLE `".DB_PREFIX."_admins` DROP COLUMN `expired`;",
 				"ALTER IGNORE TABLE `".DB_PREFIX."_admins` DROP COLUMN `skype`;",
 				"ALTER IGNORE TABLE `".DB_PREFIX."_admins` DROP COLUMN `comment`;",
