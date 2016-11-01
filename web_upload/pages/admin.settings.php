@@ -301,6 +301,7 @@ else
 											(" . (int)$kickit . ", 'config.enablekickit'),
 											(" . (int)$groupban . ", 'config.enablegroupbanning'),
 											(" . (int)$friendsban . ", 'config.enablefriendsbanning'),
+											(" . (int)$_POST['moder_group_st'] . ", 'config.modgroup'),
 											(" . (int)$admininfos . ", 'config.enableadmininfos'),
 											(" . (int)$alladmininfos . ", 'config.changeadmininfos'),
 											(" . (int)$adminrehash . ", 'config.enableadminrehashing')");
@@ -314,6 +315,10 @@ else
 	#########[Settings Page]###############
 	echo '<div id="0" style="display:none;">';
 		
+		$wgroups = $GLOBALS['db']->GetAll("SELECT gid, name FROM ".DB_PREFIX."_groups WHERE type != 3");
+		$theme->assign('wgroups', 				$wgroups);
+		$theme->assign('config_modergroup', 		$GLOBALS['config']['config.modgroup']);
+	
 		$theme->assign('config_dateformat', 		$GLOBALS['config']['config.dateformat']);
 		$theme->assign('config_dateformat_ver2', 	$GLOBALS['config']['config.dateformat_ver2']);
 		$theme->assign('config_title',			$GLOBALS['config']['template.title']);
@@ -412,6 +417,7 @@ $('enable_friendsbanning').checked = <?php echo $GLOBALS['config']['config.enabl
 $('enable_admininfo').checked = <?php echo $GLOBALS['config']['config.enableadmininfos']?>;
 $('allow_admininfo').checked = <?php echo $GLOBALS['config']['config.changeadmininfos']?>;
 $('enable_adminrehashing').checked = <?php echo $GLOBALS['config']['config.enableadminrehashing']?>;
+$('moder_group_st').value = <?php echo $GLOBALS['config']['config.modgroup']?>;
 <?php
 if(ini_get('safe_mode')==1) {
 	print "$('enable_groupbanning').disabled = true;\n";
