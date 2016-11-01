@@ -87,6 +87,18 @@
 						</div>
 					</div>
 				</div>
+				
+				<div class="form-group m-b-5">
+					<label for="moder_group_st" class="col-sm-3 control-label">{help_icon title="Модерирование группы" message="Система которая позволяет администратору редактировать вообще любые баны(при условии, что ему разрешено редактировать все баны), но только на том сервере, где у этого права администратора. Полезно будет тем, у кого есть такие должности как 'управляющий сервером', чтобы администраторы в этой группе могли редактировать только баны на тех серверах, где они управляют."} Модерировать группу</label>
+					<div class="col-sm-3 p-t-5">
+						<select class="selectpicker" name="moder_group_st" id="moder_group_st">
+							<option value="0">Отключить</option>
+							{foreach from=$wgroups item=gr}
+								<option value="{$gr.gid}"{if $gr.gid == $config_modergroup} selected="selected"{/if}>{$gr.name}</option>
+							{/foreach}
+						</select>
+					</div>
+				</div>
 			</div>
 			<div class="card-body card-padding text-center">
 				{sb_button text="Сохранить" icon="<i class='zmdi zmdi-check-all'></i>" class="bgm-green btn-icon-text" id="fsettings" submit=true}
