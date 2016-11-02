@@ -532,8 +532,8 @@ while (!$res->EOF)
 	else
 		$data['reban_link'] = false;
 	$data['blockcomm_link'] = CreateLinkR('Заглушить',"index.php?p=admin&c=comms".$pagelink."&blockfromban=".$res->fields['ban_id']."&key=".$_SESSION['banlist_postkey']."#^0");
-	$data['details_link'] = CreateLinkR('click','getdemo.php?type=B&id='.$res->fields['ban_id']);
-	$data['groups_link'] = CreateLinkR('Show Groups',"index.php?p=admin&c=bans&fid=".$data['communityid']."#^4");
+	$data['details_link'] = CreateLinkR('Кликни','getdemo.php?type=B&id='.$res->fields['ban_id']);
+	$data['groups_link'] = CreateLinkR('Показать группы',"index.php?p=admin&c=bans&fid=".$data['communityid']."#^4");
 	$data['friend_ban_link'] = CreateLinkR('Забанить друзей', '#', '', '_self', false, "BanFriendsProcess('".$data['communityid']."','".StripQuotes($data['player'])."');return false;");
 	$data['edit_link'] = CreateLinkR('Редактировать',"index.php?p=admin&c=bans&o=edit".$pagelink."&id=".$res->fields['ban_id']."&key=".$_SESSION['banlist_postkey']);
 
