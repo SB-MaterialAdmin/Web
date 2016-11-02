@@ -149,20 +149,25 @@ function sbError($errno, $errstr, $errfile, $errline)
     switch ($errno) {
     case E_USER_ERROR:
         $msg = "[$errno] $errstr<br />\n";
-        $msg .= "Fatal error on line $errline in file $errfile";
+        $msg .= "Произошла фатальная ошибка на строке $errline в файле $errfile";
      	$log = new CSystemLog("e", "PHP Error", $msg);
+	
+	// SourceBans Fatal Error Handler //
+	include(INCLUDES_PATH.'/FatalErrorHandler.php');
+	// SourceBans Fatal Error Handler //
+	
         exit(1);
         break;
 
     case E_USER_WARNING:
         $msg = "[$errno] $errstr<br />\n";
-        $msg .= "Error on line $errline in file $errfile";
+        $msg .= "Ошибка на строке $errline в файле $errfile";
         $GLOBALS['log']->AddLogItem("w", "PHP Warning", $msg);
         break;
 
     case E_USER_NOTICE:
          $msg = "[$errno] $errstr<br />\n";
-         $msg .= "Notice on line $errline in file $errfile";
+         $msg .= "Уведомление на строке $errline в файле $errfile";
          $GLOBALS['log']->AddLogItem("m", "PHP Notice", $msg);
         break;
 

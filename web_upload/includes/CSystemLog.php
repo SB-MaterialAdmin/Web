@@ -111,8 +111,10 @@ class CSystemLog {
 		$bt = debug_backtrace();
 	
 		$functions = "";
-		for ($idx = 2; $idx<count($bt); $idx++)
-			$functions .= str_replace(ROOT, "/", $bt[$idx]['file']) . "::".$bt[$idx]['function']."(".$this->FormatArguments($bt[$idx]['args']).") - " . $bt[$idx]['line'] . "<br />";
+		$count = count($bt);
+		for ($idx = 2; $idx<$count; $idx++)
+			if ($bt[$idx]['function'] != "sbError")
+				$functions .= "<b>". ($count-$idx) . "</b>: " . str_replace(ROOT, "/", $bt[$idx]['file']) . "::".$bt[$idx]['function']."(".$this->FormatArguments($bt[$idx]['args']).") - " . $bt[$idx]['line'] . "<br />\n";
 		return $functions;
 	}
 	
