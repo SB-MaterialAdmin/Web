@@ -2,8 +2,8 @@
 if (!defined('IN_SB')) {echo 'You should not be here. Only follow links!';die();}
 
 global $theme;
-if (headers_sent()) // Если SB уже отправил некоторые части шаблона, их надо очистить
-    echo('<script>document.getElementsByTagName("html")[0].innerHTML = "";</script>');
+// SB ничего не мог отправить, так как весь вывод пихался в буфер. Выключим его, очистив всё его содержимое, и начнём выводить свой шаблон ошибки.
+ob_end_clean();
 
 $theme->assign('title', "Ошибка системы");
 $theme->assign('message', $msg);
