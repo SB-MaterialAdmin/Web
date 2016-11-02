@@ -37,7 +37,7 @@ if($GLOBALS['config']['config.modgroup'] != "0"){
 		$srv_ban = $GLOBALS['db']->GetOne("SELECT `sid` FROM `" . DB_PREFIX . "_bans` WHERE `bid` = '".$_GET['id']."'");
 		$amd_access = $GLOBALS['db']->GetOne("SELECT `server_id` FROM `" . DB_PREFIX . "_admins_servers_groups` WHERE `admin_id` = '".$userbank->GetAid()."' AND `server_id` = '".$srv_ban."'");
 		if($srv_ban != $amd_access){
-			echo '<script>ShowBox("Ошибка", "Вы имеете доступ только к редактированию банов на тех серверах, где у вас есть права управляющего!", "red", "");setTimeout(\'history.go(-1);\', 4000);</script>';
+			echo '<script>setTimeout(\'<script>ShowBox("Ошибка", "Вы имеете доступ только к редактированию банов на тех серверах, где у вас есть права управляющего!", "red", "");setTimeout(\'history.go(-1);\', 4000);\', 1200);</script>';
 			PageDie();
 		}
 	}
