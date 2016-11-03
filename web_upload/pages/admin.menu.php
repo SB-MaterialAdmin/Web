@@ -7,10 +7,9 @@ global $userbank, $theme;
 	else {
 		$objResponse = new xajaxResponse();
 		
-		if(!empty($_GET['o']) and !empty($_GET['id']) and !is_numeric($_GET['id'])){
-			PageDie();
-		}else{
-			if(($_GET['o'] == "del") and !empty($_GET['o'])){
+		$_GET['id'] = preg_replace('/[^0-9]/', '', $_GET['id']);
+
+			if($_GET['o'] == "del"){
 					$check_sys = $GLOBALS['db']->GetOne("SELECT system FROM `" . DB_PREFIX . "_menu` WHERE id = '".(int)$_GET['id']."'");
 					if($check_sys != "1"){
 						$gg_check_sys = $GLOBALS['db']->Execute("DELETE FROM `" . DB_PREFIX . "_menu` WHERE id = '".(int)$_GET['id']."'");
@@ -18,7 +17,7 @@ global $userbank, $theme;
 							ShowBox_ajx("Успешно", "Ссылка была успешно удалена из меню!", "green", "index.php/?p=admin&c=menu", false, $objResponse); // не работает 
 					}else
 						ShowBox_ajx("Ошибка", "Системную ссылку удалить невозможно!", "red", "index.php/?p=admin&c=menu"); // не работает 
-			}elseif(($_GET['o'] == "on") and !empty($_GET['o'])){
+			}elseif($_GET['o'] == "on"){
 				$check_sys = $GLOBALS['db']->GetOne("SELECT enabled FROM `" . DB_PREFIX . "_menu` WHERE id = '".(int)$_GET['id']."'");
 				if($check_sys == "0"){
 					$gg_check_sys = $GLOBALS['db']->Execute("UPDATE `" . DB_PREFIX . "_menu` SET `enabled` = '1' WHERE id = '".(int)$_GET['id']."'");
@@ -26,7 +25,7 @@ global $userbank, $theme;
 						ShowBox_ajx("Успешно", "Ссылка была успешно включена в главное меню SourceBans!", "green", "index.php/?p=admin&c=menu", false, $objResponse); // не работает 
 				}else
 					ShowBox_ajx("Ошибка", "Данная ссылка уже и так отключена!", "red", "index.php/?p=admin&c=menu", false, $objResponse); // не работает 
-			}elseif(($_GET['o'] == "off") and !empty($_GET['o'])){
+			}elseif($_GET['o'] == "off"){
 				$check_sys = $GLOBALS['db']->GetOne("SELECT enabled FROM `" . DB_PREFIX . "_menu` WHERE id = '".(int)$_GET['id']."'");
 				if($check_sys == "1"){
 					$gg_check_sys = $GLOBALS['db']->Execute("UPDATE `" . DB_PREFIX . "_menu` SET `enabled` = '0' WHERE id = '".(int)$_GET['id']."'");
