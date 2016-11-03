@@ -181,7 +181,6 @@ function AddTab($title, $url, $desc, $active=false)
 function BuildPageTabs()
 {
 	global $userbank;
-	//AddTab("<i class='zmdi zmdi-home bgm-red'></i> Главная", "index.php?p=home", "Главная страница SourceBans. Список серверов, последних банов и блоков.");
 	AddTab("<i class='zmdi zmdi-home zmdi-hc-fw'></i> Главная", "index.php?p=home", "Главная страница SourceBans. Список серверов, последних банов и блоков.");
 	AddTab("<i class='zmdi zmdi-input-composite zmdi-hc-fw'></i> Серверы", "index.php?p=servers", "Список всех серверов и их текущий статус.");
 	AddTab("<i class='zmdi zmdi-lock-outline zmdi-hc-fw'></i> Список банов", "index.php?p=banlist", "Список всех когда-либо выданных банов.");
@@ -203,6 +202,8 @@ function BuildPageTabs()
 			$submenu->addMenuItem("Администраторы", 0,"", "index.php?p=admin&amp;c=admins", true);
 		if(($userbank->HasAccess(ADMIN_OWNER)) && ($GLOBALS['config']['page.vay4er'] == "1"))
 			$submenu->addMenuItem("Ваучеры", 0,"", "index.php?p=admin&amp;c=pay_card", true);
+		if($userbank->HasAccess(ADMIN_OWNER))
+			$submenu->addMenuItem("Меню", 0,"", "index.php?p=admin&amp;c=menu", true);
 		if($userbank->HasAccess(ADMIN_OWNER|ADMIN_LIST_SERVERS|ADMIN_ADD_SERVER|ADMIN_EDIT_SERVERS|ADMIN_DELETE_SERVERS))
 			$submenu->addMenuItem("Серверы", 0,"", "index.php?p=admin&amp;c=servers", true);
 		if($userbank->HasAccess( ADMIN_OWNER|ADMIN_ADD_BAN|ADMIN_EDIT_OWN_BANS|ADMIN_EDIT_GROUP_BANS|ADMIN_EDIT_ALL_BANS|ADMIN_BAN_PROTESTS|ADMIN_BAN_SUBMISSIONS))
@@ -253,6 +254,9 @@ function BuildBreadcrumbs()
 				break;
 			case "pay_card":
 				$cat = "Управление Ваучерами";
+				break;
+			case "menu":
+				$cat = "Управление Меню";
 				break;
 			default:
 				unset($_GET['c']);
