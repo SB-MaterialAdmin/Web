@@ -47,7 +47,6 @@ global $userbank, $theme;
 		
 		$list_menus = $GLOBALS['db']->GetAll("SELECT * FROM ".DB_PREFIX."_menu ORDER BY `priority`");
 		$theme->assign('list', $list_menus);
-		$theme->assign('test', $test);
 		$theme->display('page_admin_menu.tpl');
 	}
 ?>
