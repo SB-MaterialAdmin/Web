@@ -433,6 +433,35 @@ else
 		include TEMPLATES_PATH . "/admin.pay_card.php";
 		RewritePageTitle("Настройки Ваучеров");
 	}
+	elseif($_GET['c'] == "menu")
+	 // ###################[ Settings ]##################################################################
+	{
+		CheckAdminAccess( ADMIN_OWNER );
+		if(!isset($_GET['o']))
+		{
+		// ====================[ ADMIN SIDE MENU START ] ===================
+			$settingsTabMenu = new CTabsMenu();
+			if($userbank->HasAccess(ADMIN_OWNER))
+			{
+				$settingsTabMenu->addMenuItem("Список",0);
+				$settingsTabMenu->addMenuItem("Добавить",1);
+				$settingsTabMenu->outputMenu();
+			}
+		// ====================[ ADMIN SIDE MENU END ] ===================
+	
+		include TEMPLATES_PATH . "/admin.menu.php";
+		RewritePageTitle("Настройка меню");
+		}
+		elseif($_GET['o'] == 'edit')
+		{
+			$banTabMenu = new CTabsMenu();
+			$banTabMenu->addMenuItem("Назад", 0,"", "javascript:history.go(-1);", true);
+			$banTabMenu->outputMenu();			
+			
+			include TEMPLATES_PATH . "/admin.menu.edit.php";
+			RewritePageTitle("Редактировать меню");
+		}
+	}
 }
 echo '</div></div></div>';
 ?>
