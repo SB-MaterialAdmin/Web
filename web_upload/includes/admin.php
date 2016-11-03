@@ -437,8 +437,15 @@ else
 	 // ###################[ Settings ]##################################################################
 	{
 		CheckAdminAccess( ADMIN_OWNER );
-		if(!isset($_GET['o']))
+		if($_GET['o'] == 'edit')
 		{
+			$banTabMenu = new CTabsMenu();
+			$banTabMenu->addMenuItem("Назад", 0,"", "javascript:history.go(-1);", true);
+			$banTabMenu->outputMenu();			
+			
+			include TEMPLATES_PATH . "/admin.menu.edit.php";
+			RewritePageTitle("Редактировать меню");
+		}else{
 		// ====================[ ADMIN SIDE MENU START ] ===================
 			$settingsTabMenu = new CTabsMenu();
 			if($userbank->HasAccess(ADMIN_OWNER))
@@ -451,15 +458,6 @@ else
 	
 		include TEMPLATES_PATH . "/admin.menu.php";
 		RewritePageTitle("Настройка меню");
-		}
-		elseif($_GET['o'] == 'edit')
-		{
-			$banTabMenu = new CTabsMenu();
-			$banTabMenu->addMenuItem("Назад", 0,"", "javascript:history.go(-1);", true);
-			$banTabMenu->outputMenu();			
-			
-			include TEMPLATES_PATH . "/admin.menu.edit.php";
-			RewritePageTitle("Редактировать меню");
 		}
 	}
 }
