@@ -1407,7 +1407,7 @@ function UpdateGroupPermissionCheckBoxes()
 		$('type.msg').setHTML('Ждите...');
 		$('type.msg').setStyle('display', 'block');
 	}
-	if(document.getElementById('grouptype').value == 1)
+	/*if(document.getElementById('grouptype').value == 1)
 	{
 		var height = 285;
 	}else if(document.getElementById('grouptype').value == 2)
@@ -1419,6 +1419,7 @@ function UpdateGroupPermissionCheckBoxes()
 		var height = 2;
 	}
 	Shrink('perms', 1000, height);
+	*/
 	if(document.getElementById('grouptype').value != 3 && document.getElementById('grouptype').value != 0)
 		setTimeout("xajax_UpdateGroupPermissions(document.getElementById('grouptype').value)",1000);
 }
