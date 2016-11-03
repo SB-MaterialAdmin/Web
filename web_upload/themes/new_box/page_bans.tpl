@@ -409,35 +409,65 @@
 																				<li>{$commenta.delcomlink}</li>
 																			</ul>
 																		</li>
+<!-- COMMENT CODik-->
+										{if $view_comments}
+											<hr class="m-t-10 m-b-10" />
+											<div class="wall-comment-list">
+												{if $ban.commentdata != "None"}
+													<div class="wcl-list">
+														{foreach from=$ban.commentdata item=commenta}
+															<div class="media">
+																<a href="#" class="pull-left">
+																	<img src="themes/new_box/img/profile-pics/4.jpg" alt="" class="lv-img-sm">
+																</a>
+										 
+																<div class="media-body">
+																	<a href="#" class="a-title">
+																		{if !empty($commenta.comname)}
+																			{$commenta.comname|escape:'html'}
+																		{else}
+																			<i>Admin deleted</i>
+																		{/if}
+																	</a> 
+																	{if !empty($commenta.edittime)}
+																		<small class="c-gray m-l-10">last edit {$commenta.edittime} by 
+																			{if !empty($commenta.editname)}
+																				{$commenta.editname}
+																			{else}
+																				<i>Админ удален</i>
+																			{/if}
+																		</small>
+																	{/if}
+																	<p class="m-t-5 m-b-0" style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">{$commenta.commenttxt}</p>
+																</div>
+																
+																{if $commenta.editcomlink != ""}
+																	<ul class="actions" style="right: -1px;">
+																		<li class="dropdown">
+																			<a href="#" data-toggle="dropdown" aria-expanded="false">
+																				<i class="zmdi zmdi-more-vert"></i>
+																			</a>
+
+																			<ul class="dropdown-menu dropdown-menu-right">
+																				<li>{$commenta.editcomlink}</li>
+																				<li>{$commenta.delcomlink}</li>
+																			</ul>
+																		</li>
 																	</ul>
 																{/if}
 															</div>
-															{/foreach}
-														</div>
-													{else}
-														<!-- Comment Listing -->
-														<div class="wcl-list">
-															<div class="media">
-																<div class="media-body">
-																	<p class="m-t-5 m-b-0">{if $ban.commentdata == "None"}Комментарии отсутствуют.{/if}</p>
-																</div>
-															</div>
-														</div>
-													{/if}
+														{/foreach}
+													</div>
 												{else}
-													<!-- Comment Listing -->
-													<!-- 
 													<div class="wcl-list">
 														<div class="media">
 															<div class="media-body">
-																<p class="m-t-5 m-b-0">Просматривать комментарии и оставлять их - разрешено только авторизированным пользователям!</p>
+																<p class="m-t-5 m-b-0">Комментарии отсутствуют.</p>
 															</div>
 														</div>
 													</div>
-													-->
 												{/if}
 												<!-- Comment form -->
-												{if $view_comments}
 													<div class="wcl-form m-t-15">
 														<div class="wc-comment">
 															<a href="{$ban.addcomment_link}">
@@ -447,18 +477,8 @@
 															</a>
 														</div>
 													</div>
-												{else}
-													<!--
-													<div class="wcl-form m-t-15">
-														<div class="wc-comment">
-															<div class="wcc-inner" style="cursor: no-drop;">
-																Доступ запрещен...
-															</div>
-														</div>
-													</div>
-													-->
-												{/if}
 											</div>
+										{/if}
 										<!-- COMMENT CODik-->
 									</div>
 									{/if}
