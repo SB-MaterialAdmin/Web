@@ -7,7 +7,7 @@ $qs = ["CREATE TABLE IF NOT EXISTS `sb_menu` ( `id` int(11) NOT NULL AUTO_INCREM
        $insq_menu . " (4, '<i class=''zmdi zmdi-mic-off zmdi-hc-fw''></i> Список мутов/гагов', 'Список всех когда-либо выданных мутов и гагов.', 'index.php?p=commslist', 1, 1, 997);",
        $insq_menu . " (5, '<i class=''zmdi zmdi-plus-circle-o-duplicate zmdi-hc-fw''></i> Пожаловаться на игрока', 'Здесь вы можете оставить жалобу на игрока.', 'index.php?p=submit', 1, 0, 996);",
        $insq_menu . " (6, '<i class=''zmdi zmdi-comment-edit zmdi-hc-fw''></i> Апелляция бана', 'Вы можете подать аппеляцию вашего бана, предоставив доказательства невиновности.', 'index.php?p=protest', 1, 0, 995);", 
-       $insq_menu . " (7, '<i class=''zmdi zmdi-accounts zmdi-hc-fw''></i> Админлист', 'Список администраторов на доступных серверах.', 'index.php?p=adminlist', 1, 0, 994);"]
+       $insq_menu . " (7, '<i class=''zmdi zmdi-accounts zmdi-hc-fw''></i> Админлист', 'Список администраторов на доступных серверах.', 'index.php?p=adminlist', 1, 0, 994);"];
 
 foreach ($qs as $query)
     if (!$GLOBALS['db']->Execute($query)) return false;
