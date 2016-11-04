@@ -638,8 +638,8 @@ while (!$res->EOF)
 					$cdata['editname'] = $commentres->fields['editname'];
 				}
 				else {
-					$cdata['edittime'] = "";
-					$cdata['editname'] = "";
+					$cdata['edittime'] = "none";
+					$cdata['editname'] = "none";
 				}
 
 				$morecom = 1;
