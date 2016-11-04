@@ -395,7 +395,6 @@
 																	<p class="m-t-5 m-b-0" style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">{$commenta.commenttxt}</p>
 																</div>
 																
-																{if $commenta.editcomlink != ""}
 																	<ul class="actions" style="right: -1px;">
 																		<li class="dropdown">
 																			<a href="#" data-toggle="dropdown" aria-expanded="false">
@@ -403,12 +402,11 @@
 																			</a>
 
 																			<ul class="dropdown-menu dropdown-menu-right">
-																				<li>{$commenta.editcomlink}</li>
-																				<li>{$commenta.delcomlink}</li>
+																				{if $commenta.editcomlink != "none"}<li>{$commenta.editcomlink}</li>{/if}
+																				{if $commenta.delcomlink != "none"}<li>{$commenta.delcomlink}</li>{/if}
 																			</ul>
 																		</li>
 																	</ul>
-																{/if}
 															</div>
 														{/foreach}
 													</div>
