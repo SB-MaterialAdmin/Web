@@ -382,7 +382,7 @@
 										{if $view_comments}
 											<hr class="m-t-10 m-b-10" />
 											<div class="wall-comment-list">
-												{if $ban.commentdata != "None"}
+												{if $ban.commentdata != "Нет"}
 													<div class="wcl-list">
 														{foreach from=$ban.commentdata item=commenta}
 															<div class="media">
