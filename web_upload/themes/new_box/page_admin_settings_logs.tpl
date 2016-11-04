@@ -1,11 +1,13 @@
 <div class="card-header">
     <h2 align="left">Системный лог {$clear_logs} <small>Щёлкните курсором мыши по нужному событию, дабы раскрыть больше подробностей о нём.</small></h2>
 </div>
+<div class="card-body">
+{php} require (TEMPLATES_PATH . "/admin.log.search.php");{/php}
+</div>
 <div class="card-body card-padding">
-    {php} require (TEMPLATES_PATH . "/admin.log.search.php");{/php}
-
-    <div id="banlist-nav">{$page_numbers}</div>
-    <br /><br />
+<div id="banlist-nav">{$page_numbers}</div>
+</div>
+<div class="card-body">
 
     <table width="100%" cellspacing="0" cellpadding="0" align="center" class="table table-striped table-vmiddle">
         <tr>
