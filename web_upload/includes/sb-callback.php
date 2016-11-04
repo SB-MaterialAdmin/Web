@@ -3393,9 +3393,9 @@ function GroupBan($groupuri, $isgrpurl="no", $queue="no", $reason="", $last="")
 	}
 
 	if($queue=="yes")
-		$objResponse->addScript("ShowBox('Ждите...', 'Банятся все участники выбранной группы... <br>Ждите...<br>Внимание: Это может занять 15 минут или дольше, в зависимости от количества участников группы!', 'info', '', true);");
+		$objResponse->addScript("ShowBox('Ждите...', 'Банятся все участники выбранной группы... <br>Ждите...<br>Внимание: Это может занять 15 минут или дольше, в зависимости от количества участников группы!', 'info', '', false);");
 	else
-		$objResponse->addScript("ShowBox('Ждите...', 'Банятся все участники группы ".$grpname."...<br>Ждите...<br>Внимание: Это может занять 15 минут или дольше, в зависимости от количества участников группы!', 'info', '', true);");
+		$objResponse->addScript("ShowBox('Ждите...', 'Банятся все участники группы ".$grpname."...<br>Ждите...<br>Внимание: Это может занять 15 минут или дольше, в зависимости от количества участников группы!', 'info', '', false);");
 	$objResponse->addScript("$('dialog-control').setStyle('display', 'none');");
 	$objResponse->addScriptCall("xajax_BanMemberOfGroup", $grpname, $queue, htmlspecialchars(addslashes($reason)), $last);
 	return $objResponse;
@@ -3496,9 +3496,10 @@ function BanMemberOfGroup($grpurl, $queue, $reason, $last)
 		}
 	}
 	if($queue=="yes") {
-		$objResponse->addAppend("steamGroupStatus", "innerHTML", "<p>Забанено ".($total-$bannedbefore-$error)." из ".$total." участников группы '".$grpurl."'. | ".$bannedbefore." были забанены ранее. | ".$error." ошибок.</p>");
+		$objResponse->addScript("$('steamGroupStatus').setStyle('display', 'block');");
+		$objResponse->addAppend("steamGroupStatus", "innerHTML", "<p>Забанено ".($total-$bannedbefore-$error)." из ".$total." участников группы '".$grpurl."'. <br/> ".$bannedbefore." были забанены ранее. <br /> ".$error." ошибок.</p>");
 		if($grpurl==$last) {
-			$objResponse->addScript("ShowBox('Группы успешно забанены', 'Выбранные группы были успешно забанены. Детали банов ниже.', 'green', '', true);");
+			$objResponse->addScript("ShowBox('Группы успешно забанены', 'Выбранные группы были успешно забанены. Детали банов выведены в зеленое окно.', 'green', '', true);");
 			$objResponse->addScript("$('dialog-control').setStyle('display', 'block');");
 		}
 	} else {
