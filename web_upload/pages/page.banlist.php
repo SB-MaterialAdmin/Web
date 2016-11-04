@@ -616,16 +616,14 @@ while (!$res->EOF)
 				$cdata = array();
 				$cdata['morecom'] = ($morecom==1?true:false);
 				if($commentres->fields['aid'] == $userbank->GetAid() || $userbank->HasAccess(ADMIN_OWNER)) {
-					//$cdata['editcomlink'] = CreateLinR('<img src=\'images/edit.gif\' border=\'0\' alt=\'\' style=\'vertical-align:middle\' />','index.php?p=banlist&comment='.$data['ban_id'].'&ctype=B&cid='.$commentres->fields['cid'].$pagelink,'Edit Comment');
 					$cdata['editcomlink'] = "<a href=\"index.php?p=banlist&comment=".$data['ban_id']."&ctype=B&cid=".$commentres->fields['cid'].$pagelink."\"> Редактировать</a>";
 					if($userbank->HasAccess(ADMIN_OWNER)) {
-						//$cdata['delcomlink'] = "<a href=\"#\" class=\"tip\" title=\"<img src='images/delete.gif' border='0' alt='' style='vertical-align:middle' /> :: Delete Comment\" target=\"_self\" onclick=\"RemoveComment(".$commentres->fields['cid'].",'B',".(isset($_GET["page"])?$page:-1).");\"><img src='images/delete.gif' border='0' alt='' style='vertical-align:middle' /></a>";
 						$cdata['delcomlink'] = "<a href=\"#\" target=\"_self\" onclick=\"RemoveComment(".$commentres->fields['cid'].",'B',".(isset($_GET["page"])?$page:-1).");\">Удалить</a>";
 					}
 				}
 				else {
-					$cdata['editcomlink'] = "";
-					$cdata['delcomlink'] = "";
+					$cdata['editcomlink'] = "none";
+					$cdata['delcomlink'] = "none";
 				}
 
 				$cdata['comname'] = $commentres->fields['comname'];
