@@ -181,16 +181,12 @@ function AddTab($title, $url, $desc, $active=false)
 function BuildPageTabs()
 {
 	global $userbank;
-	AddTab("<i class='zmdi zmdi-home zmdi-hc-fw'></i> Главная", "index.php?p=home", "Главная страница SourceBans. Список серверов, последних банов и блоков.");
-	AddTab("<i class='zmdi zmdi-input-composite zmdi-hc-fw'></i> Серверы", "index.php?p=servers", "Список всех серверов и их текущий статус.");
-	AddTab("<i class='zmdi zmdi-lock-outline zmdi-hc-fw'></i> Список банов", "index.php?p=banlist", "Список всех когда-либо выданных банов.");
-	AddTab("<i class='zmdi zmdi-mic-off zmdi-hc-fw'></i> Список мутов/гагов", "index.php?p=commslist", "Список всех когда-либо выданных мутов и гагов.");
-	if($GLOBALS['config']['config.enablesubmit']=="1")
-		AddTab("<i class='zmdi zmdi-plus-circle-o-duplicate zmdi-hc-fw'></i> Пожаловаться на игрока", "index.php?p=submit", "Здесь вы можете оставить жалобу на игрока.");
-	if($GLOBALS['config']['config.enableprotest']=="1")
-		AddTab("<i class='zmdi zmdi-comment-edit zmdi-hc-fw'></i> Апелляция бана", "index.php?p=protest", "Вы можете подать аппеляцию вашего бана, предоставив доказательства невиновности.");
-	if($GLOBALS['config']['page.adminlist']=="1")
-		AddTab("<i class='zmdi zmdi-accounts zmdi-hc-fw'></i> Админлист", "index.php?p=adminlist", "Список администраторов на доступных серверах.");
+
+	// NEW MENU, V2.0
+	$items = $GLOBALS['db']->GetAll(sprintf("SELECT * FROM `%s_menu` WHERE `enabled` = 1 ORDER BY `priority` DESC", DB_PREFIX));
+	foreach ($items as &$item)
+		AddTab($item['text'], $item['url'], $item['description']);
+
 	if ($userbank->is_admin())
 		AddTab("<i class='zmdi zmdi-star zmdi-hc-fw'></i> Админ-Панель", "index.php?p=admin", "Панель для администраторов. Управление серверами, администраторами, настройками.");
 
@@ -202,8 +198,6 @@ function BuildPageTabs()
 			$submenu->addMenuItem("Администраторы", 0,"", "index.php?p=admin&amp;c=admins", true);
 		if(($userbank->HasAccess(ADMIN_OWNER)) && ($GLOBALS['config']['page.vay4er'] == "1"))
 			$submenu->addMenuItem("Ваучеры", 0,"", "index.php?p=admin&amp;c=pay_card", true);
-		if($userbank->HasAccess(ADMIN_OWNER))
-			$submenu->addMenuItem("Меню", 0,"", "index.php?p=admin&amp;c=menu", true);
 		if($userbank->HasAccess(ADMIN_OWNER|ADMIN_LIST_SERVERS|ADMIN_ADD_SERVER|ADMIN_EDIT_SERVERS|ADMIN_DELETE_SERVERS))
 			$submenu->addMenuItem("Серверы", 0,"", "index.php?p=admin&amp;c=servers", true);
 		if($userbank->HasAccess( ADMIN_OWNER|ADMIN_ADD_BAN|ADMIN_EDIT_OWN_BANS|ADMIN_EDIT_GROUP_BANS|ADMIN_EDIT_ALL_BANS|ADMIN_BAN_PROTESTS|ADMIN_BAN_SUBMISSIONS))
@@ -214,6 +208,8 @@ function BuildPageTabs()
 			$submenu->addMenuItem("Группы", 0,"", "index.php?p=admin&amp;c=groups", true);
 		if($userbank->HasAccess(ADMIN_OWNER|ADMIN_WEB_SETTINGS))
 			$submenu->addMenuItem("Настройки", 0,"", "index.php?p=admin&amp;c=settings", true);
+		if($userbank->HasAccess(ADMIN_OWNER))
+			$submenu->addMenuItem("Меню", 0,"", "index.php?p=admin&amp;c=menu", true);
 		if($userbank->HasAccess( ADMIN_OWNER|ADMIN_LIST_MODS|ADMIN_ADD_MODS|ADMIN_EDIT_MODS|ADMIN_DELETE_MODS))
 			$submenu->addMenuItem("Моды", 0,"", "?p=admin&amp;c=mods", true);
 		SubMenu( $submenu->getMenuArray() );
@@ -256,7 +252,7 @@ function BuildBreadcrumbs()
 				$cat = "Управление Ваучерами";
 				break;
 			case "menu":
-				$cat = "Управление Меню";
+				$cat = "Управление меню";
 				break;
 			default:
 				unset($_GET['c']);
@@ -1271,6 +1267,24 @@ function prepareSize($bytes, $precision = 2) {
 }
 
 function generateMsgBoxJS($title = "Успех!", $text = "Действие успешно выполнено", $color = "green", $redirect = "", $button = true) {
-    return sprintf('ShowBox("%s", "%s", "%s", "%s", %s)', htmlspecialchars($title), htmlspecialchars($text), $color, $redirect, $button?"true":"false");
+    return sprintf('ShowBox("%s", "%s", "%s", "%s", %s)', htmlspecialchars(addslashes($title)), htmlspecialchars(addslashes($text)), $color, $redirect, $button?"true":"false");
+}
+
+function PushScriptToExecuteAfterLoadPage($script) {
+	setcookie("ScriptFooter", $script, time()+60);
+}
+
+function FatalRefresh($url = 0) {
+	if ($url === 0)
+		$url = $_SERVER['REQUEST_URI'];
+	
+	ob_end_clean();
+	Header("Location: " . $url);
+	exit(0);
+}
+
+function AddScriptWithReload($script = 'alert("test")', $url = 0) {
+    PushScriptToExecuteAfterLoadPage($script);
+    FatalRefresh($url);
 }
 ?>

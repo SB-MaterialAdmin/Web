@@ -433,10 +433,11 @@ else
 		include TEMPLATES_PATH . "/admin.pay_card.php";
 		RewritePageTitle("Настройки Ваучеров");
 	}
+	//////////////////////////////////////////////////////
 	elseif($_GET['c'] == "menu")
-	 // ###################[ Settings ]##################################################################
+	// ###################[ Settings ]##################################################################
 	{
-		CheckAdminAccess( ADMIN_OWNER );
+		CheckAdminAccess( ADMIN_OWNER );	
 		if($_GET['o'] == 'edit')
 		{
 			$banTabMenu = new CTabsMenu();
@@ -444,7 +445,7 @@ else
 			$banTabMenu->outputMenu();			
 			
 			include TEMPLATES_PATH . "/admin.menu.edit.php";
-			RewritePageTitle("Редактировать меню");
+			RewritePageTitle("Редактирование меню");
 		}else{
 		// ====================[ ADMIN SIDE MENU START ] ===================
 			$settingsTabMenu = new CTabsMenu();
@@ -457,9 +458,10 @@ else
 		// ====================[ ADMIN SIDE MENU END ] ===================
 	
 		include TEMPLATES_PATH . "/admin.menu.php";
-		RewritePageTitle("Настройка меню");
+		RewritePageTitle("Управление меню");
 		}
 	}
+	
 }
 echo '</div></div></div>';
 ?>

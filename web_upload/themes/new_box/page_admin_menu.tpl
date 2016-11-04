@@ -4,7 +4,6 @@
 		<h2>Меню <small>Позволяет управлять ссылками в главном меню SourceBans.</small></h2>
 		</div>
 
-		<div class="alert alert-info" role="alert">При включении стандартных страниц, таких как "Протест бана", "Жалоба на игрока", "АдминЛист", не забывайте их включить в настройках SourceBans.</div>
 		<div class="card-body table-responsive">
 				<table width="100%" class="table">
 					<thead>
@@ -29,7 +28,7 @@
 									{$menu.description|escape:'html'|stripslashes}
 								</td>
 								<td>
-									{$menu.url|escape:'html'|stripslashes}
+									<a href="{$menu.url}">{$menu.url}</a>
 								</td>
 								<td class="center">
 									{if $menu.system != "1"}<a href="index.php?p=admin&c=menu&o=del&id={$menu.id}">Удалить</a> / {/if}<a href="index.php?p=admin&c=menu&o=edit&id={$menu.id}">Изменить</a> {if $menu.enabled != "1"}/ <a href="index.php?p=admin&c=menu&o=on&id={$menu.id}">Включить</a> {else}/ <a href="index.php?p=admin&c=menu&o=off&id={$menu.id}">Отключить</a>{/if}
@@ -50,6 +49,7 @@
 			<div class="card-header">
 				<h2>Меню <small>Позволяет управлять ссылками в главном меню SourceBans.</small></h2>
 			</div>
+			<div class="alert alert-info" role="alert">Вы можете добавлять или заменять иконки ссылок! Иконки используются из фреймворка <i>Material Design Iconic Font</i>. Доступные иконки вы можете просмотреть <a href="http://zavoloklom.github.io/material-design-iconic-font/examples.html" target="_blank">здесь</a>.</div>
 			<div class="card-body card-padding p-b-0" id="group.details">
 				<div class="form-group m-b-5">
 					<label for="names_link" class="col-sm-3 control-label">{help_icon title="Заголовок" message="Введите заголовок названия ссылки. Грубо говоря 'Имя' ссылки."} Заголовок</label>

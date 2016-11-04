@@ -186,6 +186,14 @@ window.addEvent('domready', function(){
 <script defer type="text/javascript" src="./scripts/pngfix.js"></script>
 <![endif]-->
 
+<?php if (isset($_COOKIE['ScriptFooter'])) { ?>
+    <script type="text/javascript">
+        <?php echo $_COOKIE['ScriptFooter']; ?>
+    </script>
+<?php
+    setcookie("ScriptFooter", "", time());
+    } ?>
+
 </body>
 </html>
 
