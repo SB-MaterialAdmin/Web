@@ -340,8 +340,8 @@
 											</div>
 										</div>
 									</div>
-									{if !$hideadminname}
 									<div class="form-group col-sm-5">
+									{if !$hideadminname}
 											<div class="wall-comment-list">
 												
 												<div class="pmo-block pmo-contact" style="font-size: 14px;">
@@ -382,37 +382,6 @@
 										{if $view_comments}
 											<hr class="m-t-10 m-b-10" />
 											<div class="wall-comment-list">
-												{if $view_comments}
-													{if $ban.commentdata != "None"}
-														<!-- Comment Listing -->
-														<div class="wcl-list">
-															{foreach from=$ban.commentdata item=commenta}
-															<div class="media">
-																<a href="#" class="pull-left">
-																	<img src="themes/new_box/img/profile-pics/4.jpg" alt="" class="lv-img-sm">
-																</a>
-										 
-																<div class="media-body">
-																	<a href="#" class="a-title">{if !empty($commenta.comname)}{$commenta.comname|escape:'html'}{else}<i>Админ удален</i>{/if}</a> {if !empty($commenta.edittime)}<small class="c-gray m-l-10">редактировал {if !empty($commenta.editname)}{$commenta.editname}{else}<i>Админ удален</i>{/if} в {$commenta.edittime}</small>{/if}
-																	<p class="m-t-5 m-b-0" style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">{$commenta.commenttxt}</p>
-																</div>
-																
-																{if $commenta.editcomlink != ""}
-																	<ul class="actions" style="right: -1px;">
-																		<li class="dropdown">
-																			<a href="#" data-toggle="dropdown" aria-expanded="false">
-																				<i class="zmdi zmdi-more-vert"></i>
-																			</a>
-
-																			<ul class="dropdown-menu dropdown-menu-right">
-																				<li>{$commenta.editcomlink}</li>
-																				<li>{$commenta.delcomlink}</li>
-																			</ul>
-																		</li>
-<!-- COMMENT CODik-->
-										{if $view_comments}
-											<hr class="m-t-10 m-b-10" />
-											<div class="wall-comment-list">
 												{if $ban.commentdata != "None"}
 													<div class="wcl-list">
 														{foreach from=$ban.commentdata item=commenta}
@@ -422,22 +391,7 @@
 																</a>
 										 
 																<div class="media-body">
-																	<a href="#" class="a-title">
-																		{if !empty($commenta.comname)}
-																			{$commenta.comname|escape:'html'}
-																		{else}
-																			<i>Admin deleted</i>
-																		{/if}
-																	</a> 
-																	{if !empty($commenta.edittime)}
-																		<small class="c-gray m-l-10">last edit {$commenta.edittime} by 
-																			{if !empty($commenta.editname)}
-																				{$commenta.editname}
-																			{else}
-																				<i>Админ удален</i>
-																			{/if}
-																		</small>
-																	{/if}
+																	<a href="#" class="a-title">{if !empty($commenta.comname)}{$commenta.comname|escape:'html'}{else}<i>Админ удален</i>{/if}</a> {if !empty($commenta.edittime)}<small class="c-gray m-l-10">редактировал {if !empty($commenta.editname)}{$commenta.editname}{else}<i>Админ удален</i>{/if} в {$commenta.edittime}</small>{/if}
 																	<p class="m-t-5 m-b-0" style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">{$commenta.commenttxt}</p>
 																</div>
 																
@@ -479,9 +433,8 @@
 													</div>
 											</div>
 										{/if}
-										<!-- COMMENT CODik-->
-									</div>
-									{/if}
+									<!-- COMMENT CODik-->
+										</div>
 								</div>
 						</div>
 					</td>
