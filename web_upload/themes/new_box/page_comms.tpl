@@ -259,7 +259,7 @@
 										<!-- COMMENT CODik-->
 										<div class="wall-comment-list">
 										{if $view_comments}
-											{if $ban.commentdata != "None"}
+											{if $ban.commentdata != "Нет"}
 												<!-- Comment Listing -->
 												<div class="wcl-list">
 													{foreach from=$ban.commentdata item=commenta}
