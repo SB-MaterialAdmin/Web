@@ -101,7 +101,7 @@
 								<i class="zmdi zmdi-videocam"></i>
 							</div>
 						{/if}
-						{if $view_comments && $ban.commentdata != "None" && $ban.commentdata|@count > 0}
+						{if $view_comments && $ban.commentdata != "Нет" && $ban.commentdata|@count > 0}
 							<div style="float:right;padding-right: 5px;">
 								{$ban.commentdata|@count} <img src="themes/new_box/img/comm.png" alt="Comments" title="Комментарии" style="height:14px;width:14px;" />
 							</div>

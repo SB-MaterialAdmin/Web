@@ -82,7 +82,7 @@
 								{$ban.player|escape:'html'|stripslashes}
 							{/if}
 						</div>
-						{if $view_comments && $ban.commentdata != "None" && $ban.commentdata|@count > 0}
+						{if $view_comments && $ban.commentdata != "Нет" && $ban.commentdata|@count > 0}
 							<div style="float:right;">
 								{$ban.commentdata|@count} <img src="themes/new_box/img/comm.png" alt="Comments" title="Comments" style="height:14px;width:14px;" />
 							</div>
