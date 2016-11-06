@@ -157,7 +157,7 @@ while (!$res->EOF)
 	//$info['created'] = SBDate($dateformat,$res->fields['created']);
 	$info['created'] = SBDate($GLOBALS['config']['config.dateformat_ver2'],$res->fields['created']);
 	$info['created_info'] = SBDate("Выдано ".$GLOBALS['config']['config.dateformat'],$res->fields['created']);
-	$ltemp = explode(",",$res->fields[6] == 0 ? 'Навсегда' : SecondsToString(intval($res->fields[6])));
+	$ltemp = explode(",",$res->fields[6] == 0 ? 'Навсегда' : ($res->fields[6] < 0 ? "Сессия" : SecondsToString(intval($res->fields[6]))));
 	$info['length'] = $ltemp[0];
 	$info['icon'] = empty($res->fields[13]) ? 'web.png' : $res->fields[13];
 	$info['authid'] = $res->fields['authid'];
