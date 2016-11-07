@@ -101,9 +101,9 @@
 								<td class="p-b-5">
 									<div class="col-sm-6 p-t-5 p-r-0 p-l-0">
 										<select class="form-control" id="type" onmouseup="$('type_').checked = true">
-											<option label="Message" value="m">Message</option>
-											<option label="Warning" value="w">Warning</option>
-											<option label="Error" value="e">Error</option>
+											<option label="Сообщение" value="m">Сообщение</option>
+											<option label="Предупреждение" value="w">Предупреждение</option>
+											<option label="Ошибка" value="e">Ошибка</option>
 										</select>
 									</div>
 								</td>
