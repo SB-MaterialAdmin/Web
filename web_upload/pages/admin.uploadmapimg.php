@@ -24,7 +24,7 @@
 //   Page: <http://www.sourcebans.net/> - <https://github.com/GameConnect/sourcebansv1>
 //
 // *************************************************************************
-
+header("Content-Type: text/html; charset=utf-8");
 include_once("../init.php");
 include_once("../includes/system-functions.php");
 global $theme, $userbank;
