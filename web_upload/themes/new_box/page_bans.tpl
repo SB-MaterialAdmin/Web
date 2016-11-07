@@ -23,7 +23,7 @@
 				{/foreach}
 				<li class="p-20">
 					<div class="fg-line">
-						<textarea class="form-control auto-size" placeholder="Ваш комментарий...." id="commenttext" name="commenttext">{$commenttext}</textarea>
+						<textarea class="form-control auto-size" rows="5" placeholder="Ваш комментарий...." id="commenttext" name="commenttext">{$commenttext}</textarea>
 						<div id="commenttext.msg" class="badentry"></div>
 					</div>
 					<input type="hidden" name="bid" id="bid" value="{$comment}">
