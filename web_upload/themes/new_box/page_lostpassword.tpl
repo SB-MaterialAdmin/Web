@@ -10,7 +10,7 @@
 				<label for="email" class="col-sm-3 control-label">E-Mail</label>
 				<div class="col-sm-9">
 					<div class="fg-line">
-						<input type="text" TABINDEX=1 class="form-control" id="email" name="password" placeholder="Введите данные">
+						<input type="text" TABINDEX=1 class="form-control" id="email" name="email" placeholder="Введите данные">
 					</div>
 				</div>
 			</div>
