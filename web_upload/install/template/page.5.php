@@ -31,7 +31,7 @@ define('SB_WP_URL','{sbwpurl}');       				//URL of SourceBans Site
 	
 	"sourcebans"
 	{
-		"driver"			"default"
+		"driver"			"mysql"
 		"host"				"{server}"
 		"database"			"{db}"
 		"user"				"{user}"
@@ -42,7 +42,7 @@ define('SB_WP_URL','{sbwpurl}');       				//URL of SourceBans Site
 	
 	"sourcecomms"
 	{
-		"driver"			"default"
+		"driver"			"mysql"
 		"host"				"{server}"
 		"database"			"{db}"
 		"user"				"{user}"
