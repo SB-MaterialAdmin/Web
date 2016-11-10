@@ -481,7 +481,7 @@ function UnbanBan(id, key, page, name, popup, bulk)
 	if(popup==1) {
 		//ShowBox('Unban Reason', '<b>Please give a short comment, why you are going to unban '+(bulk=="true"?"those players":"\'"+ name +"\'")+'!</b><br><textarea rows="3" cols="40" name="ureason" id="ureason" style="overflow:auto;"></textarea><br><div id="ureason.msg" class="badentry"></div>', 'blue', '', true);
 		ShowBox('Разбан', '<div class="form-group has-warning has-feedback"><label class="control-label f-14" for="inputWarning2">Пожалуйста, напишите краткий комментарий, почему вы собираетесь разбанить игрока '+(bulk=="true"?"those players":"\'"+ name +"\'")+'!</label><div class="fg-line"><input type="text" class="form-control" id="inputWarning2" name="ureason"></div><span class="zmdi zmdi-alert-triangle form-control-feedback"></span><p class="help-block" id="ureason.msg"></p></div>', 'blue', '', true);
-		$('dialog-control').setHTML('<input type="button" onclick="UnbanBan(\''+id+'\', \''+key+'\', \''+page+'\', \''+addslashes(name.replace(/\'/g,'\\\''))+'\', \'0\''+(bulk=="true"?", \'true\'":"")+');document.getElementById(\'uban\').disabled = true;" name="uban" class="btn btn-lg btn-primary waves-effect" id="uban" value="Разбанить" />');
+		$('dialog-control').setHTML('<input type="button" onclick="if (UnbanBan(\''+id+'\', \''+key+'\', \''+page+'\', \''+addslashes(name.replace(/\'/g,'\\\''))+'\', \'0\''+(bulk=="true"?", \'true\'":"")+')) document.getElementById(\'uban\').disabled = true;" name="uban" class="btn btn-lg btn-primary waves-effect" id="uban" value="Разбанить" />');
 	} else if(popup==0) {
 		if(page != "") 
 			var pagelink = page;
@@ -491,13 +491,14 @@ function UnbanBan(id, key, page, name, popup, bulk)
 		if(reason == "") {
 			$('ureason.msg').setHTML("Пожалуйста оставьте комментарий.");
 			$('ureason.msg').setStyle('display', 'block');
-			return;
+			return false;
 		} else {
 			$('ureason.msg').setHTML('');
 			$('ureason.msg').setStyle('display', 'none');
 		}
 		window.location = "index.php?p=banlist" + pagelink + "&a=unban&id="+ id +"&key="+ key +"&ureason="+ reason +(bulk=="true"?"&bulk=true":"");
 	}
+	return true;
 }
 
 function BoxToSrvMask()
