@@ -1383,7 +1383,7 @@ function server_parse($socket, $response, $line = __LINE__) {
     return true;
 }
 
-function SendMail($to, $subject, $message, $headers) {
+function EMail($to, $subject, $message, $headers) { // SendMail - registered in sb-callback.php :<
     if ($GLOBALS['config']['smtp.enabled'] == "1")
         $func = "smtpmail";
     else
