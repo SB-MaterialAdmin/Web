@@ -1287,4 +1287,108 @@ function AddScriptWithReload($script = 'alert("test")', $url = 0) {
     PushScriptToExecuteAfterLoadPage($script);
     FatalRefresh($url);
 }
+
+function smtpmail($mail_to, $subject, $message, $headers='') {
+    $SEND =   "Date: ".date("D, d M Y H:i:s") . " UT\r\n";
+    $SEND .=   'Subject: =?'.$GLOBALS['config']['smtp.charset'].'?B?'.base64_encode($subject)."=?=\r\n";
+    if ($headers)
+        $SEND .= $headers."\r\n\r\n";
+    else {
+        $SEND .= "Reply-To: ".$GLOBALS['config']['smtp.username']."\r\n";
+        $SEND .= "MIME-Version: 1.0\r\n";
+        $SEND .= "Content-Type: text/plain; charset=\"".$GLOBALS['config']['smtp.charset']."\"\r\n";
+        $SEND .= "Content-Transfer-Encoding: 8bit\r\n";
+        $SEND .= "From: \"".$GLOBALS['config']['smtp.from']."\" <".$GLOBALS['config']['smtp.username'].">\r\n";
+        $SEND .= "To: $mail_to <$mail_to>\r\n";
+        $SEND .= "X-Priority: 3\r\n\r\n";
+    }
+    
+    $SEND .=  $message."\r\n";
+    if (!$socket = @fsockopen($GLOBALS['config']['smtp.host'], $GLOBALS['config']['smtp.port'], $errno, $errstr, 5)) {
+        new CSystemLog("e", "SMTP Mailing Error", sprintf("[%d] %s", $errno, $errstr));
+        return false;
+    }
+
+    if (!server_parse($socket, "220", __LINE__)) return false;
+
+    @fputs($socket, "HELO " . $GLOBALS['config']['smtp.host'] . "\r\n");
+    if (!server_parse($socket, "250", __LINE__)) {
+        new CSystemLog("e", "SMTP Mailing Error", "Не удаётся отправить HELO");
+        fclose($socket);
+        return false;
+    }
+
+    @fputs($socket, "AUTH LOGIN\r\n");
+    if (!server_parse($socket, "334", __LINE__)) {
+        new CSystemLog("e", "SMTP Mailing Error", "Не удаётся найти ответ на запрос авторизации клиента.");
+        fclose($socket);
+        return false;
+    }
+
+    @fputs($socket, base64_encode($GLOBALS['config']['smtp.username']) . "\r\n");
+    if (!server_parse($socket, "334", __LINE__)) {
+        new CSystemLog("e", "SMTP Mailing Error", "Логин пользователя не был принят сервером.");
+        fclose($socket);
+        return false;
+    }
+
+    @fputs($socket, base64_encode($GLOBALS['config']['smtp.password']) . "\r\n");
+    if (!server_parse($socket, "235", __LINE__)) {
+        new CSystemLog("e", "SMTP Mailing Error", "Пароль не был принят сервером как верный.");
+        fclose($socket);
+        return false;
+    }
+
+    @fputs($socket, "MAIL FROM: <".$GLOBALS['config']['smtp.username'].">\r\n");
+    if (!server_parse($socket, "250", __LINE__)) {
+        new CSystemLog("e", "SMTP Mailing Error", "Не удаётся отправить команду.");
+        fclose($socket);
+        return false;
+    }
+
+    @fputs($socket, "RCPT TO: <" . $mail_to . ">\r\n");
+    if (!server_parse($socket, "250", __LINE__)) {
+        new CSystemLog("e", "SMTP Mailing Error", "Не удаётся отправить команду.");
+        fclose($socket);
+        return false;
+    }
+
+    @fputs($socket, "DATA\r\n");
+    if (!server_parse($socket, "354", __LINE__)) {
+        new CSystemLog("e", "SMTP Mailing Error", "Не удаётся отправить команду.");
+        fclose($socket);
+        return false;
+    }
+
+    @fputs($socket, $SEND."\r\n.\r\n");
+    if (!server_parse($socket, "250", __LINE__)) {
+        new CSystemLog("e", "SMTP Mailing Error", "Не удаётся отправить письмо на удалённый сервер.");
+        fclose($socket);
+        return false;
+    }
+
+    @fputs($socket, "QUIT\r\n");
+    fclose($socket);
+    return true;
+}
+
+function server_parse($socket, $response, $line = __LINE__) {
+    while (substr($response, 3, 1) != ' ') {
+        if (!($response = fgets($socket, 256)))
+            return false;
+    }
+    if (!(substr($response, 0, 3) == $response))
+        return false;
+
+    return true;
+}
+
+function SendMail($to, $subject, $message, $headers) {
+    if ($GLOBALS['config']['smtp.enabled'] == "1")
+        $func = "smtpmail";
+    else
+        $func = "mail";
+
+    return $func($to, $subject, $message, $headers);
+}
 ?>
