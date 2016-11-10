@@ -344,6 +344,8 @@ if ((isset($_GET['debug']) && $_GET['debug'] == 1) || defined("DEVELOPER_MODE") 
 {
 	$theme->force_compile = true;
 }
+require_once(INCLUDES_PATH . "/theme_framework.php");
+
 // ---------------------------------------------------
 // Setup our user manager
 // ---------------------------------------------------
