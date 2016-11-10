@@ -18,5 +18,7 @@ $qs = [sprintf($insq, 'smtp.enabled', (isset($config['enabled'])?'0':'1')),
 foreach ($qs as $query)
     if (!$GLOBALS['db']->Execute($query)) return false;
 
+if (!isset($config['enabled']))
+    @unlink($SMTPFilePath);
 return true;
 ?>
