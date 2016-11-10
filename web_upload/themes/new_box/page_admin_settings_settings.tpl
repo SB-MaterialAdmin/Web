@@ -314,6 +314,24 @@
 				</div>
 				
 			</div>
+			
+			<div class="card-header">
+				<h2>Настройки отправки почты</h2>
+			</div>
+			<div class="card-body card-padding p-b-0">
+				<p><span style="color: red;">Обратите внимание!</span><br />Если функция <i>mail()</i> на Вашем веб-сервере не настроена, то <strong>рекомендуется</strong> включить и настроить SMTP для работоспособной отправки писем от системы.</p>
+				
+				<!-- SMTP settings start -->
+				{display_material_checkbox name="smtp_enabled" help_title="Использовать SMTP" help_text="Включает использование SMTP-почты вместо mail()"}
+				{display_material_input name="smtp_host" help_title="Адрес почтового сервера" help_text="Здесь указывается адрес до почтового SMTP-сервера." placeholder="ssl://smtp.yandex.ru" value=$smtp_host}
+				{display_material_input name="smtp_port" help_title="Порт почтового сервера" help_text="Здесь указываете порт SMTP-сервера. Порт можно узнать из справочной системы вашего почтового сервиса." placeholder="465" value=$smtp_port}
+				{display_material_input name="smtp_username" help_title="Логин почтового аккаунта" help_text="Введите имя своего почтового ящика" placeholder="primer@yandex.ru" value=$smtp_username}
+				{display_material_input name="smtp_password" help_title="Пароль от почтового аккаунта" help_text="Укажите пароль от своего почтового аккаунта на указанном SMTP-сервере." value="*Скрыт*" placeholder=""}
+				{display_material_input name="smtp_charset" help_title="Кодировка сообщений" help_text="Укажите кодировку сообщений. Как правило, UTF-8 или Windows-1251" placeholder="UTF-8" value=$smtp_charset}
+				{display_material_input name="smtp_from" help_title="Имя отправителя" help_text="Введите в это поле, от чьего имени письма будут помечаться. Отображается при прочтении в поле 'От кого'." placeholder="[SourceBans] SMTP-sender" value=$smtp_from}
+				<!-- SMTP settings  end  -->
+			</div>
+			
 			<div class="card-body card-padding text-center">
 				{sb_button text="Сохранить" icon="<i class='zmdi zmdi-check-all'></i>" class="bgm-green btn-icon-text" id="asettings" submit=true}
 				&nbsp;
@@ -324,3 +342,4 @@
 		
 </form>
 <script>$('sel_timezoneoffset').value = "{$config_time}";</script>
+{if $smtp_enabled}<script>$('smtp_enabled').checked = true;</script>{/if}

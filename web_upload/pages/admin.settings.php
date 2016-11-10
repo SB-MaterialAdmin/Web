@@ -275,6 +275,19 @@ else
 												(" . (int)$_POST['block_home'] . ", 'config.home.comms'),
 												(".(int)$admin_list_en.", 'page.adminlist'),
 												(".(int)$vay4_en.", 'page.vay4er')", array($_POST['template_title'], $_POST['template_logo'], $_POST['config_dateformat'], $_POST['config_dateformat2'], $_POST['dash_intro_text'], $tz_string, $summertime, $cureason));
+				
+				/* SMTP */
+				$GLOBALS['db']->Execute(sprintf("REPLACE INTO `%s_settings` (`value`, `setting`) VALUES
+				('%s', 'smtp.enabled'),
+				(%s, 'smtp.username'),
+				(%s, 'smtp.port'),
+				(%s, 'smtp.host'),
+				(%s, 'smtp.charset'),
+				(%s, 'smtp.from');", DB_PREFIX, (($_POST['smtp_enabled']=="on")?"1":"0"), $GLOBALS['db']->qstr($_POST['smtp_username']), $GLOBALS['db']->qstr($_POST['smtp_port']), $GLOBALS['db']->qstr($_POST['smtp_host']), $GLOBALS['db']->qstr($_POST['smtp_charset']), $GLOBALS['db']->qstr($_POST['smtp_from'])));
+				// PASSWORD SMTP
+				if ($_POST['smtp_password'] != "*Скрыт*")
+					$GLOBALS['db']->Execute(sprintf("REPLACE INTO `%s_settings` (`value`, `setting`) VALUES (%s, 'smtp.password');", DB_PREFIX, $GLOBALS['db']->qstr($_POST['smtp_password'])));
+				
 				?><script>setTimeout("ShowBox('Главные настройки изменены', 'Изменения были успешно применены!', 'green', 'index.php?p=admin&c=settings', false, 2500);", 1200);</script><?php 
 			}else{
 				CreateRedBox("Ошибка", $errors); 
@@ -329,6 +342,14 @@ else
 		$theme->assign('config_bans_per_page',	$GLOBALS['config']['banlist.bansperpage']);
 		
 		$theme->assign('bans_customreason', ((isset($GLOBALS['config']['bans.customreasons'])&&$GLOBALS['config']['bans.customreasons']!="")?unserialize($GLOBALS['config']['bans.customreasons']):array()));
+		
+		// SMTP Settings
+		$theme->assign('smtp_enabled', ($GLOBALS['config']['smtp.enabled'] == "1"));
+		$theme->assign('smtp_username', $GLOBALS['config']['smtp.username']);
+		$theme->assign('smtp_port',     $GLOBALS['config']['smtp.port']);
+		$theme->assign('smtp_host',     $GLOBALS['config']['smtp.host']);
+		$theme->assign('smtp_charset',  $GLOBALS['config']['smtp.charset']);
+		$theme->assign('smtp_from',     $GLOBALS['config']['smtp.from']);
 		
 		$theme->display('page_admin_settings_settings.tpl');	
 	echo '</div>';
