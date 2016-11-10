@@ -25,10 +25,6 @@
 //
 // *************************************************************************
 
-//smtp
-include_once('smtp-func.php');
-//smtp
-
 
 require_once('xajax.inc.php');
 include_once('system-functions.php');

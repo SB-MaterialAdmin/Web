@@ -5,18 +5,6 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>Установка SourceBans++</title>
-<!--?php 
-//if(isset($_GET['step']) && $_GET['step'] > 5)
-//{
-//	echo '<link href="includes/css.php" rel="stylesheet" type="text/css" />';
-//}
-?
-
-//smtp
-//include_once('../includes/smtp-func.php');
-//smtp
-?
--->
 <script type="text/javascript" src="scripts/mootools.js"></script>
 <script type="text/javascript" src="scripts/sourcebans.js"></script>
 <link rel="Shortcut Icon" href="images/favicon.ico">
