@@ -221,7 +221,7 @@ function LostPassword($email)
 
 	$headers = 'From: Sourcebans@' . $_SERVER['HTTP_HOST'] . "\n" .
     'X-Mailer: PHP/' . phpversion();
-	$m = smtpmail($email, "Сброс пароля SourceBans", $message, $headers);
+	$m = EMail($email, "Сброс пароля SourceBans", $message, $headers);
 
 	$objResponse->addScript("ShowBox('Проверьте почту', 'На Ваш электронный ящик было отправлено письмо с ссылкой для сброса пароля.', 'blue', '', true);");
 	return $objResponse;
@@ -2406,7 +2406,7 @@ function AddBan($nickname, $type, $steam, $ip, $length, $dfile, $dname, $reason,
 		$message = "Привет,\n";
 		$message .= "Ваша заявка на бан подтверждена админом.\nПерейдите по ссылке, чтобы посмотреть банлист.\n\nhttp://" . $_SERVER['HTTP_HOST'] . $requri . "?p=banlist";
 
-		smtpmail($submail->fields['email'], "[SourceBans] Бан добавлен", $message, $headers);
+		EMail($submail->fields['email'], "[SourceBans] Бан добавлен", $message, $headers);
 		$GLOBALS['db']->Execute("UPDATE `" . DB_PREFIX . "_submissions` SET archiv = '2', archivedby = '".$userbank->GetAid()."' WHERE subid = '" . (int)$fromsub . "'");
 	}
 
@@ -2923,7 +2923,7 @@ function SendMail($subject, $message, $type, $id)
 	}
 	
 	$headers = "From: noreply@" . $_SERVER['HTTP_HOST'] . "\n" . 'X-Mailer: PHP/' . phpversion();
-	$m = @smtpmail($email, '[SourceBans] ' . $subject, $message, $headers);
+	$m = @EMail($email, '[SourceBans] ' . $subject, $message, $headers);
 
 	
 	if($m)

@@ -63,7 +63,7 @@ if(isset($_GET['validation'],$_GET['email']) && !empty($_GET['email']) && !empty
 
 		$headers = 'From: SourceBans@' . $_SERVER['HTTP_HOST'] . "\n" .
 		'X-Mailer: PHP/' . phpversion();
-		$m = smtpmail($email, "Сброс пароля SourceBans", $message, $headers);
+		$m = EMail($email, "Сброс пароля SourceBans", $message, $headers);
 		
 		echo '<div class="alert alert-success" role="alert" id="msg-blue"><h4>Успешно!</h4><span class="p-l-10">Ваш пароль был сброшен и отправлен вам на почту.<br />Проверьте папку "Спам" тоже.<br />Пожалуйста, войдите, используя этот пароль, затем смените пароль в вашей учетной записи на свой, нормальный :).</span></div>';
 	}
