@@ -1148,7 +1148,7 @@ function search_log()
 var icname = "";
 function icon(name)
 {
-	$('icon.msg').setHTML("Uploaded: <b>" + name + "</b>");
+	$('icon.msg').setHTML("Загружено: <b>" + name + "</b>");
 	icname = name;
 	if($('icon_hid'))
 		$('icon_hid').value = name;
