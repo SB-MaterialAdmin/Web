@@ -98,6 +98,7 @@
 						</div>
 					</div>
 				</div>
+				{display_material_checkbox name="onNewTab" help_title="Открывать в новой вкладке" help_text="При щелчке по пункту в меню, он будет открываться в новой вкладке браузера, если здесь установлена галочка."}
 				
 			</div>
 			<div class="card-body card-padding text-center">

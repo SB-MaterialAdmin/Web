@@ -139,7 +139,7 @@ function BuildContHeader()
  * @return noreturn
  */
 
-function AddTab($title, $url, $desc, $active=false)
+function AddTab($title, $url, $desc, $newtab=false, $active=false)
 {
 	global $tabs;
 	$tab_arr = array(	);
@@ -155,6 +155,7 @@ function AddTab($title, $url, $desc, $active=false)
 	$tabs['title'] = $title;
 	$tabs['url'] = $url;
 	$tabs['desc'] = $desc;
+	$tabs['newtab'] = $newtab;
 	if($_GET['p'] == "default" && $title == $tab_arr[intval($GLOBALS['config']['config.defaultpage'])])
 	{
 		$tabs['active'] = true;
@@ -185,7 +186,7 @@ function BuildPageTabs()
 	// NEW MENU, V2.0
 	$items = $GLOBALS['db']->GetAll(sprintf("SELECT * FROM `%s_menu` WHERE `enabled` = 1 ORDER BY `priority` DESC", DB_PREFIX));
 	foreach ($items as &$item)
-		AddTab($item['text'], $item['url'], $item['description']);
+		AddTab($item['text'], $item['url'], $item['description'], ($item['newtab']=="1"));
 
 	if ($userbank->is_admin())
 		AddTab("<i class='zmdi zmdi-star zmdi-hc-fw'></i> Админ-Панель", "index.php?p=admin", "Панель для администраторов. Управление серверами, администраторами, настройками.");

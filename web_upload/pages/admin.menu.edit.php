@@ -12,7 +12,7 @@ global $userbank, $theme;
 				$on_act = (isset($_POST['on_link']) && $_POST['on_link'] == "on" ? 1 : 0);
 				$system = $GLOBALS['db']->GetRow("SELECT url,system FROM `" . DB_PREFIX . "_menu` WHERE `id` = " . (int) $_GET['id']);
 				
-				$add = $GLOBALS['db']->Execute("UPDATE `" . DB_PREFIX . "_menu` SET `text` = ?, `description` = ?, `url` = ?, `system` = ?, `enabled` = ?, `priority` = ? WHERE `id` = ?", array($_POST['names_link'], $_POST['des_link'], ((int) $system['system']!=0)?$_POST['url_link']:$system['url'], $system['system'], $on_act, $_POST['priora_link'], (int) $_GET['id']));
+				$add = $GLOBALS['db']->Execute("UPDATE `" . DB_PREFIX . "_menu` SET `text` = ?, `description` = ?, `url` = ?, `system` = ?, `enabled` = ?, `priority` = ?, `newtab` = ? WHERE `id` = ?", array($_POST['names_link'], $_POST['des_link'], ((int) $system['system']!=0)?$_POST['url_link']:$system['url'], $system['system'], $on_act, $_POST['priora_link'], (($_POST['onNewTab']=="on")?"1":"0"), (int) $_GET['id']));
 				
 				PushScriptToExecuteAfterLoadPage(sprintf("setTimeout(function() { %s; }, 1350);", generateMsgBoxJS("Успех!", "Ссылка успешно сохранена!", "green", "", true)));
 				FatalRefresh("index.php?p=admin&c=menu");
