@@ -125,6 +125,9 @@ switch ($_GET['p'])
 // Начинаем буферизовать вывод. Необходимо для более корректной работы хандлера ошибок.
 ob_start();
 
+// Подключаем графический фреймворк
+require_once(INCLUDES_PATH . "/theme_framework.php");
+
 global $ui;
 $ui = new CUI();
 BuildPageHeader();

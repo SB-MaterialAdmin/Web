@@ -1,67 +1,27 @@
 <form action="" method="post">
-	<div id="add-group">
-		<h3>Детали МОДа</h3>
-		За дополнительной информацией или помощью наведите курсор мыши на знак вопроса.<br /><br />
-		<input type="hidden" name="insert_type" value="add">
-		<table width="90%" border="0" style="border-collapse:collapse;" id="group.details" cellpadding="3">
-			<tr>
-		    	<td valign="top" width="35%"><div class="rowdesc">{help_icon title="Название МОДа" message="Введите название МОДа."}Название МОДа</div></td>
-		    	<td>
-		    		<div align="left"> 
-					    <input type="hidden" id="icon_hid" name="icon_hid" value="{$mod_icon}">
-					    <input type="text" TABINDEX=1 class="textbox" id="name" name="name" value="{$name}" />
-					</div>
-					<div id="name.msg" class="badentry"></div>
-				</td>
-		  </tr>
-		  
-			<tr>
-				<td valign="top"><div class="rowdesc">{help_icon title="Имя папки" message="Введите имя папки МОДа. Например, для МОДа Counter-Strike: Source's папка будет 'cstrike'"}Имя папки</div></td>
-		    	<td>
-		    		<div align="left">
-		      			<input type="text" TABINDEX=2 class="textbox" id="folder" name="folder" value="{$folder}" />
-		    		</div>
-		    		<div id="folder.msg" class="badentry"></div>
-		    	</td>
-		  </tr>
-      <tr>
-				<td valign="top"><div class="rowdesc">{help_icon title="Универсальный номер Steam" message="(STEAM_<b>X</b>:Y:Z) Некоторые игры отображают steamid отличающийся от других. Введите первую цифру в SteamID (<b>X</b>) в зависимости от вашего мода. (По умолчанию: 0)."}Универсальный номер Steam</div></td>
-		    	<td>
-		    		<div align="left">
-		      			<input type="text" TABINDEX=3 class="textbox" id="steam_universe" name="steam_universe" value="{$steam_universe}" />
-		    		</div>
-		    	</td>
-		  </tr>
-		  <tr>
-			<td valign="top"><div class="rowdesc">{help_icon title="Активация мода" message="Выберите, чтобы включить этот МОД"}Включить</div></td>
-		    	<td>
-		    		<div align="left">
-		      			<input type="checkbox" TABINDEX=4 id="enabled" name="enabled" value="1" />
-		    		</div>
-		    	</td>
-		  </tr>
-		 	
-			<tr>
-				<td valign="top" width="35%"><div class="rowdesc">{help_icon title="Загрузить иконку" message="Кликните тут, чтобы выбрать и загрузить иконку МОДа."}Загрузить иконку</div></td>
-		    	<td>
-		    		<div align="left">
-		      			{sb_button text="Загрузить икнку МОДа" onclick="childWindow=open('pages/admin.uploadicon.php','upload','resizable=yes,width=300,height=130');" class="save" id="upload" submit=false} 
-		    		</div>
-		    		<div id="icon.msg" class="badentry" style="display:block;">
-			    		{if $mod_icon}
-			    			Загружено: <b>{$mod_icon}</b>
-			    		{/if}
-		    		</div>
-		    	</td>
-		  	</tr>
-			<tr>
-		    	<td>&nbsp;</td>
-		    	<td>      
-			    	{sb_button text="Сохранить" class="ok" id="editmod" submit=true}
-			     	 &nbsp;
-			     	 {sb_button text="Назад" onclick="history.go(-1)" class="cancel" id="back" submit=false} 
-		      	</td>
-		  	</tr>
-		</table>
+	<div class="form-horizontal" role="form">
+		{display_header title="Детали МОДа" text="За дополнительной информацией или помощью наведите курсор мыши на знак вопроса."}
+		<div class="card-body card-padding clearfix p-b-0">
+			{display_material_input name="name" help_title="Название мода" help_text="Введите имя для МОДа." placeholder="Counter-Strike: Source" value=$name}
+			<p id="name.msg" style="color:#CC0000;"></p>
+
+			{display_material_input name="folder" help_title="Имя папки" help_text="Введите имя папки МОДа. Например, для Counter-Strike: Source папка будет 'cstrike'" placeholder="cstrike" value=$folder}
+			<p id="folder.msg" style="color:#CC0000;"></p>
+
+			{display_material_input name="steam_universe" help_title="Универсальный номер Steam" help_text="(STEAM_<b>X</b>:Y:Z) Некоторые игры отображают steamid отличающийся от других. Введите первую цифру в SteamID (<b>X</b>) в зависимости от вашего мода. (По умолчанию: 0)." placeholder="0" value=$steam_universe}
+			{display_material_checkbox name="enabled" help_title="Активация МОДа" help_text="Выберите, чтобы включить этот МОД"}
+
+			<div class="form-group m-b-5">
+				<label for="icon" class="col-sm-3 control-label">{help_icon title="Upload Icon" message="Загрузить иконку" message="Кликните тут, чтобы загрузить иконку МОДа."}Загрузить иконку</label>
+				<div class="col-sm-9">
+					{sb_button text="Загрузить иконку МОДа" onclick="childWindow=open('pages/admin.uploadicon.php','upload','resizable=yes,width=300,height=130');" class="save" id="upload"}
+				</div>
+				<p id="icon.msg" style="color:#C00;">{if $mod_icon}Загружено: <b>{$mod_icon}</b>{/if}</p>
+				<input type="hidden" id="icon_hid" name="icon_hid" />
+			</div>
+
+			<p class="text-center">{sb_button text="Сохранить МОД" icon="<i class='zmdi zmdi-check-all'></i>" class="bgm-green btn-icon-text" submit=true id="amod"}&nbsp;
+			{sb_button text="Назад" icon="<i class='zmdi zmdi-undo'></i>" class="bgm-red btn-icon-text" onclick="history.go(-1)" id="aback"}</p>
+		</div>
 	</div>
 </form>

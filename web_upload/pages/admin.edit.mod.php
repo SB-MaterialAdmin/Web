@@ -95,7 +95,7 @@ if(isset($_POST['name']))
 	$name = htmlspecialchars(strip_tags($_POST['name']));//don't want to addslashes because execute will automatically do it
 	$icon = htmlspecialchars(strip_tags($_POST['icon_hid']));
 	$folder = htmlspecialchars(strip_tags($_POST['folder']));
-	$enabled = ($_POST['enabled'] == '1' ? 1 : 0);
+	$enabled = ($_POST['enabled'] == 'on' ? 1 : 0);
 	$steam_universe = (int)$_POST['steam_universe'];
 	
 	if($error == 0)

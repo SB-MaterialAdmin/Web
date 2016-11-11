@@ -1,9 +1,13 @@
 <?php
 global $theme;
 
+// Подгрузка самого нужного плагина
+require_once(INCLUDES_PATH . "/smarty/plugins/function.help_icon.php");
+
 // Регистрация функций
 $theme->register_function("display_material_checkbox", "materialdesign_checkbox");
 $theme->register_function("display_material_input", "materialdesign_input");
+$theme->register_function("display_header", "materialdesign_cardheader");
 
 // Создание каллбэков
 function materialdesign_checkbox($params, &$smarty) {
@@ -35,6 +39,17 @@ function materialdesign_input($params, &$smarty) {
     $str .= '<div class="col-sm-9"><div class="fg-line">';
     $str .= '<input type="'.(isset($params['pass'])?"password":"text").'" TABINDEX=1 class="form-control" name="'.$params['name'].'" id="'.$params['name'].'" placeholder="'.$params['placeholder'].'" value="'.$params['value'].'" />';
     $str .= '</div></div></div>';
+
+    return $str;
+}
+
+function materialdesign_cardheader($params, &$smarty) {
+    if (!isset($params['title']))
+        return "";
+
+    $str  = '<div class="card-header"><h2>'.$params['title'];
+    $str .= (isset($params['text']))?"<small>".$params['text']."</small>":"";
+    $str .= "</h2></div>";
 
     return $str;
 }
