@@ -2,12 +2,12 @@
 $config = [];
 $SMTPFilePath = INCLUDES_PATH . '/smtp-func.php';
 if (file_exists($SMTPFilePath))
-    require_once(INCLUDES_PATH . '/smtp-func.php');
+    require_once($SMTPFilePath);
 else
     $config = ['smtp_username' => '', 'smtp_port' => '', 'smtp_host' => '', 'smtp_password' => '', 'smtp_charset' => '', 'smtp_from' => '', 'enabled' => 0];
 
-$insq = "INSERT INTO `sb_settings` (`setting`, `value`) VALUES ('%s', '%s');";
-$qs = [sprintf($insq, 'smtp.enabled', (isset($config['enabled'])?'0':'1')),
+$insq = "INSERT INTO `sb_settings` (`setting`, `value`) VALUES ('%s', %s);";
+$qs = [sprintf($insq, 'smtp.enabled', $GLOBALS['db']->qstr((isset($config['enabled'])?'0':'1'))),
        sprintf($insq, 'smtp.username', $GLOBALS['db']->qstr($config['smtp_username'])),
        sprintf($insq, 'smtp.port', $GLOBALS['db']->qstr($config['smtp_port'])),
        sprintf($insq, 'smtp.host', $GLOBALS['db']->qstr($config['smtp_host'])),
