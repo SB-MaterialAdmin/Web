@@ -32,6 +32,7 @@ global $userbank, $theme;
 			$theme->right_delimiter = "}";
 			$theme->display('page_admin_menu_edit.tpl');
 			echo "<script>$('on_link').checked = ".(int)$list_menu['enabled'].";</script>";
+			echo "<script>$('onNewTab').checked = ".(int)$list_menu['newtab']."</script>";
 		}
 	}
 ?>
