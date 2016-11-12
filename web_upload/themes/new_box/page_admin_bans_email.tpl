@@ -2,7 +2,7 @@
 <table width="90%" style="border-collapse:collapse;" id="group.details" cellpadding="3">
 	<tr>
     	<td valign="top" width="35%">
-    		<div class="rowdesc">{help_icon title="Subject" message="Введите тему сообщения."}Тема </div>
+    		<div class="rowdesc">{help_icon title="Тема" message="Введите тему сообщения."}Тема </div>
     	</td>
     	
     <td><div align="left">
