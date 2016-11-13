@@ -4,6 +4,8 @@
 #### Последняя актуальная версия: **1.1.4** *(от 31.10.2016)*
 Официальная тема рефорка на *[HLmod.ru](http://hlmod.ru/threads/alpha-material-admin-refork-na-osnove-sb-1-5-4-7-bootstrap-3.36382/)* и на *[MyArena.ru](http://forum.myarena.ru/index.php?/topic/35781-alpha-material-admin-refork-sb-1547/)*
 
+[Список всех планируемых изменений (TODO)](https://github.com/CrazyHackGUT/SB_Material_Design/blob/master/TODO.md)
+
 Авторы: [AS.^TRO](http://hlmod.ru/members/79776/), [SAZONISCHE](http://hlmod.ru/members/57554/), [XaH JoB](http://hlmod.ru/members/81268/), [Vampir](http://hlmod.ru/members/17369/), [gibs](http://hlmod.ru/members/46233/), [CrazyHackGUT](http://hlmod.ru/members/72654/)
 
 [Скриншоты](http://imgur.com/a/5PMoj)
