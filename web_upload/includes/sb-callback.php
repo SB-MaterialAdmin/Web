@@ -2951,7 +2951,7 @@ function CheckVersion() {
                 $VersionInformation .= "<strong>*</strong> ".$change."<br />";
             $VersionInformation .= "И многое другое...</div><br />";
 
-            $msg = "<span style='color:#aa0000;'><strong>Доступна новая версия.</strong></span> <a href ='#' onClick='" . generateMsgBoxJS("Доступна новая версия!",$
+            $msg = "<span style='color:#aa0000;'><strong>Доступна новая версия.</strong></span> <a href ='#' onClick='" . generateMsgBoxJS("Доступна новая версия!", $VersionInformation . "<a href=\"" . $reldata->download_url . "\">Скачать</a> / <a href=\"" . $reldata->changelist . "\">Список изменений</a>", "red", "", true) . "'>Подробнее...</a>";
         } else
             $msg = "<span style='color:#00aa00;'><strong>Вы используете последнюю версию</strong></span>";
 
