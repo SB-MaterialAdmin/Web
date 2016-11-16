@@ -2933,43 +2933,32 @@ function SendMail($subject, $message, $type, $id)
 	return $objResponse;
 }
 
-function CheckVersion()
-{
-	$objResponse = new xajaxResponse();
-	$relver = @file_get_contents("https://sarabveer.github.io/SourceBans-Fork/rel/");
+function CheckVersion() {
+    $objResponse = new xajaxResponse();
+    $relver = @file_get_contents("https://raw.githubusercontent.com/CrazyHackGUT/SB_Material_Design/master/updates.json");
+    $version = 0;
 
-	if(defined('SB_GIT'))
-		$relgit = @file_get_contents("https://sarabveer.github.io/SourceBans-Fork/dev/");
+    if (strlen($relver)<8 || $relver == "") {
+        $version = "<span style='color:#aa0000;'>Ошибка</span>";
+        $msg = "<span style='color:#aa0000;'><strong>Ошибка получения обновлений</strong></span>";
+    } else {
+        $reldata = json_decode($relver);
+        $version = $reldata->release;
 
-	if(version_compare($relver, SB_VERSION) > 0)
-		$versmsg = "<span style='color:#aa0000;'><strong>Доступна новая версия.</strong></span>";
-	else
-		$versmsg = "<span style='color:#00aa00;'><strong>Вы используете последнюю версию.</strong></span>";
+        if(version_compare($reldata->release, theme_version) <= 0) {
+            $VersionInformation  = "<div style=\"text-align: left\">";
+            foreach ($reldata->changes as $change)
+                $VersionInformation .= "<strong>*</strong> ".$change."<br />";
+            $VersionInformation .= "И многое другое...</div><br />";
 
-	$msg = $versmsg;
-	if(strlen($relver)>8 || $relver=="") {
-		$relver = "<span style='color:#aa0000;'>Ошибка</span>";
-		$msg = "<span style='color:#aa0000;'><strong>Ошибка получения обновлений.</strong></span>";
-	}
-	$objResponse->addAssign("relver", "innerHTML",  $relver);
+            $msg = "<span style='color:#aa0000;'><strong>Доступна новая версия.</strong></span> <a href ='#' onClick='" . generateMsgBoxJS("Доступна новая версия!",$
+        } else
+            $msg = "<span style='color:#00aa00;'><strong>Вы используете последнюю версию</strong></span>";
 
-	if(defined('SB_GIT'))
-	{
-		if(intval($relgit) > GetGITRev())
-			$svnmsg = "<span style='color:#aa0000;'><strong>Доступна новая SVN версия.</strong></span>";
-		else
-			$svnmsg = "<span style='color:#00aa00;'><strong>Вы используете последнюю SVN версию.</strong></span>";
+    }
 
-		if(strlen($relgit)>8 || $relgit=="") {
-			$relgit = "<span style='color:#aa0000;'>Ошибка</span>";
-			$svnmsg = "<span style='color:#aa0000;'><strong>Ошибка получения SVN версии.</strong></span>";
-		}
-		$msg .= "<br />" . $svnmsg;
-		$objResponse->addAssign("svnrev", "innerHTML",  $relgit);
-	}
-
-	$objResponse->addAssign("versionmsg", "innerHTML", $msg);
-	return $objResponse;
+    $objResponse->addAssign("relver", "innerHTML",  sprintf("%s (%s)", $version, $msg));
+    return $objResponse;
 }
 
 function SelTheme($theme)
