@@ -31,7 +31,18 @@ if(isset($_GET['validation'],$_GET['email']) && !empty($_GET['email']) && !empty
 {  
 	$email = $_GET['email'];
 	$validation = $_GET['validation'];
-
+	$tryHack = false;
+	
+	if (is_array($email) || is_array($validation))
+		$tryHack = true;
+	
+	if ($tryHack) {
+		CreateRedBox("Ошибка", "Была зафиксирована попытка взлома системы через некорректно построенный запрос. Данная попытка была записана в системный лог.");
+		require(TEMPLATES_PATH . "/footer.php");
+		$log = new CSystemLog("e", "Попытка взлома", "Произошла попытка взлома системы с использованием некорректно построенного запроса SQL.");
+		exit();
+	}
+	
 	preg_match("@^(?:http://)?([^/]+)@i", $_SERVER['HTTP_HOST'], $match);
 
 	if($match[0] != $_SERVER['HTTP_HOST']) 
