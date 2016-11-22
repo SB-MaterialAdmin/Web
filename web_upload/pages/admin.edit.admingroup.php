@@ -81,7 +81,7 @@ if(isset($_POST['wg']) || isset($_GET['wg']) || isset($_GET['sg']))
 	$email = $GLOBALS['userbank']->GetProperty('email', $_GET['id']);
 	if($_POST['wg'] > 0 && (empty($password) || empty($email)))
 	{
-		echo '<script>setTimeout(\'ShowBox("Ошибка", "Администраторы должны иметь пароль и адрес электронной почты для того, чтобы получить веб-разрешения.<br /><a href=\"index.php?p=admin&c=admins&o=editdetails&id=' . $_GET['id'] . '\" title=\"Редактировать детали Администратора\">Измените детали</a> сначала и попробуйте снова.", "red");\', 1350);</script>';
+		echo '<script>setTimeout(function() { ShowBox("Ошибка", "Администраторы должны иметь пароль и адрес электронной почты для того, чтобы получить веб-разрешения.<br /><a href=\"index.php?p=admin&c=admins&o=editdetails&id=' . $_GET['id'] . '\" title=\"Редактировать детали Администратора\">Измените детали</a> сначала и попробуйте снова.", "red"); }, 1350);</script>';
 	}
 	else
 	{
