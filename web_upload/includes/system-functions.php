@@ -1144,7 +1144,7 @@ function SendRconSilent($rcon, $sid)
 		return false;
 	}
 
-	$ret = $r->rconCommand($rcon);
+	$ret = $r->SendCommand($rcon);
 	if($ret)
 		return true;
 	return false;
