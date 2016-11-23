@@ -675,7 +675,7 @@ function CreateHostnameCache()
 		$sinfo->Connect($res->fields[1], $res->fields[2]);
 		$info = $sinfo->GetInfo();
 		if(!empty($info['HostName']))
-			$servers[$res->fields[0]] = $info['hostname'];
+			$servers[$res->fields[0]] = $info['HostName'];
 		else
 			$servers[$res->fields[0]] = $res->fields[1].":".$res->fields[2];
 		$res->MoveNext();
