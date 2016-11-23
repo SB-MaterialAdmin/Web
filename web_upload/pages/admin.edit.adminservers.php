@@ -26,7 +26,6 @@
 // *************************************************************************
 
 if(!defined("IN_SB")){echo "Ошибка доступа!";die();} 
-require INCLUDES_PATH.'/CServerInfo.php';
 global $theme;
 if(!isset($_GET['id']))
 {

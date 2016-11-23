@@ -665,15 +665,16 @@ function SecondsToString($sec, $textual=true)
 // unused, as loading too slowly.
 function CreateHostnameCache()
 {
-	require_once INCLUDES_PATH.'/CServerInfo.php';
+	require_once INCLUDES_PATH.'/CServerControl.php';
 	$res = $GLOBALS['db']->Execute("SELECT sid, ip, port FROM ".DB_PREFIX."_servers ORDER BY sid");
 	$servers = array();
 	while (!$res->EOF)
 	{
 		$info = array();
-		$sinfo = new CServerInfo($res->fields[1],$res->fields[2]);
-		$info = $sinfo->getInfo();
-		if(!empty($info['hostname']))
+		$sinfo = new CServerControl($res->fields[1],$res->fields[2]);
+		$sinfo->Connect($res->fields[1], $res->fields[2]);
+		$info = $sinfo->GetInfo();
+		if(!empty($info['HostName']))
 			$servers[$res->fields[0]] = $info['hostname'];
 		else
 			$servers[$res->fields[0]] = $res->fields[1].":".$res->fields[2];
@@ -927,7 +928,7 @@ function check_email($email) {
 // check, if one steamid is online on one specific server
 function checkSinglePlayer($sid, $steamid)
 {
-	require_once(INCLUDES_PATH.'/CServerRcon.php');
+	require_once(INCLUDES_PATH.'/CServerControl.php');
 	$serv = $GLOBALS['db']->GetRow("SELECT ip, port, rcon FROM ".DB_PREFIX."_servers WHERE sid = '".$sid."';");
 	if(empty($serv['rcon'])) {
 		return false;
@@ -936,9 +937,11 @@ function checkSinglePlayer($sid, $steamid)
 	if(!$test) {
 		return false;
 	}
-	$r = new CServerRcon($serv['ip'], $serv['port'], $serv['rcon']);
-	if(!$r->Auth())
-	{
+	
+	$r = new CServerControl();
+	$r->Connect($serv['ip'], $serv['port']);
+	
+	if(!$r->AuthRcon($serv['rcon'])) {
 		$GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_servers SET rcon = '' WHERE sid = '".(int)$sid."';");
 		return false;
 	}
@@ -966,7 +969,7 @@ function checkSinglePlayer($sid, $steamid)
 //returns array('STEAM_ID_1' => array('name' => $name, 'steam' => $steam, 'ip' => $ip, 'time' => $time, 'ping' => $ping), 'STEAM_ID_2' => array()....)
 function checkMultiplePlayers($sid, $steamids)
 {
-	require_once(INCLUDES_PATH.'/CServerRcon.php');
+	require_once(INCLUDES_PATH.'/CServerControl.php');
 	$serv = $GLOBALS['db']->GetRow("SELECT ip, port, rcon FROM ".DB_PREFIX."_servers WHERE sid = '".$sid."';");
 	if(empty($serv['rcon'])) {
 		return false;
@@ -975,10 +978,11 @@ function checkMultiplePlayers($sid, $steamids)
 	if(!$test) {
 		return false;
 	}
-	$r = new CServerRcon($serv['ip'], $serv['port'], $serv['rcon']);
-
-	if(!$r->Auth())
-	{
+	
+	$r = new CServerControl();
+	$r->Connect($serv['ip'], $serv['port']);
+	
+	if(!$r->AuthRcon($serv['rcon'])) {
 		$GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_servers SET rcon = '' WHERE sid = '".(int)$sid."';");
 		return false;
 	}
@@ -1122,7 +1126,7 @@ function GetCommunityName($steamid)
 
 function SendRconSilent($rcon, $sid)
 {
-	require_once(INCLUDES_PATH.'/CServerRcon.php');
+	require_once(INCLUDES_PATH.'/CServerControl.php');
 	$serv = $GLOBALS['db']->GetRow("SELECT ip, port, rcon FROM ".DB_PREFIX."_servers WHERE sid = '".$sid."';");
 	if(empty($serv['rcon'])) {
 		return false;
@@ -1131,10 +1135,11 @@ function SendRconSilent($rcon, $sid)
 	if(!$test) {
 		return false;
 	}
-	$r = new CServerRcon($serv['ip'], $serv['port'], $serv['rcon']);
-
-	if(!$r->Auth())
-	{
+	
+	$r = new CServerControl($serv['ip'], $serv['port'], $serv['rcon']);
+	$r->Connect($serv['ip'], $serv['port']);
+	
+	if(!$r->AuthRcon($serv['rcon'])) {
 		$GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_servers SET rcon = '' WHERE sid = '".(int)$sid."';");
 		return false;
 	}

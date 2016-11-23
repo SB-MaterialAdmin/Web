@@ -32,6 +32,9 @@ if($GLOBALS['config']['config.enablesubmit']!="1")
 	CreateRedBox("Ошибка", "Страница отключена.");
 	PageDie();
 }
+
+$sinfo = new CServerControl();
+
 if (!isset($_POST['subban']) || $_POST['subban'] != 1)
 {
 	$SteamID = "";
@@ -112,12 +115,14 @@ else
 		if($demo || empty($_FILES['demo_file']['name']))
 		{
 			if($SID!=0) {
-				require_once(INCLUDES_PATH.'/CServerInfo.php');
+				require_once(INCLUDES_PATH.'/CServerControl.php');
 				$res = $GLOBALS['db']->GetRow("SELECT ip, port FROM ".DB_PREFIX."_servers WHERE sid = $SID");
-				$sinfo = new CServerInfo($res[0],$res[1]);
-				$info = $sinfo->getInfo();
-				if(!empty($info['hostname']))
-					$mailserver = "Сервер: " . $info['hostname'] . " (" . $res[0] . ":" . $res[1] . ")\n";
+				
+				$sinfo->Connect($res[0],$res[1]);
+				
+				$info = $sinfo->GetInfo();
+				if($info)
+					$mailserver = "Сервер: " . $info['HostName'] . " (" . $res[0] . ":" . $res[1] . ")\n";
 				else
 					$mailserver = "Сервер: Ошибка соединения (" . $res[0] . ":" . $res[1] . ")\n";
 				$modid = $GLOBALS['db']->GetRow("SELECT m.mid FROM `".DB_PREFIX."_servers` as s LEFT JOIN `".DB_PREFIX."_mods` as m ON m.mid = s.modid WHERE s.sid = '".$SID."';");
@@ -148,9 +153,9 @@ else
 			foreach($admins AS $admin)
 			{
 				$message = "";
-				$message .= "Приветствую " . $admin['user'] . ",\n\n";
+				$message .= "Приветствую, " . $admin['user'] . ",\n\n";
 				$message .= "Поступила новая жалоба на игрока в вашей системе SourceBans:\n\n";
-				$message .= "Игрок: ".$_POST['PlayerName']." (".$_POST['SteamID'].")\nDemo: ".(empty($_FILES['demo_file']['name'])?'no':'yes (http://' . $_SERVER['HTTP_HOST'] . $requri . 'getdemo.php?type=S&id='.$subid.')')."\n".$mailserver."Причина: ".$_POST['BanReason']."\n\n";
+				$message .= "Игрок: ".$_POST['PlayerName']." (".$_POST['SteamID'].")\nДемо: ".(empty($_FILES['demo_file']['name'])?'Отсутствует':'Присутствует (http://' . $_SERVER['HTTP_HOST'] . $requri . 'getdemo.php?type=S&id='.$subid.')')."\n".$mailserver."Причина: ".$_POST['BanReason']."\n\n";
 				$message .= "Кликните по ссылке для просмотра жалобы.\n\nhttp://" . $_SERVER['HTTP_HOST'] . $requri . "index.php?p=admin&c=bans#^2";
 				if($userbank->HasAccess(ADMIN_OWNER|ADMIN_BAN_SUBMISSIONS, $admin['aid']) && $userbank->HasAccess(ADMIN_NOTIFY_SUB, $admin['aid']))
 					mail($admin['email'], "[SourceBans] Добавлена жалоба на игрока", $message, $headers);
@@ -166,19 +171,17 @@ else
 }
 
 //$mod_list = $GLOBALS['db']->GetAssoc("SELECT mid,name FROM ".DB_PREFIX."_mods WHERE `mid` > 0 AND `enabled`= 1 ORDER BY mid ");
-require_once INCLUDES_PATH.'/CServerInfo.php';
+require_once INCLUDES_PATH.'/CServerControl.php';
 //serverlist
 $server_list = $GLOBALS['db']->Execute("SELECT sid, ip, port FROM `" . DB_PREFIX . "_servers` WHERE enabled = 1 ORDER BY modid, sid");
 $servers = array();
 while (!$server_list->EOF)
 {
 	$info = array();
-	$sinfo = new CServerInfo($server_list->fields[1],$server_list->fields[2]);
-	$info = $sinfo->getInfo();
-	if(empty($info['hostname']))
-	{
-		$info['hostname'] = "Ошибка соединения (" . $server_list->fields[1] . ":" . $server_list->fields[2] . ")";
-	}
+	$sinfo->Connect($server_list->fields[1], $server_list->fields[2]);
+	$info = $sinfo->GetInfo();
+	if($info)
+		$info['HostName'] = "Ошибка соединения (" . $server_list->fields[1] . ":" . $server_list->fields[2] . ")";
 	$info['sid'] = $server_list->fields[0];
 	array_push($servers,$info);
 	$server_list->MoveNext();

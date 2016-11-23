@@ -1810,7 +1810,7 @@ function ServerHostPlayers($sid, $type="servers", $obId="", $tplsid="", $open=""
 {
 	$objResponse = new xajaxResponse();
 	global $userbank;
-	require INCLUDES_PATH.'/CServerInfo.php';
+	require INCLUDES_PATH.'/CServerControl.php';
 	
 	$sid = (int)$sid;
 
@@ -1819,27 +1819,23 @@ function ServerHostPlayers($sid, $type="servers", $obId="", $tplsid="", $open=""
 	if(empty($res[1]) || empty($res[2]))
 		return $objResponse;
 	$info = array();
-	$sinfo = new CServerInfo($res[1],$res[2]);
-	$info = $sinfo->getInfo();
-	if($type == "servers")
-	{
-		if(!empty($info['hostname']))
-		{
-			$objResponse->addAssign("host_$sid", "innerHTML", trunc($info['hostname'], $trunchostname, false));
-			$objResponse->addAssign("players_$sid", "innerHTML", $info['numplayers'] . "/" . $info['maxplayers']);
-			$objResponse->addAssign("os_$sid", "innerHTML", "<img src='images/" . (!empty($info['os'])?$info['os']:'server_small') . ".png'>");
-			if( $info['secure'] == 1 )
-			{
+	$sinfo = new CServerControl();
+	$sinfo->Connect($res[1], $res[2]);
+	$info = $sinfo->GetInfo();
+	if($type == "servers") {
+		if($info)) {
+			$objResponse->addAssign("host_$sid", "innerHTML", trunc($info['HostName'], $trunchostname, false));
+			$objResponse->addAssign("players_$sid", "innerHTML", $info['Players'] . "/" . $info['MaxPlayers']);
+			$objResponse->addAssign("os_$sid", "innerHTML", "<img src='images/" . (!empty($info['Os'])?$info['Os']:'server_small') . ".png'>");
+			if($info['Secure'])
 				$objResponse->addAssign("vac_$sid", "innerHTML", "<img src='images/shield.png' />");
-			}else{
+			else
 				$objResponse->addAssign("vac_$sid", "innerHTML", "<img src='images/noshield.png' />");
-			}
-			$objResponse->addAssign("map_$sid", "innerHTML", basename($info['map'])); // Strip Steam Workshop folder
+			$objResponse->addAssign("map_$sid", "innerHTML", basename($info['Map'])); // Strip Steam Workshop folder
 			if(!$inHome) {
-				$objResponse->addScript("$('mapimg_$sid').setProperty('src', '".GetMapImage($info['map'], $res[4])."').setProperty('alt', '".$info['map']."').setProperty('title', '".basename($info['map'])."');");
-				$objResponse->addAssign("mapimg_$sid", "innerHTML", GetMapImage($info['map'], $res[4]));
-				if($info['numplayers'] == 0 || empty($info['numplayers']))
-				{
+				$objResponse->addScript("$('mapimg_$sid').setProperty('src', '".GetMapImage($info['Map'], $res[4])."').setProperty('alt', '".$info['Map']."').setProperty('title', '".basename($info['Map'])."');");
+				$objResponse->addAssign("mapimg_$sid", "innerHTML", GetMapImage($info['Map'], $res[4]));
+				if($info['Players'] == 0) {
 					$objResponse->addScript("$('sinfo_$sid').setStyle('display', 'none');");
 					$objResponse->addScript("$('noplayer_$sid').setStyle('display', 'block');");
 					$objResponse->addScript("$('serverwindow_$sid').setStyle('height', '64px');");
@@ -1998,18 +1994,18 @@ function ServerHostPlayers($sid, $type="servers", $obId="", $tplsid="", $open=""
 	}
 	elseif($type=="id")
 	{
-		if(!empty($info['hostname']))
+		if($info])
 		{
-			$objResponse->addAssign("$obId", "innerHTML", trunc($info['hostname'], $trunchostname, false));
+			$objResponse->addAssign("$obId", "innerHTML", trunc($info['HostName'], $trunchostname, false));
 		}else{
 			$objResponse->addAssign("$obId", "innerHTML", "<b>!!!</b> <i>Ошибка соединения</i> (<i>" . $res[1] . ":" . $res[2]. "</i>) <b>!!!</b>");
 		}
 	}
 	else
 	{
-		if(!empty($info['hostname']))
+		if($info))
 		{
-			$objResponse->addAssign("ban_server_$type", "innerHTML", trunc($info['hostname'], $trunchostname, false));
+			$objResponse->addAssign("ban_server_$type", "innerHTML", trunc($info['HostName'], $trunchostname, false));
 		}else{
 			$objResponse->addAssign("ban_server_$type", "innerHTML", "<b>!!!</b> <i>Ошибка соединения</i> (<i>" . $res[1] . ":" . $res[2]. "</i>) <b>!!!</b>");
 		}
@@ -2021,7 +2017,7 @@ function ServerHostProperty($sid, $obId, $obProp, $trunchostname)
 {
     $objResponse = new xajaxResponse();
 	global $userbank;
-	require INCLUDES_PATH.'/CServerInfo.php';
+	require INCLUDES_PATH.'/CServerControl.php';
 	
 	$sid = (int)$sid;
     $obId = htmlspecialchars($obId);
@@ -2032,11 +2028,13 @@ function ServerHostProperty($sid, $obId, $obProp, $trunchostname)
 	if(empty($res[0]) || empty($res[1]))
 		return $objResponse;
 	$info = array();
-	$sinfo = new CServerInfo($res[0],$res[1]);
-	$info = $sinfo->getInfo();
+	
+	$sinfo = new CServerControl();
+	$sinfo->Connect($res[0], $res[1]);
+	$info = $sinfo->GetInfo();
     
-    if(!empty($info['hostname'])) {
-        $objResponse->addAssign("$obId", "$obProp", addslashes(trunc($info['hostname'], $trunchostname, false)));
+    if($info) {
+        $objResponse->addAssign("$obId", "$obProp", addslashes(trunc($info['HostName'], $trunchostname, false)));
     } else {
         $objResponse->addAssign("$obId", "$obProp", "Ошибка соединения (" . $res[0] . ":" . $res[1]. ")");
     }
@@ -2046,7 +2044,7 @@ function ServerHostProperty($sid, $obId, $obProp, $trunchostname)
 function ServerHostPlayers_list($sid, $type="servers", $obId="")
 {
 	$objResponse = new xajaxResponse();
-	require INCLUDES_PATH.'/CServerInfo.php';
+	require INCLUDES_PATH.'/CServerControl.php';
 
 	$sids = explode(";", $sid, -1);
 	if(count($sids) < 1)
@@ -2061,15 +2059,15 @@ function ServerHostPlayers_list($sid, $type="servers", $obId="")
 		if(empty($res[1]) || empty($res[2]))
 			return $objResponse;
 		$info = array();
-		$sinfo = new CServerInfo($res[1],$res[2]);
-		$info = $sinfo->getInfo();
+		$sinfo = new CServerControl();
+		$sinfo->Connect($res[1], $res[2]);
+		$info = $sinfo->GetInfo();
 
-		if(!empty($info['hostname']))
-		{
-			$ret .= trunc($info['hostname'], 48, false) . "<br />";
-		}else{
+		if($info)
+			$ret .= trunc($info['HostName'], 48, false) . "<br />";
+		else
 			$ret .= "<b>Ошибка соединения</b> (<i>" . $res[1] . ":" . $res[2]. "</i>) <br />";
-		}
+		
 	}
 
 	if($type=="id")
@@ -2088,9 +2086,8 @@ function ServerHostPlayers_list($sid, $type="servers", $obId="")
 function ServerPlayers($sid)
 {
 	$objResponse = new xajaxResponse();
-	require INCLUDES_PATH.'/CServerInfo.php';
+	require INCLUDES_PATH.'/CServerControl.php';
 
-	
 	$sid = (int)$sid;
 
 	$res = $GLOBALS['db']->GetRow("SELECT sid, ip, port FROM ".DB_PREFIX."_servers WHERE sid = $sid");
@@ -2100,17 +2097,17 @@ function ServerPlayers($sid)
 		return $objResponse;
 	}
 	$info = array();
-	$sinfo = new CServerInfo($res[1],$res[2]);
-	$info = $sinfo->getPlayers();
+	$sinfo = new CServerControl();
+	$sinfo->Connect($res[1], $res[2]);
+	$info = $sinfo->GetPlayers();
 
 	$html = "";
 	if(empty($info))
 		return $objResponse;
-	foreach($info AS $player)
-	{
-		$html .= '<tr> <td class="listtable_1">'.htmlentities($player['name']).'</td>
-						<td class="listtable_1">'.(int)$player['kills'].'</td>
-						<td class="listtable_1">'.$player['time'].'</td>
+	foreach($info AS $player) {
+		$html .= '<tr> <td class="listtable_1">'.htmlentities($player['Name']).'</td>
+						<td class="listtable_1">'.(int)$player['Frags'].'</td>
+						<td class="listtable_1">'.$player['TimeF'].'</td>
 				  </tr>';
 	}
 	$objResponse->addAssign("player_detail_$sid", "innerHTML", $html);
@@ -2135,23 +2132,25 @@ function KickPlayer($sid, $name)
 		return $objResponse;
 	}
 
-	require INCLUDES_PATH.'/CServerRcon.php';
+	require INCLUDES_PATH.'/CServerControl.php';
 	//get the server data
 	$data = $GLOBALS['db']->GetRow("SELECT ip, port, rcon FROM ".DB_PREFIX."_servers WHERE sid = '".$sid."';");
 	if(empty($data['rcon'])) {
 		$objResponse->addScript("ShowBox('Ошибка', 'Невозможно кикнуть ".addslashes(htmlspecialchars($name)).". Не задан РКОН пароль!', 'red', '', true);");
 		return $objResponse;
 	}
-	$r = new CServerRcon($data['ip'], $data['port'], $data['rcon']);
+	
+	$r = new CServerControl();
+	$r->Connect($data['ip'], $data['port']);
 
-	if(!$r->Auth())
+	if(!$r->AuthRcon($data['rcon']))
 	{
 		$GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_servers SET rcon = '' WHERE sid = '".$sid."';");
 		$objResponse->addScript("ShowBox('Ошибка', 'Невозможно кикнуть ".addslashes(htmlspecialchars($name)).". Неверный РКОН пароль!', 'red', '', true);");
 		return $objResponse;
 	}
 	// search for the playername
-	$ret = $r->rconCommand("status");
+	$ret = $r->SendCommand("status");
 	$search = preg_match_all(STATUS_PARSE,$ret,$matches,PREG_PATTERN_ORDER);
 	$i = 0;
 	$found = false;
@@ -2213,7 +2212,7 @@ function PasteBan($sid, $name, $type=0)
 		$log = new CSystemLog("w", "Ошибка доступа", $username . " пытался забанить, не имея на это прав.");
 		return $objResponse;
 	}
-	require INCLUDES_PATH.'/CServerRcon.php';
+	require INCLUDES_PATH.'/CServerControl.php';
 	//get the server data
 	$data = $GLOBALS['db']->GetRow("SELECT ip, port, rcon FROM ".DB_PREFIX."_servers WHERE sid = ?;", array($sid));
 	if(empty($data['rcon'])) {
@@ -2222,8 +2221,9 @@ function PasteBan($sid, $name, $type=0)
 		return $objResponse;
 	}
 
-	$r = new CServerRcon($data['ip'], $data['port'], $data['rcon']);
-	if(!$r->Auth())
+	$r = new CServerControl();
+	$r->Connect($data['ip'], $data['port']);
+	if(!$r->AuthRcon($data['rcon']))
 	{
 		$GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_servers SET rcon = '' WHERE sid = ?;", array($sid));
 		$objResponse->addScript("$('dialog-control').setStyle('display', 'block');");
@@ -2231,7 +2231,7 @@ function PasteBan($sid, $name, $type=0)
 		return $objResponse;
 	}
 
-	$ret = $r->rconCommand("status");
+	$ret = $r->SendCommand("status");
 	$search = preg_match_all(STATUS_PARSE,$ret,$matches,PREG_PATTERN_ORDER);
 	$i = 0;
 	$found = false;
@@ -2842,15 +2842,18 @@ function SendRcon($sid, $command, $output)
 	}
     @fclose($test);
 	include(INCLUDES_PATH . "/CServerRcon.php");
-	$r = new CServerRcon($rcon['ip'], $rcon['port'], $rcon['rcon']);
-	if(!$r->Auth())
+	
+	$r = new CServerControl();
+	$r->Connect($rcon['ip'], $rcon['port']);
+	
+	if(!$r->AuthRcon($rcon['rcon']))
 	{
 		$GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_servers SET rcon = '' WHERE sid = '".$sid."';");
 		$objResponse->addAppend("rcon_con", "innerHTML", "<div class='lv-item media p-b-5 p-t-5'><div class='lv-avatar bgm-red pull-left'>R</div><div class='media-body'><div class='ms-item' style='display: block;max-width: 100%;'> > Ошибка: неверный РКОН пароль!<br />Вы должны изменить РКОН пароль для этого сервера.<br /> Если Вы продолжите использовать консоль с неверным РКОН паролем, <br />сервер заблокирует соединение!</div></div></div>");
 		$objResponse->addScript("scroll.toBottom(); $('cmd').value='Сменить РКОН пароль.'; $('cmd').disabled=true; $('rcon_btn').disabled=true");
 		return $objResponse;
 	}
-	$ret = $r->rconCommand($command);
+	$ret = $r->SendCommand($command);
 
 
 	$textAppend = "<div class='lv-item media right p-b-5 p-t-5'><div class='lv-avatar bgm-orange pull-right'><img src='".GetUserAvatar($userbank->getProperty("authid"))."' /></div><div class='media-body'><div class='ms-item'> $command </div><small class='ms-date'><i class='zmdi zmdi-time'></i> ".date("d/m/Y в H:i")."</small></div></div>";
@@ -3253,9 +3256,12 @@ function RehashAdmins_pay($server, $do=0, $card)
 			return $objResponse;
 		}
 
-		require INCLUDES_PATH.'/CServerRcon.php';
-		$r = new CServerRcon($serv['ip'], $serv['port'], $serv['rcon']);
-		if(!$r->Auth())
+		require INCLUDES_PATH.'/CServerControl.php';
+		
+		$r = new CServerControl();
+		$r->Connect($serv['ip'], $serv['port']);
+		
+		if(!$r->AuthRcon($serv['rcon']))
 		{
 			$GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_servers SET rcon = '' WHERE sid = '".$serv['sid']."';");
 			$objResponse->addAppend("rehashDiv", "innerHTML", "".$serv['ip'].":".$serv['port']." (".($do+1)."/".sizeof($servers).") <font color='red'>Ошибка: неверный РКОН пароль</font>.<br />");
@@ -3266,8 +3272,8 @@ function RehashAdmins_pay($server, $do=0, $card)
 			}
 			return $objResponse;
 		}
-		$ret = $r->rconCommand("sm_rehash");
-		$ret = $r->rconCommand("sm_reloadadmins");
+		$ret = $r->SendCommand("sm_rehash");
+		$ret = $r->SendCommand("sm_reloadadmins");
 
 		$objResponse->addAppend("rehashDiv", "innerHTML", "".$serv['ip'].":".$serv['port']." (".($do+1)."/".sizeof($servers).") <font color='green'>успешно</font>.<br />");
 		if($do >= sizeof($servers)-1) {
@@ -3320,9 +3326,12 @@ function RehashAdmins($server, $do=0)
 			return $objResponse;
 		}
 
-		require INCLUDES_PATH.'/CServerRcon.php';
-		$r = new CServerRcon($serv['ip'], $serv['port'], $serv['rcon']);
-		if(!$r->Auth())
+		require INCLUDES_PATH.'/CServerControl.php';
+		
+		$r = new CServerControl();
+		$r->Connect($serv['ip'], $serv['port']);
+		
+		if(!$r->AuthRcon($serv['rcon']))
 		{
 			$GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_servers SET rcon = '' WHERE sid = '".$serv['sid']."';");
 			$objResponse->addAppend("rehashDiv", "innerHTML", "".$serv['ip'].":".$serv['port']." (".($do+1)."/".sizeof($servers).") <font color='red'>Ошибка: неверный РКОН пароль</font>.<br />");
@@ -3333,8 +3342,8 @@ function RehashAdmins($server, $do=0)
 			}
 			return $objResponse;
 		}
-		$ret = $r->rconCommand("sm_rehash");
-		$ret = $r->rconCommand("sm_reloadadmins");
+		$ret = $r->SendCommand("sm_rehash");
+		$ret = $r->SendCommand("sm_reloadadmins");
 
 		$objResponse->addAppend("rehashDiv", "innerHTML", "".$serv['ip'].":".$serv['port']." (".($do+1)."/".sizeof($servers).") <font color='green'>успешно</font>.<br />");
 		if($do >= sizeof($servers)-1) {
@@ -3678,23 +3687,25 @@ function ViewCommunityProfile($sid, $name)
 	}
 	$sid = (int)$sid;
   
-	require INCLUDES_PATH.'/CServerRcon.php';
+	require INCLUDES_PATH.'/CServerControl.php';
 	//get the server data
 	$data = $GLOBALS['db']->GetRow("SELECT ip, port, rcon FROM ".DB_PREFIX."_servers WHERE sid = '".$sid."';");
 	if(empty($data['rcon'])) {
 		$objResponse->addScript("ShowBox('Ошибка', 'Невозможно получить информацию о игроке ".addslashes(htmlspecialchars($name)).". Не задан РКОН пароль!', 'red', '', true);");
 		return $objResponse;
 	}
-	$r = new CServerRcon($data['ip'], $data['port'], $data['rcon']);
+	
+	$r = new CServerControl();
+	$r->Connect($data['ip'], $data['port']);
 
-	if(!$r->Auth())
+	if(!$r->AuthRcon($data['rcon']))
 	{
 		$GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_servers SET rcon = '' WHERE sid = '".$sid."';");
 		$objResponse->addScript("ShowBox('Ошибка', 'Невозможно получить информацию о игроке ".addslashes(htmlspecialchars($name)).". Неверный РКОН пароль!', 'red', '', true);");
 		return $objResponse;
 	}
 	// search for the playername
-	$ret = $r->rconCommand("status");
+	$ret = $r->SendCommand("status");
 	$search = preg_match_all(STATUS_PARSE,$ret,$matches,PREG_PATTERN_ORDER);
 	$i = 0;
 	$found = false;
@@ -3732,22 +3743,25 @@ function SendMessage($sid, $name, $message)
 		return $objResponse;
 	}
 	$sid = (int)$sid;
-	require INCLUDES_PATH.'/CServerRcon.php';
+	require INCLUDES_PATH.'/CServerControl.php';
 	//get the server data
 	$data = $GLOBALS['db']->GetRow("SELECT ip, port, rcon FROM ".DB_PREFIX."_servers WHERE sid = '".$sid."';");
 	if(empty($data['rcon'])) {
 		$objResponse->addScript("ShowBox('Ошибка', 'Невозможно отправить сообщение для ".addslashes(htmlspecialchars($name)).". Не задан РКОН пароль!', 'red', '', true);");
 		return $objResponse;
 	}
-	$r = new CServerRcon($data['ip'], $data['port'], $data['rcon']);
-	if(!$r->Auth())
+	
+	$r = new CServerControl();
+	$r->Connect($data['ip'], $data['port']);
+	
+	if(!$r->AuthRcon($data['rcon']))
 	{
 		$GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_servers SET rcon = '' WHERE sid = '".$sid."';");
 		$objResponse->addScript("ShowBox('Ошибка', 'Невозможно отправить сообщение для ".addslashes(htmlspecialchars($name)).". Неверноый РКОН пароль!', 'red', '', true);");
 		return $objResponse;
 	}
-	$ret = $r->sendCommand('sm_psay "'.$name.'" "'.addslashes($message).'"');
-  new CSystemLog("m", "Сообщение отправлено", "Данное сообщение было отправлено " . addslashes(htmlspecialchars($name)) . " on server " . $data['ip'] . ":" . $data['port'] . ": " . RemoveCode($message));
+	$ret = $r->SendCommand('sm_psay "'.$name.'" "'.addslashes($message).'"');
+	new CSystemLog("m", "Сообщение отправлено", "Данное сообщение было отправлено " . addslashes(htmlspecialchars($name)) . " on server " . $data['ip'] . ":" . $data['port'] . ": " . RemoveCode($message));
 	$objResponse->addScript("ShowBox('Сообщение отправлено', 'Сообщение для игрока \'".addslashes(htmlspecialchars($name))."\' успешно отправлено!', 'green', '', true);$('dialog-control').setStyle('display', 'none');");
 	return $objResponse;
 }
@@ -3920,7 +3934,7 @@ function PasteBlock($sid, $name)
 		$log = new CSystemLog("w", "Ошибка доступа", $username . " пытался вставить блок , не имея на это прав.");
 		return $objResponse;
 	}
-	require INCLUDES_PATH.'/CServerRcon.php';
+	require INCLUDES_PATH.'/CServerControl.php';
 	//get the server data
 	$data = $GLOBALS['db']->GetRow("SELECT ip, port, rcon FROM ".DB_PREFIX."_servers WHERE sid = ?;", array($sid));
 	if(empty($data['rcon'])) {
@@ -3929,8 +3943,10 @@ function PasteBlock($sid, $name)
 		return $objResponse;
 	}
 
-	$r = new CServerRcon($data['ip'], $data['port'], $data['rcon']);
-	if(!$r->Auth())
+	$r = new CServerRcon();
+	$r->Connect($data['ip'], $data['port']);
+	
+	if(!$r->AuthRcon($data['rcon']))
 	{
 		$GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_servers SET rcon = '' WHERE sid = ?;", array($sid));
 		$objResponse->addScript("$('dialog-control').setStyle('display', 'block');");
@@ -3938,7 +3954,7 @@ function PasteBlock($sid, $name)
 		return $objResponse;
 	}
 
-	$ret = $r->rconCommand("status");
+	$ret = $r->SendCommand("status");
 	$search = preg_match_all(STATUS_PARSE,$ret,$matches,PREG_PATTERN_ORDER);
 	$i = 0;
 	$found = false;

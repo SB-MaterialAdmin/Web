@@ -87,18 +87,18 @@ function KickPlayer($check, $sid, $num, $type) {
 	//test if server is online
 	if($test = @fsockopen($sdata['ip'], $sdata['port'], $errno, $errstr, 2)) {
 		@fclose($test);
-		require_once(INCLUDES_PATH . "/CServerRcon.php");
+		require_once(INCLUDES_PATH . "/CServerControl.php");
 		
-		$r = new CServerRcon($sdata['ip'], $sdata['port'], $sdata['rcon']);
+		$r = new CServerControl();
+		$r->Connect($sdata['ip'], $sdata['port']);
 
-		if(!$r->Auth())
-		{
+		if(!$r->AuthRcon($sdata['rcon'])) {
 			$GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_servers SET rcon = '' WHERE sid = '".$sid."' LIMIT 1;");		
 			$objResponse->addAssign("srv_$num", "innerHTML", "<font color='red' size='1'>Ошибка Rcon пароля!</font>");
 			$objResponse->addScript('set_counter(1);');
 			return $objResponse;
 		}
-		$ret = $r->rconCommand("status");
+		$ret = $r->SendCommand("status");
 		
 		// show hostname instead of the ip, but leave the ip in the title
 		require_once("../includes/system-functions.php");
@@ -119,9 +119,9 @@ function KickPlayer($check, $sid, $num, $type) {
 					$requri = substr($_SERVER['REQUEST_URI'], 0, strrpos($_SERVER['REQUEST_URI'], "pages/admin.kickit.php"));
 					
 					if(strpos($match, "[U:") === 0) {
-						$kick = $r->sendCommand("кикнут \"".$match."\" \"вы были кикнуты. За более подробной информацией зайдите на http://" . $_SERVER['HTTP_HOST'].$requri." for more info.\"");
+						$kick = $r->SendCommand("kick \"".$match."\" \"Вы были кикнуты. За более подробной информацией зайдите на http://" . $_SERVER['HTTP_HOST'].$requri." за более подробной информацией.\"");
 					} else {
-						$kick = $r->sendCommand("кикнут ".$match." \"вы были кикнуты. За более подробной информацией зайдите на http://" . $_SERVER['HTTP_HOST'].$requri." for more info.\"");
+						$kick = $r->SendCommand("kick ".$match." \"Вы были кикнуты. За более подробной информацией зайдите на http://" . $_SERVER['HTTP_HOST'].$requri." за более подробной информацией.\"");
 					}
 					
 					$objResponse->addAssign("srv_$num", "innerHTML", "<font color='green' size='1'><b><u>Найден. Кикаю...</u></b></font>");
@@ -140,7 +140,7 @@ function KickPlayer($check, $sid, $num, $type) {
 					$gothim = true;
 					$GLOBALS['db']->Execute("UPDATE `".DB_PREFIX."_bans` SET sid = '".$sid."' WHERE ip = '".$check."' AND RemovedBy IS NULL;");
 					$requri = substr($_SERVER['REQUEST_URI'], 0, strrpos($_SERVER['REQUEST_URI'], "pages/admin.kickit.php"));
-					$kick = $r->sendCommand("кикнут ".$userid." \"вы были кикнуты. За более подробной информацией зайдите на http://" . $_SERVER['HTTP_HOST'].$requri." for more info.\"");
+					$kick = $r->sendCommand("kick ".$userid." \"вы были кикнуты. За более подробной информацией зайдите на http://" . $_SERVER['HTTP_HOST'].$requri." за более подробной информацией.\"");
 					$objResponse->addAssign("srv_$num", "innerHTML", "<font color='green' size='1'><b><u>Найден. Кикаю...</u></b></font>");
 					$objResponse->addScript("set_counter('-1');");
 					return $objResponse;

@@ -88,18 +88,18 @@ function BlockPlayer($check, $sid, $num, $type, $length) {
 	//test if server is online
 	if($test = @fsockopen($sdata['ip'], $sdata['port'], $errno, $errstr, 2)) {
 		@fclose($test);
-		require_once(INCLUDES_PATH . "/CServerRcon.php");
+		require_once(INCLUDES_PATH . "/CServerControl.php");
 		
-		$r = new CServerRcon($sdata['ip'], $sdata['port'], $sdata['rcon']);
+		$r = new CServerControl();
+		$r->Connect($sdata['ip'], $sdata['port']);
 
-		if(!$r->Auth())
-		{
+		if(!$r->AuthRcon($sdata['rcon'])) {
 			$GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_servers SET rcon = '' WHERE sid = '".$sid."' LIMIT 1;");		
 			$objResponse->addAssign("srv_$num", "innerHTML", "<font color='red' size='1'>Неправильный RCON пароль, измените!</font>");
 			$objResponse->addScript('set_counter(1);');
 			return $objResponse;
 		}
-		$ret = $r->rconCommand("status");
+		$ret = $r->SendCommand("status");
 		
 		// show hostname instead of the ip, but leave the ip in the title
 		require_once("../includes/system-functions.php");
@@ -117,8 +117,8 @@ function BlockPlayer($check, $sid, $num, $type, $length) {
 				$gothim = true;
 				$GLOBALS['db']->Execute("UPDATE `".DB_PREFIX."_comms` SET sid = '".$sid."' WHERE authid = '".$check."' AND RemovedBy IS NULL;");
 				$requri = substr($_SERVER['REQUEST_URI'], 0, strrpos($_SERVER['REQUEST_URI'], "pages/admin.blockit.php"));
-				$kick = $r->sendCommand("sc_fw_block ".$type." ".$length." ".$match);
-				$objResponse->addAssign("srv_$num", "innerHTML", "<font color='green' size='1'><b><u>Игрок найден и заблокирован!!!</u></b></font>");
+				$kick = $r->SendCommand("sc_fw_block ".$type." ".$length." ".$match);
+				$objResponse->addAssign("srv_$num", "innerHTML", "<font color='green' size='1'><b><u>Игрок найден и заблокирован!</u></b></font>");
 				$objResponse->addScript("set_counter('-1');");
 				return $objResponse;
 			}
