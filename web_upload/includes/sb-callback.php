@@ -1823,7 +1823,7 @@ function ServerHostPlayers($sid, $type="servers", $obId="", $tplsid="", $open=""
 	$sinfo->Connect($res[1], $res[2]);
 	$info = $sinfo->GetInfo();
 	if($type == "servers") {
-		if($info)) {
+		if($info) {
 			$objResponse->addAssign("host_$sid", "innerHTML", trunc($info['HostName'], $trunchostname, false));
 			$objResponse->addAssign("players_$sid", "innerHTML", $info['Players'] . "/" . $info['MaxPlayers']);
 			$objResponse->addAssign("os_$sid", "innerHTML", "<img src='images/" . (!empty($info['Os'])?$info['Os']:'server_small') . ".png'>");
@@ -1994,7 +1994,7 @@ function ServerHostPlayers($sid, $type="servers", $obId="", $tplsid="", $open=""
 	}
 	elseif($type=="id")
 	{
-		if($info])
+		if($info)
 		{
 			$objResponse->addAssign("$obId", "innerHTML", trunc($info['HostName'], $trunchostname, false));
 		}else{
@@ -2003,7 +2003,7 @@ function ServerHostPlayers($sid, $type="servers", $obId="", $tplsid="", $open=""
 	}
 	else
 	{
-		if($info))
+		if($info)
 		{
 			$objResponse->addAssign("ban_server_$type", "innerHTML", trunc($info['HostName'], $trunchostname, false));
 		}else{
@@ -2841,7 +2841,7 @@ function SendRcon($sid, $command, $output)
 		return $objResponse;
 	}
     @fclose($test);
-	include(INCLUDES_PATH . "/CServerRcon.php");
+	include(INCLUDES_PATH . "/CServerControl.php");
 	
 	$r = new CServerControl();
 	$r->Connect($rcon['ip'], $rcon['port']);
