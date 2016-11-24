@@ -105,8 +105,8 @@ function KickPlayer($check, $sid, $num) {
 			$objResponse->addAssign("srvip_$num", "innerHTML", "<font size='1'><span title='".$sdata['ip'].":".$sdata['port']."'>".$ret['HostName']."</span></font>");
 		
 		$response = $r->SendCommand(sprintf("ma_wb_ban %s", $check));
-		if ($response && strpos("ok", $response)) {
-			$objResponse->addAssign("srv_$num", "innerHTML", "<font color='green' size='1'><b><u>Найден и кикнут с сервера.</u></b></font>");
+		if ($response && strpos($response, "ok") !== FALSE) {
+			$objResponse->addAssign("srv_$num", "innerHTML", "<font color='green' size='1'><b>Найден и кикнут с сервера.</b></font>");
 			$objResponse->addScript("set_counter('-1');");
 			return $objResponse;
 		}
