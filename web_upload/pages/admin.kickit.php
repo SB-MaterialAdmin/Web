@@ -41,7 +41,7 @@ $xajax->registerFunction("LoadServers");
 $xajax->processRequests();
 $username = $userbank->GetProperty("user");
 
-function LoadServers($check, $type) {
+function LoadServers($check) {
 	$objResponse = new xajaxResponse();
 	global $userbank, $username;
 	if(!$userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_BAN))
@@ -56,10 +56,10 @@ function LoadServers($check, $type) {
 		//search for player
 		if(!empty($servers->fields["rcon"])) {
 			$text = '<font size="1">Поиск...</font>';
-			$objResponse->addScript("xajax_KickPlayer('".$check."', '".$servers->fields["sid"]."', '".$id."', '".$type."');");
+			$objResponse->addScript("xajax_KickPlayer('".$check."', '".$servers->fields["sid"]."', '".$id."');");
 		}
 		else { //no rcon = servercount + 1 ;)
-			$text = '<font size="1">Нету Rcon пароля.</font>';
+			$text = '<font size="1">Нет Rcon пароля.</font>';
 			$objResponse->addScript('set_counter(1);');
 		}		
 		$objResponse->addAssign("srv_".$id, "innerHTML", $text);
@@ -69,7 +69,7 @@ function LoadServers($check, $type) {
 	return $objResponse;
 }
 
-function KickPlayer($check, $sid, $num, $type) {
+function KickPlayer($check, $sid, $num) {
 	$objResponse = new xajaxResponse();
 	global $userbank, $username;
 	$sid = (int)$sid;
@@ -98,63 +98,24 @@ function KickPlayer($check, $sid, $num, $type) {
 			$objResponse->addScript('set_counter(1);');
 			return $objResponse;
 		}
-		$ret = $r->SendCommand("status");
+		$ret = $r->GetInfo();
 		
 		// show hostname instead of the ip, but leave the ip in the title
-		require_once("../includes/system-functions.php");
-		$hostsearch = preg_match_all('/hostname:[ ]*(.+)/',$ret,$hostname,PREG_PATTERN_ORDER);
-		$hostname = trunc(htmlspecialchars($hostname[1][0]),25,false);
-		if(!empty($hostname))
-			$objResponse->addAssign("srvip_$num", "innerHTML", "<font size='1'><span title='".$sdata['ip'].":".$sdata['port']."'>".$hostname."</span></font>");
+		if(!$ret)
+			$objResponse->addAssign("srvip_$num", "innerHTML", "<font size='1'><span title='".$sdata['ip'].":".$sdata['port']."'>".$ret['HostName']."</span></font>");
 		
-		$gothim = false;
-		$search = preg_match_all(STATUS_PARSE,$ret,$matches,PREG_PATTERN_ORDER);
-		//search for the steamid on the server
-		if((int)$type==0) {
-			foreach($matches[3] AS $match) {
-				if(getAccountId($match) == getAccountId($check)) {
-					// gotcha!!! kick him!
-					$gothim = true;
-					$GLOBALS['db']->Execute("UPDATE `".DB_PREFIX."_bans` SET sid = '".$sid."' WHERE authid = '".$check."' AND RemovedBy IS NULL;");
-					$requri = substr($_SERVER['REQUEST_URI'], 0, strrpos($_SERVER['REQUEST_URI'], "pages/admin.kickit.php"));
-					
-					if(strpos($match, "[U:") === 0) {
-						$kick = $r->SendCommand("kick \"".$match."\" \"Вы были кикнуты. За более подробной информацией зайдите на http://" . $_SERVER['HTTP_HOST'].$requri." за более подробной информацией.\"");
-					} else {
-						$kick = $r->SendCommand("kick ".$match." \"Вы были кикнуты. За более подробной информацией зайдите на http://" . $_SERVER['HTTP_HOST'].$requri." за более подробной информацией.\"");
-					}
-					
-					$objResponse->addAssign("srv_$num", "innerHTML", "<font color='green' size='1'><b><u>Найден. Кикаю...</u></b></font>");
-					$objResponse->addScript("set_counter('-1');");
-					return $objResponse;
-				}
-			}
-		} else if((int)$type==1) { // search for the ip on the server
-			$id = 0;
-			foreach($matches[8] AS $match) {
-				$ip = explode(":", $match);
-				$ip = $ip[0];
-				if($ip == $check) {
-					$userid = $matches[1][$id];
-					// gotcha!!! kick him!
-					$gothim = true;
-					$GLOBALS['db']->Execute("UPDATE `".DB_PREFIX."_bans` SET sid = '".$sid."' WHERE ip = '".$check."' AND RemovedBy IS NULL;");
-					$requri = substr($_SERVER['REQUEST_URI'], 0, strrpos($_SERVER['REQUEST_URI'], "pages/admin.kickit.php"));
-					$kick = $r->sendCommand("kick ".$userid." \"вы были кикнуты. За более подробной информацией зайдите на http://" . $_SERVER['HTTP_HOST'].$requri." за более подробной информацией.\"");
-					$objResponse->addAssign("srv_$num", "innerHTML", "<font color='green' size='1'><b><u>Найден. Кикаю...</u></b></font>");
-					$objResponse->addScript("set_counter('-1');");
-					return $objResponse;
-				}
-				$id++;
-			}
-		}
-		if(!$gothim) {
-			$objResponse->addAssign("srv_$num", "innerHTML", "<font size='1'>Не найден.</font>");
-			$objResponse->addScript('set_counter(1);');
+		$response = $r->SendCommand(sprintf("ma_wb_ban %s", $check));
+		if ($response && strpos("ok", $response)) {
+			$objResponse->addAssign("srv_$num", "innerHTML", "<font color='green' size='1'><b><u>Найден и кикнут с сервера.</u></b></font>");
+			$objResponse->addScript("set_counter('-1');");
 			return $objResponse;
 		}
+
+		$objResponse->addAssign("srv_$num", "innerHTML", "<font size='1'>Не найден.</font>");
+		$objResponse->addScript('set_counter(1);');
+		return $objResponse;
 	} else {
-		$objResponse->addAssign("srv_$num", "innerHTML", "<font color='red' size='1'><i>Нету соединения.</i></font>");
+		$objResponse->addAssign("srv_$num", "innerHTML", "<font color='red' size='1'><i>Нет соединения.</i></font>");
 		$objResponse->addScript('set_counter(1);');
 		return $objResponse;
 	}
@@ -175,7 +136,6 @@ while(!$servers->EOF) {
 $theme->assign('servers', $serverlinks);
 $theme->assign('xajax_functions',  $xajax->printJavascript("../scripts", "xajax.js"));
 $theme->assign('check', $_GET["check"]);// steamid or ip address
-$theme->assign('type', $_GET['type']);
 
 $theme->left_delimiter = "-{";
 $theme->right_delimiter = "}-";
