@@ -33,6 +33,7 @@ if($GLOBALS['config']['config.enablesubmit']!="1")
 	PageDie();
 }
 
+require_once(INCLUDES_PATH.'/CServerControl.php');
 $sinfo = new CServerControl();
 
 if (!isset($_POST['subban']) || $_POST['subban'] != 1)
@@ -115,7 +116,6 @@ else
 		if($demo || empty($_FILES['demo_file']['name']))
 		{
 			if($SID!=0) {
-				require_once(INCLUDES_PATH.'/CServerControl.php');
 				$res = $GLOBALS['db']->GetRow("SELECT ip, port FROM ".DB_PREFIX."_servers WHERE sid = $SID");
 				
 				$sinfo->Connect($res[0],$res[1]);
@@ -171,7 +171,6 @@ else
 }
 
 //$mod_list = $GLOBALS['db']->GetAssoc("SELECT mid,name FROM ".DB_PREFIX."_mods WHERE `mid` > 0 AND `enabled`= 1 ORDER BY mid ");
-require_once INCLUDES_PATH.'/CServerControl.php';
 //serverlist
 $server_list = $GLOBALS['db']->Execute("SELECT sid, ip, port FROM `" . DB_PREFIX . "_servers` WHERE enabled = 1 ORDER BY modid, sid");
 $servers = array();
