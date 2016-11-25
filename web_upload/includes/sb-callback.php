@@ -1924,7 +1924,7 @@ function ServerHostPlayers($sid, $type="servers", $obId="", $tplsid="", $open=""
 														// Time TD
 														var td = tr.insertCell("-1");
 															td.className = "p-l-10";
-															var txt = document.createTextNode("'.$player["TimeF"].'");
+															var txt = document.createTextNode("'.SecondsToString($player['Time']).'");
 															td.appendChild(txt);
 														');
 							if($userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_BAN)) {
@@ -2234,7 +2234,7 @@ function PasteBan($sid, $name, $type=0)
 		return $objResponse;
 	}
 
-	$ret = $r->SendCommand("status");
+	/* $ret = $r->SendCommand("status");
 	$search = preg_match_all(STATUS_PARSE,$ret,$matches,PREG_PATTERN_ORDER);
 	$i = 0;
 	$found = false;
@@ -2265,6 +2265,19 @@ function PasteBan($sid, $name, $type=0)
 		$objResponse->addScript("ShowBox('Ошибка', 'Невозможно получить информацию о игроке ".addslashes(htmlspecialchars($name)).". Игрок покинул сервер! (".$data['ip'].":".$data['port'].") ', 'red', '', true);");
 		$objResponse->addScript("$('dialog-control').setStyle('display', 'block');");
 		return $objResponse;
+	} */
+	$ret = $r-SendCommand("ma_wb_getinfo %s", $name);
+	$pl  = explode("|", $ret);
+	if (count($pl) < 2) {
+		$objResponse->addScript("ShowBox('Ошибка', 'Невозможно получить информацию о игроке ".addslashes(htmlspecialchars($name)).". Игрок покинул сервер! (".$data['ip'].":".$data['port'].") ', 'red', '', true);");
+		$objResponse->addScript("$('dialog-control').setStyle('display', 'block');");
+		return $objResponse;
+	} else {
+		$objResponse->addScript("$('nickname').value = '" . addslashes($name) . "'");
+		if($type==1)
+			$objResponse->addScript("$('type').options[1].selected = true");
+		$objResponse->addScript("$('steam').value = '" . $pl[0] . "'");
+		$objResponse->addScript("$('ip').value = '" . $pl[1] . "'");
 	}
 	$objResponse->addScript("SwapPane(0);");
 	$objResponse->addScript("$('dialog-control').setStyle('display', 'block');");
@@ -3344,8 +3357,7 @@ function RehashAdmins($server, $do=0)
 			}
 			return $objResponse;
 		}
-		$ret = $r->SendCommand("sm_rehash");
-		$ret = $r->SendCommand("sm_reloadadmins");
+		$ret = $r->SendCommand("ma_wb_rehashadm");
 
 		$objResponse->addAppend("rehashDiv", "innerHTML", "".$serv['ip'].":".$serv['port']." (".($do+1)."/".sizeof($servers).") <font color='green'>успешно</font>.<br />");
 		if($do >= sizeof($servers)-1) {
