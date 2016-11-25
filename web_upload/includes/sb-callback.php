@@ -3275,8 +3275,7 @@ function RehashAdmins_pay($server, $do=0, $card)
 			}
 			return $objResponse;
 		}
-		$ret = $r->SendCommand("sm_rehash");
-		$ret = $r->SendCommand("sm_reloadadmins");
+		$ret = $r->SendCommand("ma_wb_rehashadm");
 
 		$objResponse->addAppend("rehashDiv", "innerHTML", "".$serv['ip'].":".$serv['port']." (".($do+1)."/".sizeof($servers).") <font color='green'>успешно</font>.<br />");
 		if($do >= sizeof($servers)-1) {
