@@ -1843,7 +1843,7 @@ function ServerHostPlayers($sid, $type="servers", $obId="", $tplsid="", $open=""
 					$objResponse->addScript("$('sinfo_$sid').setStyle('display', 'block');");
 					$objResponse->addScript("$('noplayer_$sid').setStyle('display', 'none');");
 					if(!defined('IN_HOME')) {
-						$players = $sinfo->getPlayers();
+						$players = $sinfo->GetPlayers();
 						// remove childnodes
 						$objResponse->addScript('var toempty = document.getElementById("playerlist_'.$sid.'");
 						var empty = toempty.cloneNode(false);
@@ -1898,16 +1898,19 @@ function ServerHostPlayers($sid, $type="servers", $obId="", $tplsid="", $open=""
 							$dl2 = "";
 							$dl_fix = 'p-l-10 ';
 						}
+						$id = 0;
 						foreach($players AS $player) {
+							if (empty($player['Name'])) continue;
+							$id++;
 							$objResponse->addScript('var e = document.getElementById("playerlist_'.$sid.'");
 													var tr = e.insertRow("-1");
-													tr.id = "player_s'.$sid.'p'.$player["index"].'";
+													tr.id = "player_s'.$sid.'p'.$id.'";
 														// Name TD
 														var td = tr.insertCell("-1");
 															td.className = "'.$dl_fix.'p-t-5";
-																var txt = document.createTextNode("'.str_replace('"', '\"', $player["name"]).'");
+																var txt = document.createTextNode("'.str_replace('"', '\"', $player["Name"]).'");
 																var a = document.createElement("'.$dl.'");
-																a.href = "#player_s' . $sid . 'p' . $player["index"] . '_t";
+																a.href = "#player_s' . $sid . 'p' . $id . '_t";
 																var att = document.createAttribute("data-toggle");
 																att.value = "modal"; 
 																a.setAttributeNode(att);
@@ -1916,19 +1919,19 @@ function ServerHostPlayers($sid, $type="servers", $obId="", $tplsid="", $open=""
 														// Score TD
 														var td = tr.insertCell("-1");
 															td.className = "listtable_1";
-															var txt = document.createTextNode("'.$player["kills"].'");
+															var txt = document.createTextNode("'.$player["Frags"].'");
 															td.appendChild(txt);
 														// Time TD
 														var td = tr.insertCell("-1");
 															td.className = "p-l-10";
-															var txt = document.createTextNode("'.$player["time"].'");
+															var txt = document.createTextNode("'.$player["TimeF"].'");
 															td.appendChild(txt);
 														');
 							if($userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_BAN)) {
 								$objResponse->addScript('
 									var div = document.createElement("div");
 									div.className = "modal fade";
-									div.id = "player_s' . $sid . 'p' . $player["index"] . '_t";
+									div.id = "player_s' . $sid . 'p' . $id . '_t";
 									var att = document.createAttribute("tabindex");
 									var att1 = document.createAttribute("role");
 									var att2 = document.createAttribute("aria-hidden");
@@ -1942,14 +1945,14 @@ function ServerHostPlayers($sid, $type="servers", $obId="", $tplsid="", $open=""
 										<div class=\'modal-dialog modal-sm\'>\
 											<div class=\'modal-content\'>\
 												<div class=\'modal-header\'>\
-													<h4 class=\'modal-title\'>'.str_replace('"', '\"', $player["name"]).'</h4>\
+													<h4 class=\'modal-title\'>'.str_replace('"', '\"', $player["Name"]).'</h4>\
 												</div>\
 												<div class=\'modal-body\'>\
-													<p class=\"m-b-10\"><button class=\"btn btn-link btn-block\" data-dismiss=\"modal\" onclick=\"KickPlayerConfirm('.$sid.', \''.str_replace('"', '"', $player["name"]).'\', 0);\">Кикнуть</button></p>\
-													<p class=\"m-b-10\"><button class=\"btn btn-link btn-block\" href=\"#\" data-dismiss=\'modal\' onclick=\"ViewCommunityProfile('.$sid.', \''.str_replace('"', '\"', $player["name"]).'\');\">Профиль</button></p>\
-													<p class=\"m-b-10\"><a href=\"index.php?p=admin&c=bans&action=pasteBan&sid='.$sid.'&pName='.str_replace('"', '\"', $player["name"]).'\"><button class=\"btn btn-link btn-block\">Бан</button></a></p>\
-													<p class=\"m-b-10\"><a href=\"index.php?p=admin&c=comms&action=pasteBan&sid='.$sid.'&pName='.str_replace('"', '\"', $player["name"]).'\"><button class=\"btn btn-link btn-block\">Заглушить</button></a></p>\
-													<p class=\"m-b-10\"><button class=\"btn btn-link btn-block\" href=\"#\" data-dismiss=\'modal\' onclick=\"OpenMessageBox('.$sid.', \''.str_replace('"', '\"', $player["name"]).'\', 1);\">Отправить сообщение</button></p>\
+													<p class=\"m-b-10\"><button class=\"btn btn-link btn-block\" data-dismiss=\"modal\" onclick=\"KickPlayerConfirm('.$sid.', \''.str_replace('"', '"', $player["Name"]).'\', 0);\">Кикнуть</button></p>\
+													<p class=\"m-b-10\"><button class=\"btn btn-link btn-block\" href=\"#\" data-dismiss=\'modal\' onclick=\"ViewCommunityProfile('.$sid.', \''.str_replace('"', '\"', $player["Name"]).'\');\">Профиль</button></p>\
+													<p class=\"m-b-10\"><a href=\"index.php?p=admin&c=bans&action=pasteBan&sid='.$sid.'&pName='.str_replace('"', '\"', $player["Name"]).'\"><button class=\"btn btn-link btn-block\">Бан</button></a></p>\
+													<p class=\"m-b-10\"><a href=\"index.php?p=admin&c=comms&action=pasteBan&sid='.$sid.'&pName='.str_replace('"', '\"', $player["Name"]).'\"><button class=\"btn btn-link btn-block\">Заглушить</button></a></p>\
+													<p class=\"m-b-10\"><button class=\"btn btn-link btn-block\" href=\"#\" data-dismiss=\'modal\' onclick=\"OpenMessageBox('.$sid.', \''.str_replace('"', '\"', $player["Name"]).'\', 1);\">Отправить сообщение</button></p>\
 												</div>\
 												<!--<div class=\'modal-footer\'>\
 													<button type=\'button\' class=\'btn btn-link\' data-dismiss=\'modal\'>Отмена</button>\
