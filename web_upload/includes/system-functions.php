@@ -1377,7 +1377,13 @@ function EMail($to, $subject, $message, $headers) { // SendMail - registered in 
 }
 
 function decompress_tar($path, $output) {
-    $phar = new PharData($path);
-    $phar->extractTo($output);
+    try {
+        $phar = new PharData($path);
+        $phar->extractTo($output);
+        return true;
+    } catch (PharException $e) {
+        new CSystemLog("e", "PHP Exception", $e->getMessage());
+        return false;
+    }
 }
 ?>
