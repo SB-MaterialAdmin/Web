@@ -1182,28 +1182,6 @@ function GetCommunityIDFromSteamID2($sid) {
     return bcadd(bcadd('76561197960265728', $parts['1']), bcmul($parts['2'], '2'));
 }
 
-/*
-function GetUserAvatar($sid = -1, $upd = false) {
-    global $userbank;
-    $AvatarFile = sprintf("themes/new_box/img/profile-pics/%d.jpg", rand(1,9));
-    $communityid = GetCommunityIDFromSteamID2(($sid==-1)?$userbank->getProperty("authid"):$sid);
-    $res = $GLOBALS['db']->GetRow(sprintf("SELECT url, expires FROM `%s_avatars` WHERE `authid` = '%s'", DB_PREFIX, $communityid));
-    if (count($res) != 0 && !$upd) {
-        if ($res['expires'] < time()) return GetUserAvatar($sid, true);
-        else $AvatarFile = $res['url'];
-    } else {
-        $SteamResponse = @json_decode(file_get_contents(sprintf("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=%s&steamids=%s", STEAMAPIKEY, $communityid)));
-        if (isset($SteamResponse->response->players[0]->avatarfull))
-            $AvatarFile = $SteamResponse->response->players[0]->avatarfull;
-        $ExpireTime = time()+AVATAR_LIFETIME;
-        $query = null;
-        $AF = $GLOBALS['db']->qstr($AvatarFile);
-        if ($upd) $query = sprintf("UPDATE `%s_avatars` SET `url` = %s, `expires` = %d", DB_PREFIX, $AF, $ExpireTime);
-        else $query = sprintf("INSERT INTO `%s_avatars` (`authid`, `url`, `expires`) VALUES ('%s', %s, %d)", DB_PREFIX, $communityid, $AF, $ExpireTime);
-        $GLOBALS['db']->Execute($query);
-    }
-    return $AvatarFile;
-}*/
 function GetUserAvatar($sid = -1) {
     global $userbank;
     $communityid = false;
@@ -1396,5 +1374,10 @@ function EMail($to, $subject, $message, $headers) { // SendMail - registered in 
         $func = "mail";
 
     return $func($to, $subject, $message, $headers);
+}
+
+function decompress_tar($path, $output) {
+    $phar = new PharData($path);
+    $phar->extractTo($output);
 }
 ?>
