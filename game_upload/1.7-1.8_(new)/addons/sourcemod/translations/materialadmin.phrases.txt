@@ -1,0 +1,379 @@
+"Phrases"
+{
+	// транслит меню
+	"AdminMenu_Main"
+	{
+		"en"    		"Settings block"
+		"ru"    		"Управление блокировками"
+	}
+	"OnlineTitle"
+	{
+		"en"   		 	"Online"
+		"ru"    		"Онлайн"
+	}
+	"OfflineTitle"
+	{
+		"en"    		"Offline"
+		"ru"    		"Офлайн"
+	}
+	"SettingTitle"
+	{
+		"en"    		"Settings"
+		"ru"    		"Управление"
+	}
+	"SelectPlayerTitle"
+	{
+		"en"    		"Select Player"
+		"ru"    		"Выберите игрока"
+	}
+	"SelectTimeTitle"
+	{
+		"en"    		"Select Time"
+		"ru"    		"Выберите время"
+	}
+	"SelectReasonTitle"
+	{
+		"en"    		"Select Reason"
+		"ru"    		"Выберите причину"
+	}
+	"SetTitle"
+	{
+		"en"    		"Select"
+		"ru"    		"Выберите"
+	}
+	"ReheshAdmin"
+	{
+		"en"    		"Refresh the list of Admins"
+		"ru"    		"Обновить список админов"
+	}
+	"SetMute"
+	{
+		"en"    		"Mute"
+		"ru"    		"Мут"
+	}
+	"SetBan"
+	{
+		"en"    		"Ban"
+		"ru"    		"Бан"
+	}
+	"Mute"
+	{
+		"en"    		"Mute"
+		"ru"   			"Отключить голосовой чат"
+	}
+	"Gag"
+	{
+		"en"    		"Gag"
+		"ru"    		"Отключить текстовый чат"
+	}
+	"Silence"
+	{
+		"en"   		 	"Silence"
+		"ru"    		"Отключить весь чат"
+	}
+	"unMute"
+	{
+		"en"    		"Un Mute"
+		"ru"    		"Включить голосовой чат"
+	}
+	"unGag"
+	{
+		"en"    		"Un Gag"
+		"ru"    		"Включить текстовый чат"
+	}
+	"unSilence"
+	{
+		"en"    		"Un Silence"
+		"ru"    		"Включить весь чат"
+	}
+	"No players history"
+	{
+		"en"    		"No players in history."
+		"ru"    		"Нет игроков в истории."
+	}
+	"All"
+	{
+		"en"			"All"
+		"ru"			"Все"
+	}
+	"CT"
+	{
+		"en"			"CT"
+		"ru"			"Контры"
+	}
+	"T"
+	{
+		"en"			"T"
+		"ru"			"Теры"
+	}
+	"Blue"
+	{
+		"en"			"Blue"
+		"ru"			"Синие"
+	}
+	"Red"
+	{
+		"en"			"Red"
+		"ru"			"Красные"
+	}
+	"Clients"
+	{
+		"en"			"Clients"
+		"ru"			"Выполнить на выделеных"
+	}
+	"no target"
+	{
+		"en"			"no target"
+		"ru"			"Нет игроков"
+	}
+	//------------------------------------------------
+	// сообщение при бане
+	"Permanent"
+	{
+		"en"			"Permanent"
+		"ru"			"Навсегда"
+	}
+	"Banned Admin"
+	{
+		"#format"		"{1:s},{2:s},{3:s},{4:s},{5:s},{6:s}"
+		"en"			"You was banned by admin: {1}\nReason: {2}\nBan date: {3}\nBan ends: {4}\nBan length: {5}\nRead more on the website: {6}"
+		"ru"			"Забанен админом: {1}\nПричина: {2}\nБан выдан: {3}\nБан будет снят: {4}\nЗабанен на: {5}\nПодробнее на сайте: {6}"
+	}
+	"Banned"
+	{
+		"#format"		"{1:s},{2:s},{3:s},{4:s},{5:s}"
+		"en"			"You was banned on this server\nReason: {1}\nBan date: {2}\nBan ends: {3}\nBan length: {4}\nRead more on the website: {5}"
+		"ru"			"Вы  были забанены на этом сервере\nПричина: {1}\nБан выдан: {2}\nБан будет снят: {3}\nЗабанен на: {4}\nПодробнее на сайте: {5}"
+	}
+	"Banned Admin2"
+	{
+		"#format"		"{1:s},{2:s},{3:s},{4:s},{5:s}"
+		"en"			"You was banned by admin: {1}\nReason: {2}\nBan date: {3}\nBan length: {4}\nRead more on the website: {5}"
+		"ru"			"Забанен админом: {1}\nПричина: {2}\nБан выдан: {3}\nЗабанен на: {4}\nПодробнее на сайте: {5}"
+	}
+	"Banned2"
+	{
+		"#format"		"{1:s},{2:s},{3:s},{4:s}"
+		"en"			"You was banned on this server\nReason: {1}\nBan date: {2}\nBan length: {3}\nRead more on the website: {4}"
+		"ru"			"Вы  были забанены на этом сервере\nПричина: {1}\nБан выдан: {2}\nЗабанен на: {3}\nПодробнее на сайте: {4}"
+	}
+	"Title Banned"
+	{
+		"en"			"You banned"
+		"ru"			"Вы забанены"
+	}
+	"No ends"
+	{
+		"en"			"Ban permanent"
+		"ru"			"Бан навсегда"
+	}
+	//----------------------------------------------------------------
+	// чат
+	"Days"
+	{
+		"en"			"days"
+		"ru"			"дн."
+	}
+	"Hours"
+	{
+		"en"			"hours"
+		"ru"			"час."
+	}
+	"Minutes"
+	{
+		"en"			"minutes"
+		"ru"			"мин."
+	}
+	"Sec"
+	{
+		"en"			"sec."
+		"ru"			"сек."
+	}
+	"Admin Expire"
+	{
+		"#format"		"{1:s}"
+		"en"			"Validity privileges expire {1}"
+		"ru"			"Срок действия привелегий истекает через {1}"
+	}
+	"Clear history"
+	{
+		"en"    		"Clear history"
+		"ru"    		"История очищена"
+	}
+	"Failed to bd"
+	{
+		"#format"		"{1:s}"
+		"en"    		"Failed to add to the database {1}. Operation is written to the backup, when you resume connections, data will send into the database"
+		"ru"    		"Не получилось добавить в бд {1}, операция записана в бекап, при возобновления соеденения данные занесутся в бд"
+	}
+	"Added to bd"
+	{
+		"#format"		"{1:s}"
+		"en"    		"Added to the database {1}"
+		"ru"    		"Добавлен в бд {1}"
+	}
+	"Failed to player"
+	{
+		"en"    		"Player not found"
+		"ru"    		"Игрок не найден"
+	}
+	"Own reason"
+	{
+		"#format"		"{1:s}"
+		"en"    		"Own reason:({1}). Add"
+		"ru"    		"Другая причина:({1}). Добавлена"
+	}
+	"Say reason"
+	{
+		"en"    		"Write the reason to a chat"
+		"ru"    		"Напишите в чат свою причину"
+	}
+	"ReheshAdminOk"
+	{
+		"en"    		"List administrators updated"
+		"ru"    		"Cписок админов обновлён"
+	}
+	"No Client Game"
+	{
+		"en"    		"The player left"
+		"ru"    		"Игрок вышел"
+	}
+	"Yes report"
+	{
+		"#format"		"{1:s}"
+		"en"    		"Report on {1} sent"
+		"ru"    		"Репорт на {1} отправлен"
+	}
+	"No admin"
+	{
+		"en"    		"This Admin immunity"
+		"ru"    		"Команда запрещена на испольнение над админом"
+	
+	}
+	"No Access time 0"
+	{
+		"en"    		"Permanent Ban allowed Admins with flag UNBAN"
+		"ru"    		"Банить навсегда разрешено админам с флагом UNBAN"
+	}
+	"No Access all"
+	{
+		"en"    		"Ban all players allowed Admins with flag ROOT"
+		"ru"    		"Банить всех разрешено админам с флагом ROOT"
+	}
+	"Invalid time"
+	{
+		"en"    		"Invalid time"
+		"ru"    		"Время меньше 0 запрещено"
+	}
+	"No active bans"
+	{
+		"#format"		"{1:s}"
+		"en"    		"No active bans found for that filter {1}"
+		"ru"    		"Нет активного бана по данному фильтру {1}"
+	}
+	"Is already banned"
+	{
+		"#format"		"{1:s}"
+		"en"    		"{1} is already banned"
+		"ru"    		"{1} уже находится в бане"
+	}
+	"No matching client"
+	{
+		"en"			"No matching client was found"
+		"ru"			"Не найден подходящий игрок"
+	}
+	"Target gag"
+	{
+		"#format"		"{1:s},{2:s}"
+		"en"			"You have disabled text chat on {1} because ({2})"
+		"ru"			"Вам отключили текстовый чат на {1} по причине ({2})"
+	}
+	"Target mute"
+	{
+		"#format"		"{1:s},{2:s}"
+		"en"			"You have disabled the voice chat on {1} because ({2})"
+		"ru"			"Вам отключили голосовой чат на {1} по причине ({2})"
+	}
+	"Target silence"
+	{
+		"#format"		"{1:s},{2:s}"
+		"en"			"You have disabled the voice and text chat to {1} because ({2})"
+		"ru"			"Вам отключили голосовой и текстовый чат на {1} по причине ({2})"
+	}
+	"Target ungag"
+	{
+		"en"			"You have included a text chat"
+		"ru"			"Вам включили текстовый чат"
+	}
+	"Target unmute"
+	{
+		"en"			"You have enabled voice chat"
+		"ru"			"Вам включили голосовой чат"
+	}
+	"Target unsilence"
+	{
+		"en"			"You have enabled voice and text chat"
+		"ru"			"Вам включили голосовой и текстовый чат"
+	}
+	"Target no text chat"
+	{
+		"#format"		"{1:s},{2:s}"
+		"en"			"You have turned off text chat on {1} because ({2})"
+		"ru"			"У вас выключен текстовый чат на {1} по причине ({2})"
+	}
+	//------------------------------------------------
+	// действия админа
+	"Admin"
+	{
+		"en"			"Admin"
+		"ru"			"Админ"
+	}
+	"Banned show"
+	{
+		"#format"		"{1:s},{2:s},{3:s}"
+		"en"			"banned {1} to {2} because ({3})"
+		"ru"			"забанил {1} на {2} по причине ({3})"
+	}
+	"UnBanned show"
+	{
+		"#format"		"{1:s}"
+		"en"			"unbanned {1}"
+		"ru"			"разбанил {1}"
+	}
+	"Gag show"
+	{
+		"#format"		"{1:s},{2:s},{3:s}"
+		"en"			"disabled text chat {1} on {2} for a reason ({3})"
+		"ru"			"отключил текстовый чат {1} на {2} по причине ({3})"
+	}
+	"Mute show"
+	{
+		"#format"		"{1:s},{2:s},{3:s}"
+		"en"			"disabled the voice chat {1} on {2} for a reason ({3})"
+		"ru"			"отключил голосовой чат {1} на {2} по причине ({3})"
+	}
+	"Silence show"
+	{
+		"#format"		"{1:s},{2:s},{3:s}"
+		"en"			"disabled the voice and text chat to {2} {1} because ({3})"
+		"ru"			"отключил голосовой и текстовый чат {1} на {2} по причине ({3})"
+	}
+	"UnGag show"
+	{
+		"#format"		"{1:s}"
+		"en"			"included text chat {1}"
+		"ru"			"включил текстовый чат {1}"
+	}
+	"UnMute show"
+	{
+		"#format"		"{1:s}"
+		"en"			"included voice chat {1}"
+		"ru"			"включил голосовой чат {1}"
+	}
+	"UnSilence show"
+	{
+		"#format"		"{1:s}"
+		"en"			"included voice and text chat {1}"
+		"ru"			"включил голосовой и текстовый чат {1}"
+	}
+}

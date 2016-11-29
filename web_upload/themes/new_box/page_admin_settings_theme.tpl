@@ -317,7 +317,7 @@
 					</div>
 				</div>
 				<div class="form-group m-b-5">
-					<label for="dash_textik" class="col-sm-3 control-label">{help_icon title="Дополнительное описание" message="Описание, которое добавляется в раздел 'Главная' на гравную страницу SourceBans."} Описание</label>
+					<label for="dash_textik" class="col-sm-3 control-label">{help_icon title="Дополнительное описание" message="Описание, которое добавляется в раздел 'Главная' на главную страницу SourceBans."} Описание</label>
 					<div class="col-sm-9 p-t-15">
 						<textarea cols="80" rows="20" id="dash_textik" name="dash_textik" class="html-editor">{if $dash_info_block_text != ""}{$dash_info_block_text}{else}{/if}</textarea>
 					</div>
@@ -369,7 +369,7 @@
 			<div class="alert alert-info" role="alert">Если вы не хотите использовать уведомление, оставьте поле ввода у этого уведомления - пустым.</div>
 			<div class="card-body card-padding p-b-0">
 				<div class="form-group m-b-5">
-					<label for="yvedom_1" class="col-sm-3 control-label">{help_icon title="Уведомление" message="Уведомление, которое выходит при заходе на гравную страницу SourceBans."} На главной</label>
+					<label for="yvedom_1" class="col-sm-3 control-label">{help_icon title="Уведомление" message="Уведомление, которое выходит при заходе на главную страницу SourceBans."} На главной</label>
 					<div class="col-sm-9">
 						<div class="fg-line">
 							<input type="text" class="form-control" id="yvedom_1" name="yvedom_1" {if $config_text_home != ""}value="{$config_text_home}"{else}placeholder="Введите данные(Не обязательно)"{/if} />
