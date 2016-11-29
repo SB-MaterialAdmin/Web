@@ -63,7 +63,8 @@ Database g_dSQLite = null,
 ArrayList g_aUserId[66],
 	g_aAdminsExpired;
 
-ConVar g_Cvar_Alltalk;
+ConVar g_Cvar_Alltalk,
+	g_Cvar_Deadtalk;
 	
 Handle g_hTimerMute[MAXPLAYERS+1] = null,
 	g_hTimerGag[MAXPLAYERS+1] = null,
@@ -91,6 +92,7 @@ bool g_bSayReason[MAXPLAYERS+1],
 	g_bUnBan,
 	g_bReport,
 	g_bBanSayPanel,
+	g_bHooked = false,
 	g_bOnileTarget[MAXPLAYERS+1],
 	g_bBanClientConnect[MAXPLAYERS+1];
 	
@@ -129,7 +131,7 @@ public Plugin myinfo =
 	name = "Material Admin",
 	author = "Grey™",
 	description = "For to sm 1.7",
-	version = "0.0.6b",
+	version = "0.0.7b",
 	url = "hlmod.ru Skype: wolf-1-ser"
 };
 

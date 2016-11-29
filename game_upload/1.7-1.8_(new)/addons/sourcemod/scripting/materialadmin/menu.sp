@@ -452,16 +452,19 @@ public int MenuHandler_MenuTypeMute(Menu Mmenu, MenuAction mAction, int iClient,
 				case 3: 
 				{
 					g_iTargetType[iClient] = TYPE_UNMUTE;
+					g_sTarget[iClient][TREASON] = "Нет причины";
 					OnlineClientSet(iClient);
 				}
 				case 4:
 				{
 					g_iTargetType[iClient] = TYPE_UNGAG;
+					g_sTarget[iClient][TREASON] = "Нет причины";
 					OnlineClientSet(iClient);
 				}
 				case 5:
 				{
 					g_iTargetType[iClient] = TYPE_UNSILENCE;
+					g_sTarget[iClient][TREASON] = "Нет причины";
 					OnlineClientSet(iClient);
 				}
 			}

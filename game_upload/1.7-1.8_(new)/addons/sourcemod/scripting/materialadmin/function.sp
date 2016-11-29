@@ -284,14 +284,140 @@ int FindTargetName(char[] sName)
 	}
 	return 0;
 }
-
+//---------------------------------------------------------------------------------------------
 public void ConVarChange_Alltalk(ConVar convar, const char[] oldValue, const char[] newValue)
+{
+	int iMode = g_Cvar_Deadtalk.IntValue;
+	for (int i = 1; i <= MaxClients; i++)
+	{
+		if (IsClientInGame(i))
+		{
+			if (g_iTargetMuteType[i] == TYPEMUTE || g_iTargetMuteType[i] == TYPESILENCE)
+				SetClientListeningFlags(i, VOICE_MUTED);
+			else if (g_Cvar_Alltalk.BoolValue)
+				SetClientListeningFlags(i, VOICE_NORMAL);
+			else if (!IsPlayerAlive(i) && g_iGameTyp != GAMETYP_CSGO)
+			{
+				if (iMode == 0)
+					SetClientListeningFlags(i, VOICE_NORMAL);
+				else if (iMode == 1)
+					SetClientListeningFlags(i, VOICE_LISTENALL);
+				else if (iMode == 2)
+					SetClientListeningFlags(i, VOICE_TEAM);
+			}
+		}
+	}
+}
+
+public void ConVarChange(ConVar convar, const char[] oldValue, const char[] newValue)
 {
 	for (int i = 1; i <= MaxClients; i++)
 	{
 		if (IsClientInGame(i))
-			FunMute(i);
+		{
+			if (g_iTargetMuteType[i] == TYPEMUTE || g_iTargetMuteType[i] == TYPESILENCE)
+				SetClientListeningFlags(i, VOICE_MUTED);
+		}
 	}
+}
+
+public void ConVarChange_Deadtalk(ConVar convar, const char[] oldValue, const char[] newValue)
+{
+	if (g_iGameTyp == GAMETYP_CSGO)
+	{
+		for (int i = 1; i <= MaxClients; i++)
+		{
+			if (IsClientInGame(i))
+			{
+				if (g_iTargetMuteType[i] == TYPEMUTE || g_iTargetMuteType[i] == TYPESILENCE)
+					SetClientListeningFlags(i, VOICE_MUTED);
+			}
+		}
+	}
+	else
+	{
+		int iMode = g_Cvar_Deadtalk.IntValue;
+		if (iMode)
+		{
+			for (int i = 1; i <= MaxClients; i++)
+			{
+				if (IsClientInGame(i))
+				{
+					if (g_iTargetMuteType[i] == TYPEMUTE || g_iTargetMuteType[i] == TYPESILENCE)
+						SetClientListeningFlags(i, VOICE_MUTED);
+					else if (g_Cvar_Alltalk.BoolValue)
+						SetClientListeningFlags(i, VOICE_NORMAL);
+					else if (!IsPlayerAlive(i))
+					{
+						if (iMode == 0)
+							SetClientListeningFlags(i, VOICE_NORMAL);
+						else if (iMode == 1)
+							SetClientListeningFlags(i, VOICE_LISTENALL);
+						else if (iMode == 2)
+							SetClientListeningFlags(i, VOICE_TEAM);
+					}
+				}
+			}
+			HookEvent("player_spawn", Event_PlayerSpawn, EventHookMode_Post);
+			HookEvent("player_death", Event_PlayerDeath, EventHookMode_Post);
+			g_bHooked = true;
+		}
+		else if (g_bHooked)
+		{
+			for (int i = 1; i <= MaxClients; i++)
+			{
+				if (IsClientInGame(i))
+				{
+					if (g_iTargetMuteType[i] == TYPEMUTE || g_iTargetMuteType[i] == TYPESILENCE)
+						SetClientListeningFlags(i, VOICE_MUTED);
+					else
+						SetClientListeningFlags(i, VOICE_NORMAL);
+				}
+			}
+			UnhookEvent("player_spawn", Event_PlayerSpawn);
+			UnhookEvent("player_death", Event_PlayerDeath);		
+			g_bHooked = false;
+		}
+	}
+}
+
+public void Event_PlayerSpawn(Event eEvent, const char[] sName, bool bDontBroadcast)
+{
+	int iClient = GetClientOfUserId(eEvent.GetInt("userid"));
+	
+	if (iClient)
+	{
+		if (g_iTargetMuteType[iClient] == TYPEMUTE || g_iTargetMuteType[iClient] == TYPESILENCE)
+			SetClientListeningFlags(iClient, VOICE_MUTED);
+		else
+			SetClientListeningFlags(iClient, VOICE_NORMAL);
+	}
+}
+
+public void Event_PlayerDeath(Event eEvent, const char[] sName, bool bDontBroadcast)
+{
+	int iClient = GetClientOfUserId(eEvent.GetInt("userid"));
+	
+	if (!iClient)
+		return;	
+	
+	if (g_iTargetMuteType[iClient] == TYPEMUTE || g_iTargetMuteType[iClient] == TYPESILENCE)
+	{
+		SetClientListeningFlags(iClient, VOICE_MUTED);
+		return;
+	}
+	
+	if (g_Cvar_Alltalk.BoolValue)
+	{
+		SetClientListeningFlags(iClient, VOICE_NORMAL);
+		return;
+	}
+
+	int iMode = g_Cvar_Deadtalk.IntValue;
+	if (iMode == 1)
+		SetClientListeningFlags(iClient, VOICE_LISTENALL);
+	else if (iMode == 2)
+		SetClientListeningFlags(iClient, VOICE_TEAM);
 }
 //---------------------------------------------------------------------------------------------------------
 //временная админка
@@ -355,7 +481,7 @@ void UnMute(int iClient)
 		g_iTargetMuteType[iClient] = TYPEGAG;
 	else if (g_iTargetMuteType[iClient] == TYPEMUTE)
 		g_iTargetMuteType[iClient] = 0;
-	
+
 	FunMute(iClient);
 	KillTimerMute(iClient);
 
@@ -433,7 +559,7 @@ void AddGag(int iClient, int iTime)
 		AddSilence(iClient, iTime);
 		return;
 	}
-		
+
 	KillTimerGag(iClient);
 	if (iTime > 0 && iTime < 86400)
 	{
@@ -455,7 +581,7 @@ void AddMute(int iClient, int iTime)
 		AddSilence(iClient, iTime);
 		return;
 	}
-	
+
 	KillTimerMute(iClient);
 	FunMute(iClient);
 	if (iTime > 0 && iTime < 86400)
@@ -471,9 +597,17 @@ void AddMute(int iClient, int iTime)
 
 void FunMute(int iClient)
 {
-	if (g_iTargetMuteType[iClient] != TYPEGAG || g_iTargetMuteType[iClient] != 0)
+	int iMode;
+	if (g_iTargetMuteType[iClient] == TYPEMUTE || g_iTargetMuteType[iClient] == TYPESILENCE)
 		SetClientListeningFlags(iClient, VOICE_MUTED);
-	else if (g_Cvar_Alltalk.BoolValue)
+	else if (!IsPlayerAlive(iClient) && g_iGameTyp != GAMETYP_CSGO && (iMode == g_Cvar_Deadtalk.IntValue))
+	{
+		if (iMode == 1)
+			SetClientListeningFlags(iClient, VOICE_LISTENALL);
+		else if (iMode == 2)
+			SetClientListeningFlags(iClient, VOICE_TEAM);
+	}
+	else
 		SetClientListeningFlags(iClient, VOICE_NORMAL);
 }
 

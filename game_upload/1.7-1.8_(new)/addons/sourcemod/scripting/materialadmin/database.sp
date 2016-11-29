@@ -307,7 +307,7 @@ void DoCreateDB(int iClient, int iTarget)
 
 //------------------------------------------------------------------------------------------------------------------------------
 //занесение в бд
-void CreateDB(int iClient, int iTarget, const char[] sSteamIp = "")
+void CreateDB(int iClient, int iTarget, char[] sSteamIp = "")
 {
 #if DEBUG
 	LogToFile(g_sLogFile,"Create sb: client %d, target %d, TargetType %d, TargetMuteType %d", iClient, iTarget, g_iTargetType[iClient], g_iTargetMuteType[iTarget]);
@@ -354,6 +354,36 @@ void CreateDB(int iClient, int iTarget, const char[] sSteamIp = "")
 	
 	if (!g_sTarget[iClient][TREASON][0])
 		g_sTarget[iClient][TREASON] = "Нет причины";
+	
+	switch(g_iTargetType[iClient])
+	{
+		case TYPE_ADDBAN:
+		{
+			if (iTarget)
+				FireOnClientBanned(iClient, iTarget, g_iTarget[iClient][TTIME], g_sTarget[iClient][TREASON]);
+			else
+			{
+				if (strncmp(sSteamIp, "STEAM_", 6) == 0)
+					FireOnClientAddBanned(iClient, "", sSteamIp, g_iTarget[iClient][TTIME], g_sTarget[iClient][TREASON]);
+				else
+					FireOnClientAddBanned(iClient, sSteamIp, "", g_iTarget[iClient][TTIME], g_sTarget[iClient][TREASON]);
+			}
+		}
+		case TYPE_UNBAN:
+		{
+			if (strncmp(sSteamIp, "STEAM_", 6) == 0)
+				FireOnClientUnBanned(iClient, "", sSteamIp, g_sTarget[iClient][TREASON]);
+			else
+				FireOnClientUnBanned(iClient, sSteamIp, "", g_sTarget[iClient][TREASON]);
+		}
+		case TYPE_BAN: 		FireOnClientBanned(iClient, iTarget, g_iTarget[iClient][TTIME], g_sTarget[iClient][TREASON]);
+		case TYPE_GAG: 		FireOnClientMuted(iClient, iTarget, TYPEGAG, g_iTarget[iClient][TTIME], g_sTarget[iClient][TREASON]);
+		case TYPE_MUTE:		FireOnClientMuted(iClient, iTarget, TYPEMUTE, g_iTarget[iClient][TTIME], g_sTarget[iClient][TREASON]);
+		case TYPE_SILENCE:	FireOnClientMuted(iClient, iTarget, TYPESILENCE, g_iTarget[iClient][TTIME], g_sTarget[iClient][TREASON]);
+		case TYPE_UNGAG:	FireOnClientUnMuted(iClient, iTarget, TYPEGAG, g_sTarget[iClient][TREASON]);
+		case TYPE_UNMUTE:	FireOnClientUnMuted(iClient, iTarget, TYPEMUTE, g_sTarget[iClient][TREASON]);
+		case TYPE_UNSILENCE:FireOnClientUnMuted(iClient, iTarget, TYPESILENCE, g_sTarget[iClient][TREASON]);
+	}
 
 	g_dDatabase.Escape(g_sTarget[iClient][TREASON], sReason, sizeof(sReason));
 	g_dDatabase.Escape(g_sTarget[iClient][TNAME], sBanName, sizeof(sBanName));
@@ -857,21 +887,20 @@ public void VerifyInsert(Database db, DBResultSet dbRs, const char[] sError, any
 				FormatTime(sCreated, sizeof(sCreated), FORMAT_TIME, iCreated);
 				if(g_bBanSayPanel)
 				{
-					FormatEx(sBuffer, sizeof(sBuffer), "%T", "Banned Admin", iClient, sName, sReason, sCreated, sEnds, sLength, g_sWebsite);
+					FormatEx(sBuffer, sizeof(sBuffer), "%T", "Banned Admin panel", iClient, sName, sReason, sCreated, sEnds, sLength, g_sWebsite);
 					CreateTeaxtDialog(iClient, sBuffer);
 				}
 				else
 				{
-					FormatEx(sBuffer, sizeof(sBuffer), "%T", "Banned Admin2", iClient, sName, sReason, sCreated, sLength, g_sWebsite);
+					FormatEx(sBuffer, sizeof(sBuffer), "%T", "Banned Admin", iClient, sName, sReason, sCreated, sLength, g_sWebsite);
 					KickClient(iTarget, sBuffer);
 				}
-				
 				ShowAdminAction(iClient, "%T", "Banned show", iClient, sTargetName, sLength, sReason);
 			}
 			else
 				ShowAdminAction(iClient, "%T", "Banned show", iClient, sSteamIp, sLength, sReason);
 		}
-		case TYPE_UNBAN: 	ShowAdminAction(iClient, "%T", "UnBanned show", iClient, sSteamIp);
+		case TYPE_UNBAN: ShowAdminAction(iClient, "%T", "UnBanned show", iClient, sSteamIp);
 		case TYPE_GAG:
 		{
 			if (iTarget)
@@ -1017,16 +1046,16 @@ public void VerifyBan(Database db, DBResultSet dbRs, const char[] sError, any iU
 			char sAdmin[64];
 			dbRs.FetchString(4, sAdmin, sizeof(sAdmin));
 			if(g_bBanSayPanel)
-				FormatEx(sBuffer, sizeof(sBuffer), "%T", "Banned Admin", iClient, sAdmin, sReason, sCreated, sEnds, sLength, g_sWebsite);
+				FormatEx(sBuffer, sizeof(sBuffer), "%T", "Banned Admin panel", iClient, sAdmin, sReason, sCreated, sEnds, sLength, g_sWebsite);
 			else
-				FormatEx(sBuffer, sizeof(sBuffer), "%T", "Banned Admin2", iClient, sAdmin, sReason, sCreated, sLength, g_sWebsite);
+				FormatEx(sBuffer, sizeof(sBuffer), "%T", "Banned Admin", iClient, sAdmin, sReason, sCreated, sLength, g_sWebsite);
 		}
 		else
 		{
 			if(g_bBanSayPanel)
-				FormatEx(sBuffer, sizeof(sBuffer), "%T", "Banned", iClient, sReason, sCreated, sEnds, sLength, g_sWebsite);
+				FormatEx(sBuffer, sizeof(sBuffer), "%T", "Banned panel", iClient, sReason, sCreated, sEnds, sLength, g_sWebsite);
 			else
-				FormatEx(sBuffer, sizeof(sBuffer), "%T", "Banned2", iClient, sReason, sCreated, sLength, g_sWebsite);
+				FormatEx(sBuffer, sizeof(sBuffer), "%T", "Banned", iClient, sReason, sCreated, sLength, g_sWebsite);
 		}
 
 		if(g_bBanSayPanel)

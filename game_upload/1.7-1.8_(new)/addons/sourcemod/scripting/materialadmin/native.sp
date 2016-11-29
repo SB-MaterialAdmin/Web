@@ -125,3 +125,80 @@ public int Native_GetClientMuteType(Handle plugin, int numParams)
 	int iClient = GetNativeCell(1);
 	return g_iTargetMuteType[iClient];
 }
+
+void FireOnClientMuted(int iClient, int iTarget, int iType, int iTime, const char[] sReason)
+{
+ 	static Handle hForward;
+	
+	if(hForward == null)
+		hForward = CreateGlobalForward("MAOnClientMuted", ET_Ignore, Param_Cell, Param_Cell, Param_Cell, Param_Cell, Param_String);
+	
+	Call_StartForward(hForward);
+	Call_PushCell(iClient);
+	Call_PushCell(iTarget);
+	Call_PushCell(iType);
+	Call_PushCell(iTime);
+	Call_PushString(sReason);
+	Call_Finish();
+}
+
+void FireOnClientUnMuted(int iClient, int iTarget, int iType, const char[] sReason)
+{
+ 	static Handle hForward;
+	
+	if(hForward == null)
+		hForward = CreateGlobalForward("MAOnClientUnMuted", ET_Ignore, Param_Cell, Param_Cell, Param_Cell, Param_String);
+	
+	Call_StartForward(hForward);
+	Call_PushCell(iClient);
+	Call_PushCell(iTarget);
+	Call_PushCell(iType);
+	Call_PushString(sReason);
+	Call_Finish();
+}
+
+void FireOnClientBanned(int iClient, int iTarget, int iTime, const char[] sReason)
+{
+ 	static Handle hForward;
+	
+	if(hForward == null)
+		hForward = CreateGlobalForward("MAOnClientBanned", ET_Ignore, Param_Cell, Param_Cell, Param_Cell, Param_String);
+	
+	Call_StartForward(hForward);
+	Call_PushCell(iClient);
+	Call_PushCell(iTarget);
+	Call_PushCell(iTime);
+	Call_PushString(sReason);
+	Call_Finish();
+}
+
+void FireOnClientAddBanned(int iClient, const char[] sIp, const char[] sSteamID, int iTime, const char[] sReason)
+{
+ 	static Handle hForward;
+	
+	if(hForward == null)
+		hForward = CreateGlobalForward("MAOnClientAddBanned", ET_Ignore, Param_Cell, Param_String, Param_String, Param_Cell, Param_String);
+	
+	Call_StartForward(hForward);
+	Call_PushCell(iClient);
+	Call_PushString(sIp);
+	Call_PushString(sSteamID);
+	Call_PushCell(iTime);
+	Call_PushString(sReason);
+	Call_Finish();
+}
+
+void FireOnClientUnBanned(int iClient, const char[] sIp, const char[] sSteamID, const char[] sReason)
+{
+ 	static Handle hForward;
+	
+	if(hForward == null)
+		hForward = CreateGlobalForward("MAOnClientUnBanned", ET_Ignore, Param_Cell, Param_String, Param_String, Param_String);
+	
+	Call_StartForward(hForward);
+	Call_PushCell(iClient);
+	Call_PushString(sIp);
+	Call_PushString(sSteamID);
+	Call_PushString(sReason);
+	Call_Finish();
+}

@@ -21,6 +21,19 @@ void RegComands()
 	
 	g_Cvar_Alltalk = FindConVar("sv_alltalk");
 	g_Cvar_Alltalk.AddChangeHook(ConVarChange_Alltalk);
+	if (g_iGameTyp == GAMETYP_CSGO)
+	{
+		ConVar Cvar;
+		Cvar = FindConVar("sv_talk_enemy_living");
+		Cvar.AddChangeHook(ConVarChange);
+		Cvar = FindConVar("sv_full_alltalk");
+		Cvar.AddChangeHook(ConVarChange);
+		g_Cvar_Deadtalk = FindConVar("sv_deadtalk");
+	}
+	else
+		g_Cvar_Deadtalk = CreateConVar("sm_deadtalk", "0", "Controls how dead communicate. 0 - Off. 1 - Dead players ignore teams. 2 - Dead players talk to living teammates.", 0, true, 0.0, true, 2.0);
+
+	g_Cvar_Deadtalk.AddChangeHook(ConVarChange_Deadtalk);
 }
 
 public Action OnClientSayCommand(int iClient, const char[] sCommand, const char[] sArgs)
@@ -84,7 +97,15 @@ public Action CommandReload(int iClient, int iArgc)
 public Action CommandConnectBd(int iClient, int iArgc)
 {
 	if (ConnectBd(g_dDatabase))
+	{
 		ReplyToCommand(iClient, "%sYes connect bd", PREFIX);
+		if (g_hTimerBekap != null)
+		{
+			KillTimer(g_hTimerBekap);
+			g_hTimerBekap = null;
+			SentBekapInBd();
+		}
+	}
 	else
 		ReplyToCommand(iClient, "%sNo connect bd", PREFIX);
 	

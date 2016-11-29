@@ -133,25 +133,25 @@
 		"en"			"Permanent"
 		"ru"			"Навсегда"
 	}
-	"Banned Admin"
+	"Banned Admin panel"
 	{
 		"#format"		"{1:s},{2:s},{3:s},{4:s},{5:s},{6:s}"
 		"en"			"You was banned by admin: {1}\nReason: {2}\nBan date: {3}\nBan ends: {4}\nBan length: {5}\nRead more on the website: {6}"
 		"ru"			"Забанен админом: {1}\nПричина: {2}\nБан выдан: {3}\nБан будет снят: {4}\nЗабанен на: {5}\nПодробнее на сайте: {6}"
 	}
-	"Banned"
+	"Banned panel"
 	{
 		"#format"		"{1:s},{2:s},{3:s},{4:s},{5:s}"
 		"en"			"You was banned on this server\nReason: {1}\nBan date: {2}\nBan ends: {3}\nBan length: {4}\nRead more on the website: {5}"
 		"ru"			"Вы  были забанены на этом сервере\nПричина: {1}\nБан выдан: {2}\nБан будет снят: {3}\nЗабанен на: {4}\nПодробнее на сайте: {5}"
 	}
-	"Banned Admin2"
+	"Banned Admin"
 	{
 		"#format"		"{1:s},{2:s},{3:s},{4:s},{5:s}"
 		"en"			"You was banned by admin: {1}\nReason: {2}\nBan date: {3}\nBan length: {4}\nRead more on the website: {5}"
 		"ru"			"Забанен админом: {1}\nПричина: {2}\nБан выдан: {3}\nЗабанен на: {4}\nПодробнее на сайте: {5}"
 	}
-	"Banned2"
+	"Banned"
 	{
 		"#format"		"{1:s},{2:s},{3:s},{4:s}"
 		"en"			"You was banned on this server\nReason: {1}\nBan date: {2}\nBan length: {3}\nRead more on the website: {4}"
