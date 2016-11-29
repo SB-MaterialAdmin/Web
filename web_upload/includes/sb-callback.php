@@ -87,6 +87,7 @@ if(isset($_COOKIE['aid'], $_COOKIE['password']) && $userbank->CheckLogin($_COOKI
 	$xajax->registerFunction("removeExpiredAdmins");
 	$xajax->registerFunction("AddSupport");
 	$xajax->registerFunction("ChangeAdminsInfos");
+	$xajax->registerFunction("InstallMOD");
 }
 
 $xajax->registerFunction("Plogin");
@@ -101,6 +102,51 @@ $xajax->registerFunction("RehashAdmins_pay");
 
 global $userbank;
 $username = $userbank->GetProperty("user");
+
+function InstallMOD($modfolder, $status = 0) {
+    global $userbank;
+    
+    $objResponse = new xajaxResponse();
+    $objResponse->addAlert("Выключено. Находится в стадии разработки");
+    return $objResponse;
+    
+    /* TODO: Добавить загрузку данных из репозитория */
+    $mapformat = str_replace('{%folder%}', $GameData['folder'], $RepoData['mapformat']);
+    $PathIcon = sprintf('%s/%s', SB_ICON_LOCATION, $GameData['icon']);
+    $PathMaps = sprintf('%s/%s', SB_MAP_LOCATION, $mapformat);
+    
+    if ($status == 0) {
+        /* Build install dialog */
+        $objResponse->addAssign("install_log", "innerHTML", "[".SBDate($GLOBALS['config']['config.dateformat'], time())."] Загрузка файлов с зеркала...");
+        $objResponse->addAssign("install_current", "innerHTML", "Загрузка файлов с зеркала");
+        $objResponse->addScript('xajax_InstallMOD("'.$modfolder.'", 1);');
+    } else if ($status == 1) {
+        /* Download files */
+        file_put_contents($PathIcon, sprintf('%s%s%s', $RepoData['mirror'], $RepoData['icons_dir'], $GameData['icon']));
+        file_put_contents($PathMaps, sprintf('%s%s%s', $RepoData['mirror'], $RepoData['maps_dir'], $mapformat));
+        
+        $objResponse->addAppend("install_log", "innerHTML", "<br />[".SBDate($GLOBALS['config']['config.dateformat'], time())."] Распаковка архива");
+        $objResponse->addAssign("install_current", "innerHTML", "Распаковка архива");
+        
+        $objResponse->addScript('xajax_InstallMOD("'.$modfolder.'", 2);');
+    } else if ($status == 2) {
+        /* Decompress maps dir */
+        decompress_tar($PathMaps, SB_MAP_LOCATION.'/'.$GameData['folder'].'/');
+        
+        $objResponse->addAppend("install_log", "innerHTML", "<br />[".SBDate($GLOBALS['config']['config.dateformat'], time())."] Удаление временных файлов");
+        $objResponse->addAssign("install_current", "innerHTML", "Удаление временных файлов");
+        
+        $objResponse->addScript('xajax_InstallMOD("'.$modfolder.'", 3);');
+    } else if ($status == 3) {
+        /* Insert to DB */
+        $GLOBALS['db']->Execute(sprintf("INSERT INTO `%s_mods` (`name`, `icon`, `modfolder`, `steam_universe`, `enabled`) VALUES (%s, %s, %s, %d, 1);", DB_PREFIX, $GLOBALS['db']->qstr($GameData['name']), $GLOBALS['db']->qstr($GameData['icon']), $GLOBALS['db']->qstr($GameData['folder']), (int) $GameData['steamcode']));
+    
+        $objResponse->addAppend("install_log", "innerHTML", "<br />[".SBDate($GLOBALS['config']['config.dateformat'], time())."] Завершено.");
+        $objResponse->addAssign("install_current", "innerHTML", "Установка завершена.");
+    }
+    
+    return $objResponse;
+}
 
 function AddSupport($aid)
 {

@@ -376,8 +376,10 @@ else
 			$modTabMenu = new CTabsMenu();
 			if($userbank->HasAccess( ADMIN_OWNER|ADMIN_LIST_MODS ) )
 				$modTabMenu->addMenuItem("Список МОДов",0);
-			if($userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_MODS ) )
+			if($userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_MODS ) ) {
 				$modTabMenu->addMenuItem("Добавить МОД",1);
+				$modTabMenu->addMenuItem("Установить МОД из репозитория",2,"","index.php?p=admin&c=mods&o=repo", true);
+			}
 			$modTabMenu->outputMenu();
 			// ====================[ ADMIN SIDE MENU END ] ===================	
 			
@@ -395,7 +397,12 @@ else
 			
 			include TEMPLATES_PATH . "/admin.edit.mod.php";
 			RewritePageTitle("Редактировать детали МОДа");
-		}	
+		}
+		elseif($_GET['o'] == "repo")
+		{
+			include TEMPLATES_PATH . "/admin.mod.repo.php";
+			RewritePageTitle("Установить МОД из репозитория");
+		}
 	}
 	elseif($_GET['c'] == "settings")
 	 // ###################[ Settings ]##################################################################

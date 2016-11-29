@@ -5,8 +5,6 @@ global $userbank, $theme;
 	if(!$userbank->HasAccess(ADMIN_OWNER))
 		CreateRedBox("Доступ запрещен!", "У вас нету доступных привилегий на просмотр данной страницы.");
 	else {
-		$objResponse = new xajaxResponse();
-		
 		if(!empty($_GET['o']) and !empty($_GET['id']) and !is_numeric($_GET['id'])){
 			PageDie();
 		}else{
