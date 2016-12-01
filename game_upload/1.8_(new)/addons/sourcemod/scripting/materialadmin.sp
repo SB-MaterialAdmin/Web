@@ -18,7 +18,7 @@
 #define CS_TEAM_CT			3	// Counter-Terrorists.
 
 #define PREFIX 		"[MA] "
-#define DEBUG 		0 	//тестовый режим
+#define DEBUG 		1 	//тестовый режим
 #define TYPE_STEAM 	AuthId_Steam2
 #define FORMAT_TIME NULL_STRING	// формат времени показывающий игроку при бане, NULL_STRING = sm_datetime_format
 

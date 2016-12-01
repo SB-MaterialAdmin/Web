@@ -387,6 +387,7 @@ public Action CommandUnBan(int iClient, int iArgc)
 public Action CommandRehashAdm(int iArgc)
 {
 	AdminHash();
+	ReplyToCommand(0, "Rehash Admin");
 	return Plugin_Handled;
 }
 

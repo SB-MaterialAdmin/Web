@@ -650,6 +650,32 @@ bool ConnectBd(Database db)
 	return false;
 }
 //--------------------------------------------------------------------------------------------------
+void CreateSayBanned(char[] sAdminName, int iTarget, int iCreated, int iTime, char[] sLength, char[] sReason)
+{
+	char sCreated[128],
+		 sEnds[128],
+		 sBuffer[512];
+	if(g_bBanSayPanel)
+	{
+		if(!iTime)
+			FormatEx(sEnds, sizeof(sEnds), "%T", "No ends", iTarget);
+		else
+			FormatTime(sEnds, sizeof(sEnds), FORMAT_TIME, iCreated + iTime);
+	}
+
+	FormatTime(sCreated, sizeof(sCreated), FORMAT_TIME, iCreated);
+	if(g_bBanSayPanel)
+	{
+		FormatEx(sBuffer, sizeof(sBuffer), "%T", "Banned Admin panel", iTarget, sAdminName, sReason, sCreated, sEnds, sLength, g_sWebsite);
+		CreateTeaxtDialog(iTarget, sBuffer);
+	}
+	else
+	{
+		FormatEx(sBuffer, sizeof(sBuffer), "%T", "Banned Admin", iTarget, sAdminName, sReason, sCreated, sLength, g_sWebsite);
+		KickClient(iTarget, sBuffer);
+	}
+}
+
 void CreateTeaxtDialog(int iClient, char[] sText)
 {
 	char sTitle[125];
