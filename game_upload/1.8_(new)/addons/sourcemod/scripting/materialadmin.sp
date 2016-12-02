@@ -93,6 +93,7 @@ bool g_bSayReason[MAXPLAYERS+1],
 	g_bReport,
 	g_bBanSayPanel,
 	g_bHooked = false,
+	g_bLalod,
 	g_bOnileTarget[MAXPLAYERS+1],
 	g_bBanClientConnect[MAXPLAYERS+1];
 	
@@ -107,7 +108,6 @@ int g_iGameTyp;
 #define GAMETYP_TF2 	2 //tf2
 
 SMCParser g_smcConfigParser;
-bool g_LalodeConfig;
 enum ConfigState
 {
 	ConfigState_Non,
@@ -131,7 +131,7 @@ public Plugin myinfo =
 	name = "Material Admin",
 	author = "Grey™",
 	description = "For to sm 1.8",
-	version = "0.0.9b",
+	version = "0.1.0b",
 	url = "hlmod.ru Skype: wolf-1-ser"
 };
 
@@ -172,7 +172,7 @@ public void OnPluginStart()
 
 	SBCreateMenu();
 	ReadConfig();
-	g_LalodeConfig = false;
+	g_bLalod = false;
 	ConnectSourceBan();
 	CreateTables();
 }
@@ -225,22 +225,16 @@ public void OnConfigsExecuted()
 		LogToFile(g_sLogFile, "plugins/sourcebans.smx was unloaded and moved to plugins/disabled/sourcebans.smx");
 	}
 	
-	if (g_LalodeConfig)
+	if (g_bLalod)
+	{
 		ReadConfig();
+		AdminHash();
+	}
 	else
-		g_LalodeConfig = true;
+		g_bLalod = true;
 	
 	if(g_bOffMapClear) 
 		ClearHistories();
-	
-	if (g_dDatabase != null)
-		AdminHash();
-	else
-	{
-		MAOnRebuildAdminCache(AdminCache_Overrides);
-		MAOnRebuildAdminCache(AdminCache_Groups);
-		MAOnRebuildAdminCache(AdminCache_Admins);
-	}
 }
 
 // удаление игроков вошедших в игру

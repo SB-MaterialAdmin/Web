@@ -20,14 +20,13 @@ public int Native_OffBan(Handle plugin, int numParams)
 	
 	if (iClient && IsClientInGame(iClient))
 	{
-		AdminId idAdmin = GetUserAdmin(iClient);
-		if (idAdmin == INVALID_ADMIN_ID)
+		if (GetUserAdmin(iClient) == INVALID_ADMIN_ID)
 		{
 			ThrowNativeError(1, "Ban Error: Player is not an admin.");
 			return false;
 		}
 		
-		if (!GetAdminFlag(idAdmin, Admin_Ban))
+		if (!CheckAdminFlags(iClient, ADMFLAG_BAN))
 		{
 			ThrowNativeError(2, "Ban Error: Player does not have BAN flag.");
 			return false;
@@ -48,14 +47,13 @@ public int Native_BanPlayer(Handle plugin, int numParams)
 	
 	if (iClient && IsClientInGame(iClient))
 	{
-		AdminId idAdmin = GetUserAdmin(iClient);
-		if (idAdmin == INVALID_ADMIN_ID)
+		if (GetUserAdmin(iClient) == INVALID_ADMIN_ID)
 		{
 			ThrowNativeError(1, "Ban Error: Player is not an admin.");
 			return false;
 		}
 		
-		if (!GetAdminFlag(idAdmin, Admin_Ban))
+		if (!CheckAdminFlags(iClient, ADMFLAG_BAN))
 		{
 			ThrowNativeError(2, "Ban Error: Player does not have BAN flag.");
 			return false;
@@ -88,14 +86,13 @@ public int Native_SetClientMuteType(Handle plugin, int numParams)
 	
 	if (iClient && IsClientInGame(iClient))
 	{
-		AdminId idAdmin = GetUserAdmin(iClient);
-		if (idAdmin == INVALID_ADMIN_ID)
+		if (GetUserAdmin(iClient) == INVALID_ADMIN_ID)
 		{
 			ThrowNativeError(1, "Mute Error: Player is not an admin.");
 			return false;
 		}
 		
-		if (!GetAdminFlag(idAdmin, Admin_Chat))
+		if (!CheckAdminFlags(iClient, ADMFLAG_CHAT))
 		{
 			ThrowNativeError(2, "Mute Error: Player does not have CHAT flag.");
 			return false;
@@ -123,14 +120,13 @@ public int Native_OffSetClientMuteType(Handle plugin, int numParams)
 	
 	if (iClient && IsClientInGame(iClient))
 	{
-		AdminId idAdmin = GetUserAdmin(iClient);
-		if (idAdmin == INVALID_ADMIN_ID)
+		if (GetUserAdmin(iClient) == INVALID_ADMIN_ID)
 		{
-			ThrowNativeError(1, "Ban Error: Player is not an admin.");
+			ThrowNativeError(1, "Mute Error: Player is not an admin.");
 			return false;
 		}
 		
-		if (!GetAdminFlag(idAdmin, Admin_Chat))
+		if (!CheckAdminFlags(iClient, ADMFLAG_CHAT))
 		{
 			ThrowNativeError(2, "Mute Error: Player does not have CHAT flag.");
 			return false;

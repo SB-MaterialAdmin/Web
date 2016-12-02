@@ -951,24 +951,23 @@ public void VerifyBan(Database db, DBResultSet dbRs, const char[] sError, any iU
 	}
 	else
 	{
+		g_bBanClientConnect[iClient] = false;
 		CheckClientMute(iClient, sSteamID);
 		
 		AdminId idAdmin = GetUserAdmin(iClient);
 		if(idAdmin != INVALID_ADMIN_ID)
 		{
 			int iExpire = GetAdminExpire(idAdmin);
-			if(iExpire == -1)
-				return;
-			
-			DataPack dPack = new DataPack();
-			dPack.WriteCell(GetClientUserId(iClient));
-			dPack.WriteCell(iExpire);
-			CreateTimer(15.0, TimerAdminExpire, dPack);
+			if(iExpire)
+			{
+				DataPack dPack = new DataPack();
+				dPack.WriteCell(GetClientUserId(iClient));
+				dPack.WriteCell(iExpire);
+				CreateTimer(15.0, TimerAdminExpire, dPack);
+			}
 		}
 		else
 			DelOflineInfo(sSteamID);	
-		
-		g_bBanClientConnect[iClient] = false;
 	}
 }
 
@@ -1047,9 +1046,9 @@ public void VerifyMute(Database db, DBResultSet dbRs, const char[] sError, any i
 // работа с админами
 void AdminHash()
 {
+	g_aAdminsExpired.Clear();
 	char sQuery[204];
-	
-	Format(sQuery, sizeof(sQuery), "SELECT type, name, flags FROM %s_overrides", g_sDatabasePrefix);
+	FormatEx(sQuery, sizeof(sQuery), "SELECT type, name, flags FROM %s_overrides", g_sDatabasePrefix);
 	g_dDatabase.SetCharset("utf8");
 	g_dDatabase.Query(OverridesDone, sQuery);
 }
@@ -1057,52 +1056,51 @@ void AdminHash()
 public void OverridesDone(Database db, DBResultSet dbRs, const char[] sError, any iData)
 {
 	if (dbRs == null || sError[0])
-	{
 		LogToFile(g_sLogFile, "Failed to retrieve overrides from the database, %s", sError);
-		return;
-	}
-	
-	KeyValues kvOverrides = new KeyValues("SB_Overrides");
-	
-	char sFlags[32], 
-		sName[64],
-		sType[64];
-	while (dbRs.FetchRow())
+	else
 	{
-		dbRs.FetchString(0, sType, sizeof(sType));
-		dbRs.FetchString(1, sName, sizeof(sName));
-		dbRs.FetchString(2, sFlags, sizeof(sFlags));
+		KeyValues kvOverrides = new KeyValues("SB_Overrides");
 		
-		// KeyValuesToFile won't add that key, if the value is ""..
-		if (sFlags[0] == '\0')
+		char sFlags[32], 
+			sName[64],
+			sType[64];
+		while (dbRs.FetchRow())
 		{
-			sFlags[0] = ' ';
-			sFlags[1] = '\0';
+			dbRs.FetchString(0, sType, sizeof(sType));
+			dbRs.FetchString(1, sName, sizeof(sName));
+			dbRs.FetchString(2, sFlags, sizeof(sFlags));
+			
+			// KeyValuesToFile won't add that key, if the value is ""..
+			if (sFlags[0] == '\0')
+			{
+				sFlags[0] = ' ';
+				sFlags[1] = '\0';
+			}
+			
+		#if DEBUG
+			LogToFile(g_sLogFile, "Adding override (%s, %s, %s)", sType, sName, sFlags);
+		#endif
+			
+			if (StrEqual(sType, "command"))
+			{
+				kvOverrides.JumpToKey("override_commands", true);
+				kvOverrides.SetString(sName, sFlags);
+				kvOverrides.GoBack();
+			}
+			else if (StrEqual(sType, "group"))
+			{
+				kvOverrides.JumpToKey("override_groups", true);
+				kvOverrides.SetString(sName, sFlags);
+				kvOverrides.GoBack();
+			}
 		}
 		
-	#if DEBUG
-		LogToFile(g_sLogFile, "Adding override (%s, %s, %s)", sType, sName, sFlags);
-	#endif
-		
-		if (StrEqual(sType, "command"))
-		{
-			kvOverrides.JumpToKey("override_commands", true);
-			kvOverrides.SetString(sName, sFlags);
-			kvOverrides.GoBack();
-		}
-		else if (StrEqual(sType, "group"))
-		{
-			kvOverrides.JumpToKey("override_groups", true);
-			kvOverrides.SetString(sName, sFlags);
-			kvOverrides.GoBack();
-		}
+		kvOverrides.Rewind();
+		kvOverrides.ExportToFile(g_sOverridesLoc);
+		delete kvOverrides;
 	}
 	
-	kvOverrides.Rewind();
-	kvOverrides.ExportToFile(g_sOverridesLoc);
-	delete kvOverrides;
-	
-	MAOnRebuildAdminCache(AdminCache_Overrides);
+	ReadOverrides();
 	
 	char sQuery[254];
 	FormatEx(sQuery, sizeof(sQuery), "SELECT name, flags, immunity   \
@@ -1114,54 +1112,54 @@ public void OverridesDone(Database db, DBResultSet dbRs, const char[] sError, an
 public void GroupsDone(Database db, DBResultSet dbRs, const char[] sError, any iData)
 {
 	if (dbRs == null || sError[0])
-	{
 		LogToFile(g_sLogFile, "Failed to retrieve groups from the database, %s", sError);
-		return;
-	}
-	char sGrpName[128], 
-		sGrpFlags[32];
-	int iImmunity;
-#if DEBUG
-	int	iGrpCount = 0;
-#endif
-	KeyValues kvGroups = new KeyValues("groups");
-
-	while (dbRs.MoreRows)
+	else
 	{
-		dbRs.FetchRow();
-		if (dbRs.IsFieldNull(0))
-			continue; // Sometimes some rows return NULL due to some setups
-		dbRs.FetchString(0, sGrpName, sizeof(sGrpName));
-		dbRs.FetchString(1, sGrpFlags, sizeof(sGrpFlags));
-		iImmunity = dbRs.FetchInt(2);
-		
-		TrimString(sGrpName);
-		TrimString(sGrpFlags);
-		
-		// Ignore empty rows..
-		if (!sGrpName[0])
-			continue;
-		
-		kvGroups.JumpToKey(sGrpName, true);
-		if (sGrpFlags[0])
-			kvGroups.SetString("flags", sGrpFlags);
-		if (iImmunity)
-			kvGroups.SetNum("immunity", iImmunity);
+		char sGrpName[128], 
+			sGrpFlags[32];
+		int iImmunity;
+	#if DEBUG
+		int	iGrpCount = 0;
+	#endif
+		KeyValues kvGroups = new KeyValues("groups");
+
+		while (dbRs.MoreRows)
+		{
+			dbRs.FetchRow();
+			if (dbRs.IsFieldNull(0))
+				continue; // Sometimes some rows return NULL due to some setups
+			dbRs.FetchString(0, sGrpName, sizeof(sGrpName));
+			dbRs.FetchString(1, sGrpFlags, sizeof(sGrpFlags));
+			iImmunity = dbRs.FetchInt(2);
 			
-		kvGroups.Rewind();
+			TrimString(sGrpName);
+			TrimString(sGrpFlags);
+			
+			// Ignore empty rows..
+			if (!sGrpName[0])
+				continue;
+			
+			kvGroups.JumpToKey(sGrpName, true);
+			if (sGrpFlags[0])
+				kvGroups.SetString("flags", sGrpFlags);
+			if (iImmunity)
+				kvGroups.SetNum("immunity", iImmunity);
+				
+			kvGroups.Rewind();
+			
+		#if DEBUG
+			LogToFile(g_sLogFile, "Add %s Group", sGrpName);
+			iGrpCount++;
+		#endif
+		}
+		
+		kvGroups.ExportToFile(g_sGroupsLoc);
+		delete kvGroups;
 		
 	#if DEBUG
-		LogToFile(g_sLogFile, "Add %s Group", sGrpName);
-		iGrpCount++;
+		LogToFile(g_sLogFile, "Finished loading %i groups.", iGrpCount);
 	#endif
 	}
-	
-	kvGroups.ExportToFile(g_sGroupsLoc);
-	delete kvGroups;
-	
-#if DEBUG
-	LogToFile(g_sLogFile, "Finished loading %i groups.", iGrpCount);
-#endif
 	
 	// Load the group overrides
 	char sQuery[512];
@@ -1172,64 +1170,64 @@ public void GroupsDone(Database db, DBResultSet dbRs, const char[] sError, any i
 public void LoadGroupsOverrides(Database db, DBResultSet dbRs, const char[] sError, any iData)
 {
 	if (dbRs == null || sError[0])
-	{
 		LogToFile(g_sLogFile, "Failed to retrieve group overrides from the database, %s", sError);
-		return;
-	}
-	char sGroupName[128],
-		sType[16],
-		sCommand[64],
-		sAllowed[16];
-	OverrideType iType;
-	
-	KeyValues kvGroups = new KeyValues("groups");
-	kvGroups.ImportFromFile(g_sGroupsLoc);
-	
-	GroupId idGroup = INVALID_GROUP_ID;
-	while (dbRs.MoreRows)
+	else
 	{
-		dbRs.FetchRow();
-		if (dbRs.IsFieldNull(0))
-			continue; // Sometimes some rows return NULL due to some setups
+		char sGroupName[128],
+			sType[16],
+			sCommand[64],
+			sAllowed[16];
+		OverrideType iType;
 		
-		dbRs.FetchString(0, sGroupName, sizeof(sGroupName));
-		TrimString(sGroupName);
-		if (!sGroupName[0])
-			continue;
+		KeyValues kvGroups = new KeyValues("groups");
+		kvGroups.ImportFromFile(g_sGroupsLoc);
 		
-		dbRs.FetchString(1, sType, sizeof(sType));
-		dbRs.FetchString(2, sCommand, sizeof(sCommand));
-		dbRs.FetchString(3, sAllowed, sizeof(sAllowed));
-		
-		idGroup = FindAdmGroup(sGroupName);
-		if (idGroup == INVALID_GROUP_ID)
-			continue;
-
-		iType = StrEqual(sType, "group") ? Override_CommandGroup : Override_Command;
-		
-	#if DEBUG
-		LogToFile(g_sLogFile, "AddAdmGroupCmdOverride(%i, %s, %i)", idGroup, sCommand, iType);
-	#endif
-		
-		// Save overrides into admin_groups.cfg backup
-		if (kvGroups.JumpToKey(sGroupName))
+		GroupId idGroup = INVALID_GROUP_ID;
+		while (dbRs.MoreRows)
 		{
-			kvGroups.JumpToKey("Overrides", true);
-			if (iType == Override_Command)
-				kvGroups.SetString(sCommand, sAllowed);
-			else
+			dbRs.FetchRow();
+			if (dbRs.IsFieldNull(0))
+				continue; // Sometimes some rows return NULL due to some setups
+			
+			dbRs.FetchString(0, sGroupName, sizeof(sGroupName));
+			TrimString(sGroupName);
+			if (!sGroupName[0])
+				continue;
+			
+			dbRs.FetchString(1, sType, sizeof(sType));
+			dbRs.FetchString(2, sCommand, sizeof(sCommand));
+			dbRs.FetchString(3, sAllowed, sizeof(sAllowed));
+			
+			idGroup = FindAdmGroup(sGroupName);
+			if (idGroup == INVALID_GROUP_ID)
+				continue;
+
+			iType = StrEqual(sType, "group") ? Override_CommandGroup : Override_Command;
+			
+		#if DEBUG
+			LogToFile(g_sLogFile, "AddAdmGroupCmdOverride(%i, %s, %i)", idGroup, sCommand, iType);
+		#endif
+			
+			// Save overrides into admin_groups.cfg backup
+			if (kvGroups.JumpToKey(sGroupName))
 			{
-				Format(sCommand, sizeof(sCommand), "@%s", sCommand);
-				kvGroups.SetString(sCommand, sAllowed);
+				kvGroups.JumpToKey("Overrides", true);
+				if (iType == Override_Command)
+					kvGroups.SetString(sCommand, sAllowed);
+				else
+				{
+					Format(sCommand, sizeof(sCommand), "@%s", sCommand);
+					kvGroups.SetString(sCommand, sAllowed);
+				}
+				kvGroups.Rewind();
 			}
-			kvGroups.Rewind();
 		}
+		
+		kvGroups.ExportToFile(g_sGroupsLoc);
+		delete kvGroups;
 	}
 	
-	kvGroups.ExportToFile(g_sGroupsLoc);
-	delete kvGroups;
-	
-	MAOnRebuildAdminCache(AdminCache_Groups);
+	ReadGroups();
 	
 	char sQuery[1204];
 	if (g_iServerID == -1)
@@ -1262,94 +1260,78 @@ public void AdminsDone(Database db, DBResultSet dbRs, const char[] sError, any i
 {
 	//SELECT authid, srv_password , srv_group, srv_flags, user
 	if (dbRs == null || sError[0])
-	{
 		LogToFile(g_sLogFile, "Failed to retrieve admins from the database, %s", sError);
-		return;
-	}
-	char sAuthType[] = "steam",
-		sIdentity[66],
-		sPassword[66],
-		sGroups[256],
-		sFlags[32],
-		sName[66];
-#if DEBUG
-	int iAdmCount = 0;
-#endif
-	int iImmunity = 0,
-		iExpire = 0;
-	AdminId idAdmin = INVALID_ADMIN_ID;
-	KeyValues kvAdmins = new KeyValues("admins");
-	
-	while (dbRs.MoreRows)
+	else
 	{
-		dbRs.FetchRow();
-		if (dbRs.IsFieldNull(0))
-			continue; // Sometimes some rows return NULL due to some setups
+		char sAuthType[] = "steam",
+			sIdentity[66],
+			sPassword[66],
+			sGroups[256],
+			sFlags[32],
+			sName[66];
+	#if DEBUG
+		int iAdmCount = 0;
+	#endif
+		int iImmunity = 0,
+			iExpire = 0;
+		KeyValues kvAdmins = new KeyValues("admins");
 		
-		dbRs.FetchString(0, sIdentity, sizeof(sIdentity));
-		dbRs.FetchString(1, sPassword, sizeof(sPassword));
-		dbRs.FetchString(2, sGroups, sizeof(sGroups));
-		dbRs.FetchString(3, sFlags, sizeof(sFlags));
-		dbRs.FetchString(4, sName, sizeof(sName));
-		
-		iImmunity = dbRs.FetchInt(5);
-		iExpire = dbRs.FetchInt(6);
-		
-		TrimString(sName);
-		TrimString(sIdentity);
-		TrimString(sGroups);
-		TrimString(sFlags);
-		
-		kvAdmins.JumpToKey(sName, true);
-			
-		kvAdmins.SetString("auth", sAuthType);
-		kvAdmins.SetString("identity", sIdentity);
-			
-		if (sFlags[0])
-			kvAdmins.SetString("flags", sFlags);
-			
-		if (sGroups[0])
-			kvAdmins.SetString("group", sGroups);
-			
-		if (sPassword[0])
-			kvAdmins.SetString("password", sPassword);
-			
-		if (iImmunity)
-			kvAdmins.SetNum("immunity", iImmunity);
-			
-		kvAdmins.Rewind();
-		
-		// find or create the admin using that identity
-		if((idAdmin = FindAdminByIdentity(sAuthType, sIdentity)) != INVALID_ADMIN_ID)
-			AddAdminExpire(idAdmin, iExpire);
-		else
+		while (dbRs.MoreRows)
 		{
-			idAdmin = CreateAdmin(sName);
-			// That should never happen!
-			if (!idAdmin.BindIdentity(sAuthType, sIdentity))
-			{
-				LogToFile(g_sLogFile, "Unable to bind admin %s to identity %s", sName, sIdentity);
-				RemoveAdmin(idAdmin);
-				continue;
-			}
+			dbRs.FetchRow();
+			if (dbRs.IsFieldNull(0))
+				continue; // Sometimes some rows return NULL due to some setups
 			
-			AddAdminExpire(idAdmin, iExpire);
+			dbRs.FetchString(0, sIdentity, sizeof(sIdentity));
+			dbRs.FetchString(1, sPassword, sizeof(sPassword));
+			dbRs.FetchString(2, sGroups, sizeof(sGroups));
+			dbRs.FetchString(3, sFlags, sizeof(sFlags));
+			dbRs.FetchString(4, sName, sizeof(sName));
+			
+			iImmunity = dbRs.FetchInt(5);
+			iExpire = dbRs.FetchInt(6);
+			
+			TrimString(sName);
+			TrimString(sIdentity);
+			TrimString(sGroups);
+			TrimString(sFlags);
+			
+			kvAdmins.JumpToKey(sName, true);
+				
+			kvAdmins.SetString("auth", sAuthType);
+			kvAdmins.SetString("identity", sIdentity);
+				
+			if (sFlags[0])
+				kvAdmins.SetString("flags", sFlags);
+				
+			if (sGroups[0])
+				kvAdmins.SetString("group", sGroups);
+				
+			if (sPassword[0])
+				kvAdmins.SetString("password", sPassword);
+				
+			if (iImmunity)
+				kvAdmins.SetNum("immunity", iImmunity);
+			
+			if (iExpire)
+				kvAdmins.SetNum("expire", iExpire);
+				
+			kvAdmins.Rewind();
+			
+		#if DEBUG
+			LogToFile(g_sLogFile, "Add %s (%s) admin", sName, sIdentity);
+			++iAdmCount;
+		#endif
 		}
 		
+		kvAdmins.ExportToFile(g_sAdminsLoc);
+		delete kvAdmins;
 	#if DEBUG
-		LogToFile(g_sLogFile, "Add %s (%s) admin", sName, sIdentity);
-		++iAdmCount;
+		LogToFile(g_sLogFile, "Finished loading %i admins.", iAdmCount);
 	#endif
 	}
 	
-	kvAdmins.ExportToFile(g_sAdminsLoc);
-	delete kvAdmins;
-	
-	MAOnRebuildAdminCache(AdminCache_Admins);
-	
-#if DEBUG
-	LogToFile(g_sLogFile, "Finished loading %i admins.", iAdmCount);
-#endif
+	ReadUsers();
 }
 //-------------------------------------------------------------------------------------------------------------
 // бекап бд
@@ -1433,6 +1415,9 @@ public void SQL_Callback_DeleteBekap(Database db, DBResultSet dbRs, const char[]
 // репорт
 void SetBdReport(int iClient, const char[] sReason)
 {
+	if (!iClient)
+		return;
+
 	int iTarget	= GetClientOfUserId(g_iTargetReport[iClient]);
 	
 	if(!iTarget)

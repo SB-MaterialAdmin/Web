@@ -439,13 +439,10 @@ public Action TimerAdminExpire(Handle timer, any data)
 	if(!iClient)
 		return Plugin_Stop;
 
-	if(iExpire > 0)
-	{
-		char sLength[128];
-		int iLength = iExpire - GetTime();
-		FormatVrema(iClient, iLength, sLength, sizeof(sLength));	
-		PrintToChat2(iClient, "%T", "Admin Expire", iClient, sLength);
-	}
+	char sLength[128];
+	int iLength = iExpire - GetTime();
+	FormatVrema(iClient, iLength, sLength, sizeof(sLength));	
+	PrintToChat2(iClient, "%T", "Admin Expire", iClient, sLength);
 	
 	return Plugin_Stop;
 }
@@ -462,7 +459,7 @@ int GetAdminExpire(AdminId idAdmin)
 	if(idx != -1)
 		return g_aAdminsExpired.Get(idx, 1);
 	
-	return -1;
+	return 0;
 }
 //--------------------------------------------------------------------------------------------------
 void FormatVrema(int iClient, int iLength, char[] sLength, int iLens)

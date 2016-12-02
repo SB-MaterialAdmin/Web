@@ -36,7 +36,8 @@ static char g_sCurAuth[64],
 	g_sCurPass[64];
 static ArrayList g_aGroupArray;
 static int g_iCurFlags,
-	g_iCurImmunity;
+	g_iCurImmunity,
+	g_iCurExpire;
 	
 enum OverrideState
 {
@@ -47,17 +48,6 @@ enum OverrideState
 
 static SMCParser g_smcOverrideParser;
 static OverrideState g_iOverrideState = OverrideState_None;
-
-void MAOnRebuildAdminCache(AdminCachePart acpPart)
-{
-	if (acpPart == AdminCache_Overrides)
-		ReadOverrides();
-	else if (acpPart == AdminCache_Groups)
-		ReadGroups();
-	else if (acpPart == AdminCache_Admins)
-		ReadUsers();
-}
-
 //-----------------------------------------------------------------------------------------------------
 public SMCResult ReadGroups_NewSection(SMCParser smc, const char[] sName, bool opt_quotes)
 {
@@ -266,6 +256,7 @@ public SMCResult ReadUsers_NewSection(SMCParser smc, const char[] sName, bool op
 		g_aGroupArray.Clear();
 		g_iCurFlags = 0;
 		g_iCurImmunity = 0;
+		g_iCurExpire = 0;
 	}
 	else
 		g_iIgnoreLevel++;
@@ -312,6 +303,13 @@ public SMCResult ReadUsers_KeyValue(SMCParser smc, const char[] sKey, const char
 		else
 			g_iCurImmunity = 0;
 	}
+	else if (StrEqual(sKey, "expire"))
+	{
+		if(sValue[0])
+			g_iCurExpire = StringToInt(sValue);
+		else
+			g_iCurExpire = 0;
+	}
 	
 	return SMCParse_Continue;
 }
@@ -333,7 +331,15 @@ public SMCResult ReadUsers_EndSection(SMCParser smc)
 			AdminId idAdmin;
 			int i, iGroups, iFlags;
 			
-			if ((idAdmin = FindAdminByIdentity(g_sCurAuth, g_sCurIdent)) == INVALID_ADMIN_ID)
+			if ((idAdmin = FindAdminByIdentity(g_sCurAuth, g_sCurIdent)) != INVALID_ADMIN_ID)
+			{
+				if (g_iCurExpire)
+					AddAdminExpire(idAdmin, g_iCurExpire);
+			#if DEBUG
+				LogToFile(g_sLogFile, "find admin yes (%d, auth %s, %s)", idAdmin, g_sCurAuth, g_sCurIdent);
+			#endif
+			}
+			else
 			{
 				idAdmin = CreateAdmin(g_sCurName);
 			#if DEBUG
@@ -345,11 +351,10 @@ public SMCResult ReadUsers_EndSection(SMCParser smc)
 					LogError("Failed to bind auth \"%s\" to identity \"%s\"", g_sCurAuth, g_sCurIdent);
 					return SMCParse_Continue;
 				}
+				
+				if (g_iCurExpire)
+					AddAdminExpire(idAdmin, g_iCurExpire);
 			}
-		#if DEBUG
-			else
-				LogToFile(g_sLogFile, "find admin yes (%d, auth %s, %s)", idAdmin, g_sCurAuth, g_sCurIdent);
-		#endif
 			
 			iGroups = g_aGroupArray.Length;
 			for (i = 0; i < iGroups; i++)
