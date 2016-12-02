@@ -130,8 +130,8 @@ public Plugin myinfo =
 {
 	name = "Material Admin",
 	author = "Grey™",
-	description = "For to sm 1.7",
-	version = "0.0.7b",
+	description = "For to sm 1.8",
+	version = "0.0.8b",
 	url = "hlmod.ru Skype: wolf-1-ser"
 };
 

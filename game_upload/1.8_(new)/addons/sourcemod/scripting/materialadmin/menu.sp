@@ -452,19 +452,19 @@ public int MenuHandler_MenuTypeMute(Menu Mmenu, MenuAction mAction, int iClient,
 				case 3: 
 				{
 					g_iTargetType[iClient] = TYPE_UNMUTE;
-					g_sTarget[iClient][TREASON] = "Нет причины";
+					FormatEx(g_sTarget[iClient][TREASON], sizeof(g_sTarget[][]), "%T", "No reason", iClient);
 					OnlineClientSet(iClient);
 				}
 				case 4:
 				{
 					g_iTargetType[iClient] = TYPE_UNGAG;
-					g_sTarget[iClient][TREASON] = "Нет причины";
+					FormatEx(g_sTarget[iClient][TREASON], sizeof(g_sTarget[][]), "%T", "No reason", iClient);
 					OnlineClientSet(iClient);
 				}
 				case 5:
 				{
 					g_iTargetType[iClient] = TYPE_UNSILENCE;
-					g_sTarget[iClient][TREASON] = "Нет причины";
+					FormatEx(g_sTarget[iClient][TREASON], sizeof(g_sTarget[][]), "%T", "No reason", iClient);
 					OnlineClientSet(iClient);
 				}
 			}
@@ -672,7 +672,7 @@ void OnlineClientSet(int iClient)
 	#if DEBUG
 		LogToFile(g_sLogFile,"Offline client set: client %d", iClient);
 	#endif
-		DoCreateDB(iClient, 0);
+		CheckBanInBd(iClient, 0, 1, g_sTarget[iClient][TSTEAMID]);
 	}
 }
 //--------------------------------------------------------------------------------------------------

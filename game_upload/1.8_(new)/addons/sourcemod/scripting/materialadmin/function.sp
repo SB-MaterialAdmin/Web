@@ -43,7 +43,13 @@ void ShowAdminAction(int iClient, const char[] sMesag, any ...)
 	{
 		case 0: return;
 		case 1: FormatEx(sName, sizeof(sName), "%T", "Admin", iClient);
-		case 2: GetClientName(iClient, sName, sizeof(sName));
+		case 2: 
+		{
+			if (iClient)
+				GetClientName(iClient, sName, sizeof(sName));
+			else
+				FormatEx(sName, sizeof(sName), "%T", "Server", iClient);
+		}
 	}
 
 	VFormat(sBufer, sizeof(sBufer), sMesag, 3);
@@ -287,7 +293,10 @@ int FindTargetName(char[] sName)
 //---------------------------------------------------------------------------------------------
 public void ConVarChange_Alltalk(ConVar convar, const char[] oldValue, const char[] newValue)
 {
-	int iMode = g_Cvar_Deadtalk.IntValue;
+	int iMode;
+	if (g_iGameTyp != GAMETYP_CSGO)
+		iMode = g_Cvar_Deadtalk.IntValue;
+
 	for (int i = 1; i <= MaxClients; i++)
 	{
 		if (IsClientInGame(i))
@@ -296,7 +305,7 @@ public void ConVarChange_Alltalk(ConVar convar, const char[] oldValue, const cha
 				SetClientListeningFlags(i, VOICE_MUTED);
 			else if (g_Cvar_Alltalk.BoolValue)
 				SetClientListeningFlags(i, VOICE_NORMAL);
-			else if (!IsPlayerAlive(i) && g_iGameTyp != GAMETYP_CSGO)
+			else if (g_iGameTyp != GAMETYP_CSGO && !IsPlayerAlive(i))
 			{
 				if (iMode == 0)
 					SetClientListeningFlags(i, VOICE_NORMAL);
@@ -349,9 +358,7 @@ public void ConVarChange_Deadtalk(ConVar convar, const char[] oldValue, const ch
 						SetClientListeningFlags(i, VOICE_NORMAL);
 					else if (!IsPlayerAlive(i))
 					{
-						if (iMode == 0)
-							SetClientListeningFlags(i, VOICE_NORMAL);
-						else if (iMode == 1)
+						if (iMode == 1)
 							SetClientListeningFlags(i, VOICE_LISTENALL);
 						else if (iMode == 2)
 							SetClientListeningFlags(i, VOICE_TEAM);
@@ -650,35 +657,29 @@ bool ConnectBd(Database db)
 	return false;
 }
 //--------------------------------------------------------------------------------------------------
-void CreateSayBanned(char[] sAdminName, int iTarget, int iCreated, int iTime, char[] sLength, char[] sReason)
+void CreateSayBanned(char[] sAdminName, int iClient, int iCreated, int iTime, char[] sLength, char[] sReason)
 {
-	char sCreated[128],
-		 sEnds[128],
-		 sBuffer[512];
+	char sCreated[128];
+	FormatTime(sCreated, sizeof(sCreated), FORMAT_TIME, iCreated);
+
 	if(g_bBanSayPanel)
 	{
+		char sEnds[128];
 		if(!iTime)
-			FormatEx(sEnds, sizeof(sEnds), "%T", "No ends", iTarget);
+			FormatEx(sEnds, sizeof(sEnds), "%T", "No ends", iClient);
 		else
 			FormatTime(sEnds, sizeof(sEnds), FORMAT_TIME, iCreated + iTime);
-	}
-
-	FormatTime(sCreated, sizeof(sCreated), FORMAT_TIME, iCreated);
-	if(g_bBanSayPanel)
-	{
-		FormatEx(sBuffer, sizeof(sBuffer), "%T", "Banned Admin panel", iTarget, sAdminName, sReason, sCreated, sEnds, sLength, g_sWebsite);
-		CreateTeaxtDialog(iTarget, sBuffer);
+		CreateTeaxtDialog(iClient, "%T", "Banned Admin panel", iClient, sAdminName, sReason, sCreated, sEnds, sLength, g_sWebsite);
 	}
 	else
-	{
-		FormatEx(sBuffer, sizeof(sBuffer), "%T", "Banned Admin", iTarget, sAdminName, sReason, sCreated, sLength, g_sWebsite);
-		KickClient(iTarget, sBuffer);
-	}
+		KickClient(iClient, "%T", "Banned Admin", iClient, sAdminName, sReason, sCreated, sLength, g_sWebsite);
 }
 
-void CreateTeaxtDialog(int iClient, char[] sText)
+void CreateTeaxtDialog(int iClient, const char[] sMesag, any ...)
 {
-	char sTitle[125];
+	char sTitle[125],
+		sText[1025];
+	VFormat(sText, sizeof(sText), sMesag, 3);
 	KeyValues kvKey = new KeyValues("text");
 	kvKey.SetNum("time", 200);
 	FormatEx(sTitle, sizeof(sTitle), "%T", "Title Banned", iClient);
@@ -695,6 +696,6 @@ public Action TimerKick(Handle timer, any iUserId)
 {
 	int iClient = GetClientOfUserId(iUserId);
 	if(iClient)
-		KickClient(iClient, "Banned");
+		KickClient(iClient, "%T", "Banneds", iClient);
 }
 //-------------------------------------------------------------------------------------------------------------

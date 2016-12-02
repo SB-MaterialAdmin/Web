@@ -157,6 +157,11 @@
 		"en"			"You was banned on this server\nReason: {1}\nBan date: {2}\nBan length: {3}\nRead more on the website: {4}"
 		"ru"			"Вы  были забанены на этом сервере\nПричина: {1}\nБан выдан: {2}\nЗабанен на: {3}\nПодробнее на сайте: {4}"
 	}
+	"Banneds"
+	{
+		"en"			"You was banned"
+		"ru"			"Вас забанили"
+	}
 	"Title Banned"
 	{
 		"en"			"You banned"
@@ -166,6 +171,16 @@
 	{
 		"en"			"Ban permanent"
 		"ru"			"Бан навсегда"
+	}
+	"Server"
+	{
+		"en"			"Server"
+		"ru"			"Сервер"
+	}
+	"No reason"
+	{
+		"en"			"No reason"
+		"ru"			"Нет причины"
 	}
 	//----------------------------------------------------------------
 	// чат

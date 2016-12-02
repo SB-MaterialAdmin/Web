@@ -21,6 +21,7 @@ public __pl_materialadmin_SetNTVOptional()
 	MarkNativeAsOptional("MABanPlayer");
 	MarkNativeAsOptional("MAGetAdminExpire");
 	MarkNativeAsOptional("MASetClientMuteType");
+	MarkNativeAsOptional("MAOffSetClientMuteType");
 	MarkNativeAsOptional("MAGetClientMuteType");
 }
 #endif
@@ -29,11 +30,11 @@ public __pl_materialadmin_SetNTVOptional()
 /*********************************************************
  * Офлайн бан
  *
- * @param iClient	Клиент ид админа кто банит
- * @param sSteamID	Стим айди кого банят
- * @param sIp		Айпи кого банят
- * @param sName		Ник кого банят
- * @param iTime		Время бана (0 - навсегда) мин
+ * @param iClient	Клиент ид админа
+ * @param sSteamID	Стим айди
+ * @param sIp		Айпи
+ * @param sName		Ник
+ * @param iTime		Время (0 - навсегда) мин
  * @param sReason	Причина
  * @return			true, false
  *********************************************************/
@@ -42,9 +43,9 @@ native bool MAOffBanPlayer(int iClient, char[] sSteamID, char[] sIp, char[] sNam
 /*********************************************************
  * Бан
  *
- * @param iClient	Клиент ид админа кто банит
- * @param iTarget	Клиент ид кого банят
- * @param iTime		Время бана (0 - навсегда) мин
+ * @param iClient	Клиент ид админа
+ * @param iTarget	Клиент ид
+ * @param iTime		Время (0 - навсегда) мин
  * @param sReason	Причина
  * @return			true, false
  *********************************************************/
@@ -62,16 +63,30 @@ native int MAGetAdminExpire(AdminId idAdmin);
 #define MA_MUTE		4
 #define MA_SILENCE	5
 /*********************************************************
- * Установить мут
+ * Мут
  *
- * @param iClient	Клиент ид админа кто банит
- * @param iTarget	Клиент ид кого банят
- * @param iTime		Время бана (0 - навсегда) мин
+ * @param iClient	Клиент ид админа
+ * @param iTarget	Клиент ид
+ * @param iTime		Время (0 - навсегда) мин
  * @param sReason	Причина
  * @param iType		Тип (MA_GAG - текстовый чат, MA_MUTE - голосовой чат, MA_SILENCE - всё вместе)
  * @return			true, false
  *********************************************************/
 native bool MASetClientMuteType(int iClient, int iTarget, int iTime, char[] sReason, int iType);
+
+/*********************************************************
+ * Оффлайн мут
+ *
+ * @param iClient	Клиент ид админа
+ * @param sSteamID	Стим айди
+ * @param sIp		Айпи
+ * @param sName		Ник
+ * @param iTime		Время (0 - навсегда) мин
+ * @param sReason	Причина
+ * @param iType		Тип (MA_GAG - текстовый чат, MA_MUTE - голосовой чат, MA_SILENCE - всё вместе)
+ * @return			true, false
+ *********************************************************/
+native bool MAOffSetClientMuteType(int iClient, char[] sSteamID, char[] sIp, char[] sName, int iTime, char[] sReason, int iType);
 
 /*********************************************************
  * Узнать тип мута
@@ -85,33 +100,42 @@ native int MAGetClientMuteType(int iClient);
  * Событие отключение голосовго или текстового чата
  * 
  * @param iClient	Клиент ид админа
- * @param iTarget	Клиент ид замутеного
+ * @param iTarget	Клиент ид, если 0 - это оффлайн
+ * @param sIp		Айпи 
+ * @param sSteamID	Стим
+ * @param sName		Ник
  * @param iType		Тип (1 - голосовой чат, 2 - текстовый чат, 3 - всё вместе)
  * @param iTime		Время
  * @param sReason	Причина
  *********************************************************/
- forward void MAOnClientMuted(int iClient, int iTarget, int iType, int iTime, char[] sReason);
+ forward void MAOnClientMuted(int iClient, int iTarget, char[] sIp, char[] sSteamID, char[] sName, int iType, int iTime, char[] sReason);
  
  /*********************************************************
  * Событие включение голосовго или текстового чата
  * 
  * @param iClient	Клиент ид админа
- * @param iTarget	Клиент ид размутеного
+ * @param iTarget	Клиент ид, если 0 - это оффлайн
+ * @param sIp		Айпи
+ * @param sSteamID	Стим
+ * @param sName		Ник
  * @param iType		Тип (1 - голосовой чат, 2 - текстовый чат, 3 - всё вместе)
  * @param iTime		Время
  * @param sReason	Причина
  *********************************************************/
- forward void MAOnClientUnMuted(int iClient, int iTarget, int iType, char[] sReason);
+ forward void MAOnClientUnMuted(int iClient, int iTarget, char[] sIp, char[] sSteamID, char[] sName, int iType, char[] sReason);
  
  /*********************************************************
  * Событие бана клиента
  * 
  * @param iClient	Клиент ид админа
- * @param iTarget	Клиент ид забаненого
- * @param iTime		Время бана
- * @param sReason	Причина бана
+ * @param iTarget	Клиент ид, если 0 - это оффлайн
+ * @param sIp		Айпи
+ * @param sSteamID	Стим
+ * @param sName		Ник
+ * @param iTime		Время
+ * @param sReason	Причина
  *********************************************************/
- forward void MAOnClientBanned(int iClient, int iTarget, int iTime, char[] sReason);
+ forward void MAOnClientBanned(int iClient, int iTarget, char[] sIp, char[] sSteamID, char[] sName, int iTime, char[] sReason);
  
  /*********************************************************
  * Событие добавление бана
@@ -119,8 +143,8 @@ native int MAGetClientMuteType(int iClient);
  * @param iClient	Клиент ид админа
  * @param sIp		Бан айпи
  * @param sSteamID	Бан стима
- * @param iTime		Время бана
- * @param sReason	Причина бана
+ * @param iTime		Время
+ * @param sReason	Причина
  *********************************************************/
  forward void MAOnClientAddBanned(int iClient, char[] sIp, char[] sSteamID, int iTime, char[] sReason);
  
@@ -130,6 +154,6 @@ native int MAGetClientMuteType(int iClient);
  * @param iClient	Клиент ид админа
  * @param sIp		Разбан айпи
  * @param sSteamID	Разбан стима
- * @param sReason	Причина разбана
+ * @param sReason	Причина
  *********************************************************/
  forward void MAOnClientUnBanned(int iClient, char[] sIp, char[] sSteamID, char[] sReason);
