@@ -131,7 +131,7 @@ public Plugin myinfo =
 	name = "Material Admin",
 	author = "Grey™",
 	description = "For to sm 1.8",
-	version = "0.0.8b",
+	version = "0.0.9b",
 	url = "hlmod.ru Skype: wolf-1-ser"
 };
 
@@ -232,6 +232,15 @@ public void OnConfigsExecuted()
 	
 	if(g_bOffMapClear) 
 		ClearHistories();
+	
+	if (g_dDatabase != null)
+		AdminHash();
+	else
+	{
+		MAOnRebuildAdminCache(AdminCache_Overrides);
+		MAOnRebuildAdminCache(AdminCache_Groups);
+		MAOnRebuildAdminCache(AdminCache_Admins);
+	}
 }
 
 // удаление игроков вошедших в игру
