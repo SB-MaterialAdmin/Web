@@ -142,9 +142,9 @@ public void ShowTargetOffline(Database db, DBResultSet dbRs, const char[] sError
 				case 3: FormatEx(sTitle, sizeof(sTitle), "%s - %s (%s)", sName, sSteamID, sTime); 
 			}
 			Mmenu.AddItem(sID, sTitle);
-			#if DEBUG
-				LogToFile(g_sLogFile,"Menu: %s, %s - %s", sID, sSteamID, sTitle);
-			#endif
+		#if DEBUG
+			LogToFile(g_sLogFile,"Menu: %s, %s - %s", sID, sSteamID, sTitle);
+		#endif
 		}
 	}
 	else
@@ -173,9 +173,9 @@ public int MenuHandler_OfflineList(Menu Mmenu, MenuAction mAction, int iClient, 
 			Mmenu.GetItem(iSlot, sID, sizeof(sID));
 			
 			g_bOnileTarget[iClient] = false;
-			#if DEBUG
-				LogToFile(g_sLogFile, "Menu BanList: %s", sID);
-			#endif
+		#if DEBUG
+			LogToFile(g_sLogFile, "Menu BanList: %s", sID);
+		#endif
 			
 			BdGetInfoOffline(iClient, StringToInt(sID));
 		}
@@ -494,14 +494,14 @@ void ShowTimeMenu(int iClient)
 	for (int i = 0; i < iCount; i++)
 	{
 		g_mTimeMenu.GetItem(i, sBuffer, sizeof(sBuffer), _, sTitle, sizeof(sTitle));
-		#if DEBUG
-			LogToFile(g_sLogFile,"Menu time: %i , %s, %s", i, sBuffer, sTitle);
-		#endif
+	#if DEBUG
+		LogToFile(g_sLogFile,"Menu time: %i , %s, %s", i, sBuffer, sTitle);
+	#endif
 		if(StringToInt(sBuffer) == 0)
 		{
-			#if DEBUG
-				LogToFile(g_sLogFile,"Menu time: yes %i , %s, %s", i, sBuffer, sTitle);
-			#endif
+		#if DEBUG
+			LogToFile(g_sLogFile,"Menu time: yes %i , %s, %s", i, sBuffer, sTitle);
+		#endif
 			if (GetUserFlagBits(iClient) & (ADMFLAG_UNBAN | ADMFLAG_ROOT))
 			{
 				g_mTimeMenu.RemoveItem(i);
@@ -550,9 +550,9 @@ public int MenuHandler_MenuTime(Menu Mmenu, MenuAction mAction, int iClient, int
 			char sInfo[12];
 			Mmenu.GetItem(iSlot, sInfo, sizeof(sInfo));
 			g_iTarget[iClient][TTIME] = StringToInt(sInfo);
-			#if DEBUG
-				LogToFile(g_sLogFile,"Menu Time: %s", sInfo);
-			#endif
+		#if DEBUG
+			LogToFile(g_sLogFile,"Menu Time: %s", sInfo);
+		#endif
 
 			if(g_iTargetType[iClient] == TYPE_BAN)
 				ShowBanReasonMenu(iClient);
@@ -600,9 +600,9 @@ public int MenuHandler_MenuBReason(Menu Mmenu, MenuAction mAction, int iClient, 
 				return;
 			}
 			strcopy(g_sTarget[iClient][TREASON], sizeof(sInfo), sInfo);
-			#if DEBUG
-				LogToFile(g_sLogFile,"Menu Reason: %s", sInfo);
-			#endif
+		#if DEBUG
+			LogToFile(g_sLogFile,"Menu Reason: %s", sInfo);
+		#endif
 			OnlineClientSet(iClient);
 		}
 	}
@@ -628,9 +628,9 @@ public int MenuHandler_MenuMReason(Menu Mmenu, MenuAction mAction, int iClient, 
 				return;
 			}
 			strcopy(g_sTarget[iClient][TREASON], sizeof(sInfo), sInfo);
-			#if DEBUG
-				LogToFile(g_sLogFile,"Menu Reason: %s", sInfo);
-			#endif
+		#if DEBUG
+			LogToFile(g_sLogFile,"Menu Reason: %s", sInfo);
+		#endif
 			OnlineClientSet(iClient);
 		}
 	}
@@ -656,9 +656,9 @@ public int MenuHandler_MenuHacking(Menu Mmenu, MenuAction mAction, int iClient, 
 			char sInfo[128];
 			Mmenu.GetItem(iSlot, sInfo, sizeof(sInfo));
 			strcopy(g_sTarget[iClient][TREASON], sizeof(sInfo), sInfo);
-			#if DEBUG
-				LogToFile(g_sLogFile,"Menu Hacking: %s", sInfo);
-			#endif
+		#if DEBUG
+			LogToFile(g_sLogFile,"Menu Hacking: %s", sInfo);
+		#endif
 
 			OnlineClientSet(iClient);
 		}

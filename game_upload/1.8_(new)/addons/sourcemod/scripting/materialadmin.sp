@@ -126,7 +126,7 @@ ConfigState g_iConfigState = ConfigState_Non;
 #include "materialadmin/database.sp"
 #include "materialadmin/native.sp"
 
-#define VERSION "0.1.1b"
+#define VERSION "0.1.2b"
 
 public Plugin myinfo = 
 {
@@ -278,7 +278,6 @@ public void OnClientDisconnect(int iClient)
 
 #if DEBUG
 	char sTime[64];
-
 	FormatTime(sTime, sizeof(sTime), g_sOffFormatTime, GetTime());
 	LogToFile(g_sLogFile,"New: %s %s - %s ; %s.", sName, sSteamID, sIP, sTime);
 #endif
@@ -316,16 +315,14 @@ void ReadConfig()
 		{
 			char sError[256];
 			g_smcConfigParser.GetErrorString(err, sError, sizeof(sError));
-			LogError("Could not parse file (line %d, file \"%s\"):", iLine, sConfigFile);
-			LogError("Parser encountered error: %s", sError);
+			LogToFile(g_sLogFile, "Could not parse file (line %d, file \"%s\"):", iLine, sConfigFile);
+			LogToFile(g_sLogFile, "Parser encountered error: %s", sError);
 		}
 	}
 	else 
 	{
-		char sError[PLATFORM_MAX_PATH+64];
-		FormatEx(sError, sizeof(sError), "%sFATAL *** ERROR *** can not find %s", PREFIX, sConfigFile);
-		LogError("FATAL *** ERROR *** can not find %s", sConfigFile);
-		SetFailState(sError);
+		LogToFile(g_sLogFile, "FATAL *** ERROR *** can not find %s", sConfigFile);
+		SetFailState("%sFATAL *** ERROR *** can not find %s", PREFIX, sConfigFile);
 	}
 }
 

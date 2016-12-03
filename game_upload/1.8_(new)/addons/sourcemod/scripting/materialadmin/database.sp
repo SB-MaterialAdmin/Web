@@ -310,7 +310,7 @@ void DoCreateDB(int iClient, int iTarget)
 void CreateDB(int iClient, int iTarget, char[] sSteamIp = "")
 {
 #if DEBUG
-	LogToFile(g_sLogFile,"Create sb: client %d, target %d, TargetType %d, TargetMuteType %d", iClient, iTarget, g_iTargetType[iClient], g_iTargetMuteType[iTarget]);
+	LogToFile(g_sLogFile,"Create bd: client %d, target %d, TargetType %d, TargetMuteType %d", iClient, iTarget, g_iTargetType[iClient], g_iTargetMuteType[iTarget]);
 #endif
 	if (g_iTargetType[iClient] > 7 && g_iTargetMuteType[iTarget] == 0 && iTarget && GetClientListeningFlags(iTarget) == VOICE_MUTED)
 	{
@@ -800,7 +800,7 @@ void CreateDB(int iClient, int iTarget, char[] sSteamIp = "")
 	g_dDatabase.SetCharset("utf8");
 	g_dDatabase.Query(VerifyInsert, sQuery, dPack, DBPrio_High);
 #if DEBUG
-	LogToFile(g_sLogFile,"create sb: %s", sQuery);
+	LogToFile(g_sLogFile,"create bd: %s", sQuery);
 #endif
 	LogAction(iClient, -1, sLog);
 }
@@ -958,15 +958,18 @@ public void VerifyBan(Database db, DBResultSet dbRs, const char[] sError, any iU
 		if(idAdmin != INVALID_ADMIN_ID)
 		{
 			int iExpire = GetAdminExpire(idAdmin);
-			if(iExpire > GetTime())
+			if (iExpire)
 			{
-				DataPack dPack = new DataPack();
-				dPack.WriteCell(GetClientUserId(iClient));
-				dPack.WriteCell(iExpire);
-				CreateTimer(15.0, TimerAdminExpire, dPack);
+				if(iExpire > GetTime())
+				{
+					DataPack dPack = new DataPack();
+					dPack.WriteCell(GetClientUserId(iClient));
+					dPack.WriteCell(iExpire);
+					CreateTimer(15.0, TimerAdminExpire, dPack);
+				}
+				else
+					RemoveAdmin(idAdmin);
 			}
-			else
-				RemoveAdmin(idAdmin);
 		}
 		else
 			DelOflineInfo(sSteamID);	
@@ -1009,30 +1012,27 @@ public void VerifyMute(Database db, DBResultSet dbRs, const char[] sError, any i
 	if (!iClient)
 		return;
 
-	if (dbRs.RowCount)
+	if (dbRs.FetchRow())
 	{
-		while (dbRs.FetchRow())
-		{
-			int iTime = dbRs.FetchInt(0);
-			int iType = dbRs.FetchInt(1);
-			g_iTargenMuteTime[iClient] = dbRs.FetchInt(2);
-			dbRs.FetchString(3, g_iTargetMuteReason[iClient], sizeof(g_iTargetMuteReason[]));
+		int iTime = dbRs.FetchInt(0);
+		int iType = dbRs.FetchInt(1);
+		g_iTargenMuteTime[iClient] = dbRs.FetchInt(2);
+		dbRs.FetchString(3, g_iTargetMuteReason[iClient], sizeof(g_iTargetMuteReason[]));
 			
-		#if DEBUG
-			LogToFile(g_sLogFile, "Fetched from DB: time %d, type %d", iTime, iType);
-		#endif
+	#if DEBUG
+		LogToFile(g_sLogFile, "Fetched from DB: time %d, type %d", iTime, iType);
+	#endif
 			
-			g_iTargetMuteType[iClient] = iType;
+		g_iTargetMuteType[iClient] = iType;
 			
-			if(iTime < 0)
-				iTime = 0;
+		if(iTime < 0)
+			iTime = 0;
 		
-			switch (iType)
-			{
-				case TYPEMUTE:		AddMute(iClient, iTime);
-				case TYPEGAG: 		AddGag(iClient, iTime);
-				case TYPESILENCE:	AddSilence(iClient, iTime);
-			}
+		switch (iType)
+		{
+			case TYPEMUTE:		AddMute(iClient, iTime);
+			case TYPEGAG: 		AddGag(iClient, iTime);
+			case TYPESILENCE:	AddSilence(iClient, iTime);
 		}
 	}
 	else

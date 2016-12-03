@@ -113,7 +113,7 @@ public SMCResult ReadGroups_KeyValue(SMCParser smc, const char[] sKey, const cha
 				g_bNeedReparse = true;
 			
 		#if DEBUG
-			LogToFile(g_sLogFile, "Laod group flag imune override (grup %d, %s %s)", g_idGroup, sKey, sValue);
+			LogToFile(g_sLogFile, "Laod group flag override (grup %d, %s %s)", g_idGroup, sKey, sValue);
 		#endif
 		} 
 		else if (g_iGroupState == GroupState_Overrides)
@@ -159,11 +159,11 @@ public SMCResult ReadGroups_KeyValue(SMCParser smc, const char[] sKey, const cha
 					if (idGroup != INVALID_GROUP_ID)
 						g_idGroup.AddGroupImmunity(idGroup);
 					else
-						LogError("Unable to find group: \"%s\"", sValue);
+						LogToFile(g_sLogFile, "Unable to find group: \"%s\"", sValue);
 				}
 			}
 		#if DEBUG
-			LogToFile(g_sLogFile, "Laod group Second (%d, %s, %s)", g_idGroup, sKey, sValue);
+			LogToFile(g_sLogFile, "Laod group add immunity (%d, %s, %s)", g_idGroup, sKey, sValue);
 		#endif
 		}
 	}
@@ -210,8 +210,8 @@ static void InternalReadGroups(const char[] sPath, GroupPass grPass)
 		{
 			char sError[256];
 			g_smcGroupParser.GetErrorString(err, sError, sizeof(sError));
-			LogError("Could not parse file (line %d, file \"%s\"):", iLine, sPath);
-			LogError("Parser encountered error: %s", sError);
+			LogToFile(g_sLogFile, "Could not parse file (line %d, file \"%s\"):", iLine, sPath);
+			LogToFile(g_sLogFile, "Parser encountered error: %s", sError);
 		}
 	}
 }
@@ -279,7 +279,7 @@ public SMCResult ReadUsers_KeyValue(SMCParser smc, const char[] sKey, const char
 	{
 		GroupId idGroup = FindAdmGroup(sValue);
 		if (idGroup == INVALID_GROUP_ID)
-			LogError("Unknown group \"%s\"", sValue);
+			LogToFile(g_sLogFile, "Unknown group \"%s\"", sValue);
 
 		g_aGroupArray.Push(idGroup);
 	} 
@@ -291,7 +291,7 @@ public SMCResult ReadUsers_KeyValue(SMCParser smc, const char[] sKey, const char
 		for (int i = 0; i < iLen; i++)
 		{
 			if (!FindFlagByChar(sValue[i], admFlag))
-				LogError("Invalid admFlag detected: %c", sValue[i]);
+				LogToFile(g_sLogFile, "Invalid admFlag detected: %c", sValue[i]);
 			else
 				g_iCurFlags |= FlagToBit(admFlag);
 		}
@@ -325,7 +325,7 @@ public SMCResult ReadUsers_EndSection(SMCParser smc)
 	if (g_iUserState == UserState_InAdmin)
 	{
 		/* Dump this user to memory */
-		if (g_sCurIdent[0] != '\0' && g_sCurAuth[0] != '\0')
+		if (g_sCurIdent[0] && g_sCurAuth[0])
 		{
 			AdminFlag admFlags[26];
 			AdminId idAdmin;
@@ -333,55 +333,53 @@ public SMCResult ReadUsers_EndSection(SMCParser smc)
 			
 			if ((idAdmin = FindAdminByIdentity(g_sCurAuth, g_sCurIdent)) != INVALID_ADMIN_ID)
 			{
-				if (g_iCurExpire > GetTime())
+				if (g_iCurExpire == 0 || g_iCurExpire > GetTime())
 				{
 				#if DEBUG
-					LogToFile(g_sLogFile, "Add admin expire %d (auth %s, %s)", g_iCurExpire, g_sCurAuth, g_sCurIdent);
+					LogToFile(g_sLogFile, "Add admin %s expire %d (auth %s, %s)", g_sCurName, g_iCurExpire, g_sCurAuth, g_sCurIdent);
 				#endif
 					AddAdminExpire(idAdmin, g_iCurExpire);
 				}
 				else
 				{
 				#if DEBUG
-					LogToFile(g_sLogFile, "Admin expire end %d (auth %s, %s)", g_iCurExpire, g_sCurAuth, g_sCurIdent);
+					LogToFile(g_sLogFile, "Admin %s expire end %d (auth %s, %s)", g_sCurName, g_iCurExpire, g_sCurAuth, g_sCurIdent);
 				#endif
 					RemoveAdmin(idAdmin);
 					return SMCParse_Continue;
 				}
 			#if DEBUG
-				LogToFile(g_sLogFile, "Find admin yes (%d, auth %s, %s)", idAdmin, g_sCurAuth, g_sCurIdent);
+				LogToFile(g_sLogFile, "Find admin %s yes (%d, auth %s, %s)", g_sCurName, idAdmin, g_sCurAuth, g_sCurIdent);
 			#endif
 			}
 			else
 			{
 			#if DEBUG
-				LogToFile(g_sLogFile, "Find admin no (auth %s, %s)", g_sCurAuth, g_sCurIdent);
+				LogToFile(g_sLogFile, "Find admin %s no (auth %s, %s)", g_sCurName, g_sCurAuth, g_sCurIdent);
 			#endif
 				idAdmin = CreateAdmin(g_sCurName);
 			#if DEBUG
-				LogToFile(g_sLogFile, "Create new admin (%d, auth %s, %s)", idAdmin, g_sCurAuth, g_sCurIdent);
+				LogToFile(g_sLogFile, "Create new admin %s (%d, auth %s, %s)", g_sCurName, idAdmin, g_sCurAuth, g_sCurIdent);
 			#endif
 				if (!idAdmin.BindIdentity(g_sCurAuth, g_sCurIdent))
 				{
 					RemoveAdmin(idAdmin);
-				#if DEBUG
+
 					LogToFile(g_sLogFile, "Failed to bind auth \"%s\" to identity \"%s\"", g_sCurAuth, g_sCurIdent);
-				#endif
-					LogError("Failed to bind auth \"%s\" to identity \"%s\"", g_sCurAuth, g_sCurIdent);
 					return SMCParse_Continue;
 				}
 				
-				if (g_iCurExpire > GetTime())
+				if (g_iCurExpire == 0 || g_iCurExpire > GetTime())
 				{
 				#if DEBUG
-					LogToFile(g_sLogFile, "Add admin expire %d (auth %s, %s)", g_iCurExpire, g_sCurAuth, g_sCurIdent);
+					LogToFile(g_sLogFile, "Add admin %s expire %d (auth %s, %s)", g_sCurName, g_iCurExpire, g_sCurAuth, g_sCurIdent);
 				#endif
 					AddAdminExpire(idAdmin, g_iCurExpire);
 				}
 				else
 				{
 				#if DEBUG
-					LogToFile(g_sLogFile, "Admin expire end %d (auth %s, %s)", g_iCurExpire, g_sCurAuth, g_sCurIdent);
+					LogToFile(g_sLogFile, "Admin %s expire end %d (auth %s, %s)", g_sCurName, g_iCurExpire, g_sCurAuth, g_sCurIdent);
 				#endif
 					RemoveAdmin(idAdmin);
 					return SMCParse_Continue;
@@ -403,11 +401,16 @@ public SMCResult ReadUsers_EndSection(SMCParser smc)
 				idAdmin.SetFlag(admFlags[i], true);
 			
 		#if DEBUG
-			LogToFile(g_sLogFile, "Laod Yes admin (name %s, auth %s, ident %s, flag %d, imuni %d, expire %d)", g_sCurName, g_sCurAuth, g_sCurIdent, g_iCurFlags, g_sCurPass, g_iCurImmunity, g_iCurExpire);
+			LogToFile(g_sLogFile, "Laod yes admin (name %s, auth %s, ident %s, flag %d, pass %s, imuni %d, expire %d)", g_sCurName, g_sCurAuth, g_sCurIdent, g_iCurFlags, g_sCurPass, g_iCurImmunity, g_iCurExpire);
 		#endif
 		}
 		else
-			LogError("Failed to create admin: did you forget either the auth or identity properties?");
+		{
+		#if DEBUG
+			LogToFile(g_sLogFile, "Laod no admin (name %s, auth %s, ident %s, flag %d, pass %s, imuni %d, expire %d)", g_sCurName, g_sCurAuth, g_sCurIdent, g_iCurFlags, g_sCurPass, g_iCurImmunity, g_iCurExpire);
+		#endif
+			LogToFile(g_sLogFile, "Failed to create admin: did you forget either the auth or identity properties?");
+		}
 		
 		g_iUserState = UserState_Admins;
 	}
@@ -440,8 +443,8 @@ void ReadUsers()
 		{
 			char sError[256];
 			g_smcUserParser.GetErrorString(err, sError, sizeof(sError));
-			LogError("Could not parse file (line %d, file \"%s\"):", iLine, g_sAdminsLoc);
-			LogError("Parser encountered error: %s", sError);
+			LogToFile(g_sLogFile, "Could not parse file (line %d, file \"%s\"):", iLine, g_sAdminsLoc);
+			LogToFile(g_sLogFile, "Parser encountered error: %s", sError);
 		}
 	}
 }
@@ -536,8 +539,8 @@ void ReadOverrides()
 		{
 			char sError[256];
 			g_smcOverrideParser.GetErrorString(err, sError, sizeof(sError));
-			LogError("Could not parse file (line %d, file \"%s\"):", iLine, g_sOverridesLoc);
-			LogError("Parser encountered error: %s", sError);
+			LogToFile(g_sLogFile, "Could not parse file (line %d, file \"%s\"):", iLine, g_sOverridesLoc);
+			LogToFile(g_sLogFile, "Parser encountered error: %s", sError);
 		}
 	}
 }
