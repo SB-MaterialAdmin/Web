@@ -513,7 +513,8 @@ void CreateDB(int iClient, int iTarget, char[] sSteamIp = "")
 			}
 			FireOnClientBanned(iClient, iTarget, g_sTarget[iClient][TIP], g_sTarget[iClient][TSTEAMID], g_sTarget[iClient][TNAME], g_iTarget[iClient][TTIME], g_sTarget[iClient][TREASON]);
 			ShowAdminAction(iClient, "%T", "Banned show", iClient, g_sTarget[iClient][TNAME], sLength, g_sTarget[iClient][TREASON]);
-			CreateSayBanned(sAdminName, iTarget, iCreated, iTime, sLength, g_sTarget[iClient][TREASON]);
+			if (iTarget)
+				CreateSayBanned(sAdminName, iTarget, iCreated, iTime, sLength, g_sTarget[iClient][TREASON]);
 			FormatEx(sLog, sizeof(sLog), "\"%L\" banned \"%s (%s IP_%s)\" (minutes \"%d\") (reason \"%s\")", iClient, g_sTarget[iClient][TNAME], g_sTarget[iClient][TSTEAMID], 
 										g_sTarget[iClient][TIP], g_iTarget[iClient][TTIME], g_sTarget[iClient][TREASON]);
 		}
