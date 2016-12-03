@@ -27,9 +27,9 @@ public void OnAdminMenuReady(Handle aTopMenu)
 	if (CategoryId == INVALID_TOPMENUOBJECT)
 		return;
 	
-	g_tmAdminMenu.AddItem("ma_target_online", Handle_MenuTargetOnline, CategoryId, "target_online", ADMFLAG_BAN|ADMFLAG_CHAT);
-	g_tmAdminMenu.AddItem("ma_target_offline", Handle_MenuTargetOffline, CategoryId, "target_offline", ADMFLAG_BAN|ADMFLAG_CHAT);
-	g_tmAdminMenu.AddItem("ma_setting", Handle_MenuSetting, CategoryId, "Setting", ADMFLAG_ROOT);
+	g_tmAdminMenu.AddItem("ma_target_online", Handle_MenuTargetOnline, CategoryId, "ma_target_online", ADMFLAG_GENERIC);
+	g_tmAdminMenu.AddItem("ma_target_offline", Handle_MenuTargetOffline, CategoryId, "ma_target_offline", ADMFLAG_GENERIC);
+	g_tmAdminMenu.AddItem("ma_setting", Handle_MenuSetting, CategoryId, "ma_setting", ADMFLAG_ROOT);
 }
 
 public void Handle_Sourcebans(Handle topmenu, TopMenuAction action, TopMenuObject topobj_id, int iClient, char[] buffer, int maxlength)
@@ -307,10 +307,17 @@ void ShowTypeMenu(int iClient)
 	Mmenu.SetTitle("%T:", "SetTitle", iClient);
 	
 	FormatEx(sTitle, sizeof(sTitle), "%T", "SetBan", iClient); // ban
-	Mmenu.AddItem("", sTitle);
+	if (CheckAdminFlags(iClient, ADMFLAG_BAN))
+		Mmenu.AddItem("", sTitle);
+	else
+		Mmenu.AddItem("", sTitle, ITEMDRAW_DISABLED);
 
+	
 	FormatEx(sTitle, sizeof(sTitle), "%T", "SetMute", iClient); // mute
-	Mmenu.AddItem("", sTitle);
+	if (CheckAdminFlags(iClient, ADMFLAG_CHAT))
+		Mmenu.AddItem("", sTitle);
+	else
+		Mmenu.AddItem("", sTitle, ITEMDRAW_DISABLED);
 	
 	Mmenu.ExitBackButton = true;
 	Mmenu.Display(iClient, MENU_TIME_FOREVER);

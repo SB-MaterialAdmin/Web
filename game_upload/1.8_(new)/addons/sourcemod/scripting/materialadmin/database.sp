@@ -958,13 +958,15 @@ public void VerifyBan(Database db, DBResultSet dbRs, const char[] sError, any iU
 		if(idAdmin != INVALID_ADMIN_ID)
 		{
 			int iExpire = GetAdminExpire(idAdmin);
-			if(iExpire)
+			if(iExpire > GetTime())
 			{
 				DataPack dPack = new DataPack();
 				dPack.WriteCell(GetClientUserId(iClient));
 				dPack.WriteCell(iExpire);
 				CreateTimer(15.0, TimerAdminExpire, dPack);
 			}
+			else
+				RemoveAdmin(idAdmin);
 		}
 		else
 			DelOflineInfo(sSteamID);	

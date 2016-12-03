@@ -60,7 +60,7 @@ int	g_iServerID = -1,
 Database g_dSQLite = null,
 	g_dDatabase = null;
 	
-ArrayList g_aUserId[66],
+ArrayList g_aUserId[MAXPLAYERS+1],
 	g_aAdminsExpired;
 
 ConVar g_Cvar_Alltalk,
@@ -126,12 +126,14 @@ ConfigState g_iConfigState = ConfigState_Non;
 #include "materialadmin/database.sp"
 #include "materialadmin/native.sp"
 
+#define VERSION "0.1.1b"
+
 public Plugin myinfo = 
 {
 	name = "Material Admin",
 	author = "Grey™",
 	description = "For to sm 1.8",
-	version = "0.1.0b",
+	version = VERSION,
 	url = "hlmod.ru Skype: wolf-1-ser"
 };
 
@@ -159,7 +161,11 @@ public void OnPluginStart()
 	BuildPath(Path_SM, g_sAdminsLoc,sizeof(g_sAdminsLoc),"configs/materialadmin/admins.cfg");
 	BuildPath(Path_SM, g_sOverridesLoc, sizeof(g_sOverridesLoc), "configs/materialadmin/overrides.cfg");
 	
-	for (int i = 1; i <= 65; i++)
+#if DEBUG
+	LogToFile(g_sLogFile, "plugin version %s", VERSION);
+#endif
+	
+	for (int i = 1; i <= MAXPLAYERS; i++)
 	{
 		g_aUserId[i] = CreateArray(ByteCountToCells(12));
 	#if DEBUG

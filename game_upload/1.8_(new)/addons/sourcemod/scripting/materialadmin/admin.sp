@@ -333,27 +333,59 @@ public SMCResult ReadUsers_EndSection(SMCParser smc)
 			
 			if ((idAdmin = FindAdminByIdentity(g_sCurAuth, g_sCurIdent)) != INVALID_ADMIN_ID)
 			{
-				if (g_iCurExpire)
+				if (g_iCurExpire > GetTime())
+				{
+				#if DEBUG
+					LogToFile(g_sLogFile, "Add admin expire %d (auth %s, %s)", g_iCurExpire, g_sCurAuth, g_sCurIdent);
+				#endif
 					AddAdminExpire(idAdmin, g_iCurExpire);
+				}
+				else
+				{
+				#if DEBUG
+					LogToFile(g_sLogFile, "Admin expire end %d (auth %s, %s)", g_iCurExpire, g_sCurAuth, g_sCurIdent);
+				#endif
+					RemoveAdmin(idAdmin);
+					return SMCParse_Continue;
+				}
 			#if DEBUG
-				LogToFile(g_sLogFile, "find admin yes (%d, auth %s, %s)", idAdmin, g_sCurAuth, g_sCurIdent);
+				LogToFile(g_sLogFile, "Find admin yes (%d, auth %s, %s)", idAdmin, g_sCurAuth, g_sCurIdent);
 			#endif
 			}
 			else
 			{
+			#if DEBUG
+				LogToFile(g_sLogFile, "Find admin no (auth %s, %s)", g_sCurAuth, g_sCurIdent);
+			#endif
 				idAdmin = CreateAdmin(g_sCurName);
 			#if DEBUG
-				LogToFile(g_sLogFile, "find admin no (%d, auth %s, %s)", idAdmin, g_sCurAuth, g_sCurIdent);
+				LogToFile(g_sLogFile, "Create new admin (%d, auth %s, %s)", idAdmin, g_sCurAuth, g_sCurIdent);
 			#endif
 				if (!idAdmin.BindIdentity(g_sCurAuth, g_sCurIdent))
 				{
 					RemoveAdmin(idAdmin);
+				#if DEBUG
+					LogToFile(g_sLogFile, "Failed to bind auth \"%s\" to identity \"%s\"", g_sCurAuth, g_sCurIdent);
+				#endif
 					LogError("Failed to bind auth \"%s\" to identity \"%s\"", g_sCurAuth, g_sCurIdent);
 					return SMCParse_Continue;
 				}
 				
-				if (g_iCurExpire)
+				if (g_iCurExpire > GetTime())
+				{
+				#if DEBUG
+					LogToFile(g_sLogFile, "Add admin expire %d (auth %s, %s)", g_iCurExpire, g_sCurAuth, g_sCurIdent);
+				#endif
 					AddAdminExpire(idAdmin, g_iCurExpire);
+				}
+				else
+				{
+				#if DEBUG
+					LogToFile(g_sLogFile, "Admin expire end %d (auth %s, %s)", g_iCurExpire, g_sCurAuth, g_sCurIdent);
+				#endif
+					RemoveAdmin(idAdmin);
+					return SMCParse_Continue;
+				}
 			}
 			
 			iGroups = g_aGroupArray.Length;
@@ -369,14 +401,15 @@ public SMCResult ReadUsers_EndSection(SMCParser smc)
 			iFlags = FlagBitsToArray(g_iCurFlags, admFlags, sizeof(admFlags));
 			for (i = 0; i < iFlags; i++)
 				idAdmin.SetFlag(admFlags[i], true);
+			
+		#if DEBUG
+			LogToFile(g_sLogFile, "Laod Yes admin (name %s, auth %s, ident %s, flag %d, imuni %d, expire %d)", g_sCurName, g_sCurAuth, g_sCurIdent, g_iCurFlags, g_sCurPass, g_iCurImmunity, g_iCurExpire);
+		#endif
 		}
 		else
 			LogError("Failed to create admin: did you forget either the auth or identity properties?");
 		
 		g_iUserState = UserState_Admins;
-	#if DEBUG
-		LogToFile(g_sLogFile, "Laod admin (name %s, auth %s, ident %s, flag %d, imuni %d)", g_sCurName, g_sCurAuth, g_sCurIdent, g_iCurFlags, g_sCurPass, g_iCurImmunity);
-	#endif
 	}
 	else if (g_iUserState == UserState_Admins)
 		g_iUserState = UserState_None;
