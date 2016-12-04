@@ -1134,9 +1134,9 @@ public void GroupsDone(Database db, DBResultSet dbRs, const char[] sError, any i
 		{
 			dbRs.FetchRow();
 		#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR == 7
-			if (!SQL_IsFieldNull(dbRs, 0))
+			if (SQL_IsFieldNull(dbRs, 0))
 		#else
-			if (!dbRs.IsFieldNull(0))
+			if (dbRs.IsFieldNull(0))
 		#endif
 				continue; // Sometimes some rows return NULL due to some setups
 			dbRs.FetchString(0, sGrpName, sizeof(sGrpName));
@@ -1198,9 +1198,9 @@ public void LoadGroupsOverrides(Database db, DBResultSet dbRs, const char[] sErr
 		{
 			dbRs.FetchRow();
 		#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR == 7
-			if (!SQL_IsFieldNull(dbRs, 0))
+			if (SQL_IsFieldNull(dbRs, 0))
 		#else
-			if (!dbRs.IsFieldNull(0))
+			if (dbRs.IsFieldNull(0))
 		#endif
 				continue; // Sometimes some rows return NULL due to some setups
 			
@@ -1295,9 +1295,9 @@ public void AdminsDone(Database db, DBResultSet dbRs, const char[] sError, any i
 		{
 			dbRs.FetchRow();
 		#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR == 7
-			if (!SQL_IsFieldNull(dbRs, 0))
+			if (SQL_IsFieldNull(dbRs, 0))
 		#else
-			if (!dbRs.IsFieldNull(0))
+			if (dbRs.IsFieldNull(0))
 		#endif
 				continue; // Sometimes some rows return NULL due to some setups
 			
