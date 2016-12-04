@@ -99,7 +99,7 @@ public Action CommandConnectBd(int iClient, int iArgc)
 	if (ConnectBd(g_dDatabase))
 	{
 		ReplyToCommand(iClient, "%sYes connect bd", PREFIX);
-		if (g_hTimerBekap != null)
+		if (g_hTimerBekap)
 		{
 			KillTimer(g_hTimerBekap);
 			g_hTimerBekap = null;

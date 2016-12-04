@@ -359,7 +359,7 @@ void CreateDB(int iClient, int iTarget, char[] sSteamIp = "")
 	
 	if(!iTime)
 		FormatEx(sLength, sizeof(sLength), "%T", "Permanent", iClient);
-	else
+	else if (iTime > 0)
 		FormatVrema(iClient, iTime, sLength, sizeof(sLength));
 	
 	if (!g_sTarget[iClient][TREASON][0])
@@ -766,6 +766,14 @@ void CreateDB(int iClient, int iTarget, char[] sSteamIp = "")
 				case TYPE_UNSILENCE:
 				{
 					iType = TYPESILENCE;
+					if (g_iTargetMuteType[iTarget] < TYPESILENCE)
+					{
+						FormatEx(sQuery, sizeof(sQuery), "UPDATE  %s_comms \
+							SET     RemovedBy = (SELECT aid FROM %s_admins WHERE authid = '%s' OR authid REGEXP '^STEAM_[0-9]:%s$'), RemoveType = 'U', RemovedOn = UNIX_TIMESTAMP(), ureason = '%s' \
+							WHERE 	authid = '%s' AND (length = '0' OR ends > UNIX_TIMESTAMP()) AND RemoveType IS NULL", 
+							g_sDatabasePrefix, g_sDatabasePrefix, sAdmin_SteamID, sAdmin_SteamID[8], sReason, g_sTarget[iClient][TSTEAMID]);
+						bSetQ = false;
+					}
 					if (iTarget)
 					{
 						UnSilence(iTarget);
@@ -870,14 +878,15 @@ public void VerifyBan(Database db, DBResultSet dbRs, const char[] sError, any iU
 		LogToFile(g_sLogFile, "Verify Ban Query Failed: %s", sError);
 		return;
 	}
-	
-	char sSteamID[MAX_STEAMID_LENGTH];
+
 	int iClient = GetClientOfUserId(iUserId);
-	
+
 	if (!iClient)
 		return;
 
+	char sSteamID[MAX_STEAMID_LENGTH];
 	GetClientAuthId(iClient, TYPE_STEAM, sSteamID, sizeof(sSteamID));
+
 	if (dbRs.FetchRow())
 	{
 		char sReason[256],
@@ -1110,8 +1119,7 @@ public void OverridesDone(Database db, DBResultSet dbRs, const char[] sError, an
 	ReadOverrides();
 	
 	char sQuery[254];
-	FormatEx(sQuery, sizeof(sQuery), "SELECT name, flags, immunity   \
-					FROM %s_srvgroups ORDER BY id", g_sDatabasePrefix);
+	FormatEx(sQuery, sizeof(sQuery), "SELECT name, flags, immunity FROM %s_srvgroups ORDER BY id", g_sDatabasePrefix);
 	g_dDatabase.SetCharset("utf8");
 	g_dDatabase.Query(GroupsDone, sQuery);
 }

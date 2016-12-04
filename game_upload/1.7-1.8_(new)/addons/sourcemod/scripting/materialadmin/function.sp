@@ -148,12 +148,10 @@ void GetClientToBd(int iClient, int iTyp, const char[] sArg = "")
 	{
 		case 0:
 		{
-			int iUserId,
-				iTarget;
+			int iTarget;
 			for (int i = 0; i <= g_aUserId[iClient].Length; i++)
 			{
-				iUserId = g_aUserId[iClient].Get(i);
-				iTarget = GetClientOfUserId(iUserId);
+				iTarget = GetClientOfUserId(g_aUserId[iClient].Get(i));
 				if(iTarget)
 					DoCreateDB(iClient, iTarget);
 				else

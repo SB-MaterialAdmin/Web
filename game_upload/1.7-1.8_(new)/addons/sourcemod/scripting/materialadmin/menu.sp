@@ -506,7 +506,7 @@ void ShowTimeMenu(int iClient)
 		#if DEBUG
 			LogToFile(g_sLogFile,"Menu time: yes %i , %s, %s", i, sBuffer, sTitle);
 		#endif
-			if (GetUserFlagBits(iClient) & (ADMFLAG_UNBAN | ADMFLAG_ROOT))
+			if (CheckAdminFlags(iClient, ADMFLAG_UNBAN))
 			{
 				g_mTimeMenu.RemoveItem(i);
 				g_mTimeMenu.InsertItem(i, sBuffer, sTitle);
