@@ -932,7 +932,11 @@ public void VerifyBan(Database db, DBResultSet dbRs, const char[] sError, any iU
 
 		g_bBanClientConnect[iClient] = true;
 		
-		if (!dbRs.IsFieldNull(0))
+	#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR == 7
+		if (!SQL_IsFieldNull(dbRs, 0))
+	#else
+ 		if (!dbRs.IsFieldNull(0))
+	#endif
 		{
 			char sAdmin[64];
 			dbRs.FetchString(4, sAdmin, sizeof(sAdmin));
@@ -1129,7 +1133,11 @@ public void GroupsDone(Database db, DBResultSet dbRs, const char[] sError, any i
 		while (dbRs.MoreRows)
 		{
 			dbRs.FetchRow();
-			if (dbRs.IsFieldNull(0))
+		#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR == 7
+			if (!SQL_IsFieldNull(dbRs, 0))
+		#else
+			if (!dbRs.IsFieldNull(0))
+		#endif
 				continue; // Sometimes some rows return NULL due to some setups
 			dbRs.FetchString(0, sGrpName, sizeof(sGrpName));
 			dbRs.FetchString(1, sGrpFlags, sizeof(sGrpFlags));
@@ -1189,7 +1197,11 @@ public void LoadGroupsOverrides(Database db, DBResultSet dbRs, const char[] sErr
 		while (dbRs.MoreRows)
 		{
 			dbRs.FetchRow();
-			if (dbRs.IsFieldNull(0))
+		#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR == 7
+			if (!SQL_IsFieldNull(dbRs, 0))
+		#else
+			if (!dbRs.IsFieldNull(0))
+		#endif
 				continue; // Sometimes some rows return NULL due to some setups
 			
 			dbRs.FetchString(0, sGroupName, sizeof(sGroupName));
@@ -1282,7 +1294,11 @@ public void AdminsDone(Database db, DBResultSet dbRs, const char[] sError, any i
 		while (dbRs.MoreRows)
 		{
 			dbRs.FetchRow();
-			if (dbRs.IsFieldNull(0))
+		#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR == 7
+			if (!SQL_IsFieldNull(dbRs, 0))
+		#else
+			if (!dbRs.IsFieldNull(0))
+		#endif
 				continue; // Sometimes some rows return NULL due to some setups
 			
 			dbRs.FetchString(0, sIdentity, sizeof(sIdentity));

@@ -247,9 +247,14 @@ void AdminMenuAddClients(Menu Mmenu, int iClient, int iTarget)
 	LogToFile(g_sLogFile,"add clients menu: admin %d -  target %d userid %d", iClient, iTarget, iUserId);
 #endif
 
-	int iPos = g_aUserId[iClient].FindValue(iUserId);
-	if (iPos > -1)
-		FormatEx(sBuffer, sizeof(sBuffer), "[v] %N (%d)", iTarget, iUserId);
+	if (g_aUserId[iClient])
+	{
+		int iPos = g_aUserId[iClient].FindValue(iUserId);
+		if (iPos > -1)
+			FormatEx(sBuffer, sizeof(sBuffer), "[v] %N (%d)", iTarget, iUserId);
+		else
+			FormatEx(sBuffer, sizeof(sBuffer), "[ ] %N (%d)", iTarget, iUserId);
+	}
 	else
 		FormatEx(sBuffer, sizeof(sBuffer), "[ ] %N (%d)", iTarget, iUserId);
 	
@@ -439,6 +444,8 @@ public int MenuHandler_MenuTypeMute(Menu Mmenu, MenuAction mAction, int iClient,
 		}
 		case MenuAction_Select:
 		{
+			if (iSlot > 2)
+				g_sTarget[iClient][TREASON][0] = '\0';
 			switch(iSlot)
 			{
 				case 0:
@@ -459,19 +466,16 @@ public int MenuHandler_MenuTypeMute(Menu Mmenu, MenuAction mAction, int iClient,
 				case 3: 
 				{
 					g_iTargetType[iClient] = TYPE_UNMUTE;
-					FormatEx(g_sTarget[iClient][TREASON], sizeof(g_sTarget[][]), "%T", "No reason", iClient);
 					OnlineClientSet(iClient);
 				}
 				case 4:
 				{
 					g_iTargetType[iClient] = TYPE_UNGAG;
-					FormatEx(g_sTarget[iClient][TREASON], sizeof(g_sTarget[][]), "%T", "No reason", iClient);
 					OnlineClientSet(iClient);
 				}
 				case 5:
 				{
 					g_iTargetType[iClient] = TYPE_UNSILENCE;
-					FormatEx(g_sTarget[iClient][TREASON], sizeof(g_sTarget[][]), "%T", "No reason", iClient);
 					OnlineClientSet(iClient);
 				}
 			}

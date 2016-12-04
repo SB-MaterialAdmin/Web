@@ -126,13 +126,13 @@ ConfigState g_iConfigState = ConfigState_Non;
 #include "materialadmin/database.sp"
 #include "materialadmin/native.sp"
 
-#define VERSION "0.1.3b"
+#define VERSION "0.1.4b"
 
 public Plugin myinfo = 
 {
 	name = "Material Admin",
 	author = "Grey™",
-	description = "For to sm 1.8",
+	description = "For to sm 1.7",
 	version = VERSION,
 	url = "hlmod.ru Skype: wolf-1-ser"
 };

@@ -148,14 +148,16 @@ void GetClientToBd(int iClient, int iTyp, const char[] sArg = "")
 	{
 		case 0:
 		{
-			for (int i = 1; i <= MaxClients; i++)
+			int iUserId,
+				iTarget;
+			for (int i = 0; i <= g_aUserId[iClient].Length; i++)
 			{
-				if (IsClientInGame(i) && !IsFakeClient(i) && GetUserAdmin(i) == INVALID_ADMIN_ID)
-				{
-					int iIndex = g_aUserId[iClient].FindValue(GetClientUserId(i));
-					if (iIndex != -1)
-						DoCreateDB(iClient, i);
-				}
+				iUserId = g_aUserId[iClient].Get(i);
+				iTarget = GetClientOfUserId(iUserId);
+				if(iTarget)
+					DoCreateDB(iClient, iTarget);
+				else
+					PrintToChat2(iClient, "%T", "No Client Game", iClient);
 			}
 		}
 		case -1:
@@ -496,7 +498,7 @@ void UnMute(int iClient)
 
 void KillTimerMute(int iClient)
 {
-	if(g_hTimerMute[iClient] != null)
+	if(g_hTimerMute[iClient])
 	{
 		KillTimer(g_hTimerMute[iClient]);
 		g_hTimerMute[iClient] = null;
@@ -528,7 +530,7 @@ void UnGag(int iClient)
 
 void KillTimerGag(int iClient)
 {
-	if(g_hTimerGag[iClient] != null)
+	if(g_hTimerGag[iClient])
 	{
 		KillTimer(g_hTimerGag[iClient]);
 		g_hTimerGag[iClient] = null;
@@ -649,7 +651,7 @@ bool ConnectBd(Database db)
 {
 	char sError[256];
 	db = SQL_Connect("sourcebans", false, sError, sizeof(sError));
-	if (db != null)
+	if (db)
 		return true;
 	return false;
 }

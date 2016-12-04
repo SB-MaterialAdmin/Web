@@ -100,13 +100,16 @@ public SMCResult ReadGroups_KeyValue(SMCParser smc, const char[] sKey, const cha
 		{
 			if (StrEqual(sKey, "flags"))
 			{
-				int iLen = strlen(sValue);
-				for (int i = 0; i < iLen; i++)
+				for (int i = 0; i < strlen(sValue); i++)
 				{
 					if (!FindFlagByChar(sValue[i], admFlag))
 						continue;
 
-					g_idGroup.SetFlag(admFlag, true);
+				#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR == 7
+					SetAdmGroupAddFlag(g_idGroup, admFlag, true);
+				#else
+ 					g_idGroup.SetFlag(admFlag, true);
+				#endif
 				}
 			} 
 			else if (StrEqual(sKey, "immunity"))
@@ -124,9 +127,17 @@ public SMCResult ReadGroups_KeyValue(SMCParser smc, const char[] sKey, const cha
 				overRule = Command_Allow;
 			
 			if (sKey[0] == '@')
-				g_idGroup.AddCommandOverride(sKey[1], Override_CommandGroup, overRule);
-			else
-				g_idGroup.AddCommandOverride(sKey, Override_Command, overRule);
+			#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR == 7
+				AddAdmGroupCmdOverride(g_idGroup, sKey[1], Override_CommandGroup, overRule);
+			#else
+ 				g_idGroup.AddCommandOverride(sKey[1], Override_CommandGroup, overRule);
+			#endif
+ 			else
+			#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR == 7
+				AddAdmGroupCmdOverride(g_idGroup, sKey, Override_Command, overRule);
+			#else
+ 				g_idGroup.AddCommandOverride(sKey, Override_Command, overRule);
+			#endif
 			
 		#if DEBUG
 			LogToFile(g_sLogFile, "Laod group command override (group %d, %s, %s)", g_idGroup, sKey, sValue);
@@ -140,14 +151,26 @@ public SMCResult ReadGroups_KeyValue(SMCParser smc, const char[] sKey, const cha
 		{
 			/* If it's a sValue we know about, use it */
 			if (StrEqual(sValue, "*"))
-				g_idGroup.ImmunityLevel = 2;
+			#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR == 7
+				SetAdmGroupImmunityLevel(g_idGroup, 2);
+			#else
+ 				g_idGroup.ImmunityLevel = 2;
+			#endif
 			else if (StrEqual(sValue, "$"))
-				g_idGroup.ImmunityLevel = 1;
+			#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR == 7
+				SetAdmGroupImmunityLevel(g_idGroup, 1);
+			#else
+ 				g_idGroup.ImmunityLevel = 1;
+			#endif
 			else
 			{
 				int iLevel;
 				if (StringToIntEx(sValue, iLevel))
-					g_idGroup.ImmunityLevel = iLevel;
+				#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR == 7
+					SetAdmGroupImmunityLevel(g_idGroup, iLevel);
+				#else
+ 					g_idGroup.ImmunityLevel = iLevel;
+				#endif
 				else
 				{
 					GroupId idGroup;
@@ -157,13 +180,17 @@ public SMCResult ReadGroups_KeyValue(SMCParser smc, const char[] sKey, const cha
 						idGroup = FindAdmGroup(sValue);
 					
 					if (idGroup != INVALID_GROUP_ID)
-						g_idGroup.AddGroupImmunity(idGroup);
+					#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR == 7
+						SetAdmGroupImmuneFrom(g_idGroup, idGroup);
+					#else
+ 						g_idGroup.AddGroupImmunity(idGroup);
+					#endif
 					else
 						LogToFile(g_sLogFile, "Unable to find group: \"%s\"", sValue);
 				}
 			}
 		#if DEBUG
-			LogToFile(g_sLogFile, "Laod group add immunity (%d, %s, %s)", g_idGroup, sKey, sValue);
+			LogToFile(g_sLogFile, "Laod group add immunity level (%d, %s, %s)", g_idGroup, sKey, sValue);
 		#endif
 		}
 	}
@@ -280,15 +307,19 @@ public SMCResult ReadUsers_KeyValue(SMCParser smc, const char[] sKey, const char
 		GroupId idGroup = FindAdmGroup(sValue);
 		if (idGroup == INVALID_GROUP_ID)
 			LogToFile(g_sLogFile, "Unknown group \"%s\"", sValue);
-
-		g_aGroupArray.Push(idGroup);
+		else
+		{
+		#if DEBUG
+			LogToFile(g_sLogFile, "Admin %s group %s %d", g_sCurName, sValue, idGroup);
+		#endif
+			g_aGroupArray.Push(idGroup);
+		}
 	} 
 	else if (StrEqual(sKey, "flags")) 
 	{
-		int iLen = strlen(sValue);
 		AdminFlag admFlag;
 		
-		for (int i = 0; i < iLen; i++)
+		for (int i = 0; i < strlen(sValue); i++)
 		{
 			if (!FindFlagByChar(sValue[i], admFlag))
 				LogToFile(g_sLogFile, "Invalid admFlag detected: %c", sValue[i]);
@@ -329,21 +360,20 @@ public SMCResult ReadUsers_EndSection(SMCParser smc)
 		{
 			AdminFlag admFlags[26];
 			AdminId idAdmin;
-			int i, iGroups, iFlags;
 			
 			if ((idAdmin = FindAdminByIdentity(g_sCurAuth, g_sCurIdent)) != INVALID_ADMIN_ID)
 			{
 				if (g_iCurExpire == 0 || g_iCurExpire > GetTime())
 				{
 				#if DEBUG
-					LogToFile(g_sLogFile, "Add admin %s expire %d (auth %s, %s)", g_sCurName, g_iCurExpire, g_sCurAuth, g_sCurIdent);
+					LogToFile(g_sLogFile, "Add admin %s expire %d", g_sCurName, g_iCurExpire);
 				#endif
 					AddAdminExpire(idAdmin, g_iCurExpire);
 				}
 				else
 				{
 				#if DEBUG
-					LogToFile(g_sLogFile, "Admin %s expire end %d (auth %s, %s)", g_sCurName, g_iCurExpire, g_sCurAuth, g_sCurIdent);
+					LogToFile(g_sLogFile, "Admin %s expire end %d", g_sCurName, g_iCurExpire);
 				#endif
 					RemoveAdmin(idAdmin);
 					return SMCParse_Continue;
@@ -354,14 +384,15 @@ public SMCResult ReadUsers_EndSection(SMCParser smc)
 			}
 			else
 			{
-			#if DEBUG
-				LogToFile(g_sLogFile, "Find admin %s no (auth %s, %s)", g_sCurName, g_sCurAuth, g_sCurIdent);
-			#endif
 				idAdmin = CreateAdmin(g_sCurName);
 			#if DEBUG
 				LogToFile(g_sLogFile, "Create new admin %s (%d, auth %s, %s)", g_sCurName, idAdmin, g_sCurAuth, g_sCurIdent);
 			#endif
-				if (!idAdmin.BindIdentity(g_sCurAuth, g_sCurIdent))
+			#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR == 7
+				if (!BindAdminIdentity(idAdmin, g_sCurAuth, g_sCurIdent))
+			#else
+ 				if (!idAdmin.BindIdentity(g_sCurAuth, g_sCurIdent))
+			#endif
 				{
 					RemoveAdmin(idAdmin);
 
@@ -372,33 +403,65 @@ public SMCResult ReadUsers_EndSection(SMCParser smc)
 				if (g_iCurExpire == 0 || g_iCurExpire > GetTime())
 				{
 				#if DEBUG
-					LogToFile(g_sLogFile, "Add admin %s expire %d (auth %s, %s)", g_sCurName, g_iCurExpire, g_sCurAuth, g_sCurIdent);
+					LogToFile(g_sLogFile, "Add admin %s expire %d", g_sCurName, g_iCurExpire);
 				#endif
 					AddAdminExpire(idAdmin, g_iCurExpire);
 				}
 				else
 				{
 				#if DEBUG
-					LogToFile(g_sLogFile, "Admin %s expire end %d (auth %s, %s)", g_sCurName, g_iCurExpire, g_sCurAuth, g_sCurIdent);
+					LogToFile(g_sLogFile, "Admin %s expire end %d", g_sCurName, g_iCurExpire);
 				#endif
 					RemoveAdmin(idAdmin);
 					return SMCParse_Continue;
 				}
 			}
 			
-			iGroups = g_aGroupArray.Length;
-			for (i = 0; i < iGroups; i++)
-				idAdmin.InheritGroup(g_aGroupArray.Get(i));
+			
+			GroupId idGroup;
+			for (int i = 0; i < g_aGroupArray.Length; i++)
+			{
+				idGroup = g_aGroupArray.Get(i);
+			#if DEBUG
+				#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR == 7
+				if (AdminInheritGroup(idAdmin, idGroup))
+				#else
+				if (idAdmin.InheritGroup(idGroup))
+				#endif
+					LogToFile(g_sLogFile, "Admin %s add group %d", g_sCurName, idGroup);
+				else
+					LogToFile(g_sLogFile, "Admin %s no add group %d", g_sCurName, idGroup);
+			#else
+				#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR == 7
+				AdminInheritGroup(idAdmin, idGroup);
+				#else
+				idAdmin.InheritGroup(idGroup);
+				#endif
+			#endif
+			}
 
 			if(g_sCurPass[0])
-				idAdmin.SetPassword(g_sCurPass);
+			#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR == 7
+				SetAdminPassword(idAdmin, g_sCurPass);
+			#else
+ 				idAdmin.SetPassword(g_sCurPass);
+			#endif
 
+		#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR == 7
+			if (GetAdminImmunityLevel(idAdmin) < g_iCurImmunity)
+				SetAdminImmunityLevel(idAdmin, g_iCurImmunity);
+		#else
 			if (idAdmin.ImmunityLevel < g_iCurImmunity)
 				idAdmin.ImmunityLevel = g_iCurImmunity;
+		#endif
 			
-			iFlags = FlagBitsToArray(g_iCurFlags, admFlags, sizeof(admFlags));
-			for (i = 0; i < iFlags; i++)
-				idAdmin.SetFlag(admFlags[i], true);
+			int iFlags = FlagBitsToArray(g_iCurFlags, admFlags, sizeof(admFlags));
+			for (int i = 0; i < iFlags; i++)
+			#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR == 7
+				SetAdminFlag(idAdmin, admFlags[i], true);
+			#else
+ 				idAdmin.SetFlag(admFlags[i], true);
+			#endif
 			
 		#if DEBUG
 			LogToFile(g_sLogFile, "Laod yes admin (name %s, auth %s, ident %s, flag %d, pass %s, imuni %d, expire %d)", g_sCurName, g_sCurAuth, g_sCurIdent, g_iCurFlags, g_sCurPass, g_iCurImmunity, g_iCurExpire);
