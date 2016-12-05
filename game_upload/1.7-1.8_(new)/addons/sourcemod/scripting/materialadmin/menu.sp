@@ -92,12 +92,12 @@ public int MenuHandler_Setting(Menu Mmenu, MenuAction mAction, int iClient, int 
 		case MenuAction_End: delete Mmenu;
 		case MenuAction_Cancel:
 		{
-			if (iSlot == MenuCancel_ExitBack && g_tmAdminMenu != null)
+			if (iSlot == MenuCancel_ExitBack && g_tmAdminMenu)
 				g_tmAdminMenu.Display(iClient, TopMenuPosition_LastCategory);
 		}
 		case MenuAction_Select:
 		{
-			if (iSlot == 0)
+			if (!iSlot)
 			{
 				AdminHash();
 				PrintToChat2(iClient, "%T",  "ReheshAdminOk", iClient);
@@ -109,7 +109,7 @@ public int MenuHandler_Setting(Menu Mmenu, MenuAction mAction, int iClient, int 
 //меню выбора игрока офлайн
 public void ShowTargetOffline(Database db, DBResultSet dbRs, const char[] sError, any iClient)
 {
-	if(dbRs == null || sError[0])
+	if(!dbRs || sError[0])
 	{
 		LogError("Error loading offline (%s)", sError);
 		return;
@@ -164,7 +164,7 @@ public int MenuHandler_OfflineList(Menu Mmenu, MenuAction mAction, int iClient, 
 		case MenuAction_End: delete Mmenu;
 		case MenuAction_Cancel:
 		{
-			if (iSlot == MenuCancel_ExitBack && g_tmAdminMenu != null)
+			if (iSlot == MenuCancel_ExitBack && g_tmAdminMenu)
 				g_tmAdminMenu.Display(iClient, TopMenuPosition_LastCategory);
 		}
 		case MenuAction_Select:
@@ -276,7 +276,7 @@ public int MenuHandler_OnlineList(Menu Mmenu, MenuAction mAction, int iClient, i
 		case MenuAction_End: delete Mmenu;
 		case MenuAction_Cancel:
 		{
-			if (iSlot == MenuCancel_ExitBack && g_tmAdminMenu != null)
+			if (iSlot == MenuCancel_ExitBack && g_tmAdminMenu)
 				g_tmAdminMenu.Display(iClient, TopMenuPosition_LastCategory);
 		}
 		case MenuAction_Select:
@@ -335,7 +335,7 @@ public int MenuHandler_MenuType(Menu Mmenu, MenuAction mAction, int iClient, int
 		case MenuAction_End: delete Mmenu;
 		case MenuAction_Cancel:
 		{
-			if (iSlot == MenuCancel_ExitBack && g_tmAdminMenu != null)
+			if (iSlot == MenuCancel_ExitBack && g_tmAdminMenu)
 				g_tmAdminMenu.Display(iClient, TopMenuPosition_Start);
 		}
 		case MenuAction_Select:
@@ -439,7 +439,7 @@ public int MenuHandler_MenuTypeMute(Menu Mmenu, MenuAction mAction, int iClient,
 		case MenuAction_End: delete Mmenu;
 		case MenuAction_Cancel:
 		{
-			if (iSlot == MenuCancel_ExitBack && g_tmAdminMenu != null)
+			if (iSlot == MenuCancel_ExitBack && g_tmAdminMenu)
 				g_tmAdminMenu.Display(iClient, TopMenuPosition_Start);
 		}
 		case MenuAction_Select:
@@ -494,8 +494,7 @@ void ShowTimeMenu(int iClient)
 
 	g_mTimeMenu.SetTitle("%T:", "SelectTimeTitle", iClient);
 
-	int iCount = g_mTimeMenu.ItemCount;
-	for (int i = 0; i < iCount; i++)
+	for (int i = 0; i < g_mTimeMenu.ItemCount; i++)
 	{
 		g_mTimeMenu.GetItem(i, sBuffer, sizeof(sBuffer), _, sTitle, sizeof(sTitle));
 	#if DEBUG
@@ -541,7 +540,7 @@ public int MenuHandler_MenuTime(Menu Mmenu, MenuAction mAction, int iClient, int
 	{
 		case MenuAction_Cancel:
 		{
-			if (iSlot == MenuCancel_ExitBack && g_tmAdminMenu != null)
+			if (iSlot == MenuCancel_ExitBack && g_tmAdminMenu)
 			{
 				if (g_bOnileTarget[iClient])
 					ShowTargetOnline(iClient);
@@ -585,7 +584,7 @@ public int MenuHandler_MenuBReason(Menu Mmenu, MenuAction mAction, int iClient, 
 	{
 		case MenuAction_Cancel:
 		{
-			if (iSlot == MenuCancel_ExitBack && g_tmAdminMenu != null)
+			if (iSlot == MenuCancel_ExitBack && g_tmAdminMenu)
 				ShowTimeMenu(iClient);
 		}
 		case MenuAction_Select:
@@ -618,7 +617,7 @@ public int MenuHandler_MenuMReason(Menu Mmenu, MenuAction mAction, int iClient, 
 	{
 		case MenuAction_Cancel:
 		{
-			if (iSlot == MenuCancel_ExitBack && g_tmAdminMenu != null)
+			if (iSlot == MenuCancel_ExitBack && g_tmAdminMenu)
 				ShowTimeMenu(iClient);
 		}
 		case MenuAction_Select:
@@ -652,7 +651,7 @@ public int MenuHandler_MenuHacking(Menu Mmenu, MenuAction mAction, int iClient, 
 	{
 		case MenuAction_Cancel:
 		{
-			if (iSlot == MenuCancel_ExitBack && g_tmAdminMenu != null)
+			if (iSlot == MenuCancel_ExitBack && g_tmAdminMenu)
 				ShowBanReasonMenu(iClient);
 		}
 		case MenuAction_Select:
@@ -705,7 +704,7 @@ void ReportMenu(int iClient)
 		}
 	}
 	
-	if(Mmenu.ItemCount == 0)
+	if(!Mmenu.ItemCount)
 	{
 		FormatEx(sTitle, sizeof(sTitle), "%T", "no target", iClient);
 		Mmenu.AddItem("", sTitle, ITEMDRAW_DISABLED);

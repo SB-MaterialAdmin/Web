@@ -567,7 +567,7 @@ void AddGag(int iClient, int iTime)
 	KillTimerGag(iClient);
 	if (iTime > 0 && iTime < 86400)
 	{
-		if(g_hTimerGag[iClient] == null)
+		if(!g_hTimerGag[iClient])
 			g_hTimerGag[iClient] = CreateTimer(float(iTime), TimerGag, iClient);
 	}
 	
@@ -590,7 +590,7 @@ void AddMute(int iClient, int iTime)
 	FunMute(iClient);
 	if (iTime > 0 && iTime < 86400)
 	{
-		if(g_hTimerMute[iClient] == null)
+		if(!g_hTimerMute[iClient])
 			g_hTimerMute[iClient] = CreateTimer(float(iTime), TimerMute, iClient);
 	}
 
@@ -623,9 +623,9 @@ void AddSilence(int iClient, int iTime)
 	KillTimerGag(iClient);
 	if (iTime > 0 && iTime < 86400)
 	{
-		if(g_hTimerMute[iClient] == null)
+		if(!g_hTimerMute[iClient])
 			g_hTimerMute[iClient] = CreateTimer(float(iTime), TimerMute, iClient);
-		if(g_hTimerGag[iClient] == null)
+		if(!g_hTimerGag[iClient])
 			g_hTimerGag[iClient] = CreateTimer(float(iTime), TimerGag, iClient);
 	}
 

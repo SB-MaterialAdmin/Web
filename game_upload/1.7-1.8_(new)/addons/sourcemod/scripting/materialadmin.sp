@@ -126,7 +126,7 @@ ConfigState g_iConfigState = ConfigState_Non;
 #include "materialadmin/database.sp"
 #include "materialadmin/native.sp"
 
-#define VERSION "0.1.6b"
+#define VERSION "0.1.7b"
 
 public Plugin myinfo = 
 {
@@ -157,9 +157,9 @@ public void OnPluginStart()
 	g_aAdminsExpired = CreateArray(2);
 
 	BuildPath(Path_SM, g_sLogFile, sizeof(g_sLogFile), "logs/materialadmin.log");
-	BuildPath(Path_SM, g_sGroupsLoc,sizeof(g_sGroupsLoc),"configs/materialadmin/admin_groups.cfg");
-	BuildPath(Path_SM, g_sAdminsLoc,sizeof(g_sAdminsLoc),"configs/materialadmin/admins.cfg");
-	BuildPath(Path_SM, g_sOverridesLoc, sizeof(g_sOverridesLoc), "configs/materialadmin/overrides.cfg");
+	BuildPath(Path_SM, g_sGroupsLoc,sizeof(g_sGroupsLoc),"configs/materialadmin/admin/groups.cfg");
+	BuildPath(Path_SM, g_sAdminsLoc,sizeof(g_sAdminsLoc),"configs/materialadmin/admin/admins.cfg");
+	BuildPath(Path_SM, g_sOverridesLoc, sizeof(g_sOverridesLoc), "configs/materialadmin/admin/overrides.cfg");
 	
 #if DEBUG
 	LogToFile(g_sLogFile, "plugin version %s", VERSION);
@@ -296,13 +296,13 @@ void ReadConfig()
 	char sConfigFile[PLATFORM_MAX_PATH];
 	BuildPath(Path_SM, sConfigFile, sizeof(sConfigFile), "configs/materialadmin/materialadmin.cfg");
 
-	if (g_mReasonMMenu != null)
+	if (g_mReasonMMenu)
 		g_mReasonMMenu.RemoveAllItems();
-	if (g_mReasonBMenu != null)
+	if (g_mReasonBMenu)
 		g_mReasonBMenu.RemoveAllItems();
-	if (g_mHackingMenu != null)
+	if (g_mHackingMenu)
 		g_mHackingMenu.RemoveAllItems();
-	if (g_mTimeMenu != null)
+	if (g_mTimeMenu)
 		g_mTimeMenu.RemoveAllItems();
 
 	if(FileExists(sConfigFile))

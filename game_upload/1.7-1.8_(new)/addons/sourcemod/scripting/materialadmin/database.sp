@@ -10,7 +10,7 @@ void ConnectSourceBan()
 
 	char sError[256];
 	g_dSQLite = SQLite_UseDatabase("maDatabase", sError, sizeof(sError));
-	if (g_dSQLite == null)
+	if (!g_dSQLite)
 		SetFailState("Lokal Database failure (%s)", sError);
 	
 	InsertServerInfo();
@@ -84,7 +84,7 @@ void SetOflineInfo(char[] sSteamID, char[] sName, char[] sIP)
 
 public void SQL_Callback_AddClient(Database db, DBResultSet dbRs, const char[] sError, any iData)
 {
-	if (dbRs == null || sError[0])
+	if (!dbRs || sError[0])
 		LogToFile(g_sLogFile, "SQL_Callback_AddClient: %s", sError);
 }
 
@@ -124,7 +124,7 @@ void BdGetInfoOffline(int iClient, int iId)
 
 public void SQL_Callback_GetInfoOffline(Database db, DBResultSet dbRs, const char[] sError, any iClient)
 {
-	if (dbRs == null || sError[0])
+	if (!dbRs || sError[0])
 	{
 		LogToFile(g_sLogFile, "SQL_Callback_GetInfoOffline: %s", sError);
 		PrintToChat2(iClient, "%T", "Failed to player", iClient);
@@ -163,7 +163,7 @@ void BdGetMuteType(int iClient, int iTarget, int iType)
 
 public void SQL_Callback_GetMuteType(Database db, DBResultSet dbRs, const char[] sError, any data)
 {
-	if (dbRs == null || sError[0])
+	if (!dbRs || sError[0])
 		LogToFile(g_sLogFile, "SQL_Callback_GetMuteType: %s", sError);
 	
 	DataPack dPack = view_as<DataPack>(data);
@@ -207,7 +207,7 @@ void BdDelMute(int iClient, int iTarget)
 
 public void SQL_Callback_DelMute(Database db, DBResultSet dbRs, const char[] sError, any data)
 {
-	if (dbRs == null || sError[0])
+	if (!dbRs || sError[0])
 		LogToFile(g_sLogFile, "SQL_Callback_DelMute: %s", sError);
 #if DEBUG
 	if (dbRs.RowCount)
@@ -256,7 +256,7 @@ public void SQL_Callback_CheckBanInBd(Database db, DBResultSet dbRs, const char[
 	char sSteamIp[56];
 	dPack.ReadString(sSteamIp, sizeof(sSteamIp));
 	
-	if (dbRs == null || sError[0])
+	if (!dbRs || sError[0])
 	{
 		LogToFile(g_sLogFile, "SQL_Callback_CheckBanInBd: %s", sError);
 		CreateDB(iClient, iTarget, sSteamIp);
@@ -824,7 +824,7 @@ public void VerifyInsert(Database db, DBResultSet dbRs, const char[] sError, any
 	dPack.ReadString(sTargetName, sizeof(sTargetName));
 
 	
-	if (dbRs == null || sError[0])
+	if (!dbRs || sError[0])
 	{
 		LogToFile(g_sLogFile, "Verify Insert Query Failed: %s", sError);
 		char sQuery[1024];
@@ -873,7 +873,7 @@ void CheckClientBan(int iClient)
 
 public void VerifyBan(Database db, DBResultSet dbRs, const char[] sError, any iUserId)
 {
-	if (dbRs == null || sError[0])
+	if (!dbRs || sError[0])
 	{
 		LogToFile(g_sLogFile, "Verify Ban Query Failed: %s", sError);
 		return;
@@ -1015,7 +1015,7 @@ void CheckClientMute(int iClient, char[] sSteamID)
 
 public void VerifyMute(Database db, DBResultSet dbRs, const char[] sError, any iUserId)
 {
-	if (dbRs == null || sError[0])
+	if (!dbRs || sError[0])
 	{
 		LogToFile(g_sLogFile, "Verify Mute failed: %s", sError);
 		return;
@@ -1071,44 +1071,38 @@ void AdminHash()
 
 public void OverridesDone(Database db, DBResultSet dbRs, const char[] sError, any iData)
 {
-	if (dbRs == null || sError[0])
+	if (!dbRs || sError[0])
 		LogToFile(g_sLogFile, "Failed to retrieve overrides from the database, %s", sError);
 	else
 	{
-		KeyValues kvOverrides = new KeyValues("SB_Overrides");
+		KeyValues kvOverrides = new KeyValues("overrides");
 		
 		char sFlags[32], 
-			sName[64],
-			sType[64];
+			 sName[64],
+			 sType[64];
 		while (dbRs.FetchRow())
 		{
 			dbRs.FetchString(0, sType, sizeof(sType));
 			dbRs.FetchString(1, sName, sizeof(sName));
 			dbRs.FetchString(2, sFlags, sizeof(sFlags));
-			
-			// KeyValuesToFile won't add that key, if the value is ""..
-			if (sFlags[0] == '\0')
+
+			if (!sFlags[0])
 			{
 				sFlags[0] = ' ';
 				sFlags[1] = '\0';
+			}
+
+			if (StrEqual(sType, "command"))
+				kvOverrides.SetString(sName, sFlags);
+			else if (StrEqual(sType, "group"))
+			{
+				Format(sName, sizeof(sName), "@%s", sName);
+				kvOverrides.SetString(sName, sFlags);
 			}
 			
 		#if DEBUG
 			LogToFile(g_sLogFile, "Adding override (%s, %s, %s)", sType, sName, sFlags);
 		#endif
-			
-			if (StrEqual(sType, "command"))
-			{
-				kvOverrides.JumpToKey("override_commands", true);
-				kvOverrides.SetString(sName, sFlags);
-				kvOverrides.GoBack();
-			}
-			else if (StrEqual(sType, "group"))
-			{
-				kvOverrides.JumpToKey("override_groups", true);
-				kvOverrides.SetString(sName, sFlags);
-				kvOverrides.GoBack();
-			}
 		}
 		
 		kvOverrides.Rewind();
@@ -1126,7 +1120,7 @@ public void OverridesDone(Database db, DBResultSet dbRs, const char[] sError, an
 
 public void GroupsDone(Database db, DBResultSet dbRs, const char[] sError, any iData)
 {
-	if (dbRs == null || sError[0])
+	if (!dbRs || sError[0])
 		LogToFile(g_sLogFile, "Failed to retrieve groups from the database, %s", sError);
 	else
 	{
@@ -1146,7 +1140,8 @@ public void GroupsDone(Database db, DBResultSet dbRs, const char[] sError, any i
 		#else
 			if (dbRs.IsFieldNull(0))
 		#endif
-				continue; // Sometimes some rows return NULL due to some setups
+				continue;
+
 			dbRs.FetchString(0, sGrpName, sizeof(sGrpName));
 			dbRs.FetchString(1, sGrpFlags, sizeof(sGrpFlags));
 			iImmunity = dbRs.FetchInt(2);
@@ -1188,7 +1183,7 @@ public void GroupsDone(Database db, DBResultSet dbRs, const char[] sError, any i
 
 public void LoadGroupsOverrides(Database db, DBResultSet dbRs, const char[] sError, any iData)
 {
-	if (dbRs == null || sError[0])
+	if (!dbRs || sError[0])
 		LogToFile(g_sLogFile, "Failed to retrieve group overrides from the database, %s", sError);
 	else
 	{
@@ -1196,21 +1191,18 @@ public void LoadGroupsOverrides(Database db, DBResultSet dbRs, const char[] sErr
 			sType[16],
 			sCommand[64],
 			sAllowed[16];
-		OverrideType iType;
 		
 		KeyValues kvGroups = new KeyValues("groups");
 		kvGroups.ImportFromFile(g_sGroupsLoc);
-		
-		GroupId idGroup = INVALID_GROUP_ID;
-		while (dbRs.MoreRows)
+
+		while (dbRs.FetchRow())
 		{
-			dbRs.FetchRow();
 		#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR == 7
 			if (SQL_IsFieldNull(dbRs, 0))
 		#else
 			if (dbRs.IsFieldNull(0))
 		#endif
-				continue; // Sometimes some rows return NULL due to some setups
+				continue;
 			
 			dbRs.FetchString(0, sGroupName, sizeof(sGroupName));
 			TrimString(sGroupName);
@@ -1220,30 +1212,23 @@ public void LoadGroupsOverrides(Database db, DBResultSet dbRs, const char[] sErr
 			dbRs.FetchString(1, sType, sizeof(sType));
 			dbRs.FetchString(2, sCommand, sizeof(sCommand));
 			dbRs.FetchString(3, sAllowed, sizeof(sAllowed));
-			
-			idGroup = FindAdmGroup(sGroupName);
-			if (idGroup == INVALID_GROUP_ID)
-				continue;
 
-			iType = StrEqual(sType, "group") ? Override_CommandGroup : Override_Command;
-			
-		#if DEBUG
-			LogToFile(g_sLogFile, "AddAdmGroupCmdOverride(%i, %s, %i)", idGroup, sCommand, iType);
-		#endif
-			
-			// Save overrides into admin_groups.cfg backup
 			if (kvGroups.JumpToKey(sGroupName))
 			{
-				kvGroups.JumpToKey("Overrides", true);
-				if (iType == Override_Command)
+				kvGroups.JumpToKey("overrides", true);
+				if (StrEqual(sType, "command"))
 					kvGroups.SetString(sCommand, sAllowed);
-				else
+				else if (StrEqual(sType, "group"))
 				{
 					Format(sCommand, sizeof(sCommand), "@%s", sCommand);
 					kvGroups.SetString(sCommand, sAllowed);
 				}
 				kvGroups.Rewind();
 			}
+			
+		#if DEBUG
+			LogToFile(g_sLogFile, "Adding group %s override (%s, %s)", sGroupName, sType, sCommand);
+		#endif
 		}
 		
 		kvGroups.ExportToFile(g_sGroupsLoc);
@@ -1282,7 +1267,7 @@ public void LoadGroupsOverrides(Database db, DBResultSet dbRs, const char[] sErr
 public void AdminsDone(Database db, DBResultSet dbRs, const char[] sError, any iData)
 {
 	//SELECT authid, srv_password , srv_group, srv_flags, user
-	if (dbRs == null || sError[0])
+	if (!dbRs || sError[0])
 		LogToFile(g_sLogFile, "Failed to retrieve admins from the database, %s", sError);
 	else
 	{
@@ -1380,7 +1365,7 @@ void BekapStart(char[] sQuery)
 
 public void SQL_Callback_AddQueryBekap(Database db, DBResultSet dbRs, const char[] sError, any iData)
 {
-	if (dbRs == null || sError[0])
+	if (!dbRs || sError[0])
 		LogToFile(g_sLogFile, "SQL_Callback_AddQueryBekap: %s", sError);
 }
 
@@ -1393,7 +1378,7 @@ void SentBekapInBd()
 
 public void SQL_Callback_QueryBekap(Database db, DBResultSet dbRs, const char[] sError, any iData)
 {
-	if (dbRs == null || sError[0])
+	if (!dbRs || sError[0])
 		LogToFile(g_sLogFile, "SQL_Callback_QueryBekap: %s", sError);
 
 	if (dbRs.RowCount)
@@ -1415,7 +1400,7 @@ public void SQL_Callback_QueryBekap(Database db, DBResultSet dbRs, const char[] 
 
 public void CheckCallbackBekap(Database db, DBResultSet dbRs, const char[] sError, any iId)
 {
-	if (dbRs == null || sError[0])
+	if (!dbRs || sError[0])
 	{
 		if (g_hTimerBekap == null)
 			g_hTimerBekap = CreateTimer(g_fRetryTime, TimerBekap, _, TIMER_REPEAT|TIMER_FLAG_NO_MAPCHANGE);
@@ -1434,7 +1419,7 @@ public void CheckCallbackBekap(Database db, DBResultSet dbRs, const char[] sErro
 
 public void SQL_Callback_DeleteBekap(Database db, DBResultSet dbRs, const char[] sError, any iData)
 {
-	if (dbRs == null || sError[0])
+	if (!dbRs || sError[0])
 		LogToFile(g_sLogFile, "SQL_Callback_DeleteBekap: %s", sError);
 }
 
@@ -1509,7 +1494,7 @@ public void CheckCallbackReport(Database db, DBResultSet dbRs, const char[] sErr
 	int iClient = GetClientOfUserId(dPack.ReadCell());
 	char sReportName[MAX_NAME_LENGTH];
 	dPack.ReadString(sReportName, sizeof(sReportName));
-	if (dbRs == null || sError[0])
+	if (!dbRs || sError[0])
 	{
 		LogToFile(g_sLogFile, "SQL_CheckCallbackReport: %s", sError);
 		char sQuery[1024];

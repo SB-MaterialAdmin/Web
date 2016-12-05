@@ -38,16 +38,8 @@ static ArrayList g_aGroupArray;
 static int g_iCurFlags,
 	g_iCurImmunity,
 	g_iCurExpire;
-	
-enum OverrideState
-{
-	OverrideState_None,
-	OverrideState_Levels,
-	OverrideState_Overrides,
-}
 
 static SMCParser g_smcOverrideParser;
-static OverrideState g_iOverrideState = OverrideState_None;
 //-----------------------------------------------------------------------------------------------------
 public SMCResult ReadGroups_NewSection(SMCParser smc, const char[] sName, bool opt_quotes)
 {
@@ -76,7 +68,7 @@ public SMCResult ReadGroups_NewSection(SMCParser smc, const char[] sName, bool o
 	} 
 	else if (g_iGroupState == GroupState_InGroup)
 	{
-		if (StrEqual(sName, "Overrides", false))
+		if (StrEqual(sName, "overrides", false))
 			g_iGroupState = GroupState_Overrides;
 		else
 			g_iIgnoreLevel++;
@@ -515,43 +507,17 @@ void ReadUsers()
 
 public SMCResult ReadOverrides_NewSection(SMCParser smc, const char[] sName, bool opt_quotes)
 {
-	if (g_iIgnoreLevel)
-	{
-		g_iIgnoreLevel++;
-		return SMCParse_Continue;
-	}
-	
-	if (g_iOverrideState == OverrideState_None)
-	{
-		if (StrEqual(sName, "override_commands", false))
-			g_iOverrideState = OverrideState_Levels;
-		else
-			g_iIgnoreLevel++;
-	}
-	else if (g_iOverrideState == OverrideState_Levels)
-	{
-		if (StrEqual(sName, "override_groups", false))
-			g_iOverrideState = OverrideState_Overrides;
-		else
-			g_iIgnoreLevel++;
-	} 
-	else
-		g_iIgnoreLevel++;
-	
 	return SMCParse_Continue;
 }
 
 public SMCResult ReadOverrides_KeyValue(SMCParser smc, const char[] sKey, const char[] sValue, bool key_quotes, bool value_quotes)
 {
-	if (g_iIgnoreLevel)
-		return SMCParse_Continue;
-	
 	int iFlags = ReadFlagString(sValue);
 	
-	if (g_iOverrideState == OverrideState_Levels)
+	if (sKey[0] == '@')
+		AddCommandOverride(sKey[1], Override_CommandGroup, iFlags);
+	else
 		AddCommandOverride(sKey, Override_Command, iFlags);
-	else if (g_iOverrideState == OverrideState_Overrides)
-		AddCommandOverride(sKey, Override_CommandGroup, iFlags);
 	
 #if DEBUG
 	LogToFile(g_sLogFile, "Laod overrid (%s, %s)", sKey, sValue);
@@ -562,22 +528,6 @@ public SMCResult ReadOverrides_KeyValue(SMCParser smc, const char[] sKey, const 
 
 public SMCResult ReadOverrides_EndSection(SMCParser smc)
 {
-	/* If we're ignoring, skip out */
-	if (g_iIgnoreLevel)
-	{
-		g_iIgnoreLevel--;
-		return SMCParse_Continue;
-	}
-	
-	if (g_iOverrideState == OverrideState_Levels)
-		g_iOverrideState = OverrideState_None;
-	else if (g_iOverrideState == OverrideState_Overrides)
-	{
-		/* We're totally done parsing */
-		g_iOverrideState = OverrideState_Levels;
-		return SMCParse_Halt;
-	}
-	
 	return SMCParse_Continue;
 }
 
@@ -590,9 +540,6 @@ void ReadOverrides()
 		g_smcOverrideParser.OnKeyValue = ReadOverrides_KeyValue;
 		g_smcOverrideParser.OnLeaveSection = ReadOverrides_EndSection;
 	}
-	
-	g_iIgnoreLevel = 0;
-	g_iOverrideState = OverrideState_None;
 
 	if(FileExists(g_sOverridesLoc))
 	{
