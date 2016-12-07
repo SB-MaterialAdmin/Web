@@ -149,7 +149,7 @@ void GetClientToBd(int iClient, int iTyp, const char[] sArg = "")
 		case 0:
 		{
 			int iTarget;
-			for (int i = 0; i <= g_aUserId[iClient].Length; i++)
+			for (int i = 0; i < g_aUserId[iClient].Length; i++)
 			{
 				iTarget = GetClientOfUserId(g_aUserId[iClient].Get(i));
 				if(iTarget)
@@ -441,8 +441,9 @@ public Action TimerAdminExpire(Handle timer, any data)
 
 	char sLength[128];
 	int iLength = iExpire - GetTime();
-	FormatVrema(iClient, iLength, sLength, sizeof(sLength));	
-	PrintToChat2(iClient, "%T", "Admin Expire", iClient, sLength);
+	FormatVrema(iClient, iLength, sLength, sizeof(sLength));
+	if(IsClientInGame(iClient))
+		PrintToChat2(iClient, "%T", "Admin Expire", iClient, sLength);
 	
 	return Plugin_Stop;
 }
@@ -669,7 +670,10 @@ void CreateSayBanned(char[] sAdminName, int iClient, int iCreated, int iTime, ch
 		CreateTeaxtDialog(iClient, "%T", "Banned Admin panel", iClient, sAdminName, sReason, sCreated, sEnds, sLength, g_sWebsite);
 	}
 	else
-		KickClient(iClient, "%T", "Banned Admin", iClient, sAdminName, sReason, sCreated, sLength, g_sWebsite);
+	{
+		if(IsClientInGame(iClient))
+			KickClient(iClient, "%T", "Banned Admin", iClient, sAdminName, sReason, sCreated, sLength, g_sWebsite);
+	}
 }
 
 void CreateTeaxtDialog(int iClient, const char[] sMesag, any ...)
@@ -683,10 +687,12 @@ void CreateTeaxtDialog(int iClient, const char[] sMesag, any ...)
 	kvKey.SetString("title", sTitle);
 	kvKey.SetNum("level", 0);
 	kvKey.SetString("msg", sText);
-	CreateDialog(iClient, kvKey, DialogType_Text);
+	if(IsClientInGame(iClient))
+	{
+		CreateDialog(iClient, kvKey, DialogType_Text);
+		CreateTimer(0.1, TimerKick, GetClientUserId(iClient));
+	}
 	delete kvKey;
-	
-	CreateTimer(0.1, TimerKick, GetClientUserId(iClient));
 }
 
 public Action TimerKick(Handle timer, any iUserId)
