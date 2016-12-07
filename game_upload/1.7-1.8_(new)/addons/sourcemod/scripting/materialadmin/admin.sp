@@ -512,6 +512,9 @@ public SMCResult ReadOverrides_NewSection(SMCParser smc, const char[] sName, boo
 
 public SMCResult ReadOverrides_KeyValue(SMCParser smc, const char[] sKey, const char[] sValue, bool key_quotes, bool value_quotes)
 {
+	if(!sKey[0])
+		return SMCParse_Continue;
+	
 	int iFlags = ReadFlagString(sValue);
 	
 	if (sKey[0] == '@')

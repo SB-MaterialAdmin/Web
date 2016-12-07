@@ -126,7 +126,7 @@ ConfigState g_iConfigState = ConfigState_Non;
 #include "materialadmin/database.sp"
 #include "materialadmin/native.sp"
 
-#define VERSION "0.1.7b"
+#define VERSION "0.1.8b"
 
 public Plugin myinfo = 
 {
@@ -156,10 +156,14 @@ public void OnPluginStart()
 
 	g_aAdminsExpired = CreateArray(2);
 
-	BuildPath(Path_SM, g_sLogFile, sizeof(g_sLogFile), "logs/materialadmin.log");
+	char sPath[56];
+	BuildPath(Path_SM, sPath, sizeof(sPath), "configs/materialadmin/admin");
+	if(!DirExists(sPath))
+		CreateDirectory(sPath, 511);
 	BuildPath(Path_SM, g_sGroupsLoc,sizeof(g_sGroupsLoc),"configs/materialadmin/admin/groups.cfg");
 	BuildPath(Path_SM, g_sAdminsLoc,sizeof(g_sAdminsLoc),"configs/materialadmin/admin/admins.cfg");
 	BuildPath(Path_SM, g_sOverridesLoc, sizeof(g_sOverridesLoc), "configs/materialadmin/admin/overrides.cfg");
+	BuildPath(Path_SM, g_sLogFile, sizeof(g_sLogFile), "logs/materialadmin.log");
 	
 #if DEBUG
 	LogToFile(g_sLogFile, "plugin version %s", VERSION);
