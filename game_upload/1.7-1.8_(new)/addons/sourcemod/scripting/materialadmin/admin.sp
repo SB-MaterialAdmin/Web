@@ -40,6 +40,20 @@ static int g_iCurFlags,
 	g_iCurExpire;
 
 static SMCParser g_smcOverrideParser;
+
+#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR == 7
+public int OnRebuildAdminCache(AdminCachePart acPart)
+#else
+public void OnRebuildAdminCache(AdminCachePart acPart)
+#endif
+{
+	if (acPart == AdminCache_Overrides)
+		ReadOverrides();
+	else if (acPart == AdminCache_Groups)
+		ReadGroups();
+	else if (acPart == AdminCache_Admins)
+		ReadUsers();
+}
 //-----------------------------------------------------------------------------------------------------
 public SMCResult ReadGroups_NewSection(SMCParser smc, const char[] sName, bool opt_quotes)
 {
