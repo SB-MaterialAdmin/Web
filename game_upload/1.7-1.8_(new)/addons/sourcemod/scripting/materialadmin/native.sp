@@ -82,25 +82,33 @@ public int Native_SetClientMuteType(Handle plugin, int numParams)
 	int iTarget = GetNativeCell(2);
 	g_iTarget[iClient][TTIME] = GetNativeCell(3);
 	GetNativeString(4, g_sTarget[iClient][TREASON], sizeof(g_sTarget[][]));
-	g_iTargetType[iClient] = GetNativeCell(5);
+	int iType = GetNativeCell(5);
+	
+	if (iType > 2 && iType < 10 && iType != 6)
+		g_iTargetType[iClient] = iType;
+	else
+	{
+		ThrowNativeError(1, "Mute Error: Invalid Type.");
+		return false;
+	}
 	
 	if (iClient && IsClientInGame(iClient))
 	{
 		if (GetUserAdmin(iClient) == INVALID_ADMIN_ID)
 		{
-			ThrowNativeError(1, "Mute Error: Player is not an admin.");
+			ThrowNativeError(2, "Mute Error: Player is not an admin.");
 			return false;
 		}
 		
 		if (!CheckAdminFlags(iClient, ADMFLAG_CHAT))
 		{
-			ThrowNativeError(2, "Mute Error: Player does not have CHAT flag.");
+			ThrowNativeError(3, "Mute Error: Player does not have CHAT flag.");
 			return false;
 		}
 	}
 	if (!iTarget && !IsClientInGame(iTarget))
 	{
-		ThrowNativeError(3, "Mute Error: Player no game.");
+		ThrowNativeError(4, "Mute Error: Player no game.");
 		return false;
 	}
 	
@@ -116,19 +124,27 @@ public int Native_OffSetClientMuteType(Handle plugin, int numParams)
 	GetNativeString(4, g_sTarget[iClient][TNAME], sizeof(g_sTarget[][]));
 	g_iTarget[iClient][TTIME] = GetNativeCell(5);
 	GetNativeString(6, g_sTarget[iClient][TREASON], sizeof(g_sTarget[][]));
-	g_iTargetType[iClient] = GetNativeCell(7);
+	int iType = GetNativeCell(7);
+	
+	if (iType > 2 && iType < 10 && iType != 6)
+		g_iTargetType[iClient] = iType;
+	else
+	{
+		ThrowNativeError(1, "Mute Error: Invalid Type.");
+		return false;
+	}
 	
 	if (iClient && IsClientInGame(iClient))
 	{
 		if (GetUserAdmin(iClient) == INVALID_ADMIN_ID)
 		{
-			ThrowNativeError(1, "Mute Error: Player is not an admin.");
+			ThrowNativeError(2, "Mute Error: Player is not an admin.");
 			return false;
 		}
 		
 		if (!CheckAdminFlags(iClient, ADMFLAG_CHAT))
 		{
-			ThrowNativeError(2, "Mute Error: Player does not have CHAT flag.");
+			ThrowNativeError(3, "Mute Error: Player does not have CHAT flag.");
 			return false;
 		}
 	}

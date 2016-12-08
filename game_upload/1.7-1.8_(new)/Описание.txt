@@ -66,3 +66,38 @@ ma_wb_rehashadm - обновить список админов
 Для нормальной работы нужно их удалить и через админ меню снова выдать. На данный момент в веб части нет иконки на этот мут.
 
 Плагины требующие basecomm нужно править, потому как он выгружается с моим плагином.
+
+Для скриптеров.
+Всё описание функций есть в иклуде на русском.
+Примеры замен:
+
+форварды
+BaseComm_OnClientMute(int client, bool muteState);
+BaseComm_OnClientGag(int client, bool gagState);
+заменены на
+MAOnClientUnMuted(int iClient, int iTarget, char[] sIp, char[] sSteamID, char[] sName, int iType, char[] sReason);
+MAOnClientMuted(int iClient, int iTarget, char[] sIp, char[] sSteamID, char[] sName, int iType, int iTime, char[] sReason);
+
+бул, проверка на мут
+BaseComm_IsClientGagged(int client);
+BaseComm_IsClientMuted(int client);
+заменён на инт
+MAGetClientMuteType(int iClient);
+
+дать мут
+BaseComm_SetClientGag(int client, bool gagState);
+BaseComm_SetClientMute(int client, bool muteState);
+заменены на
+MASetClientMuteType(int iClient, int iTarget, int iTime, char[] sReason, int iType);
+MAOffSetClientMuteType(int iClient, char[] sSteamID, char[] sIp, char[] sName, int iTime, char[] sReason, int iType);
+
+Про функции;
+MASetClientMuteType(int iClient, int iTarget, int iTime, char[] sReason, int iType);
+при указание типа MA_UNGAG, MA_UNMUTE, MA_UNSILENCE
+iTime можно указать 0, при этих типов он не используется
+
+MAOffSetClientMuteType(int iClient, char[] sSteamID, char[] sIp, char[] sName, int iTime, char[] sReason, int iType);
+при указание типа MA_UNGAG, MA_UNMUTE, MA_UNSILENCE
+iTime можно указать 0, при этих типов он не используется
+sIp можно указать "", при этих типов он не используется
+sName можно указать "", при этих типов он не используется

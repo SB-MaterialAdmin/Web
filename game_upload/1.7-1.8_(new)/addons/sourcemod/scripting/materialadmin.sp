@@ -126,7 +126,7 @@ ConfigState g_iConfigState = ConfigState_Non;
 #include "materialadmin/database.sp"
 #include "materialadmin/native.sp"
 
-#define VERSION "0.2.0b"
+#define VERSION "0.2.1b"
 
 public Plugin myinfo = 
 {
