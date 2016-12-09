@@ -133,4 +133,11 @@ class CPaymentService {
      * @return string NotifySign
      */
     public function getNotifySign() {}
+    
+    /**
+     * Generate URL for client redirect.
+     *
+     * @return string URL.
+     */
+    public function generatePaymentUrl() {}
 }
