@@ -107,6 +107,7 @@ function KickPlayer($check, $sid, $num) {
 		$response = $r->SendCommand(sprintf("ma_wb_ban %s", $check));
 		if ($response && strpos($response, "ok") !== FALSE) {
 			$objResponse->addAssign("srv_$num", "innerHTML", "<font color='green' size='1'><b>Найден и кикнут с сервера.</b></font>");
+			$GLOBALS['db']->Execute("UPDATE `".DB_PREFIX."_bans` SET sid = '".(int) $sid."' WHERE authid = '".$check."' AND RemovedBy IS NULL;");
 			$objResponse->addScript("set_counter('-1');");
 			return $objResponse;
 		}

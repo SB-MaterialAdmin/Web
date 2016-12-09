@@ -99,30 +99,18 @@ function BlockPlayer($check, $sid, $num, $type, $length) {
 			$objResponse->addScript('set_counter(1);');
 			return $objResponse;
 		}
-		$ret = $r->SendCommand("status");
+		$ret = $r->GetInfo();
+		if(!$ret)
+			$objResponse->addAssign("srvip_$num", "innerHTML", "<font size='1'><span title='".$sdata['ip'].":".$sdata['port']."'>".$ret['HostName']."</span></font>");
 		
-		// show hostname instead of the ip, but leave the ip in the title
-		require_once("../includes/system-functions.php");
-		$hostsearch = preg_match_all('/hostname:[ ]*(.+)/',$ret,$hostname,PREG_PATTERN_ORDER);
-		$hostname = trunc(htmlspecialchars($hostname[1][0]),25,false);
-		if(!empty($hostname))
-			$objResponse->addAssign("srvip_$num", "innerHTML", "<font size='1'><span title='".$sdata['ip'].":".$sdata['port']."'>".$hostname."</span></font>");
-		
-		$gothim = false;
-		$search = preg_match_all(STATUS_PARSE,$ret,$matches,PREG_PATTERN_ORDER);
-		//search for the steamid on the server
-		foreach($matches[3] AS $match) {
-			if(substr($match, 8) == substr($check, 8)) {
-				// gotcha!!! kick him!
-				$gothim = true;
-				$GLOBALS['db']->Execute("UPDATE `".DB_PREFIX."_comms` SET sid = '".$sid."' WHERE authid = '".$check."' AND RemovedBy IS NULL;");
-				$requri = substr($_SERVER['REQUEST_URI'], 0, strrpos($_SERVER['REQUEST_URI'], "pages/admin.blockit.php"));
-				$kick = $r->SendCommand("sc_fw_block ".$type." ".$length." ".$match);
-				$objResponse->addAssign("srv_$num", "innerHTML", "<font color='green' size='1'><b><u>Игрок найден и заблокирован!</u></b></font>");
-				$objResponse->addScript("set_counter('-1');");
-				return $objResponse;
-			}
-		}
+		$response = $r->SendCommand("ma_wb_block ".$type." ".$length." ".$check);
+		if ($response && strpos($response, "ok") !== FALSE) {
+            $GLOBALS['db']->Execute("UPDATE `".DB_PREFIX."_comms` SET sid = '".$sid."' WHERE authid = '".$check."' AND RemovedBy IS NULL;");
+			$requri = substr($_SERVER['REQUEST_URI'], 0, strrpos($_SERVER['REQUEST_URI'], "pages/admin.blockit.php"));
+			$objResponse->addAssign("srv_$num", "innerHTML", "<font color='green' size='1'><b>Игрок найден и заблокирован!</b></font>");
+			$objResponse->addScript("set_counter('-1');");
+			return $objResponse;
+        }
 
 		if(!$gothim) {
 			$objResponse->addAssign("srv_$num", "innerHTML", "<font size='1'>Игрок не найден.</font>");
