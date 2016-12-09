@@ -29,11 +29,22 @@ if(!defined("IN_SB")){echo "Ошибка доступа!";die();}
 
 global $theme, $userbank;
 
+global $start;
+$time = microtime();
+$time = explode(" ", $time);
+$time = $time[1] + $time[0];
+$finish = $time;
+$totaltime = ($finish - $start);
 
 $theme->assign('UPDATE_NUM', $GLOBALS['config']['config.version']);
 $theme->assign('THEME_VERSION', theme_version);
 $theme->assign('THEME_LINK', theme_link);
-$theme->assign('SB_VERSION', 	SB_VERSION);
+$theme->assign('SB_VERSION', SB_VERSION);
+
+$theme->assign('show_gendata',      ($GLOBALS['config']['page.footer.allow_show_data'] == "1"));
+$theme->assign('gendata_queries',   $GLOBALS['db']->Queries);
+$theme->assign('gendata_time',      round($totaltime, 2));
+
 $theme->display('page_footer.tpl');
 
 if(isset($_GET['p']))
@@ -45,16 +56,7 @@ if(isset($_GET['p']) && $_GET['p'] != "login")
 
 
 	
-if(defined('DEVELOPER_MODE'))
-	{
-		global $start;
-		$time = microtime();
-		$time = explode(" ", $time);
-		$time = $time[1] + $time[0];
-		$finish = $time;
-		$totaltime = ($finish - $start);
-		printf ("<h3>Страница загружена за %f секунд.</h3>", $totaltime);
-		
+if(defined('DEVELOPER_MODE')) {
 		echo '<h3>Менеджер данных пользователя</h3><pre>';
 		PrintArray($userbank); 
 		echo '</pre><h3>Сообщение данных</h3><pre>';

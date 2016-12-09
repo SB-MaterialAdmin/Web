@@ -233,6 +233,8 @@ else
 				
 				$nocountryfetch = (isset($_POST['banlist_nocountryfetch']) && $_POST['banlist_nocountryfetch'] == "on" ? 1 : 0);
 				
+				$gendata = (isset($_POST['footer_gendata']) && $_POST['footer_gendata'] == "on") ? 1 : 0;
+				
 				$onlyinvolved = (isset($_POST['protest_emailonlyinvolved']) && $_POST['protest_emailonlyinvolved'] == "on" ? 1 : 0);
 				
 				$admin_list_en = (isset($_POST['admin_list_t']) && $_POST['admin_list_t'] == "on" ? 1 : 0);
@@ -274,6 +276,7 @@ else
 												(" . (int)$_POST['default_page'] . ", 'config.defaultpage'),
 												(" . (int)$_POST['block_home'] . ", 'config.home.comms'),
 												(".(int)$admin_list_en.", 'page.adminlist'),
+												('".(int)$gendata."', 'page.footer.allow_show_data'),
 												(".(int)$vay4_en.", 'page.vay4er')", array($_POST['template_title'], $_POST['template_logo'], $_POST['config_dateformat'], $_POST['config_dateformat2'], $_POST['dash_intro_text'], $tz_string, $summertime, $cureason));
 				
 				/* SMTP */
@@ -439,6 +442,7 @@ $('enable_admininfo').checked = <?php echo $GLOBALS['config']['config.enableadmi
 $('allow_admininfo').checked = <?php echo $GLOBALS['config']['config.changeadmininfos']?>;
 $('enable_adminrehashing').checked = <?php echo $GLOBALS['config']['config.enableadminrehashing']?>;
 $('moder_group_st').value = <?php echo $GLOBALS['config']['config.modgroup']?>;
+$('footer_gendata').checked = <?php echo $GLOBALS['config']['page.footer.allow_show_data']?>;
 <?php
 if(ini_get('safe_mode')==1) {
 	print "$('enable_groupbanning').disabled = true;\n";

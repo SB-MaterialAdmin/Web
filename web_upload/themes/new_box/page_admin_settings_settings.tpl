@@ -113,6 +113,7 @@
 						</div>
 					</div>
 				</div>
+				{display_material_checkbox name="footer_gendata" help_title="Время генерации" help_text="Включает отображение времени генерации страницы и кол-во выполненных запросов к БД в 'подвале'."}
 				
 			</div>
 			

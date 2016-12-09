@@ -11,6 +11,12 @@
                 <li>Версия {$SB_VERSION} / <b>{$THEME_VERSION}</b> ({$UPDATE_NUM})</li>
                 <li><a href="https://sarabveer.github.io/SourceBans-Fork/" target="_blank" class="footer_link">Команда SourceBans</a></li>
             </ul>
+            {if $show_gendata}
+            <ul class="f-menu">
+                <li>Сгенерировано за {$gendata_time} секунд</li>
+                <li>Выполнено {$gendata_queries} запросов к БД</li>
+            </ul>
+            {/if}
         </footer>
 
         <!-- Page Loader -->

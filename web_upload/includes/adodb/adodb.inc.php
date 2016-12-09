@@ -412,7 +412,7 @@ if (!defined('_ADODB_LAYER')) {
 	//
 	// PUBLIC VARS
 	//
-	var $Queries;
+	var $Queries = 0;
 	var $dataProvider = 'native';
 	var $databaseType = '';		/// RDBMS currently in use, eg. odbc, mysql, mssql
 	var $database = '';			/// Name of database to be used.
