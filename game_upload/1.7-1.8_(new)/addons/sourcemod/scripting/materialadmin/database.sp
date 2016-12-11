@@ -961,7 +961,6 @@ public void VerifyBan(Database db, DBResultSet dbRs, const char[] sError, any iU
 			else
 				KickClient(iClient, "%T", "Banned", iClient, sReason, sCreated, sLength, g_sWebsite);
 		}
-		ServerCommand("banid 5 %s", sSteamID);
 	}
 	else
 	{
@@ -1062,7 +1061,6 @@ public void VerifyMute(Database db, DBResultSet dbRs, const char[] sError, any i
 // работа с админами
 void AdminHash()
 {
-	g_aAdminsExpired.Clear();
 	char sQuery[204];
 	FormatEx(sQuery, sizeof(sQuery), "SELECT type, name, flags FROM %s_overrides", g_sDatabasePrefix);
 	g_dDatabase.SetCharset("utf8");
@@ -1344,6 +1342,8 @@ public void AdminsDone(Database db, DBResultSet dbRs, const char[] sError, any i
 	}
 	
 	ReadUsers();
+	if (!g_bLalodAdmin)
+		g_bLalodAdmin = true;
 }
 //-------------------------------------------------------------------------------------------------------------
 // бекап бд

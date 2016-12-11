@@ -190,29 +190,33 @@ void ShowTargetOnline(int iClient)
 	Menu Mmenu = new Menu(MenuHandler_OnlineList);
 	Mmenu.SetTitle("%T:", "SelectPlayerTitle", iClient);
 	
-	if (CheckAdminFlags(iClient, ADMFLAG_ROOT))
+	if(g_bMassBan)
 	{
-		FormatEx(sTitle, sizeof(sTitle), "%T", "All", iClient);
-		Mmenu.AddItem("-1", sTitle);
+		if (CheckAdminFlags(iClient, ADMFLAG_ROOT))
+		{
+			FormatEx(sTitle, sizeof(sTitle), "%T", "All", iClient);
+			Mmenu.AddItem("-1", sTitle);
+		}
+		
+		if(g_iGameTyp == GAMETYP_TF2)
+			FormatEx(sTitle, sizeof(sTitle), "%T", "Blue", iClient);
+		else
+			FormatEx(sTitle, sizeof(sTitle), "%T", "CT", iClient);
+		Mmenu.AddItem("-2", sTitle);
+		
+		if(g_iGameTyp == GAMETYP_TF2)
+			FormatEx(sTitle, sizeof(sTitle), "%T", "Red", iClient);
+		else
+			FormatEx(sTitle, sizeof(sTitle), "%T", "T", iClient);
+		Mmenu.AddItem("-3", sTitle);
+		
+		if (g_aUserId[iClient].Length != 0)
+		{
+			FormatEx(sTitle, sizeof(sTitle), "%T", "Clients", iClient);
+			Mmenu.AddItem("0", sTitle);
+		}
 	}
 	
-	if(g_iGameTyp == GAMETYP_TF2)
-		FormatEx(sTitle, sizeof(sTitle), "%T", "Blue", iClient);
-	else
-		FormatEx(sTitle, sizeof(sTitle), "%T", "CT", iClient);
-	Mmenu.AddItem("-2", sTitle);
-	
-	if(g_iGameTyp == GAMETYP_TF2)
-		FormatEx(sTitle, sizeof(sTitle), "%T", "Red", iClient);
-	else
-		FormatEx(sTitle, sizeof(sTitle), "%T", "T", iClient);
-	Mmenu.AddItem("-3", sTitle);
-	
-	if (g_aUserId[iClient].Length != 0)
-	{
-		FormatEx(sTitle, sizeof(sTitle), "%T", "Clients", iClient);
-		Mmenu.AddItem("0", sTitle);
-	}
 	for (int i = 1; i <= MaxClients; i++)
 	{
 		if (IsClientInGame(i) && !IsFakeClient(i) && GetUserAdmin(i) == INVALID_ADMIN_ID)
@@ -224,10 +228,13 @@ void ShowTargetOnline(int iClient)
 	
 	if (!bIsClien)
 	{
-		if (CheckAdminFlags(iClient, ADMFLAG_ROOT))
-			Mmenu.RemoveItem(2);
-		Mmenu.RemoveItem(1);
-		Mmenu.RemoveItem(0);
+		if(g_bMassBan)
+		{
+			if (CheckAdminFlags(iClient, ADMFLAG_ROOT))
+				Mmenu.RemoveItem(2);
+			Mmenu.RemoveItem(1);
+			Mmenu.RemoveItem(0);
+		}
 		FormatEx(sTitle, sizeof(sTitle), "%T", "no target", iClient);
 		Mmenu.AddItem("", sTitle, ITEMDRAW_DISABLED);
 	}
@@ -247,16 +254,21 @@ void AdminMenuAddClients(Menu Mmenu, int iClient, int iTarget)
 	LogToFile(g_sLogFile,"add clients menu: admin %d -  target %d userid %d", iClient, iTarget, iUserId);
 #endif
 
-	if (g_aUserId[iClient])
+	if(g_bMassBan)
 	{
-		int iPos = g_aUserId[iClient].FindValue(iUserId);
-		if (iPos > -1)
-			FormatEx(sBuffer, sizeof(sBuffer), "[v] %N (%d)", iTarget, iUserId);
+		if (g_aUserId[iClient])
+		{
+			int iPos = g_aUserId[iClient].FindValue(iUserId);
+			if (iPos > -1)
+				FormatEx(sBuffer, sizeof(sBuffer), "[v] %N (%d)", iTarget, iUserId);
+			else
+				FormatEx(sBuffer, sizeof(sBuffer), "[ ] %N (%d)", iTarget, iUserId);
+		}
 		else
 			FormatEx(sBuffer, sizeof(sBuffer), "[ ] %N (%d)", iTarget, iUserId);
 	}
 	else
-		FormatEx(sBuffer, sizeof(sBuffer), "[ ] %N (%d)", iTarget, iUserId);
+		FormatEx(sBuffer, sizeof(sBuffer), "%N (%d)", iTarget, iUserId);
 	
 	switch(g_iTargetMuteType[iClient])
 	{
@@ -293,7 +305,15 @@ public int MenuHandler_OnlineList(Menu Mmenu, MenuAction mAction, int iClient, i
 					g_aUserId[iClient].Erase(iPos);
 				else
 					g_aUserId[iClient].Push(g_iTarget[iClient][TTYPE]);
-				ShowTargetOnline(iClient);
+				
+				if(g_bMassBan)
+					ShowTargetOnline(iClient);
+				else
+				{
+					g_iTarget[iClient][TTYPE] = 0;
+					g_bOnileTarget[iClient] = true;
+					ShowTypeMenu(iClient);
+				}
 			}
 			else
 			{

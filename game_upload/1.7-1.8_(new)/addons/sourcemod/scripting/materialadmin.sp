@@ -68,9 +68,10 @@ ConVar g_Cvar_Alltalk,
 	
 Handle g_hTimerMute[MAXPLAYERS+1] = null,
 	g_hTimerGag[MAXPLAYERS+1] = null,
-	g_hTimerBekap = null;
+	g_hTimerBekap = null,
+	g_hOnConfigSettingForward;
 	
-float g_fRetryTime;
+float g_fRetryTime = 60.0;
 
 TopMenu g_tmAdminMenu;
 Menu g_mReasonBMenu,
@@ -92,12 +93,14 @@ bool g_bSayReason[MAXPLAYERS+1],
 	g_bUnBan,
 	g_bReport,
 	g_bBanSayPanel,
+	g_bMassBan,
 	g_bHooked = false,
-	g_bLalod,
+	g_bLalod = false,
+	g_bLalodAdmin = false,
 	g_bOnileTarget[MAXPLAYERS+1],
 	g_bBanClientConnect[MAXPLAYERS+1];
 	
-/* Admin KeyValues */
+// Admin KeyValues
 char g_sGroupsLoc[128],
 	g_sAdminsLoc[128],
 	g_sOverridesLoc[128];
@@ -126,7 +129,7 @@ ConfigState g_iConfigState = ConfigState_Non;
 #include "materialadmin/database.sp"
 #include "materialadmin/native.sp"
 
-#define VERSION "0.2.1b"
+#define VERSION "0.2.2b"
 
 public Plugin myinfo = 
 {
@@ -165,6 +168,8 @@ public void OnPluginStart()
 	BuildPath(Path_SM, g_sOverridesLoc, sizeof(g_sOverridesLoc), "configs/materialadmin/admin/overrides.cfg");
 	BuildPath(Path_SM, g_sLogFile, sizeof(g_sLogFile), "logs/materialadmin.log");
 	
+	g_hOnConfigSettingForward = CreateGlobalForward("MAOnConfigSetting", ET_Ignore);
+	
 #if DEBUG
 	LogToFile(g_sLogFile, "plugin version %s", VERSION);
 #endif
@@ -179,10 +184,13 @@ public void OnPluginStart()
 			LogToFile(g_sLogFile, "g_aUserId %d yes", i);
 	#endif
 	}
+	
+	TopMenu topmenu;
+	if (LibraryExists("adminmenu") && ((topmenu = GetAdminTopMenu()) != null))
+		OnAdminMenuReady(topmenu);
 
 	SBCreateMenu();
 	ReadConfig();
-	g_bLalod = false;
 	ConnectSourceBan();
 	CreateTables();
 }
@@ -236,10 +244,7 @@ public void OnConfigsExecuted()
 	}
 	
 	if (g_bLalod)
-	{
 		ReadConfig();
-		AdminHash();
-	}
 	else
 		g_bLalod = true;
 	
@@ -328,6 +333,8 @@ void ReadConfig()
 		LogToFile(g_sLogFile, "FATAL *** ERROR *** can not find %s", sConfigFile);
 		SetFailState("%sFATAL *** ERROR *** can not find %s", PREFIX, sConfigFile);
 	}
+
+	CreateTimer(2.0, TimerOnConfigSettingForward);
 }
 
 public SMCResult NewSection(SMCParser Smc, const char[] sName, bool bOpt_quotes)
@@ -365,54 +372,61 @@ public SMCResult KeyValue(SMCParser Smc, const char[] sKey, const char[] sValue,
 		{
 			if(strcmp("DatabasePrefix", sKey, false) == 0) 
 				strcopy(g_sDatabasePrefix, sizeof(g_sDatabasePrefix), sValue);
-			if(strcmp("Website", sKey, false) == 0) 
+			else if(strcmp("Website", sKey, false) == 0) 
 				strcopy(g_sWebsite, sizeof(g_sWebsite), sValue);
-			if(strcmp("OffTimeFormat", sKey, false) == 0)
+			else if(strcmp("OffTimeFormat", sKey, false) == 0)
 				strcopy(g_sOffFormatTime, sizeof(g_sOffFormatTime), sValue);
-			if(strcmp("Addban", sKey, false) == 0)
+			else if(strcmp("Addban", sKey, false) == 0)
 			{
 				if(StringToInt(sValue) == 0)
 					g_bAddBan = false;
 				else
 					g_bAddBan = true;
 			}
-			if(strcmp("Unban", sKey, false) == 0)
+			else if(strcmp("Unban", sKey, false) == 0)
 			{
 				if(StringToInt(sValue) == 0)
 					g_bUnBan = false;
 				else
 					g_bUnBan = true;
 			}
-			if(strcmp("OffMapClear", sKey, false) == 0)
+			else if(strcmp("OffMapClear", sKey, false) == 0)
 			{
 				if(StringToInt(sValue) == 0)
 					g_bOffMapClear = false;
 				else
 					g_bOffMapClear = true;
 			}
-			if(strcmp("Report", sKey, false) == 0)
+			else if(strcmp("Report", sKey, false) == 0)
 			{
 				if(StringToInt(sValue) == 0)
 					g_bReport = false;
 				else
 					g_bReport = true;
 			}
-			if(strcmp("BanSayPanel", sKey, false) == 0)
+			else if(strcmp("BanSayPanel", sKey, false) == 0)
 			{
 				if(StringToInt(sValue) == 0)
 					g_bBanSayPanel = false;
 				else
 					g_bBanSayPanel = true;
 			}
-			if(strcmp("ServerID", sKey, false) == 0)
+			else if(strcmp("MassBan", sKey, false) == 0)
+			{
+				if(StringToInt(sValue) == 0)
+					g_bMassBan = false;
+				else
+					g_bMassBan = true;
+			}
+			else if(strcmp("ServerID", sKey, false) == 0)
 				g_iServerID = StringToInt(sValue);
-			if(strcmp("OffMaxPlayers", sKey, false) == 0)
+			else if(strcmp("OffMaxPlayers", sKey, false) == 0)
 				g_iOffMaxPlayers = StringToInt(sValue);
-			if(strcmp("OffMenuNast", sKey, false) == 0)
+			else if(strcmp("OffMenuNast", sKey, false) == 0)
 				g_iOffMenuItems = StringToInt(sValue);
-			if(strcmp("RetryTime", sKey, false) == 0)
+			else if(strcmp("RetryTime", sKey, false) == 0)
 				g_fRetryTime = StringToFloat(sValue);
-			if(strcmp("ShowAdminAction", sKey, false) == 0)
+			else if(strcmp("ShowAdminAction", sKey, false) == 0)
 				g_iShowAdminAction = StringToInt(sValue);
 		#if DEBUG
 			LogToFile(g_sLogFile,"Loaded config. key \"%s\", value \"%s\"", sKey, sValue);

@@ -3,10 +3,95 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	RegPluginLibrary("materialadmin");
 	CreateNative("MAOffBanPlayer", Native_OffBan);
 	CreateNative("MABanPlayer", Native_BanPlayer);
+	CreateNative("MAUnBanPlayer", Native_UnBanPlayer);
 	CreateNative("MAGetAdminExpire", Native_GetAdminExpire);
 	CreateNative("MASetClientMuteType", Native_SetClientMuteType);
 	CreateNative("MAOffSetClientMuteType", Native_OffSetClientMuteType);
 	CreateNative("MAGetClientMuteType", Native_GetClientMuteType);
+	CreateNative("MAGetConfigSetting", Native_GetConfigSetting);
+}
+
+public int Native_GetConfigSetting(Handle plugin, int numParams)
+{
+	int iLen;
+	GetNativeStringLength(1, iLen);
+
+	if (iLen <= 0)
+	{
+		ThrowNativeError(SP_ERROR_NATIVE, "Error: Config Setting invalid.");
+		return false;
+	}
+
+	char sSetting[126],
+		 sValue[512];
+	GetNativeString(1, sSetting, sizeof(sSetting));
+
+	if(StrEqual("DatabasePrefix", sSetting, false)) 
+		strcopy(sValue, sizeof(sValue), g_sDatabasePrefix);
+	else if(StrEqual("Website", sSetting, false)) 
+		strcopy(sValue, sizeof(sValue), g_sWebsite);
+	else if(StrEqual("OffTimeFormat", sSetting, false))
+		strcopy(sValue, sizeof(sValue), g_sOffFormatTime);
+	else if(StrEqual("Addban", sSetting, false))
+	{
+		if(g_bAddBan)
+			sValue = "1";
+		else
+			sValue = "0";
+	}
+	else if(StrEqual("Unban", sSetting, false))
+	{
+		if(g_bUnBan)
+			sValue = "1";
+		else
+			sValue = "0";
+	}
+	else if(StrEqual("OffMapClear", sSetting, false))
+	{
+		if(g_bOffMapClear)
+			sValue = "1";
+		else
+			sValue = "0";
+	}
+	else if(StrEqual("Report", sSetting, false))
+	{
+		if(g_bReport)
+			sValue = "1";
+		else
+			sValue = "0";
+	}
+	else if(StrEqual("BanSayPanel", sSetting, false))
+	{
+		if(g_bBanSayPanel)
+			sValue = "1";
+		else
+			sValue = "0";
+	}
+	else if(StrEqual("MassBan", sSetting, false))
+	{
+		if(g_bMassBan)
+			sValue = "1";
+		else
+			sValue = "0";
+	}
+	else if(StrEqual("ServerID", sSetting, false))
+		IntToString(g_iServerID, sValue, sizeof(sValue));
+	else if(StrEqual("OffMaxPlayers", sSetting, false))
+		IntToString(g_iOffMaxPlayers, sValue, sizeof(sValue));
+	else if(StrEqual("OffMenuNast", sSetting, false))
+		IntToString(g_iOffMenuItems, sValue, sizeof(sValue));
+	else if(StrEqual("RetryTime", sSetting, false))
+		FloatToString(g_fRetryTime, sValue, sizeof(sValue));
+	else if(StrEqual("ShowAdminAction", sSetting, false))
+		IntToString(g_iShowAdminAction, sValue, sizeof(sValue));
+	else
+	{
+		ThrowNativeError(SP_ERROR_NATIVE, "Error: Config Setting invalid.");
+		return false;
+	}
+
+	SetNativeString(2, sValue, sizeof(sValue), false);
+	return true;
 }
 
 public int Native_OffBan(Handle plugin, int numParams)
@@ -22,13 +107,13 @@ public int Native_OffBan(Handle plugin, int numParams)
 	{
 		if (GetUserAdmin(iClient) == INVALID_ADMIN_ID)
 		{
-			ThrowNativeError(1, "Ban Error: Player is not an admin.");
+			ThrowNativeError(SP_ERROR_NATIVE, "Ban Error: Player is not an admin.");
 			return false;
 		}
 		
 		if (!CheckAdminFlags(iClient, ADMFLAG_BAN))
 		{
-			ThrowNativeError(2, "Ban Error: Player does not have BAN flag.");
+			ThrowNativeError(SP_ERROR_NATIVE, "Ban Error: Player does not have BAN flag.");
 			return false;
 		}
 	}
@@ -49,24 +134,51 @@ public int Native_BanPlayer(Handle plugin, int numParams)
 	{
 		if (GetUserAdmin(iClient) == INVALID_ADMIN_ID)
 		{
-			ThrowNativeError(1, "Ban Error: Player is not an admin.");
+			ThrowNativeError(SP_ERROR_NATIVE, "Ban Error: Player is not an admin.");
 			return false;
 		}
 		
 		if (!CheckAdminFlags(iClient, ADMFLAG_BAN))
 		{
-			ThrowNativeError(2, "Ban Error: Player does not have BAN flag.");
+			ThrowNativeError(SP_ERROR_NATIVE, "Ban Error: Player does not have BAN flag.");
 			return false;
 		}
 	}
 	if (!iTarget && !IsClientInGame(iTarget))
 	{
-		ThrowNativeError(3, "Ban Error: Player no game.");
+		ThrowNativeError(SP_ERROR_NATIVE, "Ban Error: Player no game.");
 		return false;
 	}
 	g_iTargetType[iClient] = TYPE_BAN;
 	
 	CreateDB(iClient, iTarget);
+	return true;
+}
+
+public int Native_UnBanPlayer(Handle plugin, int numParams)
+{
+	int iClient = GetNativeCell(1);
+	char sId[MAX_IP_LENGTH];
+	GetNativeString(2, sId, sizeof(sId));
+	GetNativeString(3, g_sTarget[iClient][TREASON], sizeof(g_sTarget[][]));
+	
+	if (iClient && IsClientInGame(iClient))
+	{
+		if (GetUserAdmin(iClient) == INVALID_ADMIN_ID)
+		{
+			ThrowNativeError(SP_ERROR_NATIVE, "UnBan Error: Player is not an admin.");
+			return false;
+		}
+		
+		if (!CheckAdminFlags(iClient, ADMFLAG_UNBAN))
+		{
+			ThrowNativeError(SP_ERROR_NATIVE, "UnBan Error: Player does not have UNBAN flag.");
+			return false;
+		}
+	}
+	g_iTargetType[iClient] = TYPE_UNBAN;
+	
+	CheckBanInBd(iClient, 0, 0, sId);
 	return true;
 }
 
@@ -88,7 +200,7 @@ public int Native_SetClientMuteType(Handle plugin, int numParams)
 		g_iTargetType[iClient] = iType;
 	else
 	{
-		ThrowNativeError(1, "Mute Error: Invalid Type.");
+		ThrowNativeError(SP_ERROR_NATIVE, "Mute Error: Invalid Type.");
 		return false;
 	}
 	
@@ -96,19 +208,19 @@ public int Native_SetClientMuteType(Handle plugin, int numParams)
 	{
 		if (GetUserAdmin(iClient) == INVALID_ADMIN_ID)
 		{
-			ThrowNativeError(2, "Mute Error: Player is not an admin.");
+			ThrowNativeError(SP_ERROR_NATIVE, "Mute Error: Player is not an admin.");
 			return false;
 		}
 		
 		if (!CheckAdminFlags(iClient, ADMFLAG_CHAT))
 		{
-			ThrowNativeError(3, "Mute Error: Player does not have CHAT flag.");
+			ThrowNativeError(SP_ERROR_NATIVE, "Mute Error: Player does not have CHAT flag.");
 			return false;
 		}
 	}
 	if (!iTarget && !IsClientInGame(iTarget))
 	{
-		ThrowNativeError(4, "Mute Error: Player no game.");
+		ThrowNativeError(SP_ERROR_NATIVE, "Mute Error: Player no game.");
 		return false;
 	}
 	
@@ -130,7 +242,7 @@ public int Native_OffSetClientMuteType(Handle plugin, int numParams)
 		g_iTargetType[iClient] = iType;
 	else
 	{
-		ThrowNativeError(1, "Mute Error: Invalid Type.");
+		ThrowNativeError(SP_ERROR_NATIVE, "Mute Error: Invalid Type.");
 		return false;
 	}
 	
@@ -138,13 +250,13 @@ public int Native_OffSetClientMuteType(Handle plugin, int numParams)
 	{
 		if (GetUserAdmin(iClient) == INVALID_ADMIN_ID)
 		{
-			ThrowNativeError(2, "Mute Error: Player is not an admin.");
+			ThrowNativeError(SP_ERROR_NATIVE, "Mute Error: Player is not an admin.");
 			return false;
 		}
 		
 		if (!CheckAdminFlags(iClient, ADMFLAG_CHAT))
 		{
-			ThrowNativeError(3, "Mute Error: Player does not have CHAT flag.");
+			ThrowNativeError(SP_ERROR_NATIVE, "Mute Error: Player does not have CHAT flag.");
 			return false;
 		}
 	}
@@ -159,7 +271,7 @@ public int Native_GetClientMuteType(Handle plugin, int numParams)
 	return g_iTargetMuteType[iClient];
 }
 
-void FireOnClientMuted(int iClient, int iTarget, char[] sIp, char[] sSteamID, char[] sName, int iType, int iTime, const char[] sReason)
+void FireOnClientMuted(int iClient, int iTarget, const char[] sIp, const char[] sSteamID, const char[] sName, int iType, int iTime, const char[] sReason)
 {
  	static Handle hForward;
 	
@@ -178,7 +290,7 @@ void FireOnClientMuted(int iClient, int iTarget, char[] sIp, char[] sSteamID, ch
 	Call_Finish();
 }
 
-void FireOnClientUnMuted(int iClient, int iTarget, char[] sIp, char[] sSteamID, char[] sName, int iType, const char[] sReason)
+void FireOnClientUnMuted(int iClient, int iTarget, const char[] sIp, const char[] sSteamID, const char[] sName, int iType, const char[] sReason)
 {
  	static Handle hForward;
 	
@@ -196,7 +308,7 @@ void FireOnClientUnMuted(int iClient, int iTarget, char[] sIp, char[] sSteamID, 
 	Call_Finish();
 }
 
-void FireOnClientBanned(int iClient, int iTarget, char[] sIp, char[] sSteamID, char[] sName, int iTime, const char[] sReason)
+void FireOnClientBanned(int iClient, int iTarget, const char[] sIp, const char[] sSteamID, const char[] sName, int iTime, const char[] sReason)
 {
  	static Handle hForward;
 	
@@ -243,4 +355,10 @@ void FireOnClientUnBanned(int iClient, const char[] sIp, const char[] sSteamID, 
 	Call_PushString(sSteamID);
 	Call_PushString(sReason);
 	Call_Finish();
+}
+
+public Action TimerOnConfigSettingForward(Handle timer, any data)
+{
+	Call_StartForward(g_hOnConfigSettingForward);
+	Call_Finish();	
 }
