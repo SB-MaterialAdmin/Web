@@ -57,14 +57,17 @@ if(isset($_GET['p']) && $_GET['p'] != "login")
 
 	
 if(defined('DEVELOPER_MODE')) {
-		echo '<h3>Менеджер данных пользователя</h3><pre>';
-		PrintArray($userbank); 
-		echo '</pre><h3>Сообщение данных</h3><pre>';
-		print_r($_POST); 
-		echo '</pre><h3>Данные сеанса</h3><pre>'; 
-	 	print_r($_SESSION); echo'</pre> ';
-	 	echo '</pre><h3>Данные Cookie</h3><pre>'; 
-	 	print_r($_COOKIE); echo'</pre> ';
+		echo('<div class="container" style="padding-bottom: 100px;"><div class="card">');
+		echo('<div class="card-header"><h2>Режим отладки SourceBans</h2></div><div class="card-body card-padding">Активен режим отладки SourceBans. Для отключения, снимите галочку с пункта "Режим отладки" в настройках SourceBans или закомментируйте строчку <pre>define(\'DEVELOPER_MODE\', true);</pre> в <i>config.php</i></div>');
+		echo('<div class="card-header"><h2>Менеджер данных пользователя</h2></div><div class="card-body card-padding"><pre>');
+		PrintArray($userbank);
+		echo('</pre></div><div class="card-header"><h2>Сообщение данных</h2></div><div class="card-body card-padding"><pre>');
+		print_r($_POST);
+		echo('</pre></div><div class="card-header"><h2>Данные сеанса</h2></div><div class="card-body card-padding"><pre>');
+	 	print_r($_SESSION);
+	 	echo('</pre></div><div class="card-header"><h2>Данные Cookie</h2></div><div class="card-body card-padding"><pre>'); 
+	 	print_r($_COOKIE);
+	 	echo('</pre></div></div></div>');
 }
 ?>
 </div>
