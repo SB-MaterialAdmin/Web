@@ -1,7 +1,7 @@
 void RegComands()
 {
 	RegAdminCmd("ma_off_clear", 	CommandClear, 		ADMFLAG_ROOT, 	"Clear history");
-	RegAdminCmd("ma_reload", 		CommandReload, 		ADMFLAG_RCON, 	"Reload sourcebans config and ban reason menu options"); // перезагрузка меню и конфгов
+	RegAdminCmd("ma_reload", 		CommandReload, 		ADMFLAG_RCON, 	"Reload config and ban reason menu options"); // перезагрузка меню и конфгов
 	RegAdminCmd("ma_bd_connect",	CommandConnectBd, 	ADMFLAG_RCON, 	"Reload connect sourcebans bd");
 	RegAdminCmd("sm_ban", 			CommandBan, 		ADMFLAG_BAN, 	"Ban client");
 	RegAdminCmd("sm_addban", 		CommandAddBan, 		ADMFLAG_RCON, 	"Add ban client");

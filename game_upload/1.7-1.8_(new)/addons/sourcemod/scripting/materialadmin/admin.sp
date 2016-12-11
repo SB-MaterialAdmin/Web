@@ -47,12 +47,15 @@ public int OnRebuildAdminCache(AdminCachePart acPart)
 public void OnRebuildAdminCache(AdminCachePart acPart)
 #endif
 {
-	if (acPart == AdminCache_Overrides)
-		ReadOverrides();
-	else if (acPart == AdminCache_Groups)
-		ReadGroups();
-	else if (acPart == AdminCache_Admins)
-		ReadUsers();
+	if (g_bLalodAdmin)
+	{
+		if (acPart == AdminCache_Overrides)
+			ReadOverrides();
+		else if (acPart == AdminCache_Groups)
+			ReadGroups();
+		else if (acPart == AdminCache_Admins)
+			ReadUsers();
+	}
 }
 //-----------------------------------------------------------------------------------------------------
 public SMCResult ReadGroups_NewSection(SMCParser smc, const char[] sName, bool opt_quotes)
@@ -506,6 +509,7 @@ void ReadUsers()
 		
 	if(FileExists(g_sAdminsLoc))
 	{
+		g_aAdminsExpired.Clear();
 		int iLine;
 		SMCError err = g_smcUserParser.ParseFile(g_sAdminsLoc, iLine);
 		if (err != SMCError_Okay)
