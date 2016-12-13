@@ -163,14 +163,23 @@ void BdGetMuteType(int iClient, int iTarget, int iType)
 
 public void SQL_Callback_GetMuteType(Database db, DBResultSet dbRs, const char[] sError, any data)
 {
-	if (!dbRs || sError[0])
-		LogToFile(g_sLogFile, "SQL_Callback_GetMuteType: %s", sError);
-	
 	DataPack dPack = view_as<DataPack>(data);
 	dPack.Reset();
 	int iClient = dPack.ReadCell();
 	int iTarget = dPack.ReadCell();
 	int iType = dPack.ReadCell();
+
+	if (!dbRs || sError[0])
+	{
+		LogToFile(g_sLogFile, "SQL_Callback_GetMuteType: %s", sError);
+		//g_iTargetMuteType[iTarget] = 0;
+		if (iType)
+			CreateDB(iClient, iTarget);
+		else
+			ShowTypeMuteMenu(iClient);
+		return;
+	}
+	
 
 	if (dbRs.FetchRow())
 		g_iTargetMuteType[iTarget] = dbRs.FetchInt(0);
@@ -210,7 +219,7 @@ public void SQL_Callback_DelMute(Database db, DBResultSet dbRs, const char[] sEr
 	if (!dbRs || sError[0])
 		LogToFile(g_sLogFile, "SQL_Callback_DelMute: %s", sError);
 #if DEBUG
-	if (dbRs.RowCount)
+	if (dbRs && dbRs.RowCount)
 		LogToFile(g_sLogFile, "BdDelMute:yes");
 	else
 		LogToFile(g_sLogFile, "BdDelMute:no");
@@ -692,7 +701,10 @@ void CreateDB(int iClient, int iTarget, char[] sSteamIp = "")
 			}
 			if (iTarget)
 			{
-				g_iTargenMuteTime[iTarget] = iCreated + iTime;
+				if (iTime > 0)
+					g_iTargenMuteTime[iTarget] = iCreated + iTime;
+				else
+					g_iTargenMuteTime[iTarget] = iTime;
 				strcopy(g_iTargetMuteReason[iTarget], sizeof(g_iTargetMuteReason[]), g_sTarget[iClient][TREASON]);
 			}
 			if(bSetQ)

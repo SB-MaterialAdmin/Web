@@ -61,7 +61,7 @@ void ShowAdminAction(int iClient, const char[] sMesag, any ...)
 	else
 		PrintToChatAll("\x01%s%s %s.", PREFIX, sName, sBufer);
 }
-
+//-----------------------------------------------------------------------------
 bool CheckAdminFlags(int iClient, int iFlag)
 {
 	int iUserFlags = GetUserFlagBits(iClient);
@@ -71,6 +71,82 @@ bool CheckAdminFlags(int iClient, int iFlag)
 		return false;
 }
 
+int GetImmuneAdmin(AdminId idAdmin)
+{
+	int iAdminImun = idAdmin.ImmunityLevel;
+	int iCount = idAdmin.GroupCount;
+	int iGroupImun,
+		iImune = 0;
+
+	if (iCount)
+	{
+		for (int i = 0; i < iCount; i++)
+		{
+			char sNameGroup[64];
+			GroupId idGroup = idAdmin.GetGroup(i, sNameGroup, sizeof(sNameGroup));
+			iGroupImun = idGroup.ImmunityLevel;
+			if (iImune < iAdminImun && iImune < iGroupImun)
+			{
+				if (iAdminImun >= iGroupImun)
+					iImune = iAdminImun;
+				else
+					iImune = iGroupImun;
+			}
+			else if (iImune < iGroupImun)
+				iImune = iGroupImun;
+		}
+	}
+	else
+		return iAdminImun;
+
+	return iImune;
+}
+
+bool CheckAdminImune(int iAdminClient, int iAdminTarget)
+{
+	if (iAdminClient == iAdminTarget)
+	{
+		if(g_bActionOnTheMy)
+			return true;
+		else
+			return false;
+	}
+
+	AdminId idAdminTarget = GetUserAdmin(iAdminTarget);
+	if (idAdminTarget != INVALID_ADMIN_ID && g_iCvar_ImmunityMode != 0)
+	{
+		AdminId idAdmin = GetUserAdmin(iAdminClient);
+		int iTargetImun = GetImmuneAdmin(idAdminTarget);
+		int iAdminImun = GetImmuneAdmin(idAdmin);
+	#if DEBUG
+		LogToFile(g_sLogFile, "CheckAdminImune: (admin %N - %d)  (target %N - %d)", iAdminClient, iAdminImun, iAdminTarget, iTargetImun);
+	#endif
+		switch(g_iCvar_ImmunityMode)
+		{
+			case 1:
+			{
+				if (iTargetImun < iAdminImun)
+					return true;
+				else
+					return false;
+			}
+			case 2: 
+			{
+				if (iTargetImun >= iAdminImun)
+					return false;
+			}
+			case 3: 
+			{
+				if (iTargetImun == 0 && iAdminImun == 0)
+					return true;
+				else if (iTargetImun >= iAdminImun)
+					return false;
+			}
+		}
+	}
+	return true;
+}
+//-------------------------------------------------------------------------------
 void SBGetCmdArg1(int iClient, char[] sBuffer, char[] sArg, int iMaxLin)
 {
 	int iLen;
@@ -123,20 +199,25 @@ int GetTypeClient(char[] sArg)
 
 bool ValidTime(int iClient)
 {
-	if(g_iTarget[iClient][TTIME] < 0)
+	if (g_iTargetType[iClient] < 3 && g_iTarget[iClient][TTIME] < 0)
 	{
 		if (iClient)
-			PrintToChat2(iClient, "%T", "Invalid time", iClient);
+			PrintToChat2(iClient, "%T", "Invalid time", iClient, 0);
+		else
+			ReplyToCommand(iClient, "%sUsage: [time] invalid", PREFIX);
+		return false;
+	}
+	else if (g_iTarget[iClient][TTIME] < -1)
+	{
+		if (iClient)
+			PrintToChat2(iClient, "%T", "Invalid time", iClient, -1);
 		else
 			ReplyToCommand(iClient, "%sUsage: [time] invalid", PREFIX);
 		return false;
 	}
 	else if (g_iTarget[iClient][TTIME] == 0 && iClient && !CheckAdminFlags(iClient, ADMFLAG_UNBAN))
 	{
-		if (iClient)
-			PrintToChat2(iClient, "%T", "No Access time 0", iClient);
-		else
-			ReplyToCommand(iClient, "%sPermanent Ban allowed Admins with flag UNBAN", PREFIX);
+		PrintToChat2(iClient, "%T", "No Access time 0", iClient);
 		return false;
 	}
 	return true;
@@ -164,7 +245,7 @@ void GetClientToBd(int iClient, int iTyp, const char[] sArg = "")
 			{
 				for (int i = 1; i <= MaxClients; i++)
 				{
-					if(IsClientInGame(i) && !IsFakeClient(i) && GetUserAdmin(i) == INVALID_ADMIN_ID)
+					if(IsClientInGame(i) && !IsFakeClient(i) && CheckAdminImune(iClient, i))
 						DoCreateDB(iClient, i);
 				}
 			}
@@ -173,14 +254,14 @@ void GetClientToBd(int iClient, int iTyp, const char[] sArg = "")
 				if(iClient)
 					PrintToChat2(iClient, "%T", "No Access all", iClient);
 				else
-					ReplyToCommand(iClient, "%sBan all players allowed Admins with flag ROOT.", PREFIX);
+					ReplyToCommand(iClient, "%sSelect all players allowed Admins with flag ROOT.", PREFIX);
 			}
 		}
 		case -2:
 		{
 			for (int i = 1; i <= MaxClients; i++)
 			{
-				if (IsClientInGame(i) && GetClientTeam(i) == CS_TEAM_CT && !IsFakeClient(i) && GetUserAdmin(i) == INVALID_ADMIN_ID)
+				if (IsClientInGame(i) && GetClientTeam(i) == CS_TEAM_CT && !IsFakeClient(i) && CheckAdminImune(iClient, i))
 					DoCreateDB(iClient, i);
 			}
 		}
@@ -188,7 +269,7 @@ void GetClientToBd(int iClient, int iTyp, const char[] sArg = "")
 		{
 			for (int i = 1; i <= MaxClients; i++)
 			{
-				if (IsClientInGame(i) && GetClientTeam(i) == CS_TEAM_T && !IsFakeClient(i) && GetUserAdmin(i) == INVALID_ADMIN_ID)
+				if (IsClientInGame(i) && GetClientTeam(i) == CS_TEAM_T && !IsFakeClient(i) && CheckAdminImune(iClient, i))
 					DoCreateDB(iClient, i);
 			}
 		}
@@ -202,7 +283,7 @@ void GetClientToBd(int iClient, int iTyp, const char[] sArg = "")
 			int iTarget = GetClientOfUserId(iUserId);
 			if (iTarget)
 			{
-				if(GetUserAdmin(iTarget) == INVALID_ADMIN_ID)
+				if(CheckAdminImune(iClient, iTarget))
 					DoCreateDB(iClient, iTarget);
 				else
 				{
@@ -293,9 +374,7 @@ int FindTargetName(char[] sName)
 //---------------------------------------------------------------------------------------------
 public void ConVarChange_Alltalk(ConVar convar, const char[] oldValue, const char[] newValue)
 {
-	int iMode;
-	if (g_iGameTyp != GAMETYP_CSGO)
-		iMode = g_Cvar_Deadtalk.IntValue;
+	g_bCvar_Alltalk = convar.BoolValue;
 
 	for (int i = 1; i <= MaxClients; i++)
 	{
@@ -303,15 +382,15 @@ public void ConVarChange_Alltalk(ConVar convar, const char[] oldValue, const cha
 		{
 			if (g_iTargetMuteType[i] == TYPEMUTE || g_iTargetMuteType[i] == TYPESILENCE)
 				SetClientListeningFlags(i, VOICE_MUTED);
-			else if (g_Cvar_Alltalk.BoolValue)
+			else if (g_bCvar_Alltalk)
 				SetClientListeningFlags(i, VOICE_NORMAL);
 			else if (g_iGameTyp != GAMETYP_CSGO && !IsPlayerAlive(i))
 			{
-				if (iMode == 0)
+				if (g_iCvar_Deadtalk == 0)
 					SetClientListeningFlags(i, VOICE_NORMAL);
-				else if (iMode == 1)
+				else if (g_iCvar_Deadtalk == 1)
 					SetClientListeningFlags(i, VOICE_LISTENALL);
-				else if (iMode == 2)
+				else if (g_iCvar_Deadtalk == 2)
 					SetClientListeningFlags(i, VOICE_TEAM);
 			}
 		}
@@ -320,12 +399,19 @@ public void ConVarChange_Alltalk(ConVar convar, const char[] oldValue, const cha
 
 public void ConVarChange(ConVar convar, const char[] oldValue, const char[] newValue)
 {
-	for (int i = 1; i <= MaxClients; i++)
+	char sName[256];
+	convar.GetName(sName, sizeof(sName));
+	if (StrEqual(sName, "sm_immunity_mode"))
+		g_iCvar_ImmunityMode = convar.IntValue;
+	else
 	{
-		if (IsClientInGame(i))
+		for (int i = 1; i <= MaxClients; i++)
 		{
-			if (g_iTargetMuteType[i] == TYPEMUTE || g_iTargetMuteType[i] == TYPESILENCE)
-				SetClientListeningFlags(i, VOICE_MUTED);
+			if (IsClientInGame(i))
+			{
+				if (g_iTargetMuteType[i] == TYPEMUTE || g_iTargetMuteType[i] == TYPESILENCE)
+					SetClientListeningFlags(i, VOICE_MUTED);
+			}
 		}
 	}
 }
@@ -345,8 +431,8 @@ public void ConVarChange_Deadtalk(ConVar convar, const char[] oldValue, const ch
 	}
 	else
 	{
-		int iMode = g_Cvar_Deadtalk.IntValue;
-		if (iMode)
+		g_iCvar_Deadtalk = convar.IntValue;
+		if (g_iCvar_Deadtalk)
 		{
 			for (int i = 1; i <= MaxClients; i++)
 			{
@@ -354,13 +440,13 @@ public void ConVarChange_Deadtalk(ConVar convar, const char[] oldValue, const ch
 				{
 					if (g_iTargetMuteType[i] == TYPEMUTE || g_iTargetMuteType[i] == TYPESILENCE)
 						SetClientListeningFlags(i, VOICE_MUTED);
-					else if (g_Cvar_Alltalk.BoolValue)
+					else if (g_bCvar_Alltalk)
 						SetClientListeningFlags(i, VOICE_NORMAL);
 					else if (!IsPlayerAlive(i))
 					{
-						if (iMode == 1)
+						if (g_iCvar_Deadtalk == 1)
 							SetClientListeningFlags(i, VOICE_LISTENALL);
-						else if (iMode == 2)
+						else if (g_iCvar_Deadtalk == 2)
 							SetClientListeningFlags(i, VOICE_TEAM);
 					}
 				}
@@ -414,16 +500,15 @@ public void Event_PlayerDeath(Event eEvent, const char[] sName, bool bDontBroadc
 		return;
 	}
 	
-	if (g_Cvar_Alltalk.BoolValue)
+	if (g_bCvar_Alltalk)
 	{
 		SetClientListeningFlags(iClient, VOICE_NORMAL);
 		return;
 	}
 
-	int iMode = g_Cvar_Deadtalk.IntValue;
-	if (iMode == 1)
+	if (g_iCvar_Deadtalk == 1)
 		SetClientListeningFlags(iClient, VOICE_LISTENALL);
-	else if (iMode == 2)
+	else if (g_iCvar_Deadtalk == 2)
 		SetClientListeningFlags(iClient, VOICE_TEAM);
 }
 //---------------------------------------------------------------------------------------------------------
@@ -465,18 +550,25 @@ int GetAdminExpire(AdminId idAdmin)
 //--------------------------------------------------------------------------------------------------
 void FormatVrema(int iClient, int iLength, char[] sLength, int iLens)
 {
-	int iDays = iLength / (60 * 60 * 24);
-	int iHours = (iLength - (iDays * (60 * 60 * 24))) / (60 * 60);
-	int iMinutes = (iLength - (iDays * (60 * 60 * 24)) - (iHours * (60 * 60))) / 60;
-	int iSec = (iLength - (iDays * (60 * 60 * 24)) - (iHours * (60 * 60)) - (iMinutes * 60));
-	int iLen = 0;
-#if DEBUG
-	LogToFile(g_sLogFile, "format vrema: days %d, hours %d, minutes %d, sec %d ", iDays, iHours, iMinutes, iSec);
-#endif
-	if(iDays) iLen += Format(sLength[iLen], iLens - iLen, "%d %T", iDays, "Days", iClient);
-	if(iHours) iLen += Format(sLength[iLen], iLens - iLen, "%s%d %T", iDays ? " " : "", iHours, "Hours", iClient);
-	if(iMinutes) iLen += Format(sLength[iLen], iLens - iLen, "%s%d %T", (iDays || iHours) ? " " : "", iMinutes, "Minutes", iClient);
-	if(iSec) iLen += Format(sLength[iLen], iLens - iLen, "%s%d %T", (iDays || iHours || iMinutes) ? " " : "", iSec, "Sec", iClient);
+	if (iLength == -1)
+		FormatEx(sLength, iLens, "%T", "temporarily", iClient);
+	else if (iLength == 0)
+		FormatEx(sLength, iLens, "%T", "Permanent", iClient);
+	else
+	{
+		int iDays = iLength / (60 * 60 * 24);
+		int iHours = (iLength - (iDays * (60 * 60 * 24))) / (60 * 60);
+		int iMinutes = (iLength - (iDays * (60 * 60 * 24)) - (iHours * (60 * 60))) / 60;
+		int iSec = (iLength - (iDays * (60 * 60 * 24)) - (iHours * (60 * 60)) - (iMinutes * 60));
+		int iLen = 0;
+	#if DEBUG
+		LogToFile(g_sLogFile, "format vrema: days %d, hours %d, minutes %d, sec %d ", iDays, iHours, iMinutes, iSec);
+	#endif
+		if(iDays) iLen += Format(sLength[iLen], iLens - iLen, "%d %T", iDays, "Days", iClient);
+		if(iHours) iLen += Format(sLength[iLen], iLens - iLen, "%s%d %T", iDays ? " " : "", iHours, "Hours", iClient);
+		if(iMinutes) iLen += Format(sLength[iLen], iLens - iLen, "%s%d %T", (iDays || iHours) ? " " : "", iMinutes, "Minutes", iClient);
+		if(iSec) iLen += Format(sLength[iLen], iLens - iLen, "%s%d %T", (iDays || iHours || iMinutes) ? " " : "", iSec, "Sec", iClient);
+	}
 }
 //------------------------------------------------------------------------------------------------------
 // работа с мутами
@@ -602,14 +694,13 @@ void AddMute(int iClient, int iTime)
 
 void FunMute(int iClient)
 {
-	int iMode;
 	if (g_iTargetMuteType[iClient] == TYPEMUTE || g_iTargetMuteType[iClient] == TYPESILENCE)
 		SetClientListeningFlags(iClient, VOICE_MUTED);
-	else if (!IsPlayerAlive(iClient) && g_iGameTyp != GAMETYP_CSGO && (iMode == g_Cvar_Deadtalk.IntValue))
+	else if (!IsPlayerAlive(iClient) && g_iGameTyp != GAMETYP_CSGO && g_iCvar_Deadtalk)
 	{
-		if (iMode == 1)
+		if (g_iCvar_Deadtalk == 1)
 			SetClientListeningFlags(iClient, VOICE_LISTENALL);
-		else if (iMode == 2)
+		else if (g_iCvar_Deadtalk == 2)
 			SetClientListeningFlags(iClient, VOICE_TEAM);
 	}
 	else
@@ -637,8 +728,14 @@ void AddSilence(int iClient, int iTime)
 //---------------------------------------------------------------------------
 public Action TimerBekap(Handle timer, any data)
 {
+#if DEBUG
+	LogToFile(g_sLogFile, "TimerBekap");
+#endif
 	if (ConnectBd(g_dDatabase))
 	{
+	#if DEBUG
+		LogToFile(g_sLogFile, "TimerBekap yes connect bd");
+	#endif
 		SentBekapInBd();
 		g_hTimerBekap = null;
 		return Plugin_Stop;
@@ -649,7 +746,7 @@ public Action TimerBekap(Handle timer, any data)
 bool ConnectBd(Database db)
 {
 	char sError[256];
-	db = SQL_Connect("sourcebans", false, sError, sizeof(sError));
+	db = SQL_Connect("materialadmin", false, sError, sizeof(sError));
 	if (db)
 		return true;
 	return false;

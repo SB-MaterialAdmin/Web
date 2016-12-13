@@ -184,6 +184,11 @@
 	}
 	//----------------------------------------------------------------
 	// чат
+	"temporarily"
+	{
+		"en"			"temporarily"
+		"ru"			"временно"
+	}
 	"Days"
 	{
 		"en"			"days"
@@ -267,18 +272,19 @@
 	}
 	"No Access time 0"
 	{
-		"en"    		"Permanent Ban allowed Admins with flag UNBAN"
-		"ru"    		"Банить навсегда разрешено админам с флагом UNBAN"
+		"en"    		"Permanent time allowed Admins with flag UNBAN"
+		"ru"    		"Время навсегда разрешено админам с флагом UNBAN"
 	}
 	"No Access all"
 	{
-		"en"    		"Ban all players allowed Admins with flag ROOT"
-		"ru"    		"Банить всех разрешено админам с флагом ROOT"
+		"en"    		"Select all players allowed Admins with flag ROOT"
+		"ru"    		"Выбрать всех разрешено админам с флагом ROOT"
 	}
 	"Invalid time"
 	{
+		"#format"		"{1:d}"
 		"en"    		"Invalid time"
-		"ru"    		"Время меньше 0 запрещено"
+		"ru"    		"Время меньше {1} запрещено"
 	}
 	"No active bans"
 	{

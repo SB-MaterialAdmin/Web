@@ -19,21 +19,30 @@ void RegComands()
 	RegServerCmd("ma_wb_getinfo", CommandGetInfo, "Get info by command from web site");
 	RegServerCmd("ma_wb_rehashadm", CommandRehashAdm, "Reload SQL admins");
 	
-	g_Cvar_Alltalk = FindConVar("sv_alltalk");
-	g_Cvar_Alltalk.AddChangeHook(ConVarChange_Alltalk);
+	ConVar Cvar;
+	Cvar = FindConVar("sv_alltalk");
+	Cvar.AddChangeHook(ConVarChange_Alltalk);
+	g_bCvar_Alltalk = Cvar.BoolValue;
 	if (g_iGameTyp == GAMETYP_CSGO)
 	{
-		ConVar Cvar;
+		
 		Cvar = FindConVar("sv_talk_enemy_living");
 		Cvar.AddChangeHook(ConVarChange);
 		Cvar = FindConVar("sv_full_alltalk");
 		Cvar.AddChangeHook(ConVarChange);
-		g_Cvar_Deadtalk = FindConVar("sv_deadtalk");
+		Cvar = FindConVar("sv_deadtalk");
 	}
 	else
-		g_Cvar_Deadtalk = CreateConVar("sm_deadtalk", "0", "Controls how dead communicate. 0 - Off. 1 - Dead players ignore teams. 2 - Dead players talk to living teammates.", 0, true, 0.0, true, 2.0);
+	{
+		Cvar = CreateConVar("sm_deadtalk", "0", "Controls how dead communicate. 0 - Off. 1 - Dead players ignore teams. 2 - Dead players talk to living teammates.", 0, true, 0.0, true, 2.0);
+		g_iCvar_Deadtalk = Cvar.IntValue;
+	}
 
-	g_Cvar_Deadtalk.AddChangeHook(ConVarChange_Deadtalk);
+	Cvar.AddChangeHook(ConVarChange_Deadtalk);
+	Cvar = FindConVar("sm_immunity_mode");
+	Cvar.AddChangeHook(ConVarChange);
+	g_iCvar_ImmunityMode = Cvar.IntValue;
+	
 }
 
 public Action OnClientSayCommand(int iClient, const char[] sCommand, const char[] sArgs)
@@ -67,8 +76,11 @@ public Action OnClientSayCommand(int iClient, const char[] sCommand, const char[
 	if (g_iTargetMuteType[iClient] > 1)
 	{
 		char sLength[128];
-		int iTime = g_iTargenMuteTime[iClient] - GetTime();
-		FormatVrema(iClient, iTime, sLength, sizeof(sLength));
+		if (g_iTargenMuteTime[iClient] > 0)
+			FormatVrema(iClient, g_iTargenMuteTime[iClient] - GetTime(), sLength, sizeof(sLength));
+		else
+			FormatVrema(iClient, g_iTargenMuteTime[iClient], sLength, sizeof(sLength));
+		
 		PrintToChat2(iClient, "%T", "Target no text chat", iClient, sLength, g_iTargetMuteReason[iClient]);
 		return Plugin_Handled;
 	}
@@ -129,10 +141,10 @@ public Action CommandGag(int iClient, int iArgc)
 		return Plugin_Handled;
 	}
 
+	g_iTargetType[iClient] = TYPE_GAG;
 	if (!ValidTime(iClient))
 		return Plugin_Handled;
 	
-	g_iTargetType[iClient] = TYPE_GAG;
 	int iTyp = GetTypeClient(sArg);
 #if DEBUG
 	LogToFile(g_sLogFile,"Command: sm_gag, arg %s, type %d, time %d, reason %s.", sArg, iTyp, g_iTarget[iClient][TTIME], g_sTarget[iClient][TREASON]);
@@ -159,10 +171,10 @@ public Action CommandMute(int iClient, int iArgc)
 		return Plugin_Handled;
 	}
 
+	g_iTargetType[iClient] = TYPE_MUTE;
 	if (!ValidTime(iClient))
 		return Plugin_Handled;
 	
-	g_iTargetType[iClient] = TYPE_MUTE;
 	int iTyp = GetTypeClient(sArg);
 #if DEBUG
 	LogToFile(g_sLogFile,"Command: sm_mute, arg %s, type %d, time %d, reason %s.", sArg, iTyp, g_iTarget[iClient][TTIME], g_sTarget[iClient][TREASON]);
@@ -190,10 +202,10 @@ public Action CommandSil(int iClient, int iArgc)
 		return Plugin_Handled;
 	}
 
+	g_iTargetType[iClient] = TYPE_SILENCE;
 	if (!ValidTime(iClient))
 		return Plugin_Handled;
 	
-	g_iTargetType[iClient] = TYPE_SILENCE;
 	int iTyp = GetTypeClient(sArg);
 #if DEBUG
 	LogToFile(g_sLogFile,"Command: sm_silence, arg %s, type %d, time %d, reason %s.", sArg, iTyp, g_iTarget[iClient][TTIME], g_sTarget[iClient][TREASON]);
@@ -291,10 +303,10 @@ public Action CommandBan(int iClient, int iArgc)
 		return Plugin_Handled;
 	}
 
+	g_iTargetType[iClient] = TYPE_BAN;
 	if (!ValidTime(iClient))
 		return Plugin_Handled;
 	
-	g_iTargetType[iClient] = TYPE_BAN;
 	int iTyp = GetTypeClient(sArg);
 #if DEBUG
 	LogToFile(g_sLogFile,"Command: sm_ban, arg %s, type %d, time %d, reason %s.", sArg, iTyp, g_iTarget[iClient][TTIME], g_sTarget[iClient][TREASON]);
@@ -325,10 +337,9 @@ public Action CommandAddBan(int iClient, int iArgc)
 		return Plugin_Handled;
 	}
 
+	g_iTargetType[iClient] = TYPE_ADDBAN;
 	if (!ValidTime(iClient))
 		return Plugin_Handled;
-	
-	g_iTargetType[iClient] = TYPE_ADDBAN;
 
 	int iTarget;
 	if (strncmp(sArg, "STEAM_", 6) == 0)
@@ -411,7 +422,10 @@ public Action CommandBlock(int iArgc)
 	
 	if(iClient)
 	{
-		g_iTargenMuteTime[iClient] = GetTime() + iTime;
+		if (iTime > 0)
+			g_iTargenMuteTime[iClient] = GetTime() + iTime;
+		else
+			g_iTargenMuteTime[iClient] = iTime;
 		strcopy(g_iTargetMuteReason[iClient], sizeof(g_iTargetMuteReason[]), sArg[3]);
 		ReplyToCommand(0, "ok");
 		switch(iType)

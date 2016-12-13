@@ -219,7 +219,7 @@ void ShowTargetOnline(int iClient)
 	
 	for (int i = 1; i <= MaxClients; i++)
 	{
-		if (IsClientInGame(i) && !IsFakeClient(i) && GetUserAdmin(i) == INVALID_ADMIN_ID)
+		if (IsClientInGame(i) && !IsFakeClient(i) && CheckAdminImune(iClient, i))
 		{
 			AdminMenuAddClients(Mmenu, iClient, i);
 			bIsClien = true;
@@ -716,7 +716,7 @@ void ReportMenu(int iClient)
 	
 	for (int i = 1; i <= MaxClients; i++)
 	{
-		if(IsClientInGame(i) && !IsFakeClient(i) && i != iClient && GetUserAdmin(i) == INVALID_ADMIN_ID)
+		if(IsClientInGame(i) && !IsFakeClient(i) && i != iClient && CheckAdminImune(iClient, i))
 		{
 			FormatEx(sTitle, sizeof(sTitle), "%N", i);
 			FormatEx(sOptions, sizeof(sOptions), "%d", GetClientUserId(i));

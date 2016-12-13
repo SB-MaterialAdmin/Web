@@ -63,8 +63,9 @@ Database g_dSQLite = null,
 ArrayList g_aUserId[MAXPLAYERS+1],
 	g_aAdminsExpired;
 
-ConVar g_Cvar_Alltalk,
-	g_Cvar_Deadtalk;
+bool g_bCvar_Alltalk;
+int g_iCvar_ImmunityMode,
+	g_iCvar_Deadtalk;
 	
 Handle g_hTimerMute[MAXPLAYERS+1] = null,
 	g_hTimerGag[MAXPLAYERS+1] = null,
@@ -94,6 +95,7 @@ bool g_bSayReason[MAXPLAYERS+1],
 	g_bReport,
 	g_bBanSayPanel,
 	g_bMassBan,
+	g_bActionOnTheMy,
 	g_bHooked = false,
 	g_bLalod = false,
 	g_bLalodAdmin = false,
@@ -129,7 +131,7 @@ ConfigState g_iConfigState = ConfigState_Non;
 #include "materialadmin/database.sp"
 #include "materialadmin/native.sp"
 
-#define VERSION "0.2.2b"
+#define VERSION "0.2.3b"
 
 public Plugin myinfo = 
 {
@@ -417,6 +419,13 @@ public SMCResult KeyValue(SMCParser Smc, const char[] sKey, const char[] sValue,
 					g_bMassBan = false;
 				else
 					g_bMassBan = true;
+			}
+			else if(strcmp("ActionOnTheMy", sKey, false) == 0)
+			{
+				if(StringToInt(sValue) == 0)
+					g_bActionOnTheMy = false;
+				else
+					g_bActionOnTheMy = true;
 			}
 			else if(strcmp("ServerID", sKey, false) == 0)
 				g_iServerID = StringToInt(sValue);
