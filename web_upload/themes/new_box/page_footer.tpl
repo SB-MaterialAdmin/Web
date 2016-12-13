@@ -9,7 +9,7 @@
             
             <ul class="f-menu">
                 <li>Версия {$SB_VERSION} / <b>{$THEME_VERSION}</b> ({$UPDATE_NUM})</li>
-                <li><a href="https://sarabveer.github.io/SourceBans-Fork/" target="_blank" class="footer_link">Команда SourceBans</a></li>
+                <li><a href="https://sbpp.github.io/" target="_blank" class="footer_link">Команда SourceBans</a></li>
             </ul>
             {if $show_gendata}
             <ul class="f-menu">
