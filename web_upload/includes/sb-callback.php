@@ -1879,8 +1879,8 @@ function ServerHostPlayers($sid, $type="servers", $obId="", $tplsid="", $open=""
 				$objResponse->addAssign("vac_$sid", "innerHTML", "<img src='images/noshield.png' />");
 			$objResponse->addAssign("map_$sid", "innerHTML", basename($info['Map'])); // Strip Steam Workshop folder
 			if(!$inHome) {
-				$objResponse->addScript("$('mapimg_$sid').setProperty('src', '".GetMapImage($info['Map'], $res[4])."').setProperty('alt', '".$info['Map']."').setProperty('title', '".basename($info['Map'])."');");
-				$objResponse->addAssign("mapimg_$sid", "innerHTML", GetMapImage($info['Map'], $res[4]));
+				$objResponse->addScript("$('mapimg_$sid').setProperty('src', '".GetMapImage(basename($info['Map']), $res[4])."').setProperty('alt', '".$info['Map']."').setProperty('title', '".basename($info['Map'])."');");
+				$objResponse->addAssign("mapimg_$sid", "innerHTML", GetMapImage(basename($info['Map']), $res[4]));
 				if($info['Players'] == 0) {
 					$objResponse->addScript("$('sinfo_$sid').setStyle('display', 'none');");
 					$objResponse->addScript("$('noplayer_$sid').setStyle('display', 'block');");
