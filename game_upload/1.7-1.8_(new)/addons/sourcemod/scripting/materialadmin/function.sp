@@ -642,6 +642,7 @@ void UnSilence(int iClient)
 	g_iTargetMuteType[iClient] = 0;
 	KillTimerGag(iClient);
 	KillTimerMute(iClient);
+	FunMute(iClient);
 #if DEBUG
 	LogToFile(g_sLogFile, "un silence: %N type %d", iClient, g_iTargetMuteType[iClient]);
 #endif
@@ -725,7 +726,7 @@ void AddSilence(int iClient, int iTime)
 	LogToFile(g_sLogFile, "add silence: %N type %d, time %d", iClient, g_iTargetMuteType[iClient], iTime);
 #endif
 }
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------
 public Action TimerBekap(Handle timer, any data)
 {
 #if DEBUG
@@ -741,15 +742,6 @@ public Action TimerBekap(Handle timer, any data)
 		return Plugin_Stop;
 	}
 	return Plugin_Continue;
-}
-
-bool ConnectBd(Database db)
-{
-	char sError[256];
-	db = SQL_Connect("materialadmin", false, sError, sizeof(sError));
-	if (db)
-		return true;
-	return false;
 }
 //--------------------------------------------------------------------------------------------------
 void CreateSayBanned(char[] sAdminName, int iClient, int iCreated, int iTime, char[] sLength, char[] sReason)

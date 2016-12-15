@@ -81,6 +81,20 @@ public int Native_GetConfigSetting(Handle plugin, int numParams)
 		else
 			sValue = "0";
 	}
+	else if(StrEqual("IgnoreBanServer", sSetting, false))
+	{
+		if(g_bIgnoreBanServer)
+			sValue = "1";
+		else
+			sValue = "0";
+	}
+	else if(StrEqual("IgnoreMuteServer", sSetting, false))
+	{
+		if(g_bIgnoreMuteServer)
+			sValue = "1";
+		else
+			sValue = "0";
+	}
 	else if(StrEqual("ServerID", sSetting, false))
 		IntToString(g_iServerID, sValue, sizeof(sValue));
 	else if(StrEqual("OffMaxPlayers", sSetting, false))

@@ -96,9 +96,12 @@ bool g_bSayReason[MAXPLAYERS+1],
 	g_bBanSayPanel,
 	g_bMassBan,
 	g_bActionOnTheMy,
-	g_bHooked = false,
-	g_bLalod = false,
-	g_bLalodAdmin = false,
+	g_bHooked,
+	g_bLalod,
+	g_bLalodAdmin,
+	g_bIgnoreBanServer,
+	g_bIgnoreMuteServer,
+	g_bNewConnect[MAXPLAYERS+1],
 	g_bOnileTarget[MAXPLAYERS+1],
 	g_bBanClientConnect[MAXPLAYERS+1];
 	
@@ -131,7 +134,7 @@ ConfigState g_iConfigState = ConfigState_Non;
 #include "materialadmin/database.sp"
 #include "materialadmin/native.sp"
 
-#define VERSION "0.2.3b"
+#define VERSION "0.2.4b"
 
 public Plugin myinfo = 
 {
@@ -177,19 +180,13 @@ public void OnPluginStart()
 #endif
 	
 	for (int i = 1; i <= MAXPLAYERS; i++)
-	{
 		g_aUserId[i] = CreateArray(ByteCountToCells(12));
-	#if DEBUG
-		if(g_aUserId[i] == null)
-			LogToFile(g_sLogFile, "g_aUserId %d no", i);
-		else
-			LogToFile(g_sLogFile, "g_aUserId %d yes", i);
-	#endif
-	}
 	
 	TopMenu topmenu;
 	if (LibraryExists("adminmenu") && ((topmenu = GetAdminTopMenu()) != null))
 		OnAdminMenuReady(topmenu);
+	
+	HookEvent("player_disconnect", Event_PlayerDisconnect, EventHookMode_Pre);
 
 	SBCreateMenu();
 	ReadConfig();
@@ -250,51 +247,77 @@ public void OnConfigsExecuted()
 	else
 		g_bLalod = true;
 	
+	if (!g_dDatabase)
+	{
+	#if DEBUG
+		LogToFile(g_sLogFile, "map start ConnectBd");
+	#endif
+		if (ConnectBd(g_dDatabase))
+		{
+		#if DEBUG
+			LogToFile(g_sLogFile, "map start ConnectBd: yes");
+		#endif
+			if (g_hTimerBekap)
+			{
+				KillTimer(g_hTimerBekap);
+				g_hTimerBekap = null;
+				SentBekapInBd();
+			}
+		}
+	}
+	
 	if(g_bOffMapClear) 
 		ClearHistories();
 }
 
-// удаление игроков вошедших в игру
 public void OnClientPostAdminCheck(int iClient)
 {
 	if (!IsClientInGame(iClient) || IsFakeClient(iClient)) 
 		return;
 
-	CheckClientBan(iClient);
+	if(!g_bNewConnect[iClient])
+		CheckClientBan(iClient);
+	else
+	{
+		if (g_iTargetMuteType[iClient] == TYPEMUTE || g_iTargetMuteType[iClient] == TYPESILENCE)
+			FunMute(iClient);
+	}
 }
 
- //зачисление в список игроков вышедших из игры
-public void OnClientDisconnect(int iClient) 
+public void Event_PlayerDisconnect(Event eEvent, const char[] sEName, bool bDontBroadcast)
 {
-	if (!IsClientInGame(iClient) || IsFakeClient(iClient) || g_bBanClientConnect[iClient]) 
+	int iClient = GetClientOfUserId(eEvent.GetInt("userid"));
+
+	if (!iClient || IsFakeClient(iClient) || g_bBanClientConnect[iClient]) 
 		return;
 
-	if (GetUserAdmin(iClient) != INVALID_ADMIN_ID) 
-		return;
-
+	g_bNewConnect[iClient] = false;
 	g_bSayReason[iClient] = false;
 	g_bSayReasonReport[iClient] = false;
 	g_iTargetMuteType[iClient] = 0;
 	KillTimerMute(iClient);
 	KillTimerGag(iClient);
 	
-	char sSteamID[MAX_STEAMID_LENGTH],
-		 sName[MAX_NAME_LENGTH],
-		 sIP[MAX_IP_LENGTH];
+	if (GetUserAdmin(iClient) == INVALID_ADMIN_ID) 
+	{
+		char sSteamID[MAX_STEAMID_LENGTH],
+			 sName[MAX_NAME_LENGTH],
+			 sIP[MAX_IP_LENGTH];
 
-	GetClientAuthId(iClient, TYPE_STEAM, sSteamID, sizeof(sSteamID));
-	GetClientName(iClient, sName, sizeof(sName));
-	GetClientIP(iClient, sIP, sizeof(sIP));
-	SetOflineInfo(sSteamID, sName, sIP);
+		GetClientAuthId(iClient, TYPE_STEAM, sSteamID, sizeof(sSteamID));
+		GetClientName(iClient, sName, sizeof(sName));
+		GetClientIP(iClient, sIP, sizeof(sIP));
+		SetOflineInfo(sSteamID, sName, sIP);
 
-#if DEBUG
-	char sTime[64];
-	FormatTime(sTime, sizeof(sTime), g_sOffFormatTime, GetTime());
-	LogToFile(g_sLogFile,"New: %s %s - %s ; %s.", sName, sSteamID, sIP, sTime);
-#endif
+	#if DEBUG
+		char sTime[64];
+		FormatTime(sTime, sizeof(sTime), g_sOffFormatTime, GetTime());
+		LogToFile(g_sLogFile,"New: %s %s - %s ; %s.", sName, sSteamID, sIP, sTime);
+	#endif
+	}
 }
 
-//получение значений конфига сб
+//получение значений конфига
 void ReadConfig()
 {
 	if (!g_smcConfigParser)
@@ -426,6 +449,20 @@ public SMCResult KeyValue(SMCParser Smc, const char[] sKey, const char[] sValue,
 					g_bActionOnTheMy = false;
 				else
 					g_bActionOnTheMy = true;
+			}
+			else if(strcmp("IgnoreBanServer", sKey, false) == 0)
+			{
+				if(StringToInt(sValue) == 0)
+					g_bIgnoreBanServer = false;
+				else
+					g_bIgnoreBanServer = true;
+			}
+			else if(strcmp("IgnoreMuteServer", sKey, false) == 0)
+			{
+				if(StringToInt(sValue) == 0)
+					g_bIgnoreMuteServer = false;
+				else
+					g_bIgnoreMuteServer = true;
 			}
 			else if(strcmp("ServerID", sKey, false) == 0)
 				g_iServerID = StringToInt(sValue);

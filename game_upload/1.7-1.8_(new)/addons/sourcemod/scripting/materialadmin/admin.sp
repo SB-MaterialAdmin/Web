@@ -473,13 +473,13 @@ public SMCResult ReadUsers_EndSection(SMCParser smc)
 			#endif
 			
 		#if DEBUG
-			LogToFile(g_sLogFile, "Laod yes admin (name %s, auth %s, ident %s, flag %d, pass %s, imuni %d, expire %d)", g_sCurName, g_sCurAuth, g_sCurIdent, g_iCurFlags, g_sCurPass, g_iCurImmunity, g_iCurExpire);
+			LogToFile(g_sLogFile, "Laod yes admin (name %s, auth %s, ident %s, flag %d, imuni %d, expire %d)", g_sCurName, g_sCurAuth, g_sCurIdent, g_iCurFlags, g_iCurImmunity, g_iCurExpire);
 		#endif
 		}
 		else
 		{
 		#if DEBUG
-			LogToFile(g_sLogFile, "Laod no admin (name %s, auth %s, ident %s, flag %d, pass %s, imuni %d, expire %d)", g_sCurName, g_sCurAuth, g_sCurIdent, g_iCurFlags, g_sCurPass, g_iCurImmunity, g_iCurExpire);
+			LogToFile(g_sLogFile, "Laod no admin (name %s, auth %s, ident %s, flag %d, imuni %d, expire %d)", g_sCurName, g_sCurAuth, g_sCurIdent, g_iCurFlags, g_iCurImmunity, g_iCurExpire);
 		#endif
 			LogToFile(g_sLogFile, "Failed to create admin: did you forget either the auth or identity properties?");
 		}
