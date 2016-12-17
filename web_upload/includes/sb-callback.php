@@ -2312,7 +2312,7 @@ function PasteBan($sid, $name, $type=0)
 		$objResponse->addScript("$('dialog-control').setStyle('display', 'block');");
 		return $objResponse;
 	} */
-	$ret = $r-SendCommand("ma_wb_getinfo %s", $name);
+	$ret = $r->SendCommand("ma_wb_getinfo %s", $name);
 	$pl  = explode("|", $ret);
 	if (count($pl) < 2) {
 		$objResponse->addScript("ShowBox('Ошибка', 'Невозможно получить информацию о игроке ".addslashes(htmlspecialchars($name)).". Игрок покинул сервер! (".$data['ip'].":".$data['port'].") ', 'red', '', true);");
