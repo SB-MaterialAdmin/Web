@@ -1213,7 +1213,7 @@ function GetUserAvatar($sid = -1) {
             $AvatarFile = $SteamResponse->response->players[0]->avatarfull;
         
         // Add file to memory cache
-        $avatarCache[] = ['authid' => $communityid, 'url' => $avatarFile];
+        $avatarCache[$communityid] = $avatarFile;
         
         // And insert to DB
         $query = null;
