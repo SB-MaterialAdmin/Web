@@ -1213,12 +1213,12 @@ function GetUserAvatar($sid = -1) {
             $AvatarFile = $SteamResponse->response->players[0]->avatarfull;
         
         // Add file to memory cache
-        $avatarCache[$communityid] = $avatarFile;
+        $avatarCache[$communityid] = $AvatarFile;
         
         // And insert to DB
         $query = null;
         $AF = $GLOBALS['db']->qstr($AvatarFile);
-        if ($success) $query = sprintf("UPDATE `%s_avatars` SET `url` = %s", DB_PREFIX, $AF);
+        if ($res) $query = sprintf("UPDATE `%s_avatars` SET `url` = %s", DB_PREFIX, $AF);
         else $query = sprintf("INSERT INTO `%s_avatars` (`authid`, `url`) VALUES ('%s', %s)", DB_PREFIX, $communityid, $AF);
         $GLOBALS['db']->Execute($query);
     }
