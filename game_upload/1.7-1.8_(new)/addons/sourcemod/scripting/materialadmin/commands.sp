@@ -2,7 +2,7 @@ void RegComands()
 {
 	RegAdminCmd("ma_off_clear", 	CommandClear, 		ADMFLAG_ROOT, 	"Clear history");
 	RegAdminCmd("ma_reload", 		CommandReload, 		ADMFLAG_RCON, 	"Reload config and ban reason menu options"); // перезагрузка меню и конфгов
-	RegAdminCmd("ma_bd_connect",	CommandConnectBd, 	ADMFLAG_RCON, 	"Reload connect sourcebans bd");
+	RegAdminCmd("ma_bd_connect",	CommandConnectBd, 	ADMFLAG_RCON, 	"Reload connect bd");
 	RegAdminCmd("sm_ban", 			CommandBan, 		ADMFLAG_BAN, 	"Ban client");
 	RegAdminCmd("sm_addban", 		CommandAddBan, 		ADMFLAG_RCON, 	"Add ban client");
 	RegAdminCmd("sm_unban", 		CommandUnBan,		ADMFLAG_UNBAN, 	"Un ban client");
@@ -407,9 +407,6 @@ public Action CommandBlock(int iArgc)
 	char sArgs[256],
 		sArg[4][264];
 	GetCmdArgString(sArgs, sizeof(sArgs));
-#if DEBUG
-	LogToFile(g_sLogFile,"CommandBlock: %s", sArgs);
-#endif
 
 	int iType, iTime;
 	if (ExplodeString(sArgs, " ", sArg, 4, 264) != 4 || !StringToIntEx(sArg[0], iType) || iType < 1 || iType > 4 || !StringToIntEx(sArg[1], iTime))
@@ -438,6 +435,10 @@ public Action CommandBlock(int iArgc)
 	else
 		ReplyToCommand(0, "nope");
 	
+#if DEBUG
+	LogToFile(g_sLogFile,"CommandBlock: %s", sArgs);
+#endif
+	
 	return Plugin_Handled;
 }
 
@@ -446,9 +447,6 @@ public Action CommandUnBlock(int iArgc)
 	char sArgs[256],
 		sArg[2][64];
 	GetCmdArgString(sArgs, sizeof(sArgs));
-#if DEBUG
-	LogToFile(g_sLogFile,"CommandUnBlock: %s", sArgs);
-#endif
 
 	int iType;
 	if (ExplodeString(sArgs, " ", sArg, 2, 64) != 2 || !StringToIntEx(sArg[0], iType) || iType < 1 || iType > 4)
@@ -472,6 +470,10 @@ public Action CommandUnBlock(int iArgc)
 	else
 		ReplyToCommand(0, "nope");
 	
+#if DEBUG
+	LogToFile(g_sLogFile,"CommandUnBlock: %s", sArgs);
+#endif
+	
 	return Plugin_Handled;
 }
 
@@ -480,9 +482,6 @@ public Action CommandWBan(int iArgc)
 	char sArgs[256],
 		sArg[1][64];
 	GetCmdArgString(sArgs, sizeof(sArgs));
-#if DEBUG
-	LogToFile(g_sLogFile,"CommandWBan: %s", sArgs);
-#endif
 
 	if (!ExplodeString(sArgs, " ", sArg, 1, 64))
 	{
@@ -504,6 +503,10 @@ public Action CommandWBan(int iArgc)
 	else
 		ReplyToCommand(0, "nope");
 	
+#if DEBUG
+	LogToFile(g_sLogFile,"CommandWBan: %s", sArgs);
+#endif
+	
 	return Plugin_Handled;
 }
 
@@ -512,9 +515,6 @@ public Action CommandGetInfo(int iArgc)
 	char sArgs[256],
 		sArg[1][64];
 	GetCmdArgString(sArgs, sizeof(sArgs));
-#if DEBUG
-	LogToFile(g_sLogFile,"CommandGetInfo: %s", sArgs);
-#endif
 
 	if (!ExplodeString(sArgs, " ", sArg, 1, 64))
 	{
@@ -534,6 +534,10 @@ public Action CommandGetInfo(int iArgc)
 	}
 	else
 		ReplyToCommand(0, "nope");
+	
+#if DEBUG
+	LogToFile(g_sLogFile,"CommandGetInfo: %s", sArgs);
+#endif
 	
 	return Plugin_Handled;
 }

@@ -95,6 +95,15 @@ public int Native_GetConfigSetting(Handle plugin, int numParams)
 		else
 			sValue = "0";
 	}
+	else if(StrEqual("ServerBanTyp", sSetting, false))
+	{
+		if(g_bServerBanTyp)
+			sValue = "1";
+		else
+			sValue = "0";
+	}
+	else if(StrEqual("ServerBanTime", sSetting, false))
+		IntToString(g_iServerBanTime, sValue, sizeof(sValue));
 	else if(StrEqual("ServerID", sSetting, false))
 		IntToString(g_iServerID, sValue, sizeof(sValue));
 	else if(StrEqual("OffMaxPlayers", sSetting, false))

@@ -999,6 +999,15 @@ public void VerifyBan(Database db, DBResultSet dbRs, const char[] sError, any iU
 			else
 				KickClient(iClient, "%T", "Banned", iClient, sReason, sCreated, sLength, g_sWebsite);
 		}
+		if (g_iServerBanTime > 0)
+		{
+			DataPack dPack = new DataPack();
+			if (g_bServerBanTyp)
+				dPack.WriteString(sSteamID);
+			else
+				dPack.WriteString(sIP);
+			CreateTimer(0.5, TimerBan, dPack);
+		}
 	}
 	else
 	{

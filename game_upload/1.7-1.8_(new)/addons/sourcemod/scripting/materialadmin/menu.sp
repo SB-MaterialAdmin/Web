@@ -80,6 +80,12 @@ void ShowSetting(int iClient)
 	char sTitle[128];
 	FormatEx(sTitle, sizeof(sTitle), "%T", "ReheshAdmin", iClient);
 	Mmenu.AddItem("", sTitle);
+	FormatEx(sTitle, sizeof(sTitle), "%T", "ClearHistory", iClient);
+	Mmenu.AddItem("", sTitle);
+	FormatEx(sTitle, sizeof(sTitle), "%T", "ReloadConfig", iClient);
+	Mmenu.AddItem("", sTitle);
+	FormatEx(sTitle, sizeof(sTitle), "%T", "ReloadConnect", iClient);
+	Mmenu.AddItem("", sTitle);
 	
 	Mmenu.ExitBackButton = true;
 	Mmenu.Display(iClient, MENU_TIME_FOREVER);
@@ -97,11 +103,40 @@ public int MenuHandler_Setting(Menu Mmenu, MenuAction mAction, int iClient, int 
 		}
 		case MenuAction_Select:
 		{
-			if (!iSlot)
+			switch(iSlot)
 			{
-				AdminHash();
-				PrintToChat2(iClient, "%T",  "ReheshAdminOk", iClient);
+				case 0:
+				{
+					AdminHash();
+					PrintToChat2(iClient, "%T",  "ReheshAdminOk", iClient);
+				}
+				case 1:
+				{
+					ClearHistories();
+					PrintToChat2(iClient, "%T", "Clear history", iClient);
+				}
+				case 2:
+				{
+					ReadConfig();
+					PrintToChat2(iClient, "%T",  "Reload config", iClient);
+				}
+				case 3:
+				{
+					if (ConnectBd(g_dDatabase))
+					{
+						PrintToChat2(iClient, "%T",  "Reload connect ok", iClient);
+						if (g_hTimerBekap)
+						{
+							KillTimer(g_hTimerBekap);
+							g_hTimerBekap = null;
+							SentBekapInBd();
+						}
+					}
+					else
+						PrintToChat2(iClient, "%T",  "Reload connect no", iClient);
+				}
 			}
+			ShowSetting(iClient);
 		}
 	}
 }
@@ -272,10 +307,10 @@ void AdminMenuAddClients(Menu Mmenu, int iClient, int iTarget)
 	
 	switch(g_iTargetMuteType[iClient])
 	{
-		case 0: FormatEx(sTitle, sizeof(sTitle), "[ ] %s", sBuffer);
-		case 1: FormatEx(sTitle, sizeof(sTitle), "[m] %s", sBuffer);
-		case 2: FormatEx(sTitle, sizeof(sTitle), "[g] %s", sBuffer);
-		case 3: FormatEx(sTitle, sizeof(sTitle), "[s] %s", sBuffer);
+		case 0: 			FormatEx(sTitle, sizeof(sTitle), "[ ] %s", sBuffer);
+		case TYPEMUTE: 		FormatEx(sTitle, sizeof(sTitle), "[m] %s", sBuffer);
+		case TYPEGAG: 		FormatEx(sTitle, sizeof(sTitle), "[g] %s", sBuffer);
+		case TYPESILENCE: 	FormatEx(sTitle, sizeof(sTitle), "[s] %s", sBuffer);
 	}
 
 	Mmenu.AddItem(sOption, sTitle);
@@ -538,6 +573,9 @@ void ShowTimeMenu(int iClient)
 		}
 		else if (StringToInt(sBuffer) == -1)
 		{
+		#if DEBUG
+			LogToFile(g_sLogFile,"Menu time: yes %i , %s, %s", i, sBuffer, sTitle);
+		#endif
 			if (g_iTargetType[iClient] == TYPE_BAN)
 			{
 				g_mTimeMenu.RemoveItem(i);
@@ -716,7 +754,7 @@ void ReportMenu(int iClient)
 	
 	for (int i = 1; i <= MaxClients; i++)
 	{
-		if(IsClientInGame(i) && !IsFakeClient(i) && i != iClient && CheckAdminImune(iClient, i))
+		if(IsClientInGame(i) && !IsFakeClient(i) && i != iClient)
 		{
 			FormatEx(sTitle, sizeof(sTitle), "%N", i);
 			FormatEx(sOptions, sizeof(sOptions), "%d", GetClientUserId(i));

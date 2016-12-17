@@ -46,6 +46,21 @@
 		"en"    		"Refresh the list of Admins"
 		"ru"    		"Обновить список админов"
 	}
+	"ClearHistory"
+	{
+		"en"    		"Clear off history"
+		"ru"    		"Очистить оффлайн историю"
+	}
+	"ReloadConfig"
+	{
+		"en"    		"Reload config"
+		"ru"    		"Перезагрузить конфиг"
+	}
+	"ReloadConnect"
+	{
+		"en"    		"Reload connect"
+		"ru"    		"Переподключится к бд"
+	}
 	"SetMute"
 	{
 		"en"    		"Mute"
@@ -219,6 +234,21 @@
 	{
 		"en"    		"Clear history"
 		"ru"    		"История очищена"
+	}
+	"Reload config"
+	{
+		"en"    		"Reload config ok"
+		"ru"    		"Конфиг перезагружен"
+	}
+	"Reload connect ok"
+	{
+		"en"    		"Reload connect ok"
+		"ru"    		"Соединение с бд установлено"
+	}
+	"Reload connect no"
+	{
+		"en"    		"Reload connect no"
+		"ru"    		"Соединение с бд не установлено"
 	}
 	"Failed to bd"
 	{

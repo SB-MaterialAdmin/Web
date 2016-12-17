@@ -778,6 +778,9 @@ void CreateTeaxtDialog(int iClient, const char[] sMesag, any ...)
 	kvKey.SetString("msg", sText);
 	if(IsClientInGame(iClient))
 	{
+	#if DEBUG
+		LogToFile(g_sLogFile, "CreateTeaxtDialog %N", iClient);
+	#endif
 		CreateDialog(iClient, kvKey, DialogType_Text);
 		CreateTimer(0.1, TimerKick, GetClientUserId(iClient));
 	}
@@ -789,5 +792,26 @@ public Action TimerKick(Handle timer, any iUserId)
 	int iClient = GetClientOfUserId(iUserId);
 	if(iClient)
 		KickClient(iClient, "%T", "Banneds", iClient);
+}
+
+public Action TimerBan(Handle timer, any data)
+{
+	DataPack dPack = view_as<DataPack>(data);
+	dPack.Reset();
+	char sBuffer[MAX_IP_LENGTH];
+	dPack.ReadString(sBuffer, sizeof(sBuffer));
+	delete dPack;
+	
+	if (g_bServerBanTyp)
+		ServerCommand("banid %d %s", g_iServerBanTime, sBuffer);
+	else
+		ServerCommand("addip %d %s", g_iServerBanTime, sBuffer);
+	
+#if DEBUG
+	if (g_bServerBanTyp)
+		LogToFile(g_sLogFile, "banid %d %s", g_iServerBanTime, sBuffer);
+	else
+		LogToFile(g_sLogFile, "addip %d %s", g_iServerBanTime, sBuffer);
+#endif
 }
 //-------------------------------------------------------------------------------------------------------------

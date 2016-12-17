@@ -55,6 +55,7 @@ int	g_iServerID = -1,
 	g_iOffMaxPlayers,
 	g_iOffMenuItems,
 	g_iShowAdminAction,
+	g_iServerBanTime,
 	g_iTargetReport[MAXPLAYERS+1]; // репорт юзер
 
 Database g_dSQLite = null,
@@ -101,6 +102,7 @@ bool g_bSayReason[MAXPLAYERS+1],
 	g_bLalodAdmin,
 	g_bIgnoreBanServer,
 	g_bIgnoreMuteServer,
+	g_bServerBanTyp,
 	g_bNewConnect[MAXPLAYERS+1],
 	g_bOnileTarget[MAXPLAYERS+1],
 	g_bBanClientConnect[MAXPLAYERS+1];
@@ -134,7 +136,7 @@ ConfigState g_iConfigState = ConfigState_Non;
 #include "materialadmin/database.sp"
 #include "materialadmin/native.sp"
 
-#define VERSION "0.2.4b"
+#define VERSION "0.2.5 beta"
 
 public Plugin myinfo = 
 {
@@ -289,7 +291,10 @@ public void Event_PlayerDisconnect(Event eEvent, const char[] sEName, bool bDont
 	int iClient = GetClientOfUserId(eEvent.GetInt("userid"));
 
 	if (!iClient || IsFakeClient(iClient) || g_bBanClientConnect[iClient]) 
+	{
+		eEvent.BroadcastDisabled = true;
 		return;
+	}
 
 	g_bNewConnect[iClient] = false;
 	g_bSayReason[iClient] = false;
@@ -464,6 +469,15 @@ public SMCResult KeyValue(SMCParser Smc, const char[] sKey, const char[] sValue,
 				else
 					g_bIgnoreMuteServer = true;
 			}
+			else if(strcmp("ServerBanTyp", sKey, false) == 0)
+			{
+				if(StringToInt(sValue) == 0)
+					g_bServerBanTyp = false;
+				else
+					g_bServerBanTyp = true;
+			}
+			else if(strcmp("ServerBanTime", sKey, false) == 0)
+				g_iServerBanTime = StringToInt(sValue);
 			else if(strcmp("ServerID", sKey, false) == 0)
 				g_iServerID = StringToInt(sValue);
 			else if(strcmp("OffMaxPlayers", sKey, false) == 0)
