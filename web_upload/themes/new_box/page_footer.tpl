@@ -9,8 +9,8 @@
             
             <ul class="f-menu">
                 <li>Версия <b>{$THEME_VERSION}</b> ({$UPDATE_NUM})</li>
-                <li><a href="https://sbpp.github.io/" target="_blank" class="footer_link">Команда SourceBans++</a></li>
-                <li><a href="https://github.com/CrazyHackGUT/SB_Material_Design/blob/master/authors.md" target="_blank" class="footer_link">Команда MATERIAL Admin</a></li>
+                <li><a href="https://sbpp.github.io/" target="_blank" class="footer_link">Команда <b>SourceBans++</b></a></li>
+                <li><a href="https://github.com/CrazyHackGUT/SB_Material_Design/blob/master/authors.md" target="_blank" class="footer_link"><b>MATERIAL Admin</b></a></li>
             </ul>
             {if $show_gendata}
             <ul class="f-menu">
