@@ -8,8 +8,9 @@
 			</div>
             
             <ul class="f-menu">
-                <li>Версия {$SB_VERSION} / <b>{$THEME_VERSION}</b> ({$UPDATE_NUM})</li>
-                <li><a href="https://sbpp.github.io/" target="_blank" class="footer_link">Команда SourceBans</a></li>
+                <li>Версия <b>{$THEME_VERSION}</b> ({$UPDATE_NUM})</li>
+                <li><a href="https://sbpp.github.io/" target="_blank" class="footer_link">Команда SourceBans++</a></li>
+                <li><a href="https://github.com/CrazyHackGUT/SB_Material_Design/blob/master/authors.md" target="_blank" class="footer_link">Команда MATERIAL Admin</a></li>
             </ul>
             {if $show_gendata}
             <ul class="f-menu">
