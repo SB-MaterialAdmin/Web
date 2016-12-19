@@ -166,18 +166,6 @@ if(isset($_POST['username'], $_POST['password'], $_POST['server'], $_POST['port'
 									<td class="<?php echo $class?>"><?php echo $rg==""?'Выкл':'Вкл';?></td>
 								</tr>
 								<tr>
-									<td>Путь к Send Mail</td>
-									<td>Не пустой</td>
-									<td>Н/A</td>
-									<?php 
-										$sm = ini_get("sendmail_path");
-										if($sm)
-											$class = "success c-white";
-										else {  $class = "active"; $errors++;}
-									?>
-									<td class="<?php echo $class?>"><?php echo ($sm?$sm:"Empty");?></td>
-								</tr>
-								<tr>
 									<td>Safe Mode</td>
 									<td>Выкл</td>
 									<td>Н/A</td>
