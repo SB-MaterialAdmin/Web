@@ -1925,7 +1925,10 @@ function ServerHostPlayers($sid, $type="servers", $obId="", $tplsid="", $open=""
 								td.appendChild(b);');
 						// add players
 						$playercount = 0;
-						if($userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_BAN)) {
+						
+						$needAddPlayerManaging = (($userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_BAN) && $GLOBALS['db']->GetOne(sprintf("SELECT COUNT(*) FROM `%s_admins_servers_groups` WHERE `admin_id` = %d AND `server_id` = %d", DB_PREFIX, $userbank->GetAid(), (int)$sid)) == 1) || $userbank->HasAccess(ADMIN_OWNER));
+						
+						if($needAddPlayerManaging) {
 							$dl = "a";
 							$dl2 = 'var i_i = document.createElement("i");
 									//var img = document.createElement("img");
@@ -1973,7 +1976,7 @@ function ServerHostPlayers($sid, $type="servers", $obId="", $tplsid="", $open=""
 															var txt = document.createTextNode("'.SecondsToString($player['Time']).'");
 															td.appendChild(txt);
 														');
-							if($userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_BAN)) {
+							if($needAddPlayerManaging) {
 								$objResponse->addScript('
 									var div = document.createElement("div");
 									div.className = "modal fade";
