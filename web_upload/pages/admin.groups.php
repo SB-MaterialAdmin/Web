@@ -59,15 +59,7 @@ for($i=0;$i<count($server_group_list);$i++)
 {
 	$query = $GLOBALS['db']->GetRow("SELECT COUNT(server_id) AS cnt FROM `" . DB_PREFIX . "_servers_groups` WHERE `group_id` = ".  $server_group_list[$i]['gid'] ) ;
 	$server_group_count[$i] = $query['cnt'];
-	$servers_in_group = $GLOBALS['db']->GetAll("SELECT server_id FROM `" . DB_PREFIX . "_servers_groups` WHERE group_id = " . $server_group_list[$i]['gid']);
-	$server_arr = "";
-	foreach($servers_in_group as $server)
-	{
-		$server_arr .= $server['server_id'] . ";";
-	}
-	echo "<script>";
-	echo "xajax_ServerHostPlayers_list('" . $server_arr . "', 'id', 'servers_" . $server_group_list[$i]['gid']. "');";
-	echo "</script>";
+	$server_group_list[$i]['servers'] = $GLOBALS['db']->GetAll("SELECT server_id FROM `" . DB_PREFIX . "_servers_groups` WHERE group_id = " . $server_group_list[$i]['gid']);
 }
 
 
@@ -89,7 +81,6 @@ echo '<div id="0" style="display:none;">';
 	$theme->assign('server_overrides_list',		$server_admin_group_overrides);
 	$theme->assign('server_group_list', 		$server_admin_group_list);
 	$theme->assign('server_group_count',		count($server_group_list));
-	$theme->assign('server_counts', 			(isset($server_group_count)?$server_group_count:'0'));
 	$theme->assign('server_list', 				$server_group_list);
 	$theme->display('page_admin_groups_list.tpl');
 
@@ -104,7 +95,5 @@ echo '<div id="1" style="display:none;">';
 echo '</div>';
 
 ?>
-	<script>InitAccordion('tr.opener', 'div.opener', 'mainwrapper');</script>
-
 
 </div>
