@@ -91,7 +91,7 @@
 				<thead>
 					<tr>
 						<th class="text-center">Игра</th>
-						<th class="text-center hidden-xs">ОC</th>
+						<th class="text-center hidden-xs">OC</th>
 						<th class="text-center hidden-xs">VAC</th>
 						<th>Название сервера</th>
 						<th class="text-right">Игроки</th>
