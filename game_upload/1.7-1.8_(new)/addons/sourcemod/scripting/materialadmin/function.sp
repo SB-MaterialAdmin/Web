@@ -27,9 +27,9 @@ void PrintToChat2(int iClient, const char[] sMesag, any ...)
 		ReplaceString(sBufer, sizeof(sBufer), sColorT[i], sColorC[i]);
 
 	if (GetUserMessageType() == UM_Protobuf)
-		PrintToChat(iClient, " \x01%s%s.", PREFIX, sBufer);
+		PrintToChat(iClient, " \x01%T %s.", "prifix", iClient, sBufer);
 	else
-		PrintToChat(iClient, "\x01%s%s.", PREFIX, sBufer);
+		PrintToChat(iClient, "\x01%T %s.", "prifix", iClient, sBufer);
 }
 
 void ShowAdminAction(int iClient, const char[] sMesag, any ...)
@@ -57,9 +57,9 @@ void ShowAdminAction(int iClient, const char[] sMesag, any ...)
 		ReplaceString(sBufer, sizeof(sBufer), sColorT[i], sColorC[i]);
 
 	if (GetUserMessageType() == UM_Protobuf)
-		PrintToChatAll(" \x01%s%s %s.", PREFIX, sName, sBufer);
+		PrintToChatAll(" \x01%T %s %s.", "prifix", iClient, sName, sBufer);
 	else
-		PrintToChatAll("\x01%s%s %s.", PREFIX, sName, sBufer);
+		PrintToChatAll("\x01%T %s %s.", "prifix", iClient, sName, sBufer);
 }
 //-----------------------------------------------------------------------------
 bool CheckAdminFlags(int iClient, int iFlag)

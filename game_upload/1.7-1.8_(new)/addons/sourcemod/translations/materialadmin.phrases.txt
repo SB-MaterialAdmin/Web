@@ -8,13 +8,13 @@
 	}
 	"OnlineTitle"
 	{
-		"en"   		 	"Online"
-		"ru"    		"Онлайн"
+		"en"   		 	"Players on the server"
+		"ru"    		"Игроки на сервере"
 	}
 	"OfflineTitle"
 	{
-		"en"    		"Offline"
-		"ru"    		"Офлайн"
+		"en"    		"The left players"
+		"ru"    		"Вышедшие игроки"
 	}
 	"SettingTitle"
 	{
@@ -371,6 +371,11 @@
 		"#format"		"{1:s},{2:s}"
 		"en"			"You have turned off text chat on {1} because ({2})"
 		"ru"			"У вас выключен текстовый чат на {1} по причине ({2})"
+	}
+	"prifix"
+	{
+		"en"			"[MA]"
+		"ru"			"[MA]"
 	}
 	//------------------------------------------------
 	// действия админа

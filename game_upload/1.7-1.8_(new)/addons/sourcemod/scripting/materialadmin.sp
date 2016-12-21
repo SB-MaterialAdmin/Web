@@ -113,7 +113,7 @@ char g_sGroupsLoc[128],
 	g_sOverridesLoc[128];
 	
 int g_iGameTyp;
-#define GAMETYP_CCS 	0 //css
+//#define GAMETYP_CCS 	0 //css
 #define GAMETYP_CSGO 	1 //csgo
 #define GAMETYP_TF2 	2 //tf2
 
@@ -136,7 +136,7 @@ ConfigState g_iConfigState = ConfigState_Non;
 #include "materialadmin/database.sp"
 #include "materialadmin/native.sp"
 
-#define VERSION "0.2.5 beta"
+#define VERSION "0.2.6 beta"
 
 public Plugin myinfo = 
 {
@@ -155,9 +155,9 @@ public void OnPluginStart()
 	char sGameType[10];
 	GetGameFolderName(sGameType, sizeof(sGameType));
 	
-	if (StrEqual(sGameType, "cstrike", false))
-		g_iGameTyp = GAMETYP_CCS; 
-	else if (StrEqual(sGameType, "csgo", false)) 
+	//if (StrEqual(sGameType, "cstrike", false))
+		//g_iGameTyp = GAMETYP_CCS; 
+	if (StrEqual(sGameType, "csgo", false)) 
 		g_iGameTyp = GAMETYP_CSGO;
 	else if (StrEqual(sGameType, "tf", false)) 
 		g_iGameTyp = GAMETYP_TF2; 

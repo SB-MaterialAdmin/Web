@@ -14,10 +14,10 @@ void RegComands()
 	RegAdminCmd("sm_unsilence", 	CommandUnSil, 		ADMFLAG_CHAT, 	"Un silence client");
 
 	RegServerCmd("ma_wb_ban", CommandWBan, "Ban player by command from web site");
-	RegServerCmd("ma_wb_block", CommandBlock, "Blocking player comms by command fromweb site");
-	RegServerCmd("ma_wb_unblock", CommandUnBlock, "un Blocking player comms by command from web site");
-	RegServerCmd("ma_wb_getinfo", CommandGetInfo, "Get info by command from web site");
-	RegServerCmd("ma_wb_rehashadm", CommandRehashAdm, "Reload SQL admins");
+	RegServerCmd("ma_wb_mute", CommandWMute, "Mute player by command from web site");
+	RegServerCmd("ma_wb_unmute", CommandWUnMute, "Un mute player by command from web site");
+	RegServerCmd("ma_wb_getinfo", CommandWGetInfo, "Get info by command from web site");
+	RegServerCmd("ma_wb_rehashadm", CommandWRehashAdm, "Reload SQL admins");
 	
 	ConVar Cvar;
 	Cvar = FindConVar("sv_alltalk");
@@ -92,7 +92,7 @@ public Action CommandClear(int iClient, int iArgc)
 {
 	ClearHistories();
 
-	ReplyToCommand(iClient, "%sClear history", iClient, PREFIX);
+	ReplyToCommand(iClient, "%sClear history", PREFIX);
 	
 	return Plugin_Handled;
 }
@@ -395,14 +395,14 @@ public Action CommandUnBan(int iClient, int iArgc)
 	return Plugin_Handled;
 }
 //------------------------------------------------------------------------------------------------------------------------
-public Action CommandRehashAdm(int iArgc)
+public Action CommandWRehashAdm(int iArgc)
 {
 	AdminHash();
 	ReplyToCommand(0, "Rehash Admin");
 	return Plugin_Handled;
 }
 
-public Action CommandBlock(int iArgc)
+public Action CommandWMute(int iArgc)
 {
 	char sArgs[256],
 		sArg[4][264];
@@ -411,7 +411,7 @@ public Action CommandBlock(int iArgc)
 	int iType, iTime;
 	if (ExplodeString(sArgs, " ", sArg, 4, 264) != 4 || !StringToIntEx(sArg[0], iType) || iType < 1 || iType > 4 || !StringToIntEx(sArg[1], iTime))
 	{
-		LogToFile(g_sLogFile, "Wrong usage of ma_wb_block");
+		LogToFile(g_sLogFile, "Wrong usage of ma_wb_mute");
 		return Plugin_Stop;
 	}
 	
@@ -436,13 +436,13 @@ public Action CommandBlock(int iArgc)
 		ReplyToCommand(0, "nope");
 	
 #if DEBUG
-	LogToFile(g_sLogFile,"CommandBlock: %s", sArgs);
+	LogToFile(g_sLogFile,"CommandWMute: %s", sArgs);
 #endif
 	
 	return Plugin_Handled;
 }
 
-public Action CommandUnBlock(int iArgc)
+public Action CommandWUnMute(int iArgc)
 {
 	char sArgs[256],
 		sArg[2][64];
@@ -451,7 +451,7 @@ public Action CommandUnBlock(int iArgc)
 	int iType;
 	if (ExplodeString(sArgs, " ", sArg, 2, 64) != 2 || !StringToIntEx(sArg[0], iType) || iType < 1 || iType > 4)
 	{
-		LogToFile(g_sLogFile, "Wrong usage of ma_wb_unblock");
+		LogToFile(g_sLogFile, "Wrong usage of ma_wb_unmute");
 		return Plugin_Stop;
 	}
 	
@@ -471,7 +471,7 @@ public Action CommandUnBlock(int iArgc)
 		ReplyToCommand(0, "nope");
 	
 #if DEBUG
-	LogToFile(g_sLogFile,"CommandUnBlock: %s", sArgs);
+	LogToFile(g_sLogFile,"CommandWUnMute: %s", sArgs);
 #endif
 	
 	return Plugin_Handled;
@@ -510,7 +510,7 @@ public Action CommandWBan(int iArgc)
 	return Plugin_Handled;
 }
 
-public Action CommandGetInfo(int iArgc)
+public Action CommandWGetInfo(int iArgc)
 {
 	char sArgs[256],
 		sArg[1][64];
@@ -536,7 +536,7 @@ public Action CommandGetInfo(int iArgc)
 		ReplyToCommand(0, "nope");
 	
 #if DEBUG
-	LogToFile(g_sLogFile,"CommandGetInfo: %s", sArgs);
+	LogToFile(g_sLogFile,"CommandWGetInfo: %s", sArgs);
 #endif
 	
 	return Plugin_Handled;
