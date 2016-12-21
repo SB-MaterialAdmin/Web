@@ -1,6 +1,6 @@
 <?php
-$insq_menu = "INSERT INTO `sb_menu` (`id`, `text`, `description`, `url`, `system`, `enabled`, `priority`) VALUES";
-$qs = ["CREATE TABLE IF NOT EXISTS `sb_menu` ( `id` int(11) NOT NULL AUTO_INCREMENT, `text` varchar(256) NOT NULL, `description` varchar(450) NOT NULL, `url` varchar(300) NOT NULL, `system` tinyint(1) NOT NULL, `enabled` tinyint(1) NOT NULL, `priority` int(11) NOT NULL, PRIMARY KEY (`id`) ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=8;",
+$insq_menu = "INSERT INTO `".DB_PREFIX."_menu` (`id`, `text`, `description`, `url`, `system`, `enabled`, `priority`) VALUES";
+$qs = ["CREATE TABLE IF NOT EXISTS `".DB_PREFIX."_menu` ( `id` int(11) NOT NULL AUTO_INCREMENT, `text` varchar(256) NOT NULL, `description` varchar(450) NOT NULL, `url` varchar(300) NOT NULL, `system` tinyint(1) NOT NULL, `enabled` tinyint(1) NOT NULL, `priority` int(11) NOT NULL, PRIMARY KEY (`id`) ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=8;",
        $insq_menu . " (1, '<i class=''zmdi zmdi-home zmdi-hc-fw''></i> Главная', 'Главная страница SourceBans. Список серверов, последних банов и блоков.', 'index.php?p=home', 1, 1, 1000);", 
        $insq_menu . " (2, '<i class=''zmdi zmdi-input-composite zmdi-hc-fw''></i> Серверы', 'Список всех серверов и их текущий статус.', 'index.php?p=servers', 1, 1, 999);", 
        $insq_menu . " (3, '<i class=''zmdi zmdi-lock-outline zmdi-hc-fw''></i> Список банов', 'Список всех когда-либо выданных банов.', 'index.php?p=banlist', 1, 1, 998);", 
