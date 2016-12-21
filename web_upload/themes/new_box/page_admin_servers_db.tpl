@@ -7,7 +7,7 @@
         </div>
         <div class="card-body card-padding">
             <div class="form-group">
-                <div class="fg-line disabled">
+                <div class="fg-line">
                     <textarea class="form-control" rows="23" readonly>{$conf}</textarea>
                 </div>
             </div>
