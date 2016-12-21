@@ -11,7 +11,7 @@
 - */pages/admin.edit.group.php* (да-да, говнокодеры из SB++ запихали всю страницу в PHP-код)
 - */themes/new_box/page_admin_edit_admins_details.tpl*
 - */themes/new_box/page_admin_edit_admins_groups.tpl*
-- */themes/new_box/page_admin_overrides.tpl*
+- ~~/themes/new_box/page_admin_overrides.tpl~~ Сделано. 21.12.2016, Крузя.
 - */themes/new_box/page_admin_bans_protests.tpl*
 - */themes/new_box/page_admin_bans_protests_archiv.tpl*
 - */themes/new_box/page_admin_bans_submissions.tpl*
