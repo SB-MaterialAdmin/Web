@@ -25,9 +25,14 @@ public __pl_materialadmin_SetNTVOptional()
 	MarkNativeAsOptional("MAOffSetClientMuteType");
 	MarkNativeAsOptional("MAGetClientMuteType");
 	MarkNativeAsOptional("MAGetConfigSetting");
+	MarkNativeAsOptional("MAGetDatabaseConnect");
 }
 #endif
 
+/*********************************************************
+ * Получение хендель бд
+ *********************************************************/
+native Database MAGetDatabaseConnect();
 
 /*********************************************************
  * Офлайн бан

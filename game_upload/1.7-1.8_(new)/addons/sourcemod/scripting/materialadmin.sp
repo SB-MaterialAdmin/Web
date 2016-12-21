@@ -105,6 +105,7 @@ bool g_bSayReason[MAXPLAYERS+1],
 	g_bServerBanTyp,
 	g_bNewConnect[MAXPLAYERS+1],
 	g_bOnileTarget[MAXPLAYERS+1],
+	g_bReportReason[MAXPLAYERS+1],
 	g_bBanClientConnect[MAXPLAYERS+1];
 	
 // Admin KeyValues
@@ -136,7 +137,7 @@ ConfigState g_iConfigState = ConfigState_Non;
 #include "materialadmin/database.sp"
 #include "materialadmin/native.sp"
 
-#define VERSION "0.2.6 beta"
+#define VERSION "0.2.7 beta"
 
 public Plugin myinfo = 
 {
@@ -299,6 +300,7 @@ public void Event_PlayerDisconnect(Event eEvent, const char[] sEName, bool bDont
 	g_bNewConnect[iClient] = false;
 	g_bSayReason[iClient] = false;
 	g_bSayReasonReport[iClient] = false;
+	g_bReportReason[iClient] = false;
 	g_iTargetMuteType[iClient] = 0;
 	KillTimerMute(iClient);
 	KillTimerGag(iClient);

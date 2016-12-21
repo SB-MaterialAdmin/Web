@@ -616,7 +616,10 @@ public int MenuHandler_MenuTime(Menu Mmenu, MenuAction mAction, int iClient, int
 		#endif
 
 			if(g_iTargetType[iClient] == TYPE_BAN)
+			{
+				g_bReportReason[iClient] = false;
 				ShowBanReasonMenu(iClient);
+			}
 			else
 				ShowMuteReasonMenu(iClient);
 		}
@@ -643,7 +646,12 @@ public int MenuHandler_MenuBReason(Menu Mmenu, MenuAction mAction, int iClient, 
 		case MenuAction_Cancel:
 		{
 			if (iSlot == MenuCancel_ExitBack && g_tmAdminMenu)
-				ShowTimeMenu(iClient);
+			{
+				if (g_bReportReason[iClient])
+					ReportMenu(iClient);
+				else
+					ShowTimeMenu(iClient);
+			}
 		}
 		case MenuAction_Select:
 		{
@@ -657,14 +665,24 @@ public int MenuHandler_MenuBReason(Menu Mmenu, MenuAction mAction, int iClient, 
 			if(StrEqual("Own Reason", sInfo))
 			{
 				PrintToChat2(iClient, "%T", "Say reason", iClient);
-				g_bSayReason[iClient] = true;
+				if (g_bReportReason[iClient])
+					g_bSayReasonReport[iClient] = true;
+				else
+					g_bSayReason[iClient] = true;
 				return;
 			}
-			strcopy(g_sTarget[iClient][TREASON], sizeof(sInfo), sInfo);
+			
 		#if DEBUG
 			LogToFile(g_sLogFile,"Menu Reason: %s", sInfo);
 		#endif
-			OnlineClientSet(iClient);
+		
+			if (g_bReportReason[iClient])
+				SetBdReport(iClient, sInfo);
+			else
+			{
+				strcopy(g_sTarget[iClient][TREASON], sizeof(sInfo), sInfo);
+				OnlineClientSet(iClient);
+			}
 		}
 	}
 }
@@ -716,12 +734,18 @@ public int MenuHandler_MenuHacking(Menu Mmenu, MenuAction mAction, int iClient, 
 		{
 			char sInfo[128];
 			Mmenu.GetItem(iSlot, sInfo, sizeof(sInfo));
-			strcopy(g_sTarget[iClient][TREASON], sizeof(sInfo), sInfo);
+			
 		#if DEBUG
 			LogToFile(g_sLogFile,"Menu Hacking: %s", sInfo);
 		#endif
-
-			OnlineClientSet(iClient);
+		
+			if (g_bReportReason[iClient])
+				SetBdReport(iClient, sInfo);
+			else
+			{
+				strcopy(g_sTarget[iClient][TREASON], sizeof(sInfo), sInfo);
+				OnlineClientSet(iClient);
+			}
 		}
 	}
 }
@@ -782,8 +806,9 @@ public int MenuHandler_ReportMenu(Menu Mmenu, MenuAction mAction, int iClient, i
 			Mmenu.GetItem(iSlot, sInfo, sizeof(sInfo));
 			
 			g_iTargetReport[iClient] = StringToInt(sInfo);
-			PrintToChat2(iClient, "%T", "Say reason", iClient);
-			g_bSayReasonReport[iClient] = true;
+			
+			g_bReportReason[iClient] = true;
+			ShowBanReasonMenu(iClient);
 		}
 	}
 }

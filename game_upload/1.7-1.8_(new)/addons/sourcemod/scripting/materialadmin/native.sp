@@ -9,6 +9,12 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	CreateNative("MAOffSetClientMuteType", Native_OffSetClientMuteType);
 	CreateNative("MAGetClientMuteType", Native_GetClientMuteType);
 	CreateNative("MAGetConfigSetting", Native_GetConfigSetting);
+	CreateNative("MAGetDatabaseConnect", Native_GetDatabaseConnect);
+}
+
+public int Native_GetDatabaseConnect(Handle plugin, int numParams)
+{
+	return view_as<int>(CloneHandle(g_dDatabase, plugin));
 }
 
 public int Native_GetConfigSetting(Handle plugin, int numParams)
