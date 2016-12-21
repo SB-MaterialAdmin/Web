@@ -67,6 +67,8 @@
         <script type="text/javascript" src="themes/new_box/vendors/bower_components/chosen/chosen.jquery.min.js" ></script>
 		
         <script type="text/javascript" src="themes/new_box/vendors/input-mask/input-mask.min.js"></script>
+        
+        <script src="themes/new_box/vendors/fileinput/fileinput.min.js"></script>
 		
 		<script>
 		  $.noConflict();

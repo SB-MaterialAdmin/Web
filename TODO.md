@@ -16,4 +16,4 @@
 - */themes/new_box/page_admin_bans_protests_archiv.tpl*
 - */themes/new_box/page_admin_bans_submissions.tpl*
 - */themes/new_box/page_admin_bans_submissions_archiv.tpl*
-- */themes/new_box/page_admin_bans_import.tpl*
+- ~~/themes/new_box/page_admin_bans_import.tpl~~ Сделано. 21.12.2016, Крузя.
