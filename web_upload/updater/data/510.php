@@ -6,7 +6,7 @@ if (file_exists($SMTPFilePath))
 else
     $config = ['smtp_username' => '', 'smtp_port' => '', 'smtp_host' => '', 'smtp_password' => '', 'smtp_charset' => '', 'smtp_from' => '', 'enabled' => 0];
 
-$insq = "INSERT INTO `sb_settings` (`setting`, `value`) VALUES ('%s', %s);";
+$insq = "INSERT INTO `".DB_PREFIX."_settings` (`setting`, `value`) VALUES ('%s', %s);";
 $qs = [sprintf($insq, 'smtp.enabled', $GLOBALS['db']->qstr((isset($config['enabled'])?'0':'1'))),
        sprintf($insq, 'smtp.username', $GLOBALS['db']->qstr($config['smtp_username'])),
        sprintf($insq, 'smtp.port', $GLOBALS['db']->qstr($config['smtp_port'])),
