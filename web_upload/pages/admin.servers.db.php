@@ -39,6 +39,7 @@ $srv_cfg = '"Databases"
 {
 	"driver_default"		"mysql"
 	
+	// Если вы используете старую серверную часть:
 	"sourcebans"
 	{
 		"driver"			"mysql"
@@ -46,14 +47,28 @@ $srv_cfg = '"Databases"
 		"database"			"{db}"
 		"user"				"{user}"
 		"pass"				"{pass}"
-		//"timeout"			"0"
-		"port"			"{port}"
+		"port"				"{port}"
 	}
 	
-	"storage-local"
+	"sourcecomms"
 	{
-		"driver"			"sqlite"
-		"database"			"sourcemod-local"
+		"driver"			"mysql"
+		"host"				"{server}"
+		"database"			"{db}"
+		"user"				"{user}"
+		"pass"				"{pass}"
+		"port"				"{port}"
+	}
+	
+	// Если вы используете новую серверную часть:
+	"materialadmin"
+	{
+		"driver"			"mysql"
+		"host"				"{server}"
+		"database"			"{db}"
+		"user"				"{user}"
+		"pass"				"{pass}"
+		"port"				"{port}"
 	}
 }
 ';
