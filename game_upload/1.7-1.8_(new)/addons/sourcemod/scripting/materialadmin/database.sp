@@ -891,14 +891,14 @@ void CheckClientBan(int iClient)
 		{
 			FormatEx(sQuery, sizeof(sQuery), "SELECT a.bid, a.length, a.created, a.reason, b.user FROM %s_bans a LEFT JOIN %s_admins b ON a.aid=b.aid \
 						WHERE ((a.type = 0 AND a.authid REGEXP '^STEAM_[0-9]:%s$') OR (a.type = 1 AND a.ip = '%s')) \
-						AND (a.length = '0' OR a.ends > UNIX_TIMESTAMP()) AND a.RemoveType IS NULL AND a.sid != (SELECT sid FROM %s_servers WHERE ip = '%s' AND port = '%s' LIMIT 0,1)", 
+						AND (a.length = '0' OR a.ends > UNIX_TIMESTAMP()) AND a.RemoveType IS NULL AND a.sid = (SELECT sid FROM %s_servers WHERE ip = '%s' AND port = '%s' LIMIT 0,1)", 
 						g_sDatabasePrefix, g_sDatabasePrefix, sSteamID[8], sIp, g_sDatabasePrefix, g_sServerIP, g_sServerPort);
 		}
 		else
 		{
 			FormatEx(sQuery, sizeof(sQuery), "SELECT a.bid, a.length, a.created, a.reason, b.user FROM %s_bans a LEFT JOIN %s_admins b ON a.aid=b.aid \
 						WHERE ((a.type = 0 AND a.authid REGEXP '^STEAM_[0-9]:%s$') OR (a.type = 1 AND a.ip = '%s')) \
-						AND (a.length = '0' OR a.ends > UNIX_TIMESTAMP()) AND a.RemoveType IS NULL AND a.sid != %d", g_sDatabasePrefix, g_sDatabasePrefix, sSteamID[8], sIp, g_iServerID);
+						AND (a.length = '0' OR a.ends > UNIX_TIMESTAMP()) AND a.RemoveType IS NULL AND a.sid = %d", g_sDatabasePrefix, g_sDatabasePrefix, sSteamID[8], sIp, g_iServerID);
 		}
 	}
 #if DEBUG
@@ -1068,7 +1068,7 @@ void CheckClientMute(int iClient, char[] sSteamID)
 					WHERE       RemoveType IS NULL \
 								AND authid REGEXP '^STEAM_[0-9]:%s$' \
 								AND (length = '0' OR ends > UNIX_TIMESTAMP())\
-								AND sid != (SELECT sid FROM %s_servers WHERE ip = '%s' AND port = '%s' LIMIT 0,1)", 
+								AND sid = (SELECT sid FROM %s_servers WHERE ip = '%s' AND port = '%s' LIMIT 0,1)", 
 			g_sDatabasePrefix, sSteamID[8], g_sDatabasePrefix, g_sServerIP, g_sServerPort);
 		}
 		else
@@ -1079,7 +1079,7 @@ void CheckClientMute(int iClient, char[] sSteamID)
 					WHERE       RemoveType IS NULL \
 								AND authid REGEXP '^STEAM_[0-9]:%s$' \
 								AND (length = '0' OR ends > UNIX_TIMESTAMP())\
-								AND sid != %d", 
+								AND sid = %d", 
 			g_sDatabasePrefix, sSteamID[8], g_iServerID);
 		}
 	}
