@@ -23,13 +23,14 @@ void PrintToChat2(int iClient, const char[] sMesag, any ...)
 					  sColorC[][] = {"\x01", "\x02", "\x03", "\x04", "\x05", "\x06", "\x07", "\x08", "\x09", "\x10", "\x0B", "\x0C", "\x0E"};
 	char sBufer[256];
 	VFormat(sBufer, sizeof(sBufer), sMesag, 3);
+	Format(sBufer, sizeof(sBufer), "%T %s.", "prifix", iClient, sBufer);
 	for(int i = 0; i < 13; i++)
 		ReplaceString(sBufer, sizeof(sBufer), sColorT[i], sColorC[i]);
 
 	if (GetUserMessageType() == UM_Protobuf)
-		PrintToChat(iClient, " \x01%T %s.", "prifix", iClient, sBufer);
+		PrintToChat(iClient, " \x01%s.", sBufer);
 	else
-		PrintToChat(iClient, "\x01%T %s.", "prifix", iClient, sBufer);
+		PrintToChat(iClient, "\x01%s.", sBufer);
 }
 
 void ShowAdminAction(int iClient, const char[] sMesag, any ...)
@@ -53,13 +54,14 @@ void ShowAdminAction(int iClient, const char[] sMesag, any ...)
 	}
 
 	VFormat(sBufer, sizeof(sBufer), sMesag, 3);
+	Format(sBufer, sizeof(sBufer), "%T %s %s.", "prifix", iClient, sName, sBufer);
 	for(int i = 0; i < 13; i++)
 		ReplaceString(sBufer, sizeof(sBufer), sColorT[i], sColorC[i]);
 
 	if (GetUserMessageType() == UM_Protobuf)
-		PrintToChatAll(" \x01%T %s %s.", "prifix", iClient, sName, sBufer);
+		PrintToChatAll(" \x01%s.", sBufer);
 	else
-		PrintToChatAll("\x01%T %s %s.", "prifix", iClient, sName, sBufer);
+		PrintToChatAll("\x01%s.", sBufer);
 }
 //-----------------------------------------------------------------------------
 bool CheckAdminFlags(int iClient, int iFlag)
