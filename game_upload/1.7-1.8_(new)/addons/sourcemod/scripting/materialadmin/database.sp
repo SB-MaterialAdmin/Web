@@ -1,5 +1,14 @@
 void ConnectSourceBan()
 {
+	if (g_dDatabase) {
+		delete g_dDatabase;
+		g_dDatabase = null;
+	}
+	if (g_dSQLite) {
+		delete g_dSQLite;
+		g_dSQLite = null;
+	}
+	
 	if (SQL_CheckConfig("materialadmin"))
 		Database.Connect(ConnectDatabase, "materialadmin");
 	else if (SQL_CheckConfig("sourcebans"))
