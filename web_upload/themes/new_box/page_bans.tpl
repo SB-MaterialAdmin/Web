@@ -91,7 +91,7 @@
 					<td>
 						<div style="float:left;">{$ban.country_icon}
 							{if empty($ban.player)}
-								<i>имя игрока скрыто</i>
+								<i>имя игрока не указано</i>
 							{else}
 								{$ban.player|escape:'html'|stripslashes}
 							{/if}
@@ -176,7 +176,7 @@
 											<label class="col-sm-4 control-label"><i class="zmdi zmdi-circle-o text-left"></i>  Игрок</label>
 											<div class="col-sm-8">
 												{if empty($ban.player)}
-													<i>имя игрока скрыто.</i>
+													<i>имя игрока не указано.</i>
 												{else}
 													{$ban.player|escape:'html'|stripslashes}
 												{/if}
@@ -186,7 +186,7 @@
 											<label class="col-sm-4 control-label"><i class="zmdi zmdi-circle-o text-left"></i> Steam ID</label>
 											<div class="col-sm-8">
 												{if empty($ban.steamid)}
-													<i>Steam ID игрока скрыт.</i>
+													<i>Steam ID игрока не указан.</i>
 												{else}
 													{$ban.steamid}
 												{/if}
@@ -196,7 +196,7 @@
 											<label class="col-sm-4 control-label"><i class="zmdi zmdi-circle-o text-left"></i> Steam3 ID</label>
 											<div class="col-sm-8">
 												{if empty($ban.steamid)}
-													<i>Steam3 ID игрока скрыт.</i>
+													<i>Steam3 ID игрока не указан.</i>
 												{else}
 													<a href="http://steamcommunity.com/profiles/{$ban.steamid3}" target="_blank">{$ban.steamid3}</a>
 												{/if}
