@@ -137,7 +137,7 @@ ConfigState g_iConfigState = ConfigState_Non;
 #include "materialadmin/database.sp"
 #include "materialadmin/native.sp"
 
-#define VERSION "0.3.0 beta"
+#define VERSION "0.3.1 beta"
 
 public Plugin myinfo = 
 {
@@ -250,22 +250,21 @@ public void OnConfigsExecuted()
 	else
 		g_bLalod = true;
 	
-	if (!g_dDatabase)
+#if DEBUG
+	LogToFile(g_sLogFile, "map start ConnectBd");
+#endif
+	delete g_dDatabase;
+	g_dDatabase = null;
+	if (ConnectBd(g_dDatabase))
 	{
-	#if DEBUG
-		LogToFile(g_sLogFile, "map start ConnectBd");
-	#endif
-		if (ConnectBd(g_dDatabase))
+#if DEBUG
+		LogToFile(g_sLogFile, "map start ConnectBd: yes");
+#endif
+		if (g_hTimerBekap)
 		{
-		#if DEBUG
-			LogToFile(g_sLogFile, "map start ConnectBd: yes");
-		#endif
-			if (g_hTimerBekap)
-			{
-				KillTimer(g_hTimerBekap);
-				g_hTimerBekap = null;
-				SentBekapInBd();
-			}
+			KillTimer(g_hTimerBekap);
+			g_hTimerBekap = null;
+			SentBekapInBd();
 		}
 	}
 	

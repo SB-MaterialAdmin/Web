@@ -108,6 +108,8 @@ public Action CommandReload(int iClient, int iArgc)
 
 public Action CommandConnectBd(int iClient, int iArgc)
 {
+	delete g_dDatabase;
+	g_dDatabase = null;
 	if (ConnectBd(g_dDatabase))
 	{
 		ReplyToCommand(iClient, "%sYes connect bd", PREFIX);
@@ -119,7 +121,7 @@ public Action CommandConnectBd(int iClient, int iArgc)
 		}
 	}
 	else
-		ReplyToCommand(iClient, "%sNo connect bd", PREFIX);
+		ReplyToCommand(iClient, "%sNo connect bd", PREFIX); 
 	
 	return Plugin_Handled;
 }
