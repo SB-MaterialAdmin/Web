@@ -137,15 +137,15 @@ ConfigState g_iConfigState = ConfigState_Non;
 #include "materialadmin/database.sp"
 #include "materialadmin/native.sp"
 
-#define VERSION "0.2.9 beta"
+#define VERSION "0.3.0 beta"
 
 public Plugin myinfo = 
 {
 	name = "Material Admin",
-	author = "",
+	author = "Material Admin Dev Team",
 	description = "For to sm 1.7",
 	version = VERSION,
-	url = "hlmod.ru"
+	url = "https://github.com/CrazyHackGUT/SB_Material_Design/"
 };
 
 public void OnPluginStart() 

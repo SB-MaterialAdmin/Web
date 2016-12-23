@@ -42,6 +42,10 @@ public void ConnectDatabase(Database db, const char[] sError, any data)
 
 bool ConnectBd(Database db)
 {
+	if (g_dDatabase) {
+		delete g_dDatabase;
+		g_dDatabase = null;
+	}
 	char sError[256];
 	if (SQL_CheckConfig("materialadmin"))
 		db = SQL_Connect("materialadmin", false, sError, sizeof(sError));
