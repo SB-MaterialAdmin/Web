@@ -130,7 +130,7 @@
 				</div>
 			</div>
 			<div class="form-group m-b-5 col-sm-6">
-				<label class="col-sm-5 control-label">Аппеляции банов:</label>
+				<label class="col-sm-5 control-label">Заявок на бан:</label>
 				<div class="col-sm-5 control-label" style="text-align: left;">
 					{$total_submissions}
 				</div>
@@ -142,7 +142,7 @@
 				</div>
 			</div>
 			<div class="form-group m-b-5 col-sm-6">
-				<label class="col-sm-5 control-label">Аппеляции в архиве:</label>
+				<label class="col-sm-5 control-label">Заявок в архиве:</label>
 				<div class="col-sm-5 control-label" style="text-align: left;">
 					{$archived_submissions}
 				</div>
