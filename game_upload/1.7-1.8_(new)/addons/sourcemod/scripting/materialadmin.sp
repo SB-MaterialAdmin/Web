@@ -142,10 +142,10 @@ ConfigState g_iConfigState = ConfigState_Non;
 public Plugin myinfo = 
 {
 	name = "Material Admin",
-	author = "Grey™",
+	author = "",
 	description = "For to sm 1.7",
 	version = VERSION,
-	url = "hlmod.ru Skype: wolf-1-ser"
+	url = "hlmod.ru"
 };
 
 public void OnPluginStart() 
