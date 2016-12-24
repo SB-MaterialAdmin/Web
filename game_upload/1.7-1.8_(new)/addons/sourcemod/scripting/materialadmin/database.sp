@@ -1,18 +1,7 @@
 void ConnectSourceBan()
 {
-	if (g_dDatabase) {
-		delete g_dDatabase;
-		g_dDatabase = null;
-	}
-	if (g_dSQLite) {
-		delete g_dSQLite;
-		g_dSQLite = null;
-	}
-	
 	if (SQL_CheckConfig("materialadmin"))
 		Database.Connect(ConnectDatabase, "materialadmin");
-	else if (SQL_CheckConfig("sourcebans"))
-		Database.Connect(ConnectDatabase, "sourcebans");
 	else
 	{
 		LogToFile(g_sLogFile, "Database failure: Could not find Database conf \"materialadmin\"");
@@ -40,17 +29,15 @@ public void ConnectDatabase(Database db, const char[] sError, any data)
 	SentBekapInBd();
 }
 
-bool ConnectBd(Database db)
+bool ConnectBd(Database &db)
 {
-	if (g_dDatabase) {
-		delete g_dDatabase;
-		g_dDatabase = null;
+	if (!g_hTimerBekap && db)
+	{
+		delete db;
+		db = null;
 	}
 	char sError[256];
-	if (SQL_CheckConfig("materialadmin"))
-		db = SQL_Connect("materialadmin", false, sError, sizeof(sError));
-	else if (SQL_CheckConfig("sourcebans"))
-		db = SQL_Connect("sourcebans", false, sError, sizeof(sError));
+	db = SQL_Connect("materialadmin", false, sError, sizeof(sError));
 
 	if (db)
 		return true;

@@ -246,27 +246,22 @@ public void OnConfigsExecuted()
 	}
 	
 	if (g_bLalod)
+	{
 		ReadConfig();
+		if (ConnectBd(g_dDatabase))
+		{
+		#if DEBUG
+			LogToFile(g_sLogFile, "map start ConnectBd: yes");
+		#endif
+			KillTimerBekap();
+		}
+	#if DEBUG
+		else
+			LogToFile(g_sLogFile, "map start ConnectBd: no");
+	#endif
+	}
 	else
 		g_bLalod = true;
-	
-#if DEBUG
-	LogToFile(g_sLogFile, "map start ConnectBd");
-#endif
-	delete g_dDatabase;
-	g_dDatabase = null;
-	if (ConnectBd(g_dDatabase))
-	{
-#if DEBUG
-		LogToFile(g_sLogFile, "map start ConnectBd: yes");
-#endif
-		if (g_hTimerBekap)
-		{
-			KillTimer(g_hTimerBekap);
-			g_hTimerBekap = null;
-			SentBekapInBd();
-		}
-	}
 	
 	if(g_bOffMapClear) 
 		ClearHistories();

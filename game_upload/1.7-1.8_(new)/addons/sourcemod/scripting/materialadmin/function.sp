@@ -729,6 +729,16 @@ void AddSilence(int iClient, int iTime)
 #endif
 }
 //----------------------------------------------------------------------------------------------
+void KillTimerBekap()
+{
+	if (g_hTimerBekap)
+	{
+		KillTimer(g_hTimerBekap);
+		g_hTimerBekap = null;
+		SentBekapInBd();
+	}
+}
+
 public Action TimerBekap(Handle timer, any data)
 {
 #if DEBUG
@@ -739,8 +749,8 @@ public Action TimerBekap(Handle timer, any data)
 	#if DEBUG
 		LogToFile(g_sLogFile, "TimerBekap yes connect bd");
 	#endif
-		SentBekapInBd();
 		g_hTimerBekap = null;
+		SentBekapInBd();
 		return Plugin_Stop;
 	}
 	return Plugin_Continue;
