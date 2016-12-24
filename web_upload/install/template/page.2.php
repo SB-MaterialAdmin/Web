@@ -181,7 +181,7 @@
 							<label for="sb-wp-url" class="col-sm-3 control-label"><?php echo HelpIcon("Адрес SourceBans", "Адрес установки системы SourceBans. Пример: http://mysite.com/bans/");?> Адрес SourceBans</label>
 							<div class="col-sm-9">
 								<div class="fg-line">
-									<input type="text" class="form-control input-sm" id="sb-wp-url" name="sb-wp-url" placeholder="Введите данные" value="<?php echo isset($_POST['sb-wp-url'])?$_POST['sb-wp-url']:'';?>" />
+									<input type="text" class="form-control input-sm" id="sb-wp-url" name="sb-wp-url" placeholder="Введите данные" value="<?php echo isset($_POST['sb-wp-url'])?$_POST['sb-wp-url']:TryAutodetectURL();?>" />
 								</div>
 								<div id="database.msg"></div>
 							</div>
