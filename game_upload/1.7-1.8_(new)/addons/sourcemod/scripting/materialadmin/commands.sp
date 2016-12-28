@@ -108,7 +108,7 @@ public Action CommandReload(int iClient, int iArgc)
 
 public Action CommandConnectBd(int iClient, int iArgc)
 {
-	if (ConnectBd(g_dDatabase))
+	if (ConnectBd(g_dDatabase, true))
 	{
 		ReplyToCommand(iClient, "%sYes connect bd", PREFIX);
 		KillTimerBekap();

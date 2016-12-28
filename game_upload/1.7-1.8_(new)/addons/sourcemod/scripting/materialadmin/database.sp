@@ -1,46 +1,42 @@
 void ConnectSourceBan()
 {
-	if (SQL_CheckConfig("materialadmin"))
-		Database.Connect(ConnectDatabase, "materialadmin");
-	else
-	{
-		LogToFile(g_sLogFile, "Database failure: Could not find Database conf \"materialadmin\"");
-		SetFailState("Database failure: Could not find Database conf \"materialadmin\"");
-		return;
-	}	
-	
-
 	char sError[256];
 	g_dSQLite = SQLite_UseDatabase("maDatabase", sError, sizeof(sError));
 	if (!g_dSQLite)
-		SetFailState("Lokal Database failure (%s)", sError);
+		SetFailState("Local Database failure (%s)", sError);
+	
+	if (ConnectBd(g_dDatabase, true)) {
+		AdminHash();
+		SentBekapInBd();
+	}
 	
 	InsertServerInfo();
 }
 
-public void ConnectDatabase(Database db, const char[] sError, any data)
+bool ConnectBd(Database &db, bool bForceReconnect = false)
 {
-	if (db == null || sError[0])
-		SetFailState("Database failure (%s)", sError);
-	
-	g_dDatabase = db;
-	g_dDatabase.SetCharset("utf8");
-	AdminHash();
-	SentBekapInBd();
-}
-
-bool ConnectBd(Database &db)
-{
-	if (!g_hTimerBekap && db)
-	{
+	if (!g_hTimerBekap && db || bForceReconnect) {
 		delete db;
 		db = null;
-	}
-	char sError[256];
-	db = SQL_Connect("materialadmin", false, sError, sizeof(sError));
-
-	if (db)
+	} else {
+		db = g_dDatabase;
 		return true;
+	}
+	
+	char sError[256];
+	if (SQL_CheckConfig("materialadmin"))
+		db = SQL_Connect("materialadmin", false, sError, sizeof(sError));
+	else {
+		LogToFile(g_sLogFile, "Database failure: Could not find Database conf \"materialadmin\"");
+		SetFailState("Database failure: Could not find Database conf \"materialadmin\"");
+		return false;
+	}
+	
+	if (db) {
+		g_dDatabase.SetCharset("utf8");
+		return true;
+	}
+	
 	return false;
 }
 

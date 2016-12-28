@@ -122,7 +122,7 @@ public int MenuHandler_Setting(Menu Mmenu, MenuAction mAction, int iClient, int 
 				}
 				case 3:
 				{
-					if (ConnectBd(g_dDatabase))
+					if (ConnectBd(g_dDatabase, true))
 					{
 						PrintToChat2(iClient, "%T",  "Reload connect ok", iClient);
 						KillTimerBekap();
