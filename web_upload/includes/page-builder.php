@@ -138,7 +138,4 @@ BuildBreadcrumbs();
 if(!empty($page))
 	include $page;
 include_once(TEMPLATES_PATH . '/footer.php');
-
-// И выключаем буферизацию с выводом содержимого буфера.
-ob_end_flush();
 ?>

@@ -141,44 +141,9 @@ if($debug->fields['value']=="1") {
 // ---------------------------------------------------
 //  Setup our custom error handler
 // ---------------------------------------------------
-set_error_handler('sbError');
-function sbError($errno, $errstr, $errfile, $errline)
-{
-	if(!is_object($GLOBALS['log']))
-		return false;
-    switch ($errno) {
-    case E_USER_ERROR:
-        $msg = "[$errno] $errstr<br />\n";
-        $msg .= "Произошла фатальная ошибка на строке $errline в файле $errfile";
-     	$log = new CSystemLog("e", "PHP Error", $msg);
-	
-	// SourceBans Fatal Error Handler //
-	include(INCLUDES_PATH.'/FatalErrorHandler.php');
-	// SourceBans Fatal Error Handler //
-	
-        exit(1);
-        break;
+require_once(INCLUDES_PATH . '/CErrorHandler.php');
+$GLOBALS['error_manager'] = new CErrorHandler();
 
-    case E_USER_WARNING:
-        $msg = "[$errno] $errstr<br />\n";
-        $msg .= "Ошибка на строке $errline в файле $errfile";
-        $GLOBALS['log']->AddLogItem("w", "PHP Warning", $msg);
-        break;
-
-    case E_USER_NOTICE:
-         $msg = "[$errno] $errstr<br />\n";
-         $msg .= "Уведомление на строке $errline в файле $errfile";
-         $GLOBALS['log']->AddLogItem("m", "PHP Notice", $msg);
-        break;
-
-    default:
-    	return false;
-        break;
-    }
-
-    /* Don't execute PHP internal error handler */
-    return true;
-}
 // ---------------------------------------------------
 //  Some defs
 // ---------------------------------------------------
