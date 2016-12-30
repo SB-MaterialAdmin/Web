@@ -1890,129 +1890,131 @@ function ServerHostPlayers($sid, $type="servers", $obId="", $tplsid="", $open=""
 					$objResponse->addScript("$('noplayer_$sid').setStyle('display', 'none');");
 					if(!defined('IN_HOME')) {
 						$players = $sinfo->GetPlayers();
-						// remove childnodes
-						$objResponse->addScript('var toempty = document.getElementById("playerlist_'.$sid.'");
-						var empty = toempty.cloneNode(false);
-						toempty.parentNode.replaceChild(empty,toempty);');
-						//draw table headlines
-						$objResponse->addScript('var e = document.getElementById("playerlist_'.$sid.'");
-						var tr = e.insertRow("-1");
-							// Name Top TD
-							var td = tr.insertCell("-1");
-								td.setAttribute("width","50%");
-								//td.setAttribute("height","16");
-								td.className = "text-center p-5 bgm-bluegray c-white";
-									var b = document.createElement("b");
-									var txt = document.createTextNode("Имя");
-									b.appendChild(txt);
-								td.appendChild(b);
-							// Score Top TD
-							var td = tr.insertCell("-1");
-								td.setAttribute("width","15%");
-								//td.setAttribute("height","16");
-								td.className = "p-5 bgm-bluegray c-white";
-									var b = document.createElement("b");
-									var txt = document.createTextNode("Счет");
-									b.appendChild(txt);
-								td.appendChild(b);
-							// Time Top TD
-							var td = tr.insertCell("-1");
-								//td.setAttribute("height","16");
-								td.className = "p-5 bgm-bluegray c-white";
-									var b = document.createElement("b");
-									var txt = document.createTextNode("Время");
-									b.appendChild(txt);
-								td.appendChild(b);');
-						// add players
-						$playercount = 0;
-						
-						$needAddPlayerManaging = (($userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_BAN) && $GLOBALS['db']->GetOne(sprintf("SELECT COUNT(*) FROM `%s_admins_servers_groups` WHERE `admin_id` = %d AND `server_id` = %d", DB_PREFIX, $userbank->GetAid(), (int)$sid)) == 1) || $userbank->HasAccess(ADMIN_OWNER));
-						
-						if($needAddPlayerManaging) {
-							$dl = "a";
-							$dl2 = 'var i_i = document.createElement("i");
-									//var img = document.createElement("img");
-									//img.src = "themes/new_box/img/inn.png";
-									//img.className = "m-r-5";
-									i_i.className = "zmdi zmdi-label c-lightblue p-r-10 p-l-5";
-									i_i.style = "font-size: 17px;";
-									//img.style.width = "20px";
-									//img.style.height = "20px";
-									a.appendChild(i_i);
-									td.appendChild(a);
-									';
-							$dl_fix = 'p-l-5 ';
-						}else{
-							$dl = "span";
-							$dl2 = "";
-							$dl_fix = 'p-l-10 ';
-						}
-						$id = 0;
-						foreach($players AS $player) {
-							if (empty($player['Name'])) continue;
-							$id++;
+						if ($players !== false) {
+							// remove childnodes
+							$objResponse->addScript('var toempty = document.getElementById("playerlist_'.$sid.'");
+							var empty = toempty.cloneNode(false);
+							toempty.parentNode.replaceChild(empty,toempty);');
+							//draw table headlines
 							$objResponse->addScript('var e = document.getElementById("playerlist_'.$sid.'");
-													var tr = e.insertRow("-1");
-													tr.id = "player_s'.$sid.'p'.$id.'";
-														// Name TD
-														var td = tr.insertCell("-1");
-															td.className = "'.$dl_fix.'p-t-5";
-																var txt = document.createTextNode("'.str_replace('"', '\"', $player["Name"]).'");
-																var a = document.createElement("'.$dl.'");
-																a.href = "#player_s' . $sid . 'p' . $id . '_t";
-																var att = document.createAttribute("data-toggle");
-																att.value = "modal"; 
-																a.setAttributeNode(att);
-																'.$dl2.'
-															td.appendChild(txt);
-														// Score TD
-														var td = tr.insertCell("-1");
-															td.className = "listtable_1";
-															var txt = document.createTextNode("'.$player["Frags"].'");
-															td.appendChild(txt);
-														// Time TD
-														var td = tr.insertCell("-1");
-															td.className = "p-l-10";
-															var txt = document.createTextNode("'.SecondsToString($player['Time']).'");
-															td.appendChild(txt);
-														');
+							var tr = e.insertRow("-1");
+								// Name Top TD
+								var td = tr.insertCell("-1");
+									td.setAttribute("width","50%");
+									//td.setAttribute("height","16");
+									td.className = "text-center p-5 bgm-bluegray c-white";
+										var b = document.createElement("b");
+										var txt = document.createTextNode("Имя");
+										b.appendChild(txt);
+									td.appendChild(b);
+								// Score Top TD
+								var td = tr.insertCell("-1");
+									td.setAttribute("width","15%");
+									//td.setAttribute("height","16");
+									td.className = "p-5 bgm-bluegray c-white";
+										var b = document.createElement("b");
+										var txt = document.createTextNode("Счет");
+										b.appendChild(txt);
+									td.appendChild(b);
+								// Time Top TD
+								var td = tr.insertCell("-1");
+									//td.setAttribute("height","16");
+									td.className = "p-5 bgm-bluegray c-white";
+										var b = document.createElement("b");
+										var txt = document.createTextNode("Время");
+										b.appendChild(txt);
+									td.appendChild(b);');
+							// add players
+							$playercount = 0;
+							
+							$needAddPlayerManaging = (($userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_BAN) && $GLOBALS['db']->GetOne(sprintf("SELECT COUNT(*) FROM `%s_admins_servers_groups` WHERE `admin_id` = %d AND `server_id` = %d", DB_PREFIX, $userbank->GetAid(), (int)$sid)) == 1) || $userbank->HasAccess(ADMIN_OWNER));
+							
 							if($needAddPlayerManaging) {
-								$objResponse->addScript('
-									var div = document.createElement("div");
-									div.className = "modal fade";
-									div.id = "player_s' . $sid . 'p' . $id . '_t";
-									var att = document.createAttribute("tabindex");
-									var att1 = document.createAttribute("role");
-									var att2 = document.createAttribute("aria-hidden");
-									att.value = "-1"; 
-									att1.value = "dialog"; 
-									att2.value = "true"; 
-									div.setAttributeNode(att);   
-									div.setAttributeNode(att1);   
-									div.setAttributeNode(att2);   
-									div.innerHTML = "\
-										<div class=\'modal-dialog modal-sm\'>\
-											<div class=\'modal-content\'>\
-												<div class=\'modal-header\'>\
-													<h4 class=\'modal-title\'>'.str_replace('"', '\"', $player["Name"]).'</h4>\
-												</div>\
-												<div class=\'modal-body\'>\
-													<p class=\"m-b-10\"><button class=\"btn btn-link btn-block\" data-dismiss=\"modal\" onclick=\"KickPlayerConfirm('.$sid.', \''.str_replace('"', '"', $player["Name"]).'\', 0);\">Кикнуть</button></p>\
-													<p class=\"m-b-10\"><button class=\"btn btn-link btn-block\" href=\"#\" data-dismiss=\'modal\' onclick=\"ViewCommunityProfile('.$sid.', \''.str_replace('"', '\"', $player["Name"]).'\');\">Профиль</button></p>\
-													<p class=\"m-b-10\"><a href=\"index.php?p=admin&c=bans&action=pasteBan&sid='.$sid.'&pName='.str_replace('"', '\"', $player["Name"]).'\"><button class=\"btn btn-link btn-block\">Бан</button></a></p>\
-													<p class=\"m-b-10\"><a href=\"index.php?p=admin&c=comms&action=pasteBan&sid='.$sid.'&pName='.str_replace('"', '\"', $player["Name"]).'\"><button class=\"btn btn-link btn-block\">Заглушить</button></a></p>\
-													<p class=\"m-b-10\"><button class=\"btn btn-link btn-block\" href=\"#\" data-dismiss=\'modal\' onclick=\"OpenMessageBox('.$sid.', \''.str_replace('"', '\"', $player["Name"]).'\', 1);\">Отправить сообщение</button></p>\
-												</div>\
-												<!--<div class=\'modal-footer\'>\
-													<button type=\'button\' class=\'btn btn-link\' data-dismiss=\'modal\'>Отмена</button>\
-												</div>-->\
-											</div>\
-										</div>\
-									";
-
-									document.body.appendChild(div);');
+								$dl = "a";
+								$dl2 = 'var i_i = document.createElement("i");
+										//var img = document.createElement("img");
+										//img.src = "themes/new_box/img/inn.png";
+										//img.className = "m-r-5";
+										i_i.className = "zmdi zmdi-label c-lightblue p-r-10 p-l-5";
+										i_i.style = "font-size: 17px;";
+										//img.style.width = "20px";
+										//img.style.height = "20px";
+										a.appendChild(i_i);
+										td.appendChild(a);
+										';
+								$dl_fix = 'p-l-5 ';
+							}else{
+								$dl = "span";
+								$dl2 = "";
+								$dl_fix = 'p-l-10 ';
 							}
-							$playercount++;
+							$id = 0;
+							foreach($players as $player) {
+								if (empty($player['Name'])) continue;
+								$id++;
+								$objResponse->addScript('var e = document.getElementById("playerlist_'.$sid.'");
+														var tr = e.insertRow("-1");
+														tr.id = "player_s'.$sid.'p'.$id.'";
+															// Name TD
+															var td = tr.insertCell("-1");
+																td.className = "'.$dl_fix.'p-t-5";
+																	var txt = document.createTextNode("'.str_replace('"', '\"', $player["Name"]).'");
+																	var a = document.createElement("'.$dl.'");
+																	a.href = "#player_s' . $sid . 'p' . $id . '_t";
+																	var att = document.createAttribute("data-toggle");
+																	att.value = "modal"; 
+																	a.setAttributeNode(att);
+																	'.$dl2.'
+																td.appendChild(txt);
+															// Score TD
+															var td = tr.insertCell("-1");
+																td.className = "listtable_1";
+																var txt = document.createTextNode("'.$player["Frags"].'");
+																td.appendChild(txt);
+															// Time TD
+															var td = tr.insertCell("-1");
+																td.className = "p-l-10";
+																var txt = document.createTextNode("'.SecondsToString($player['Time']).'");
+																td.appendChild(txt);
+															');
+								if($needAddPlayerManaging) {
+									$objResponse->addScript('
+										var div = document.createElement("div");
+										div.className = "modal fade";
+										div.id = "player_s' . $sid . 'p' . $id . '_t";
+										var att = document.createAttribute("tabindex");
+										var att1 = document.createAttribute("role");
+										var att2 = document.createAttribute("aria-hidden");
+										att.value = "-1"; 
+										att1.value = "dialog"; 
+										att2.value = "true"; 
+										div.setAttributeNode(att);   
+										div.setAttributeNode(att1);   
+										div.setAttributeNode(att2);   
+										div.innerHTML = "\
+											<div class=\'modal-dialog modal-sm\'>\
+												<div class=\'modal-content\'>\
+													<div class=\'modal-header\'>\
+														<h4 class=\'modal-title\'>'.str_replace('"', '\"', $player["Name"]).'</h4>\
+													</div>\
+													<div class=\'modal-body\'>\
+														<p class=\"m-b-10\"><button class=\"btn btn-link btn-block\" data-dismiss=\"modal\" onclick=\"KickPlayerConfirm('.$sid.', \''.str_replace('"', '"', $player["Name"]).'\', 0);\">Кикнуть</button></p>\
+														<p class=\"m-b-10\"><button class=\"btn btn-link btn-block\" href=\"#\" data-dismiss=\'modal\' onclick=\"ViewCommunityProfile('.$sid.', \''.str_replace('"', '\"', $player["Name"]).'\');\">Профиль</button></p>\
+														<p class=\"m-b-10\"><a href=\"index.php?p=admin&c=bans&action=pasteBan&sid='.$sid.'&pName='.str_replace('"', '\"', $player["Name"]).'\"><button class=\"btn btn-link btn-block\">Бан</button></a></p>\
+														<p class=\"m-b-10\"><a href=\"index.php?p=admin&c=comms&action=pasteBan&sid='.$sid.'&pName='.str_replace('"', '\"', $player["Name"]).'\"><button class=\"btn btn-link btn-block\">Заглушить</button></a></p>\
+														<p class=\"m-b-10\"><button class=\"btn btn-link btn-block\" href=\"#\" data-dismiss=\'modal\' onclick=\"OpenMessageBox('.$sid.', \''.str_replace('"', '\"', $player["Name"]).'\', 1);\">Отправить сообщение</button></p>\
+													</div>\
+													<!--<div class=\'modal-footer\'>\
+														<button type=\'button\' class=\'btn btn-link\' data-dismiss=\'modal\'>Отмена</button>\
+													</div>-->\
+												</div>\
+											</div>\
+										";
+
+										document.body.appendChild(div);');
+								}
+								$playercount++;
+							}
 						}
 					}
 					if($playercount>15)
