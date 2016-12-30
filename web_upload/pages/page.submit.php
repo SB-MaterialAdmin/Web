@@ -179,7 +179,7 @@ while (!$server_list->EOF)
 	$info = array();
 	$sinfo->Connect($server_list->fields[1], $server_list->fields[2]);
 	$info = $sinfo->GetInfo();
-	if($info)
+	if(!$info)
 		$info['HostName'] = "Ошибка соединения (" . $server_list->fields[1] . ":" . $server_list->fields[2] . ")";
 	$info['sid'] = $server_list->fields[0];
 	array_push($servers,$info);
