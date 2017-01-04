@@ -34,71 +34,14 @@ $xajax = new xajax();
 $xajax->setRequestURI(XAJAX_REQUEST_URI);
 global $userbank;
 
-if(isset($_COOKIE['aid'], $_COOKIE['password']) && $userbank->CheckLogin($_COOKIE['password'], $_COOKIE['aid']))
-{
-	$xajax->registerFunction("AddMod");
-	$xajax->registerFunction("RemoveMod");
-	$xajax->registerFunction("AddGroup");
-	$xajax->registerFunction("RemoveGroup");
-	$xajax->registerFunction("RemoveAdmin");
-	$xajax->registerFunction("RemoveSubmission");
-	$xajax->registerFunction("RemoveServer");
-	$xajax->registerFunction("UpdateGroupPermissions");
-	$xajax->registerFunction("UpdateAdminPermissions");
-	$xajax->registerFunction("AddAdmin");
-	$xajax->registerFunction("SetupEditServer");
-	$xajax->registerFunction("AddServerGroupName");
-	$xajax->registerFunction("AddServer");
-	$xajax->registerFunction("AddBan");
-	$xajax->registerFunction("RehashAdmins");
-	$xajax->registerFunction("AddCTBan");
-	$xajax->registerFunction("EditGroup");
-	$xajax->registerFunction("RemoveProtest");
-	$xajax->registerFunction("SendRcon");
-	$xajax->registerFunction("EditAdminPerms");
-	$xajax->registerFunction("SelTheme");
-	$xajax->registerFunction("ApplyTheme");
-	$xajax->registerFunction("AddComment");
-	$xajax->registerFunction("EditComment");
-	$xajax->registerFunction("RemoveComment");
-	$xajax->registerFunction("PrepareReban");
-	$xajax->registerFunction("ClearCache");
-	$xajax->registerFunction("ClearCacheAva");
-	$xajax->registerFunction("KickPlayer");
-	$xajax->registerFunction("PasteBan");
-	$xajax->registerFunction("GroupBan");
-	$xajax->registerFunction("BanMemberOfGroup");
-	$xajax->registerFunction("GetGroups");
-	$xajax->registerFunction("BanFriends");
-	$xajax->registerFunction("SendMessage");
-	$xajax->registerFunction("ViewCommunityProfile");
-	$xajax->registerFunction("SetupBan");
-	$xajax->registerFunction("CheckPassword");
-	$xajax->registerFunction("ChangePassword");
-	$xajax->registerFunction("CheckSrvPassword");
-	$xajax->registerFunction("ChangeSrvPassword");
-	$xajax->registerFunction("ChangeEmail");
-	$xajax->registerFunction("CheckVersion");
-	$xajax->registerFunction("SendMail");
-	$xajax->registerFunction("AddBlock");
-	$xajax->registerFunction("PrepareReblock");
-	$xajax->registerFunction("PrepareBlockFromBan");
-	$xajax->registerFunction("PasteBlock");
-	$xajax->registerFunction("removeExpiredAdmins");
-	$xajax->registerFunction("AddSupport");
-	$xajax->registerFunction("ChangeAdminsInfos");
-	$xajax->registerFunction("InstallMOD");
-}
+$methods = array('admin' => array('AddMod', 'RemoveMod', 'AddGroup', 'RemoveGroup', 'RemoveAdmin', 'RemoveSubmission', 'RemoveServer', 'UpdageGroupPermissions', 'UpdateAdminPermissions', 'AddAdmin', 'SetupEditServer', 'AddServerGroupName', 'AddServer', 'AddBan', 'RehashAdmins', 'EditGroup', 'RemoveProtest', 'SendRcon', 'EditAdminPerms', 'AddComment', 'EditComment', 'RemoveComment', 'PrepareReban', 'ClearCache', 'ClearCacheAva', 'KickPlayer', 'PasteBan', 'GroupBan', 'BanMemberOfGroup', 'GetGroups', 'BanFriends', 'SendMessage', 'ViewCommunityProfile', 'SetupBan', 'CheckPassword', 'ChangePassword', 'CheckSrvPassword', 'ChangeSrvPassword', 'ChangeEmail', 'CheckVersion', 'SendMail', 'AddBlock', 'PrepareReblock', 'PrepareBlockFromBan', 'PasteBlock', 'removeExpiredAdmins', 'AddSupport', 'ChangeAdminsInfos', 'InstallMOD'), 'default' => array('Plogin', 'ServerHostPlayers', 'ServerHostProperty', 'ServerHostPlayers_list', 'ServerPlayers', 'LostPassword', 'RefreshServer', 'AddAdmin_pay', 'RehashAdmins_pay'));
 
-$xajax->registerFunction("Plogin");
-$xajax->registerFunction("ServerHostPlayers"); 
-$xajax->registerFunction("ServerHostProperty");
-$xajax->registerFunction("ServerHostPlayers_list");
-$xajax->registerFunction("ServerPlayers");
-$xajax->registerFunction("LostPassword");
-$xajax->registerFunction("RefreshServer");
-$xajax->registerFunction("AddAdmin_pay");
-$xajax->registerFunction("RehashAdmins_pay");
+if(isset($_COOKIE['aid'], $_COOKIE['password']) && $userbank->CheckLogin($_COOKIE['password'], $_COOKIE['aid']))
+    foreach ($methods['admin'] as $method)
+        $xajax->registerFunction($method);
+
+foreach ($methods['default'] as $method)
+    $xajax->registerFunction($method);
 
 global $userbank;
 $username = $userbank->GetProperty("user");
@@ -3031,79 +2974,6 @@ function CheckVersion() {
     return $objResponse;
 }
 
-function SelTheme($theme)
-{
-	$objResponse = new xajaxResponse();
-    global $userbank, $username;
-    if(!$userbank->HasAccess(ADMIN_OWNER|ADMIN_WEB_SETTINGS))
-	{
-		$objResponse->redirect("index.php?p=login&m=no_access", 0);
-		$log = new CSystemLog("w", "Ошибка доступа", $username . " пытался сменить шаблон, не имея на это прав.");
-		return $objResponse;
-	}
-	
-	$theme = rawurldecode($theme);
-	$theme = str_replace(array('../', '..\\', chr(0)), '', $theme);
-	$theme = basename($theme);
-	
-	if($theme[0] == '.' || !in_array($theme, scandir(SB_THEMES)) || !is_dir(SB_THEMES . $theme) || !file_exists(SB_THEMES . $theme . "/theme.conf.php"))
-	{
-		$objResponse->addAlert('Выбрана неверная тема.');
-		return $objResponse;
-	}
-	
-	include(SB_THEMES . $theme . "/theme.conf.php");
-	
-	if(!defined('theme_screenshot'))
-	{
-		$objResponse->addAlert('Выбрана плохая тема.');
-		return $objResponse;
-	}
-
-	$objResponse->addAssign("current-theme-screenshot", "innerHTML", '<img width="250px" height="170px" src="themes/'.$theme.'/'.strip_tags(theme_screenshot).'">');
-	$objResponse->addAssign("theme.name", "innerHTML",  theme_name);
-	$objResponse->addAssign("theme.auth", "innerHTML",  theme_author);
-	$objResponse->addAssign("theme.vers", "innerHTML",  theme_version);
-	$objResponse->addAssign("theme.link", "innerHTML",  '<a href="'.theme_link.'" target="_new">'.theme_link.'</a>');
-	$objResponse->addAssign("theme.apply", "innerHTML",  "<input type='button' onclick=\"javascript:xajax_ApplyTheme('" .$theme."')\" name='btnapply' class='btn ok' onmouseover='ButtonOver(\"btnapply\")' onmouseout='ButtonOver(\"btnapply\")' id='btnapply' value='Применить тему' />");
-
-	return $objResponse;
-}
-
-function ApplyTheme($theme)
-{
-	$objResponse = new xajaxResponse();
-    global $userbank, $username;
-    if(!$userbank->HasAccess(ADMIN_OWNER|ADMIN_WEB_SETTINGS))
-	{
-		$objResponse->redirect("index.php?p=login&m=no_access", 0);
-		$log = new CSystemLog("w", "Ошибка доступа", $username . " пытался сменить тему на ".htmlspecialchars(addslashes($theme)).", не имея на это прав.");
-		return $objResponse;
-	}
-	
-	$theme = rawurldecode($theme);
-	$theme = str_replace(array('../', '..\\', chr(0)), '', $theme);
-	$theme = basename($theme);
-	
-	if($theme[0] == '.' || !in_array($theme, scandir(SB_THEMES)) || !is_dir(SB_THEMES . $theme) || !file_exists(SB_THEMES . $theme . "/theme.conf.php"))
-	{
-		$objResponse->addAlert('Выбрана неверная тема.');
-		return $objResponse;
-	}
-	
-	include(SB_THEMES . $theme . "/theme.conf.php");
-	
-	if(!defined('theme_screenshot'))
-	{
-		$objResponse->addAlert('Выбрана плохая тема.');
-		return $objResponse;
-	}
-
-	$query = $GLOBALS['db']->Execute("UPDATE `" . DB_PREFIX . "_settings` SET `value` = ? WHERE `setting` = 'config.theme'", array($theme));
-	$objResponse->addScript('window.location.reload( false );');
-	return $objResponse;
-}
-
 function AddComment($bid, $ctype, $ctext, $page)
 {
 	$objResponse = new xajaxResponse();
@@ -4045,74 +3915,6 @@ function PasteBlock($sid, $name)
 	$objResponse->addScript("SwapPane(0);");
 	$objResponse->addScript("$('dialog-control').setStyle('display', 'block');");
 	$objResponse->addScript("$('dialog-placement').setStyle('display', 'none');");
-	return $objResponse;
-}
-
-function AddCTBan($name, $steam, $length, $reason, $fromsub)
-{
-	$objResponse = new xajaxResponse();
-	global $userbank, $username;
-	if(!$userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_BAN))
-	{
-		$objResponse->redirect("index.php?p=login&m=no_access", 0);
-		$log = new CSystemLog("w", "Hacking Attempt", $username . " tried to add a CT ban, but doesnt have access.");
-		return $objResponse;
-	}
-
-	$steam = trim($steam);
-	
-	$error = 0;
-
-	$name = RemoveCode($name);
-	if(empty($name))
-	{
-		$error++;
-		$objResponse->addAssign("ctname.msg", "innerHTML", "You must enter a reason.");
-		$objResponse->addScript("$('ctname.msg').setStyle('display', 'block');");
-	}
-	else
-	{
-		$objResponse->addAssign("ctname.msg", "innerHTML", "");
-		$objResponse->addScript("$('ctname.msg').setStyle('display', '');");
-	}
-
-	// If they didnt type a steamid
-	if(empty($steam) && $type == 0)
-	{
-		$error++;
-		$objResponse->addAssign("ctsteam.msg", "innerHTML", "You must type a Steam ID ");
-		$objResponse->addScript("$('ctsteam.msg').setStyle('display', 'block');");
-	}
-	else if(!is_numeric($steam) && !validate_steam($steam))
-	{
-		$error++;
-		$objResponse->addAssign("ctsteam.msg", "innerHTML", "Please enter a valid Steam ID");
-		$objResponse->addScript("$('steam.msg').setStyle('display', 'block');");
-	}
-	else
-	{
-		$objResponse->addAssign("ctsteam.msg", "innerHTML", "");
-		$objResponse->addScript("$('ctsteam.msg').setStyle('display', 'none');");
-	}
-
-	$reason = RemoveCode($reason);
-	if(empty($reason))
-	{
-		$error++;
-		$objResponse->addAssign("ctreason.msg", "innerHTML", "You must enter a reason.");
-		$objResponse->addScript("$('ctreason.msg').setStyle('display', 'block');");
-	}
-	else
-	{
-		$objResponse->addAssign("ctreason.msg", "innerHTML", "");
-		$objResponse->addScript("$('ctreason.msg').setStyle('display', '');");
-	}
-
-	$conn = new mysqli(SM_DB_HOST, SM_DB_USER, SM_DB_PASS, SM_DB_NAME);
-	$conn->query("INSERT INTO CTBans (name, steamid, ctbantime, reason, date, admin, active) VALUES(\"".$name."\", \"".$steam."\", ".$length.", \"".$reason."\", ".time().",  \"".$userbank->GetProperty("authid")."\", 1)");
-
-	$objResponse->addScript("ShowBox('CT Ban Added', 'The CT ban has been successfully added', 'green', 'index.php?p=admin&c=bans');");
-	$objResponse->addScript("TabToReload();");
 	return $objResponse;
 }
 ?>
