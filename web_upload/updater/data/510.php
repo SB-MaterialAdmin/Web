@@ -1,5 +1,5 @@
 <?php
-$config = [];
+$config = array();
 $SMTPFilePath = INCLUDES_PATH . '/smtp-func.php';
 if (file_exists($SMTPFilePath))
     require_once($SMTPFilePath);
