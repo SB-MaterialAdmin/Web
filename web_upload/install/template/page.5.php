@@ -94,7 +94,10 @@ define('SB_WP_URL','{sbwpurl}');       				//URL of SourceBans Site
 				// Setup Admin
 				$admin = $GLOBALS['db']->Prepare("INSERT INTO ".$_POST['prefix']."_admins(user,authid,password,gid, email, extraflags, immunity) VALUES (?,?,?,?,?,?,?)");
 				$GLOBALS['db']->Execute($admin,array($_POST['uname'], $_POST['steam'], sha1(sha1(SB_SALT . $_POST['pass1'])), -1, $_POST['email'], (1<<24), 100));
-
+				
+				// Auth admin
+				setcookie("aid", 1);
+				setcookie("password", sha1(sha1(SB_SALT . $_POST['pass1'])));
 	
 							
 				// Setup Settings
@@ -196,7 +199,7 @@ define('SB_WP_URL','{sbwpurl}');       				//URL of SourceBans Site
 									&nbsp;
 								</div>
 								<?php
-									if(strtolower($_POST['server']) == "localhost")
+									if(strtolower($_POST['server']) == "localhost" || $_POST['server'] == "127.0.0.1")
 									{
 										echo '<script>setTimeout(\'ShowBox("Предупреждение локального сервера", "Вы указали, что Ваш сервер MySQL запущен на той же машине, что и вебсервер. Если это не так, то в databases.cfg замените значение localhost на IP адрес веб сервера." , "blue", "", true);\', 1200);</script>';
 									}

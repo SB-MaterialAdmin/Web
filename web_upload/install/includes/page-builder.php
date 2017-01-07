@@ -55,6 +55,7 @@ switch ($_GET['step'])
 		break;
 }
 
+ob_start();
 BuildPageHeader();
 BuildPageTabs();
 BuildSubMenu();
@@ -62,4 +63,5 @@ BuildContHeader();
 if(!empty($page))
 	include $page;
 include_once(TEMPLATES_PATH . '/footer.php');
+ob_end_flush();
 ?>
