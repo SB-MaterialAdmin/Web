@@ -4,7 +4,7 @@
 - [Rabb1t](http://hlmod.ru/members/rabb1t.80450/) - 266,8 руб.
 
 ### Как оказать помощь?
-Перевести средства на один из кошельков, указанных ниже, и отписаться в ЛС Крузе.
+Перевести средства на один из кошельков, указанных ниже, и отписаться в ЛС Крузе ([ВК](https://vk.com/crazyhackgut), [Steam](http://steamcommunity.com/profiles/76561198071596952/), [E-Mail](mailto:webmaster@kruzefag.ru)).
 
 - **QIWI**: +7 (912) 871-62-29
 - **WebMoney**: R269044983991
