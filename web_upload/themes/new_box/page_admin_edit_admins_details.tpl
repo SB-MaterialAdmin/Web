@@ -63,23 +63,24 @@
 					</div>
 				</div>
 				<div class="form-group m-b-5">
-					<label for="a_foreverperiod" class="col-sm-3 control-label">{help_icon title="Срок" message="На сколько дней выдавать права администратору."} Доступ</label>
+					<label for="a_foreverperiod" class="col-sm-3 control-label">{help_icon title="Изменить срок" message="На какое кол-во дней изменить срок. Оставьте пустым, если не желаете изменять."} Доступ</label>
 					<div class="col-sm-9 p-t-10">
 						<div class="toggle-switch p-b-5" data-ts-color="red">
-							<input type="checkbox" id="a_foreverperiod" name="a_foreverperiod" TABINDEX=9 onclick="$('a_period').disabled = $(this).checked;" hidden="hidden" /> 
+							<input type="checkbox" id="a_foreverperiod" name="a_foreverperiod" TABINDEX=9 onclick="$('period').disabled = $(this).checked; $('permaadmin').value = $(this).checked;" hidden="hidden" /> 
 							<label for="a_foreverperiod" class="ts-helper checkbox-inline m-r-20" style="z-index:2;"></label>Навсегда
 						</div>
 						<div class="fg-line">
-							<input type="text" TABINDEX=8 class="form-control" id="a_period" name="a_period" value="30">
+							<input type="text" TABINDEX=8 class="form-control" id="period" name="period">
 						</div>
-						<div id="a_period.msg"></div>
+						<div id="period.msg"></div>
 					</div>
+					<input type="hidden" name="permaadmin" id="permaadmin" value="false">
 				</div>
 				<div class="form-group m-b-5">
 					<label for="skype" class="col-sm-3 control-label">{help_icon title="Skype" message="Связь с админмистратором через Skype."} Skype</label>
 					<div class="col-sm-9">
 						<div class="fg-line">
-							<input type="text" TABINDEX=9 class="form-control" id="skype" name="skype" placeholder="Введите данные(Не обязательно)">
+							<input type="text" TABINDEX=9 class="form-control" id="skype" name="skype" placeholder="Введите данные(Не обязательно)" value="{$skype}">
 						</div>
 						<div id="skype.msg"></div>
 					</div>
@@ -88,7 +89,7 @@
 					<label for="comment" class="col-sm-3 control-label">{help_icon title="Коментарий" message="Напишите коментарий к администратору."} Комментарий</label>
 					<div class="col-sm-9">
 						<div class="fg-line">
-							<textarea TABINDEX=10 class="form-control p-t-5" id="comment" name="comment" rows="3" placeholder="Введите желаемый текст(Не обязательно). Включена поддержка html."></textarea>
+							<textarea TABINDEX=10 class="form-control p-t-5" id="comment" name="comment" rows="3" placeholder="Введите желаемый текст(Не обязательно). Включена поддержка html.">{$comment}</textarea>
 						</div>
 						<div id="comment.msg"></div>
 					</div>
@@ -97,49 +98,9 @@
 					<label for="vk" class="col-sm-3 control-label">{help_icon title="ВКонтакте" message="Введите ID профиля, для генерации ссылки на страницу администратора в соцсети."} VK(ID)</label>
 					<div class="col-sm-9">
 						<div class="fg-line">
-							<input type="text" TABINDEX=10 class="form-control" id="vk" name="vk" placeholder="Введите данные(Не обязательно)">
+							<input type="text" TABINDEX=10 class="form-control" id="vk" name="vk" placeholder="Введите данные(Не обязательно)" value={$vk}>
 						</div>
 						<div id="vk.msg"></div>
-					</div>
-				</div>
-			</div>
-				
-				
-			<div class="card-header">
-				<h2>Доступ к серверу(ам) <small>Выберите сервер или группу серверов, которые он будет администрировать..</small></h2>
-			</div>
-			<div class="card-body card-padding p-b-0">
-				<div class="form-group m-b-0">
-					<label class="col-sm-3 control-label">Доступные сервера</label>
-					<div class="col-sm-9">
-						<div class="checkbox">
-							<table width="100%" valign="left" id="group.details">
-								{foreach from="$group_list" item="group"}
-									<tr>
-										<td>
-											<div class="checkbox m-b-15">
-												<label for="g_{$group.gid}_g">
-													<input type="checkbox" name="group[]" id="g_{$group.gid}_g" value="g{$group.gid}" hidden="hidden" />
-													<i class="input-helper"></i> {$group.name}<b><i> (Группа сервера)</i></b></span>
-												</label>
-											</div>
-										</td>
-									</tr>
-								{/foreach}
-								{foreach from="$server_list" item="server"}
-									<tr>
-										<td>
-											<div class="checkbox m-b-15">
-												<label for="s_{$server.sid}_s">
-													<input type="checkbox" name="servers[]" id="s_{$server.sid}_s" value="s{$server.sid}" hidden="hidden" />
-													<i class="input-helper"></i> <span id="sa{$server.sid}"><i>Получение имени сервера... {$server.ip}:{$server.port}</i></span>
-												</label>
-											</div>
-										</td>
-									</tr>
-								{/foreach}
-							</table>
-						</div>
 					</div>
 				</div>
 			</div>

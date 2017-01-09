@@ -99,6 +99,8 @@ if(isset($_POST['adminname']))
 			$errorScript .= "$('period.msg').setStyle('display', 'block');";
 		}
 	}
+	if ($_POST['permaadmin'] == "true")
+        $a_period = true;
 	// ADM TIME //
 	
 	
@@ -280,7 +282,7 @@ if(isset($_POST['adminname']))
 		// ADM TIME //
 		if($a_period)
 		{
-			if($_POST['period'] == 000) {
+			if($_POST['permaadmin'] == 'true') {
 				$a_period = 0;
 			}
 			else {
