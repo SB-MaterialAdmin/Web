@@ -9,11 +9,11 @@
 
 ## Список страниц, которые требуют вёрстку
 - */pages/admin.edit.group.php* (да-да, говнокодеры из SB++ запихали всю страницу в PHP-код)
-- */themes/new_box/page_admin_edit_admins_details.tpl*
-- */themes/new_box/page_admin_edit_admins_groups.tpl*
+- ~~*/themes/new_box/page_admin_edit_admins_details.tpl*~~ Сделано. 09.01.2017. ThreshHNS.
+- ~~*/themes/new_box/page_admin_edit_admins_groups.tpl*~~ Сделано. 09.01.2017. ThreshHNS.
 - ~~/themes/new_box/page_admin_overrides.tpl~~ Сделано. 21.12.2016, Крузя.
-- */themes/new_box/page_admin_bans_protests.tpl*
-- */themes/new_box/page_admin_bans_protests_archiv.tpl*
+- ~~*/themes/new_box/page_admin_bans_protests.tpl*~~ Сделано. 09.01.2017. ThreshHNS.
+- ~~*/themes/new_box/page_admin_bans_protests_archiv.tpl*~~ Сделано. 09.01.2017. ThreshHNS.
 - */themes/new_box/page_admin_bans_submissions.tpl*
 - */themes/new_box/page_admin_bans_submissions_archiv.tpl*
 - ~~/themes/new_box/page_admin_bans_import.tpl~~ Сделано. 21.12.2016, Крузя.
