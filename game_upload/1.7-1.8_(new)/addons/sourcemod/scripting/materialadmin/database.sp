@@ -35,6 +35,8 @@ bool ConnectBd(Database &db, bool bForceReconnect = false)
 	if (db) {
 		g_dDatabase.SetCharset("utf8");
 		return true;
+	} else {
+		LogToFile("[ERROR] Couldn't connect to database. %s", sError);
 	}
 	
 	return false;

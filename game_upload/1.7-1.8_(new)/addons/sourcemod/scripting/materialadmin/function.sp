@@ -106,6 +106,9 @@ int GetImmuneAdmin(AdminId idAdmin)
 
 bool CheckAdminImune(int iAdminClient, int iAdminTarget)
 {
+	if (!iAdminClient && iAdminTarget)
+		return true;
+	
 	if (iAdminClient == iAdminTarget)
 	{
 		if(g_bActionOnTheMy)
