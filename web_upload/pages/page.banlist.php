@@ -431,7 +431,7 @@ while (!$res->EOF)
 		{
 			$data['country'] = '<img src="images/country/' .strtolower($res->fields['ban_country']) . '.gif" alt="' . $res->fields['ban_country'] . '" border="0" align="absmiddle" />';
 	    }
-		elseif(isset($GLOBALS['config']['banlist.nocountryfetch']) && $GLOBALS['config']['banlist.nocountryfetch'] == "0")
+	    elseif(isset($GLOBALS['config']['banlist.nocountryfetch']) && $GLOBALS['config']['banlist.nocountryfetch'] == "0")
 		{
 			$country = FetchIp($res->fields['ban_ip']);
 			$edit = $GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_bans SET country = ?
@@ -795,6 +795,7 @@ $theme->assign('ban_nav', $ban_nav);
 $theme->assign('ban_nav_p', $ban_nav_p);
 $theme->assign('ban_list', $bans);
 $theme->assign('admin_nick', $userbank->GetProperty("user"));
+$theme->assign('nocountryshow', ($GLOBALS['config']['banlist.nocountryfetch'] == "1" && !$userbank->is_logged_in()));
 
 $theme->assign('admin_postkey', $_SESSION['banlist_postkey']);
 $theme->assign('admininfos', $GLOBALS['config']['config.enableadmininfos']);

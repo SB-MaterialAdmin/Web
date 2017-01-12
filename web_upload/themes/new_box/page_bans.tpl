@@ -89,7 +89,7 @@
 					<td class="text-center">{$ban.mod_icon}</td>
 					<td class="text-center">{$ban.ban_date_info}</td>
 					<td>
-						<div style="float:left;">{$ban.country_icon}
+						<div style="float:left;">{if not $nocountryshow}{$ban.country_icon}{/if}
 							{if empty($ban.player)}
 								<i>имя игрока не указано</i>
 							{else}
