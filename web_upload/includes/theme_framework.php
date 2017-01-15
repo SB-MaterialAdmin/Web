@@ -8,8 +8,10 @@ require_once(INCLUDES_PATH . "/smarty/plugins/function.help_icon.php");
 $theme->register_function("display_material_checkbox", "materialdesign_checkbox");
 $theme->register_function("display_material_input", "materialdesign_input");
 $theme->register_function("display_header", "materialdesign_cardheader");
+$theme->register_function("display_alert", "materialdesign_alert");
+$theme->register_block("render_material_body", "materialdesign_body");
 
-// Создание каллбэков
+// Создание каллбэков функций
 function materialdesign_checkbox($params, &$smarty) {
     if (!isset($params["name"]) || !isset($params["help_title"]) || !isset($params["help_text"]))
         return "";
@@ -52,4 +54,19 @@ function materialdesign_cardheader($params, &$smarty) {
     $str .= "</h2></div>";
 
     return $str;
+}
+
+function materialdesign_alert($params, &$smarty) {
+    return sprintf('<div class="alert alert-info" role="alert">%s</div>', $params['text']);
+}
+
+function materialdesign_body($params, $content, &$smarty) {
+    $out = '<div class="card-body';
+    if ($params['padding'])
+        $out .= " card-padding";
+    if ($params['clearfix'])
+        $out .= " clearfix";
+    $out .= '">'.$content."</div>";
+    
+    return $out;
 }
