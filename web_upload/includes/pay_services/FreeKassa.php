@@ -37,6 +37,17 @@ if (!defined('IN_SB')) {echo("You should not be here. Only follow links!");die()
 if (!class_exists('CPaymentService')) require_once(INCLUDES_PATH . '/CDonate.php');
 
 class FreeKassa extends CPaymentService {
+    private $billing;
+    
+    public function __construct($bill) {
+        $this->billing = $bill;
+        $this->billing->register_event('onPaymentSuccessful', [$this, 'onPayment']);
+    }
+    
+    public function onPayment($service, $id) {
+        
+    }
+
     public function getName() {
         return 'FreeKassa';
     }

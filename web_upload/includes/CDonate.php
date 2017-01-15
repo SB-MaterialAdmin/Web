@@ -36,6 +36,8 @@
 if (!defined('IN_SB')) {echo("You should not be here. Only follow links!");die();}
 
 class CDonate {
+    private $hooks = array();
+    
     /**
      * Add tariff
      *
@@ -87,6 +89,29 @@ class CDonate {
      */
     public static function IsTariffExists($id) {
         return $GLOBALS['db']->GetOne(sprintf("SELECT COUNT(*) FROM `%s_billing_admintariffs` WHERE `id` = %d;", DB_PREFIX, (int) $id)) == 1;
+    }
+    
+    /**
+     * Register event hook.
+     *
+     * @noreturn
+     */
+    public function registerEvent($event_name, $func) {
+        $this->hooks[$event_name][] = $func;
+    }
+    
+    /** 
+     * Fires a event for donate submodules
+     *
+     * @noreturn
+     */
+    public function fireEvent($event_name, $data) {
+        if (!isset($this->hooks[$event_name]))
+            return;
+        
+        foreach ($this->hooks[$event_name] as $event_handler) {
+            call_user_func_array($event_handler, $data);
+        }
     }
 }
 
