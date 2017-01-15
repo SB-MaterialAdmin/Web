@@ -237,7 +237,7 @@
 											<label class="col-sm-4 control-label"><i class="zmdi zmdi-circle-o text-left"></i> Причина разбана</label>
 											<div class="col-sm-8">
 												{if $ban.ureason == ""}
-													<i>Причина разбана скрыта.</i>
+													<i>Причина разбана не указана.</i>
 												{else}
 													{$ban.ureason}
 												{/if}
@@ -258,7 +258,7 @@
 											<label class="col-sm-4 control-label"><i class="zmdi zmdi-circle-o text-left"></i> Будет снят</label>
 											<div class="col-sm-8">
 												{if $ban.expires == "never"}
-													<i>Бан навсегда.</i>
+													<i>Никогда.</i>
 												{else}
 													{$ban.expires}
 												{/if}
