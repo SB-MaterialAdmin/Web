@@ -142,7 +142,7 @@
 								<td class="listtable_1"><span data-toggle="tooltip" data-placement="top" title="" data-original-title="{$player.created_info}">{$player.created}</span></td>
 								<td class="listtable_1">
 									{if empty($player.short_name)}
-										<i>Неизвестно...</i>
+										<i>Имя игрока не указано.</i>
 									{else}
 										{$player.short_name|escape:'html'}
 									{/if}
@@ -181,7 +181,7 @@
 								<td class="{if $player.unbanned}c-cyan{else}c-cyan{/if}"><span data-toggle="tooltip" data-placement="top" title="" data-original-title="{$player.created_info}">{$player.created}</span></td>
 								<td>
 									{if empty($player.short_name)}
-										<i>Неизвестно...</i>
+										<i>Имя игрока не указано.</i>
 									{else}
 										{$player.short_name|escape:'html'}
 									{/if}
