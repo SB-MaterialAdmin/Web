@@ -9,6 +9,8 @@ if($GLOBALS['config']['page.adminlist']!="1"){
     PageDie();
 }
 
+$adminsExists = false;
+
 function SteamIDToCommunityID($sid) {
     /**
      * Thanks Valve and AlliedModders!
@@ -87,6 +89,7 @@ for ($iServer = 0; $iServer < $iServerCount; $iServer++) {
             $administrator['authid'] = SteamIDToCommunityID($administrator['authid']);
                 
             $servers[$iServer]['adminlist'][$administrator['aid']] = $administrator;
+            $adminsExists = true;
         }
     }
     
@@ -119,9 +122,11 @@ foreach ($mods as &$mod) {
 }
 
 /* Add to theme */
-$theme->assign('games', $mods);
-$theme->assign('server_list', $servers);
-$theme->assign('page', (isset($_GET["page"])?$page:-1));
-$theme->display('page_adminlist.tpl');
+if ($adminsExists) {
+    $theme->assign('games', $mods);
+    $theme->assign('server_list', $servers);
+    $theme->display('page_adminlist.tpl');
+} else
+    CreateRedBox("Ошибка", "Нет администраторов, которым были присвоены администрируемые сервера.");
 //var_dump($servers);
 ?>
