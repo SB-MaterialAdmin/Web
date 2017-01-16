@@ -87,7 +87,7 @@ if(!defined("DEVELOPER_MODE") && !defined("IS_UPDATE") && file_exists(ROOT."/upd
 	if($_SERVER['HTTP_HOST'] != "localhost")
 	{
 		echo "<script>window.location.replace('./updater');</script>";
-		echo "Выполняется редерикт на обновление SourceBans";
+		echo "Выполняется редирект на обновление SourceBans";
 		die();
 	}
 }
