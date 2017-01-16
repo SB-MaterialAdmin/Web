@@ -27,8 +27,9 @@
 
  define('IS_UPDATE', true);
  include "../init.php";
-//clear compiled themes
-$theme->clear_compiled_tpl();
+ $theme->clear_compiled_tpl();
+
+ define('IS_AJAX',   isset($_GET['updater_ajax_call']));
 
  include INCLUDES_PATH . "/CUpdate.php";
  $updater = new CUpdater();
@@ -36,6 +37,8 @@ $theme->clear_compiled_tpl();
  $setup = "Проверка текущей версии SourceBans...<b> " . $updater->getCurrentRevision() . "</b>";
  if(!$updater->needsUpdate())
  {
+	if (IS_AJAX)
+		die(json_encode(['result' => false, 'reason' => "Система в обновлениях не нуждается."]));
 	$setup .= "<br /><br />Обновления не нужны. Удалите папку <b>updater</b>!";
 	$theme->assign('setup', $setup);
 	$theme->assign('progress', "");
@@ -46,6 +49,8 @@ $theme->clear_compiled_tpl();
  
  $progress = $updater->doUpdates();
  
+ if (IS_AJAX)
+	die(json_encode(['result' => true]));
  $theme->assign('setup', $setup);
  $theme->assign('progress', $progress);
  $theme->display('updater.tpl');

@@ -234,9 +234,20 @@ define('SB_WP_URL','{sbwpurl}');       				//URL of SourceBans Site
 										<span class="c-black">Финиш</span>
 									</div>
 								</div>
-								<div class="lv-body p-15">
-									Установка SourceBans закончена. Удалите папку install в корне SourceBans, после перейдите на <a href="../updater">страницу обновлений</a>.
-								</div>
+								<script>
+									new Request({
+										method:		'get',
+										url:		'./../updater/index.php',
+										data:		{ 'updater_ajax_call': true },
+										onComplete:	function(response) {
+											try {
+												var Response = JSON.parse(response);
+												if (Response.result == false)
+													throw new SyntaxError();
+											} catch (SyntaxError) { alert("Не удалось произвести автоматическое обновление системы. Попробуйте произвести обновление вручную, перейдя на апдейтер."); }
+										}
+									}).send();
+								</script>
 							</div>
 						</div>
 					</div>

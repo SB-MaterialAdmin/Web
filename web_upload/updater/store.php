@@ -25,22 +25,23 @@
 //
 // *************************************************************************
 
- return array(
-		356 =>  "356.php",
-		480 =>  "480.php",
-		500 =>  "500.php",
-		501 =>  "501.php",
-		502 =>  "502.php",
-		503 =>  "503.php",
-		504 =>  "504.php",
-		505 =>  "505.php",
-		506 =>  "506.php",
-		507 =>  "507.php",
-		508 =>  "508.php",
-		509 =>  "509.php",
-		510 =>  "510.php",
-		511 =>  "511.php",
-		512 =>  "512.php",
-		513 =>  "513.php"
- );
+ return [
+		356 =>  "SourceComms_DBStructure.php",
+		480 =>  "MATERIAL_Admin_Upgrade.php",
+		500 =>  "ThemeCustom_Header.php",
+		501 =>  "Voucher_System_1.php",
+		502 =>  "Voucher_System_2.php",
+		503 =>  "ThemeCustom_Background_1.php",
+		504 =>  "ThemeCustom_Background_2.php",
+		505 =>  "SteamAvatars.php",
+		506 =>  "Dashboard_Comms.php",
+		507 =>  "ShowAdminInfo_Banlist.php",
+		508 =>  "ChangePersonalAdminInfo_Profile.php",
+		509 =>  "Menu.php",
+		510 =>  "SMTP.php",
+		511 =>  "Menu_NewTab.php",
+		512 =>  "GenerationPage_Footer.php",
+		513 =>  "SteamAvatars_ExpireDrop.php"
+		514 =>  "OldServerSide.php"
+ ];
 ?>
