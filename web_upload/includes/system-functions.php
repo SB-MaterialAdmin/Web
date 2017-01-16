@@ -1179,7 +1179,7 @@ function strip_31_ascii($string)
 
 function GetCommunityIDFromSteamID2($sid) {
     $parts = explode(':', str_replace('STEAM_', '' ,$sid)); 
-    return bcadd(bcadd('76561197960265728', $parts['1']), bcmul($parts['2'], '2'));
+    return bcadd(bcadd('76561197960265728', $parts[1]), bcmul($parts[2], '2'));
 }
 
 function GetUserAvatar($sid = -1) {
