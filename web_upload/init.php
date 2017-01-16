@@ -69,7 +69,7 @@ if(!file_exists(ROOT.'/config.php') || !include_once(ROOT . '/config.php')) {
 	// No were not
 	if($_SERVER['HTTP_HOST'] != "localhost")
 	{
-		echo "SourceBans is not installed.";
+		echo "SourceBans не установлен.";
 		die();
 	}
 }
@@ -77,7 +77,7 @@ if(!defined("DEVELOPER_MODE") && !defined("IS_UPDATE") && file_exists(ROOT."/ins
 {
 	if($_SERVER['HTTP_HOST'] != "localhost")
 	{
-		echo "Please delete the install directory before you use SourceBans";
+		echo "Из соображений безопасности, удалите, Пожалуйста, директорию /install/ с сервера перед тем, как работать с системой.";
 		die();
 	}
 }
@@ -86,8 +86,8 @@ if(!defined("DEVELOPER_MODE") && !defined("IS_UPDATE") && file_exists(ROOT."/upd
 {
 	if($_SERVER['HTTP_HOST'] != "localhost")
 	{
-		echo "<script>window.location.replace('./updater');</script>";
-		echo "Выполняется редирект на обновление SourceBans";
+		echo "Выполняется редирект на обновление SourceBans...";
+		echo "<script>setTimeout(function() { window.location.replace('./updater'); }, 2000);</script>";
 		die();
 	}
 }
@@ -282,20 +282,13 @@ require(INCLUDES_PATH . '/smarty/Smarty.class.php');
 
 global $theme, $userbank;
 
-$theme_name = isset($GLOBALS['config']['config.theme'])?$GLOBALS['config']['config.theme']:'new_box';
-if(defined("IS_UPDATE")){
-	$theme_name = "new_box";
-}
-define('SB_THEME', $theme_name);
+define('SB_THEME', 'new_box');
 
-if(!@file_exists(SB_THEMES . $theme_name . "/theme.conf.php"))
-{
-	die("Theme Error: <b>".$theme_name."</b> is not a valid theme. Must have a valid <b>theme.conf.php</b> file.");
-}
+if(!@file_exists(SB_THEMES . SB_THEME . "/theme.conf.php"))
+	die("<b>Ошибка шаблона</b>: Шаблон повреждён. Отсутствует файл <b>theme.conf.php</b>.");
+
 if(!@is_writable(SB_THEMES_COMPILE))
-{
-	die("Theme Error: <b>".SB_THEMES_COMPILE."</b> MUST be writable.");
-}
+	die("<b>Ошибка шаблона</b>: Папка <b>".SB_THEMES_COMPILE."</b> не перезаписываемая! Установите права 777 на папку через FTP-клиент.");
 
 $theme = new Smarty();
 $theme->error_reporting 	= 	E_ALL ^ E_NOTICE;
