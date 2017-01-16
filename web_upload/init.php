@@ -293,9 +293,9 @@ if(!@is_writable(SB_THEMES_COMPILE))
 $theme = new Smarty();
 $theme->error_reporting 	= 	E_ALL ^ E_NOTICE;
 $theme->use_sub_dirs 		= 	false;
-$theme->compile_id			= 	$theme_name;
+$theme->compile_id			= 	SB_THEME;
 $theme->caching 			= 	false;
-$theme->template_dir 		= 	SB_THEMES . $theme_name;
+$theme->template_dir 		= 	SB_THEMES . SB_THEME;
 $theme->compile_dir 		= 	SB_THEMES_COMPILE;
 
 if ((isset($_GET['debug']) && $_GET['debug'] == 1) || defined("DEVELOPER_MODE") )
