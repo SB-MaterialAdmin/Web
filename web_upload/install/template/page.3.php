@@ -107,27 +107,26 @@ if(isset($_POST['username'], $_POST['password'], $_POST['server'], $_POST['port'
 							<tbody>
 								<tr>
 									<td>Версия PHP</td>
-									<td>Н/A</td>
 									<td>5.5</td>
+									<td>5.4</td>
 									<?php 
-										if(version_compare(PHP_VERSION, "5.5") != -1)
+										if(version_compare(PHP_VERSION, "5.4") != -1)
 											$class = "success c-white";
 										else {  $class = "danger c-white"; $errors++;}
 									?>
-									<td class="<?php echo $class?>"><?php echo PHP_VERSION;?></td>
+									<td class="<?= $class ?>"><?= PHP_VERSION ?></td>
 								</tr>
 								<tr>
 									<td>Поддержка bcmath</td>
 									<td>Н/А</td>
 									<td>Да</td>
-									<?php 
-										if (function_exists('bcadd')) { $bcadd = true;} else { $bcadd = false;}
-										
-										if($bcadd)
+									<?php
+										$bcmath = function_exists('bcadd');
+										if($bcmath)
 											$class = "success c-white";
-										else {  $class = "danger c-white"; $errors++;}
+										else { $class = "danger c-white"; $errors++; }
 									?>
-									<td class="<?php echo $class?>"><?php echo $bcadd?'Да':'Нет';?></td>
+									<td class="<?= $class ?>"><?= $bcmath ? 'Да' : 'Нет' ?></td>
 								</tr>
 								<tr>
 									<td>Загрузка файлов</td>
@@ -137,9 +136,9 @@ if(isset($_POST['username'], $_POST['password'], $_POST['server'], $_POST['port'
 										$uploads = ini_get("file_uploads");
 										if($uploads)
 											$class = "success c-white";
-										else {  $class = "danger c-white"; $errors++;}
+										else {  $class = "danger c-white"; $errors++; }
 									?>
-									<td class="<?php echo $class?>"><?php echo $uploads?'Вкл':'Выкл';?></td>
+									<td class="<?= $class ?>"><?= $uploads ? 'Вкл' : 'Выкл' ?></td>
 								</tr>
 								<tr>
 									<td>Поддержка XML</td>
@@ -149,9 +148,9 @@ if(isset($_POST['username'], $_POST['password'], $_POST['server'], $_POST['port'
 										$xml = extension_loaded('xml');
 										if($xml)
 											$class = "success c-white";
-										else {  $class = "danger c-white"; $errors++;}
+										else { $class = "danger c-white"; $errors++; }
 									?>
-									<td class="<?php echo $class?>"><?php echo $xml?'Вкл':'Выкл';?></td>
+									<td class="<?= $class ?>"><?= $xml ? 'Вкл' : 'Выкл' ?></td>
 								</tr>
 								<tr>
 									<td>Глобальные переменные</td>
@@ -163,7 +162,7 @@ if(isset($_POST['username'], $_POST['password'], $_POST['server'], $_POST['port'
 											$class = "success c-white";
 										else {  $class = "active"; $errors++;}
 									?>
-									<td class="<?php echo $class?>"><?php echo $rg==""?'Выкл':'Вкл';?></td>
+									<td class="<?= $class ?>"><?= $rg=="" ? 'Выкл' : 'Вкл' ;?></td>
 								</tr>
 								<tr>
 									<td>Safe Mode</td>
@@ -180,7 +179,7 @@ if(isset($_POST['username'], $_POST['password'], $_POST['server'], $_POST['port'
 											$warnings++;
 										}
 									?>
-									<td class="<?php echo $class?>"><?php echo $safem;?></td>
+									<td class="<?= $class ?>"><?= $safem ?></td>
 								</tr>
 							</tbody>
 						</table>
@@ -214,9 +213,9 @@ if(isset($_POST['username'], $_POST['password'], $_POST['server'], $_POST['port'
 										if(version_compare($sql_version, "5") != -1){
 											$class = "success c-white";
 											$par = "width=\"30%\"";
-										} else {  $class = "danger c-white"; $errors++; $par = "width=\"50%\"";}
+										} else { $class = "danger c-white"; $errors++; $par = "width=\"50%\"";}
 									?>
-									<td class="<?php echo $class?>" <?php echo $par?>><?php echo $sql_version;?></td>
+									<td class="<?= $class ?>" <?= $par ?>><?= $sql_version ?></td>
 								</tr>
 							</tbody>
 						</table>
@@ -252,7 +251,7 @@ if(isset($_POST['username'], $_POST['password'], $_POST['server'], $_POST['port'
 											$class = "success c-white";
 										} else { $class = "danger c-white"; $errors++; }
 									?>
-									<td class="<?php echo $class?>"><?php echo is_writable("../demos")?"Да":"Нет";?></td>
+									<td class="<?= $class ?>"><?= is_writable("../demos") ? "Да" : "Нет" ?></td>
 								</tr>
 								<tr>
 									<td>Папка кэша (/themes_c)</td>
@@ -263,7 +262,7 @@ if(isset($_POST['username'], $_POST['password'], $_POST['server'], $_POST['port'
 											$class = "success c-white";
 										} else {  $class = "danger c-white"; $errors++; }
 									?>
-									<td class="<?php echo $class?>"><?php echo is_writable("../themes_c")?"Да":"Нет";?></td>
+									<td class="<?= $class ?>"><?= is_writable("../themes_c") ? "Да" : "Нет" ?></td>
 								</tr>
 								<tr>
 									<td>Папка иконок МОДов (/images/games)</td>
@@ -274,7 +273,7 @@ if(isset($_POST['username'], $_POST['password'], $_POST['server'], $_POST['port'
 											$class = "success c-white";
 										} else {  $class = "danger c-white"; $errors++; }
 									?>
-									<td class="<?php echo $class?>"><?php echo is_writable("../images/games")?"Да":"Нет";?></td>
+									<td class="<?= $class ?>"><?= is_writable("../images/games") ? "Да" : "Нет" ?></td>
 								</tr>
 								<tr>
 									<td>Папка изображений карт (/images/maps)</td>
@@ -285,7 +284,7 @@ if(isset($_POST['username'], $_POST['password'], $_POST['server'], $_POST['port'
 											$class = "success c-white";
 										} else {  $class = "danger c-white"; $errors++; }
 									?>
-									<td class="<?php echo $class?>"><?php echo is_writable("../images/maps")?"Да":"Нет";?></td>
+									<td class="<?= $class ?>"><?= is_writable("../images/maps") ? "Да" : "Нет" ?></td>
 								</tr>
 								<tr>
 									<td>Конфигурационный файл (/config.php)</td>
@@ -296,7 +295,7 @@ if(isset($_POST['username'], $_POST['password'], $_POST['server'], $_POST['port'
 											$class = "success c-white";
 										} else {  $class = "danger c-white"; $errors++; }
 									?>
-									<td class="<?php echo $class?>"><?php echo is_writable("../config.php")?"Да":"Нет";?></td>
+									<td class="<?= $class ?>"><?= is_writable("../config.php") ? "Да" : "Нет" ?></td>
 								</tr>
 							</tbody>
 						</table>
