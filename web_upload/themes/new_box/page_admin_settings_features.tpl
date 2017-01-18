@@ -100,6 +100,9 @@
 					</div>
 				</div>
 			</div>
+
+			{display_material_checkbox name="old_serverside" help_title="Режим совместимости с плагинами SB" help_text="Переключает веб-панель в режим совместимости со старой серверной частью SourceBans."}
+
 			<div class="card-body card-padding text-center">
 				{sb_button text="Сохранить" icon="<i class='zmdi zmdi-check-all'></i>" class="bgm-green btn-icon-text" id="fsettings" submit=true}
 				&nbsp;
@@ -108,3 +111,5 @@
 		</div>
 	</div>
 </form>
+
+{if $old_serverside}<script>$('old_serverside').checked = true;</script>{/if}

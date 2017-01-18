@@ -2260,7 +2260,7 @@ function PasteBan($sid, $name, $type=0)
 		$objResponse->addScript("$('dialog-control').setStyle('display', 'block');");
 		return $objResponse;
 	} */
-	$ret = $r->SendCommand(sprintf("ma_wb_getinfo %s", $name));
+	$ret = $r->SendCommand(sprintf("sb_getinfo %s", $name));
 	$pl  = explode("|", $ret);
 	if (count($pl) < 2) {
 		$objResponse->addScript("ShowBox('Ошибка', 'Невозможно получить информацию о игроке ".addslashes(htmlspecialchars($name)).". Игрок покинул сервер! (".$data['ip'].":".$data['port'].") ', 'red', '', true);");
@@ -3209,7 +3209,12 @@ function RehashAdmins_pay($server, $do=0, $card)
 			}
 			return $objResponse;
 		}
-		$ret = $r->SendCommand("ma_wb_rehashadm");
+
+		if ($GLOBALS['config']['feature.old_serverside'] == "1") {
+			$r->SendCommand("sm_rehash");
+			$r->SendCommand("sm_reloadadmins");
+		} else
+			$r->SendCommand("ma_wb_rehashadm");
 
 		$objResponse->addAppend("rehashDiv", "innerHTML", "".$serv['ip'].":".$serv['port']." (".($do+1)."/".sizeof($servers).") <font color='green'>успешно</font>.<br />");
 		if($do >= sizeof($servers)-1) {
@@ -3278,7 +3283,12 @@ function RehashAdmins($server, $do=0)
 			}
 			return $objResponse;
 		}
-		$ret = $r->SendCommand("ma_wb_rehashadm");
+
+		if ($GLOBALS['config']['feature.old_serverside'] == "1") {
+			$r->SendCommand("sm_rehash");
+			$r->SendCommand("sm_reloadadmins");
+		} else
+			$r->SendCommand("ma_wb_rehashadm");
 
 		$objResponse->addAppend("rehashDiv", "innerHTML", "".$serv['ip'].":".$serv['port']." (".($do+1)."/".sizeof($servers).") <font color='green'>успешно</font>.<br />");
 		if($do >= sizeof($servers)-1) {

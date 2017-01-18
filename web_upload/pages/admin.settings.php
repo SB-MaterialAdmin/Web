@@ -135,31 +135,6 @@ if(!defined("IN_SB")){echo "Ошибка доступа!";die();}
 		$log_item = array_merge($l, $log_item);	
 		array_push($log_list, $log_item);
 	}
-	
-	// Theme stuff
-	/*
-	$dh  = opendir(SB_THEMES);
-	while (false !== ($filename = readdir($dh))) {
-	    $themes[] = $filename;
-	}
-	//$themes = scandir(SB_THEMES);
-	$valid_themes = array();
-	foreach($themes as $thm)
-	{
-		if(@file_exists(SB_THEMES . $thm . "/theme.conf.php"))
-		{
-			$file = file_get_contents(SB_THEMES . $thm . "/theme.conf.php");
-			if($namesearch = preg_match_all('/define\(\'theme_name\',[ ]*\"(.+)\"\);/',$file,$thmname,PREG_PATTERN_ORDER))
-				$thme['name'] = $thmname[1][0];
-			else
-				$thme['name'] = $thm;
-			$thme['dir'] = $thm;
-			array_push($valid_themes, $thme);
-		}
-	}
-	require (SB_THEMES . SB_THEME . "/theme.conf.php");
-	*/
-		
 ?>
 <div id="admin-page-content">
 <?php if(!$userbank->HasAccess(ADMIN_OWNER|ADMIN_WEB_SETTINGS))
@@ -311,6 +286,8 @@ else
 			
 			$admininfos = (isset($_POST['enable_admininfo']) && $_POST['enable_admininfo'] == "on" ? 1 : 0);
 			$alladmininfos = (isset($_POST['allow_admininfo']) && $_POST['allow_admininfo'] == "on" ? 1 : 0);
+
+			$old_serverside = (isset($_POST['old_serverside']) && $_POST['old_serverside'] == "on" ? 1 : 0);
 			
 			$edit = $GLOBALS['db']->Execute("REPLACE INTO ".DB_PREFIX."_settings (`value`, `setting`) VALUES
 											(" . (int)$exportpub . ", 'config.exportpublic'),
@@ -320,8 +297,9 @@ else
 											(" . (int)$_POST['moder_group_st'] . ", 'config.modgroup'),
 											(" . (int)$admininfos . ", 'config.enableadmininfos'),
 											(" . (int)$alladmininfos . ", 'config.changeadmininfos'),
-											(" . (int)$adminrehash . ", 'config.enableadminrehashing')");
-											
+											(" . (int)$adminrehash . ", 'config.enableadminrehashing'),
+											(" . (int)$old_serverside . ", 'feature.old_serverside')");
+
 			?><script>setTimeout("ShowBox('Настройки опций изменены', 'Изменения были успешно применены!', 'green', 'index.php?p=admin&c=settings');", 1200);</script><?php
 		}
 	}
@@ -360,6 +338,7 @@ else
 
 	#########[Features Page]###############
 	echo '<div id="3" style="display:none;">';
+		$theme->assign('old_serverside', ($GLOBALS['config']['feature.old_serverside'] == "1"));
 		$theme->display('page_admin_settings_features.tpl');
 	echo '</div>';
 	#########/[Features Page]###############

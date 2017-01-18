@@ -102,9 +102,23 @@ function BlockPlayer($check, $sid, $num, $type, $length) {
 		$ret = $r->GetInfo();
 		if(!$ret)
 			$objResponse->addAssign("srvip_$num", "innerHTML", "<font size='1'><span title='".$sdata['ip'].":".$sdata['port']."'>".$ret['HostName']."</span></font>");
-		
-		$response = $r->SendCommand("ma_wb_block ".$type." ".$length." ".$check);
-		if ($response && strpos($response, "ok") !== FALSE) {
+
+		$response = null;
+		$gothim = false;
+		if ($GLOBALS['config']['feature.old_serverside'] == "1") {
+			$ret = $r->SendCommand("status");
+        	$search = preg_match_all(STATUS_PARSE, $ret, $matches, PREG_PATTERN_ORDER);
+	        //search for the steamid on the server
+    	    foreach ($matches[3] AS $match) {
+    	        if (substr($match, 8) == substr($check, 8)) {
+	                $gothim = true;
+    	            $kick   = $r->SendCommand("sc_fw_block " . $type . " " . $length . " " . $match);
+    	        }
+    	    }
+		} else
+			$gothim = (strpos($r->SendCommand("ma_wb_block ".$type." ".$length." ".$check), "ok") !== FALSE);
+
+		if ($gothim) {
             $GLOBALS['db']->Execute("UPDATE `".DB_PREFIX."_comms` SET sid = '".$sid."' WHERE authid = '".$check."' AND RemovedBy IS NULL;");
 			$requri = substr($_SERVER['REQUEST_URI'], 0, strrpos($_SERVER['REQUEST_URI'], "pages/admin.blockit.php"));
 			$objResponse->addAssign("srv_$num", "innerHTML", "<font color='green' size='1'><b>Игрок найден и заблокирован!</b></font>");

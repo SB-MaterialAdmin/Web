@@ -104,8 +104,52 @@ function KickPlayer($check, $sid, $num) {
 		if(!$ret)
 			$objResponse->addAssign("srvip_$num", "innerHTML", "<font size='1'><span title='".$sdata['ip'].":".$sdata['port']."'>".$ret['HostName']."</span></font>");
 		
-		$response = $r->SendCommand(sprintf("ma_wb_ban %s", $check));
-		if ($response && strpos($response, "ok") !== FALSE) {
+		$response = false;
+		if ($GLOBALS['config']['feature.old_serverside'] == "1") {
+			$search = preg_match_all(STATUS_PARSE, $ret, $matches, PREG_PATTERN_ORDER);
+		    //search for the steamid on the server
+		    if ((int) $type == 0) {
+				foreach ($matches[3] AS $match) {
+					if (getAccountId($match) == getAccountId($check)) {
+						// gotcha!!! kick him!
+						$response = true;
+						$GLOBALS['db']->Execute("UPDATE `" . DB_PREFIX . "_bans` SET sid = '" . $sid . "' WHERE authid = '" . $check . "' AND RemovedBy IS NULL;");
+						$requri = substr($_SERVER['REQUEST_URI'], 0, strrpos($_SERVER['REQUEST_URI'], "pages/admin.kickit.php"));
+		                
+						if (strpos($match, "[U:") === 0)
+							$kick = $r->sendCommand("kickid \"" . $match . "\" \"You have been banned by this server, check http://" . $_SERVER['HTTP_HOST'] . $requri . " for more info.\"");
+						else
+							$kick = $r->sendCommand("kickid " . $match . " \"You have been banned by this server, check http://" . $_SERVER['HTTP_HOST'] . $requri . " for more info.\"");
+		                
+						$objResponse->addAssign("srv_$num", "innerHTML", "<font color='green' size='1'><b><u>Player Found & Kicked!!!</u></b></font>");
+						$objResponse->addScript("set_counter('-1');");
+						return $objResponse;
+					}
+				}
+        	} else if ((int) $type == 1) { // search for the ip on the server
+            	$id = 0;
+            	foreach ($matches[8] AS $match) {
+                	$ip = explode(":", $match);
+                	$ip = $ip[0];
+                	if ($ip == $check) {
+                    	$userid = $matches[1][$id];
+
+                    	// gotcha!!! kick him!
+                    	$response = true;
+                    	$GLOBALS['db']->Execute("UPDATE `" . DB_PREFIX . "_bans` SET sid = '" . $sid . "' WHERE ip = '" . $check . "' AND RemovedBy IS NULL;");
+	                    $requri = substr($_SERVER['REQUEST_URI'], 0, strrpos($_SERVER['REQUEST_URI'], "pages/admin.kickit.php"));
+                    	$kick   = $r->sendCommand("kickid " . $userid . " \"You have been banned by this server, check http://" . $_SERVER['HTTP_HOST'] . $requri . " for more info.\"");
+	                    $objResponse->addAssign("srv_$num", "innerHTML", "<font color='green' size='1'><b><u>Player Found & Kicked!!!</u></b></font>");
+    	                $objResponse->addScript("set_counter('-1');");
+    	                return $objResponse;
+    	            }
+    	            $id++;
+    	        }
+    	    }
+		} else
+			$response = (strpos($r->SendCommand(sprintf("ma_wb_ban %s", $check)), "ok") !== FALSE);
+
+		if ($response) {
 			$objResponse->addAssign("srv_$num", "innerHTML", "<font color='green' size='1'><b>Найден и кикнут с сервера.</b></font>");
 			$GLOBALS['db']->Execute("UPDATE `".DB_PREFIX."_bans` SET sid = '".(int) $sid."' WHERE authid = '".$check."' AND RemovedBy IS NULL;");
 			$objResponse->addScript("set_counter('-1');");
