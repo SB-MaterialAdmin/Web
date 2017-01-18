@@ -41,7 +41,7 @@
 		510 =>  "SMTP.php",
 		511 =>  "Menu_NewTab.php",
 		512 =>  "GenerationPage_Footer.php",
-		513 =>  "SteamAvatars_ExpireDrop.php"
+		513 =>  "SteamAvatars_ExpireDrop.php",
 		514 =>  "OldServerSide.php"
  ];
 ?>
