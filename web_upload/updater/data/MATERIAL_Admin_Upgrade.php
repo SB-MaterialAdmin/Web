@@ -17,7 +17,6 @@
     }
     
 	$_admins = $GLOBALS['db']->Execute("ALTER TABLE `" . DB_PREFIX . "_admins` 
-			ADD `expired` 	int(11) NULL,
 			ADD `skype`		varchar(128) 	NULL,
 			ADD `comment`	varchar(128)	 NULL,
 			ADD `vk`		varchar(128) 	NULL,
