@@ -185,7 +185,7 @@ window.addEvent('domready', function(){
 	}?>
 	</script>
 
-<?php if(is_object($log))$log->WriteLogEntries(); ?>
+<?php if(is_object($GLOBALS['log'])) $GLOBALS['log']->WriteLogEntries(); ?>
 	
 <!--[if lt IE 7]>
 <script defer type="text/javascript" src="./scripts/pngfix.js"></script>
