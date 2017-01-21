@@ -208,7 +208,8 @@ function LostPassword($email)
     'X-Mailer: PHP/' . phpversion();
 	$m = EMail($email, "Сброс пароля SourceBans", $message, $headers);
 
-	$objResponse->addScript("ShowBox('Проверьте почту', 'На Ваш электронный ящик было отправлено письмо с ссылкой для сброса пароля.', 'blue', '', true);");
+	if ($m) $objResponse->addScript("ShowBox('Проверьте почту', 'На Ваш электронный ящик было отправлено письмо с ссылкой для сброса пароля.', 'blue', '', true);");
+	else $objResponse->addScript("ShowBox('Ошибка', 'Не удалось отправить письмо на Ваш электронный ящик. Напишите главному администратору.', 'red', '', true);");
 	return $objResponse;
 }
 
@@ -2948,7 +2949,7 @@ function SendMail($subject, $message, $type, $id)
 
 function CheckVersion() {
     $objResponse = new xajaxResponse();
-    $relver = @file_get_contents("https://raw.githubusercontent.com/CrazyHackGUT/SB_Material_Design/master/updates.json");
+    $relver = @file_get_contents("https://raw.githubusercontent.com/CrazyHackGUT/SB_Material_Design/" . MA_BRANCH . "/updates.json");
     $version = 0;
 
     if (strlen($relver)<8 || $relver == "") {
@@ -2958,7 +2959,7 @@ function CheckVersion() {
         $reldata = json_decode($relver);
         $version = $reldata->release;
 
-        if(version_compare($reldata->release, theme_version) <= 0) {
+        if(version_compare($reldata->release, theme_version, ">")) {
             $VersionInformation  = "<div style=\"text-align: left\">";
             foreach ($reldata->changes as $change)
                 $VersionInformation .= "<strong>*</strong> ".$change."<br />";
