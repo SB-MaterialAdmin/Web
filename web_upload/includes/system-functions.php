@@ -1410,4 +1410,46 @@ function FindArrayItemOnKey($array, $key, $value) {
     
     return null;
 }
+
+function getUserDataByName($serverInstance, $name) {
+    $selected = null;
+    
+    $status = explode("\n", $serverInstance->SendCommand("status"));
+    foreach ($status as $data) {
+        if (strpos($data, $name) === FALSE) {
+            continue;
+        }
+        
+        $selected = $data;
+        break;
+    }
+    
+    if ($selected === null)
+        return false;
+    
+    $ip     = null;
+    $steam  = null;
+    
+    // Parse IP
+    $matches = null;
+    if (preg_match('/(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/', $selected, $matches, PREG_OFFSET_CAPTURE)) {
+        $ip = filter_var($matches[0][0], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE);
+        if ($ip === FALSE) {
+            $ip = "127.0.0.1";
+        }
+    } else {
+        $ip = "127.0.0.1";
+    }
+    
+    // Parse Steam
+    if (preg_match('/STEAM_(\d):([0-1]):(\d{0,})/', $selected, $matches, PREG_OFFSET_CAPTURE) || preg_match('/\[U:1:\d{0,}\]/', $selected, $matches, PREG_OFFSET_CAPTURE)) {
+        $steam = $matches[0][0];
+    }
+
+    return [
+            'steam'     => $steam,
+            'name'      => $name,
+            'ip'        => $ip
+            ];
+}
 ?>
