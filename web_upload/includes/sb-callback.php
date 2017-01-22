@@ -3826,7 +3826,7 @@ function PastePlayerData($sid, $name) {
     $objResponse->addAssign("nickname", "value", $client['name']);
     $objResponse->addAssign("steam",    "value", $client['steam']);
     $objResponse->addAssign("ip",       "value", $client['ip']);
-    $objResponse->addAlert($client['source']);
+    $objResponse->addScript("swal.close();");
     
     return $objResponse;
 }
