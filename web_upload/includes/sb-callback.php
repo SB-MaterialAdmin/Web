@@ -3815,7 +3815,7 @@ function PastePlayerData($sid, $name) {
         return $objResponse;
     }
     
-    $client = getUserDataByName($CSInstance, $name);
+    $client = getClientByName($CSInstance, $name);
     if (!$client) {
         $objResponse->addScript("ShowBox('Ошибка', 'Нельзя получить информацию о игроке ".addslashes(htmlspecialchars($name)).". Игрок ушел с сервера! (".$data['ip'].":".$data['port'].") ', 'red', '', true);");
         $objResponse->addScript("$('dialog-control').setStyle('display', 'block');");

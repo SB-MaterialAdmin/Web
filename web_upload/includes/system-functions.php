@@ -1411,45 +1411,86 @@ function FindArrayItemOnKey($array, $key, $value) {
     return null;
 }
 
-function getUserDataByName($serverInstance, $name) {
-    $selected = null;
-    
+function getClientByName($serverInstance, $name) {
     $status = explode("\n", $serverInstance->SendCommand("status"));
-    foreach ($status as $data) {
-        if (strpos($data, $name) === FALSE) {
-            continue;
-        }
-        
-        $selected = $data;
-        break;
-    }
-    
-    if ($selected === null)
-        return false;
-    
-    $ip     = null;
-    $steam  = null;
-    
-    // Parse IP
-    $matches = null;
-    if (preg_match('/(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/', $selected, $matches, PREG_OFFSET_CAPTURE)) {
-        $ip = filter_var($matches[0][0], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE);
-        if ($ip === FALSE) {
-            $ip = "127.0.0.1";
-        }
-    } else {
-        $ip = "127.0.0.1";
-    }
-    
-    // Parse Steam
-    if (preg_match('/STEAM_(\d):([0-1]):(\d{0,})/', $selected, $matches, PREG_OFFSET_CAPTURE) || preg_match('/\[U:1:\d{0,}\]/', $selected, $matches, PREG_OFFSET_CAPTURE)) {
-        $steam = $matches[0][0];
+    foreach ($status as $statusStr) {
+        $data = parseStatus($statusStr);
+
+        if ($data['name'] == $name)
+            return $data;
     }
 
-    return [
-            'steam'     => $steam,
-            'name'      => $name,
-            'ip'        => $ip
-            ];
+    return false;
+}
+
+function getClientBySteamId($serverInstance, $authId) {
+    $authId = getAccountId($authId);
+
+    $status = explode("\n", $serverInstance->SendCommand("status"));
+    foreach ($status as $statusStr) {
+        $data = parseStatus($statusStr);
+
+        if ($authId == getAccountId($data['steam']))
+            return $data;
+    }
+
+    return false;
+}
+
+function getClientByIp($serverInstance, $ip) {
+    $status = explode("\n", $serverInstance->SendCommand("status"));
+    foreach ($status as $statusStr) {
+        $data = parseStatus($statusStr);
+        
+        if ($data['ip'] == $ip)
+            return $data;
+    }
+
+    return false;
+}
+
+function parseStatus($selected) {
+    $matches = null;
+    $response = [];
+
+    // Try parse SteamID
+    if (preg_match('/STEAM_(\d):([0-1]):(\d{0,})/', $selected, $matches, PREG_OFFSET_CAPTURE) || preg_match('/\[U:1:\d{0,}\]/', $selected, $matches, PREG_OFFSET_CAPTURE)) {
+        $response['steam'] = $matches[0][0];
+    } else {
+        $response['steam'] = 'STEAM_ID_PENDING';
+    }
+    
+    // Try parse IP
+    if (preg_match('/(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/', $selected, $matches, PREG_OFFSET_CAPTURE)) {
+        $response['ip'] = filter_var($matches[0][0], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4);
+        if ($response['ip'] === FALSE) {
+            $response['ip'] = "127.0.0.1";
+        }
+    } else {
+        $response['ip'] = "127.0.0.1";
+    }
+    
+    // Maybe, try parse nickname?
+    if (preg_match('/\"(.{1,})\"/', $selected, $matches, PREG_OFFSET_CAPTURE)) {
+        $response['name'] = $matches[1][0];
+    } else {
+        $response['name'] = "unnamed";
+    }
+    
+    return $response;
+}
+
+function kickClient($serverInstance, $identity, $reason = "Kicked with SourceBans WebPanel.") {
+    $client = null;
+    if (filter_var($identity, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4))
+        $client = getClientByIp($serverInstance, $identity);
+    else
+        $client = getClientBySteamId($serverInstance, $identity);
+
+    if (!$client)
+        return false;
+
+    $serverInstance->sendCommand(sprintf("kickid \"%s\" \"%s\"", $client['steam'], $reason));
+    return true;
 }
 ?>
