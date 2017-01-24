@@ -2,7 +2,7 @@
 Люди, перечисленные в этом списке, помогли материально разработчикам рефорка.
 
 - [Rabb1t](http://hlmod.ru/members/rabb1t.80450/) - 807.92 руб.
-- [DemonEkb](http://forum.myarena.ru/index.php?/user/19877-demonekb/) - 500 руб.
+- [DemonEkb](http://forum.myarena.ru/index.php?/user/19877-demonekb/) - 700 руб.
 - [CAH4E3](http://hlmod.ru/members/cah4e3.81323/) - 150 руб.
 - [Samoletik1337](http://hlmod.ru/members/samoletik1337.84417/) - 150 руб.
 
