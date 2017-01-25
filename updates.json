@@ -1,10 +1,10 @@
 {
-    "release": "1.1.5.1",
+    "release": "1.1.5.2",
     "changes": [
-        "Добавлена возможность выключать Splash Screen при загрузке SourceBans.",
-        "Исправлена ошибка, когда в админ панели писалось, что вышло новое обновление, даже если такого не происходило."
+        "Теперь кнопка, показывающая список администрации сбоку, скрывается, если некого показывать.",
+        "Добавлен раздел Обслуживания системы в настройки"
     ],
-    "download_url": "https://github.com/CrazyHackGUT/SB_Material_Design/archive/release_1151.zip",
+    "download_url": "https://github.com/CrazyHackGUT/SB_Material_Design/archive/release_1152.zip",
     "changelist":   "https://github.com/CrazyHackGUT/SB_Material_Design/blob/master/changelist.md",
     
     "mods_manifest": "http://dl.kruzefag.ru/SB_MaterialDesign/manifest.json"

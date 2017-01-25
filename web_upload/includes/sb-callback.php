@@ -34,7 +34,7 @@ $xajax = new xajax();
 $xajax->setRequestURI(XAJAX_REQUEST_URI);
 global $userbank;
 
-$methods = array('admin' => array('AddMod', 'RemoveMod', 'AddGroup', 'RemoveGroup', 'RemoveAdmin', 'RemoveSubmission', 'RemoveServer', 'UpdageGroupPermissions', 'UpdateAdminPermissions', 'AddAdmin', 'SetupEditServer', 'AddServerGroupName', 'AddServer', 'AddBan', 'RehashAdmins', 'EditGroup', 'RemoveProtest', 'SendRcon', 'EditAdminPerms', 'AddComment', 'EditComment', 'RemoveComment', 'PrepareReban', 'ClearCache', 'ClearCacheAva', 'KickPlayer', 'GroupBan', 'BanMemberOfGroup', 'GetGroups', 'BanFriends', 'SendMessage', 'ViewCommunityProfile', 'SetupBan', 'CheckPassword', 'ChangePassword', 'CheckSrvPassword', 'ChangeSrvPassword', 'ChangeEmail', 'CheckVersion', 'SendMail', 'AddBlock', 'PrepareReblock', 'PrepareBlockFromBan', 'removeExpiredAdmins', 'AddSupport', 'ChangeAdminsInfos', 'InstallMOD', 'UpdateGroupPermissions', 'PastePlayerData'), 'default' => array('Plogin', 'ServerHostPlayers', 'ServerHostProperty', 'ServerHostPlayers_list', 'ServerPlayers', 'LostPassword', 'RefreshServer', 'AddAdmin_pay', 'RehashAdmins_pay'));
+$methods = array('admin' => array('AddMod', 'RemoveMod', 'AddGroup', 'RemoveGroup', 'RemoveAdmin', 'RemoveSubmission', 'RemoveServer', 'UpdageGroupPermissions', 'UpdateAdminPermissions', 'AddAdmin', 'SetupEditServer', 'AddServerGroupName', 'AddServer', 'AddBan', 'RehashAdmins', 'EditGroup', 'RemoveProtest', 'SendRcon', 'EditAdminPerms', 'AddComment', 'EditComment', 'RemoveComment', 'PrepareReban', 'Maintenance', 'KickPlayer', 'GroupBan', 'BanMemberOfGroup', 'GetGroups', 'BanFriends', 'SendMessage', 'ViewCommunityProfile', 'SetupBan', 'CheckPassword', 'ChangePassword', 'CheckSrvPassword', 'ChangeSrvPassword', 'ChangeEmail', 'CheckVersion', 'SendMail', 'AddBlock', 'PrepareReblock', 'PrepareBlockFromBan', 'removeExpiredAdmins', 'AddSupport', 'ChangeAdminsInfos', 'InstallMOD', 'UpdateGroupPermissions', 'PastePlayerData'), 'default' => array('Plogin', 'ServerHostPlayers', 'ServerHostProperty', 'ServerHostPlayers_list', 'ServerPlayers', 'LostPassword', 'RefreshServer', 'AddAdmin_pay', 'RehashAdmins_pay'));
 
 if(isset($_COOKIE['aid'], $_COOKIE['password']) && $userbank->CheckLogin($_COOKIE['password'], $_COOKIE['aid']))
     foreach ($methods['admin'] as $method)
@@ -3019,43 +3019,57 @@ function RemoveComment($cid, $ctype, $page)
 	return $objResponse;
 }
 
-function ClearCache()
-{
-	$objResponse = new xajaxResponse();
-	global $userbank, $username, $theme;
-	if (!$userbank->HasAccess(ADMIN_OWNER|ADMIN_WEB_SETTINGS))
-	{
-		$objResponse->redirect("index.php?p=login&m=no_access", 0);
-		$log = new CSystemLog("w", "Ошибка доступа", $username . " пытался очистить кэш, не имея на это прав.");
-		return $objResponse;
-	}
-
-	$theme->clear_compiled_tpl();
-
-	$objResponse->addScript("ShowBox('Кеш удалён', 'Кеш был успешно удалён!', 'green', '', true);");
-
-	return $objResponse;
-}
-
-function ClearCacheAva()
-{
-	$objResponse = new xajaxResponse();
-	global $userbank, $username;
-	if (!$userbank->HasAccess(ADMIN_OWNER|ADMIN_WEB_SETTINGS))
-	{
-		$objResponse->redirect("index.php?p=login&m=no_access", 0);
-		$log = new CSystemLog("w", "Ошибка доступа", $username . " пытался очистить кэш аватарок, не имея на это прав.");
-		return $objResponse;
-	}
-
-	$clr = $GLOBALS['db']->Execute(sprintf("TRUNCATE `%s_avatars`", DB_PREFIX));
-	if($clr){
-		$objResponse->addScript("ShowBox('Кеш удалён', 'Кеш был успешно удалён!', 'green', '', true);");
-	}else{
-		$objResponse->addScript("ShowBox('Ошибка', 'Не могу выполнить запрос на удаление!', 'red', '', true);");
-	}
-
-	return $objResponse;
+function Maintenance($type) {
+    global $userbank, $username, $theme;
+    
+    $objResponse = new xajaxResponse();
+    if (!$userbank->HasAccess(ADMIN_OWNER|ADMIN_WEB_SETTINGS)) {
+        ShowBox_ajx("Ошибка", "Вы не имеете прав для выполнения данного действия!", "red", "", true, $objResponse);
+        new CSystemLog("w", "Ошибка доступа", $usernake . " пытался произвести операцию по обслуживанию системы, не имея на это прав.");
+        return $objResponse;
+    }
+    
+    switch($type) {
+        case "themecache": {
+            $theme->clear_compiled_tpl();
+            ShowBox_ajx("Успех", "Кеш шаблона очищен успешно.", "green", "", true, $objResponse);
+            break;
+        }
+        
+        case "avatarcache": {
+            $GLOBALS['db']->Execute(sprintf("TRUNCATE `%s_avatars`", DB_PREFIX));
+            ShowBox_ajx("Успех", "Кеш аватарок очищен успешно.", "green", "", true, $objResponse);
+            break;
+        }
+        
+        case "bansexpired": {
+            $GLOBALS['db']->Execute(sprintf("DELETE FROM `%s_bans` WHERE `RemoveType` IS NOT NULL", DB_PREFIX));
+            ShowBox_ajx("Успех", "Истёкшие баны удалены успешно.", "green", "", true, $objResponse);
+            break;
+        }
+        
+        case "commsexpired": {
+            $GLOBALS['db']->Execute(sprintf("DELETE FROM `%s_comms` WHERE `RemoveType` IS NOT NULL", DB_PREFIX));
+            ShowBox_ajx("Успех", "Истёкшие муты удалены успешно.", "green", "", true, $objResponse);
+            break;
+        }
+        
+        case "optimizebd": {
+            $tables = $GLOBALS['db']->GetAll("SHOW TABLES;");
+            foreach ($tables as &$table)
+                $GLOBALS['db']->Execute(sprintf("OPTIMIZE TABLE `%s`;", $table[0]));
+            
+            ShowBox_ajx("Успех", "Оптимизация таблиц завершена.", "green", "", true, $objResponse);
+            break;
+        }
+        
+        default: {
+            ShowBox_ajx("Ошибка", "Неизвестная операция", "red", "", true, $objResponse);
+            break;
+        }
+    }
+    
+    return $objResponse;
 }
 
 function RefreshServer($sid)

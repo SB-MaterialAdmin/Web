@@ -226,17 +226,19 @@
 						</select>
 					</div>
 				</div>
-				<div class="form-group m-b-5">
-					<label for="enable_submit" class="col-sm-3 control-label">{help_icon title="Очистить кэш" message="Кликните по этой кнопке, чтобы очистить папку themes_c или кеш аватарок администраторов."} Очистить кэш</label>
-					<div class="col-sm-9 p-t-10">
-						<div class="col-sm-12">
-							{sb_button text="Шаблона" onclick="xajax_ClearCache();" icon="<i class='zmdi zmdi-delete'></i>" class="bgm-red btn-icon-text" id="clearcache" submit=false}
-							<div id="clearcache.msg"></div>
-						</div>
-						<div class="col-sm-12 p-t-10">
-							{sb_button text="Аватарок" onclick="xajax_ClearCacheAva();" icon="<i class='zmdi zmdi-delete'></i>" class="bgm-red btn-icon-text" id="clearcache" submit=false}
-							<div id="clearcache.msg"></div>
-						</div>
+				<div class="form-group m-b-5 form-inline">
+					<label for="maintenance" class="col-sm-3 control-label">{help_icon title="Обслуживание системы" message="Выберите операцию для обслуживания системы, после чего, нажмите 'Выполнить'."} Обслуживание системы</label>
+					<div class="col-sm-3 p-t-5">
+						<select class="selectpicker" name="maintenance" id="maintenance">
+							<option value="themecache">Очистить кеш шаблона</option>
+							<option value="avatarcache">Очистить кеш аватарок</option>
+							<option value="bansexpired">Удалить истёкшие баны</option>
+							<option value="commsexpired">Удалить истёкшие блокировки чата</option>
+							<option value="optimizebd">Произвести оптимизацию БД</option>
+						</select>
+					</div>
+					<div class="col-sm-2 p-t-5">
+                        {sb_button text="Выполнить" icon="<i class='zmdi zmdi-check-all'></i>" class="bgm-green btn-icon-text" id="asettings" onclick="xajax_Maintenance($('maintenance').value);" submit=false}
 					</div>
 				</div>
 				

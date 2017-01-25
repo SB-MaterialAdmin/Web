@@ -6,7 +6,7 @@
 
 ### Ссылки на загрузку:
 - **Dev-ветка (1.1.6)** (временно недоступно)
-- **[Stable-релиз (1.1.5.1)](https://github.com/CrazyHackGUT/SB_Material_Design/archive/release_1151.zip)**
+- **[Stable-релиз (1.1.5.2)](https://github.com/CrazyHackGUT/SB_Material_Design/archive/release_1152.zip)**
 
 [Список всех планируемых изменений (TODO)](https://github.com/CrazyHackGUT/SB_Material_Design/blob/master/TODO.md)
 
