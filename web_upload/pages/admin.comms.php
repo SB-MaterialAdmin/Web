@@ -35,7 +35,7 @@ if(isset($_GET["rebanid"]))
 {
 	echo '<script type="text/javascript">xajax_PrepareBlockFromBan("'.$_GET["blockfromban"].'");</script>';
 }elseif((isset($_GET['action']) && $_GET['action'] == "pasteBan") && isset($_GET['pName']) && isset($_GET['sid'])) {
-	echo "<script type=\"text/javascript\">setTimeout(\"ShowBox('Загрузка..','<i>Подождите!</i>', 'blue', '', false, 5000);\", 800);xajax_PasteBlock('".(int)$_GET['sid']."', '".addslashes($_GET['pName'])."');</script>";
+	echo "<script type=\"text/javascript\">setTimeout(\"ShowBox('Загрузка..','<i>Подождите!</i>', 'blue', '', false, 5000);\", 800);xajax_PastePlayerData('".(int)$_GET['sid']."', '".addslashes($_GET['pName'])."');</script>";
 }
 
 echo '<div id="admin-page-content">';

@@ -154,6 +154,9 @@ else
 			
 			$xleb_kroxi = (isset($_POST['xleb_kroxi_t']) && $_POST['xleb_kroxi_t'] == "on" ? 1 : 0);
 			
+			$splashscreen    = (isset($_POST['splashscreen']) && $_POST['splashscreen'] == "on" ? 1 : 0);
+			$stats           = (isset($_POST['home_stats']) && $_POST['home_stats'] == "on" ? 1 : 0);
+			
 			$edit = $GLOBALS['db']->Execute("REPLACE INTO ".DB_PREFIX."_settings (`value`, `setting`) VALUES
 												(".(int)$global_themes_check.", 'template.global'),
 												(".(int)$p_obrat_cvaz.", 'dash.info_block'),
@@ -168,6 +171,8 @@ else
 												(?, 'dash.info_yout'),
 												(?, 'dash.info_face'),
 												(".(int)$xleb_kroxi.", 'page.xleb'),
+												(".(int)$splashscreen.", 'theme.splashscreen'),
+												(".(int)$stats.", 'theme.home.stats'),
 												(?, 'theme.style'),
 												(?, 'theme.style.color'),
 												(?, 'theme.bg'),
@@ -402,6 +407,9 @@ $('obrat_cvaz').checked = <?php echo $GLOBALS['config']['dash.info_block']?>;
 $('admin_list_t').checked = <?php echo $GLOBALS['config']['page.adminlist']?>;
 $('xleb_kroxi_t').checked = <?php echo $GLOBALS['config']['page.xleb']?>;
 
+$('splashscreen').checked = <?php echo $GLOBALS['config']['theme.splashscreen']?>;
+$('home_stats').checked = <?php echo $GLOBALS['config']['theme.home.stats']?>;
+
 $('config_debug').checked = <?php echo $GLOBALS['config']['config.debug']?>;
 $('config_summertime').checked = <?php echo $GLOBALS['config']['config.summertime']?>;
 $('enable_submit').checked = <?php echo $GLOBALS['config']['config.enablesubmit']?>;
@@ -420,7 +428,7 @@ $('enable_friendsbanning').checked = <?php echo $GLOBALS['config']['config.enabl
 $('enable_admininfo').checked = <?php echo $GLOBALS['config']['config.enableadmininfos']?>;
 $('allow_admininfo').checked = <?php echo $GLOBALS['config']['config.changeadmininfos']?>;
 $('enable_adminrehashing').checked = <?php echo $GLOBALS['config']['config.enableadminrehashing']?>;
-$('moder_group_st').value = <?php echo $GLOBALS['config']['config.modgroup']?>;
+$('moder_group_st').value = "<?php echo $GLOBALS['config']['config.modgroup']?>";
 $('footer_gendata').checked = <?php echo $GLOBALS['config']['page.footer.allow_show_data']?>;
 <?php
 if(ini_get('safe_mode')==1) {

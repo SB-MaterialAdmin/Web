@@ -25,6 +25,7 @@
 //
 // *************************************************************************
 
+// Шесть месяцев назад лишь двое знали, как это работает - я и Бог. Сейчас это знает уже только Бог.
 include_once 'init.php';
 include_once(INCLUDES_PATH . "/user-functions.php");
 include_once(INCLUDES_PATH . "/system-functions.php");

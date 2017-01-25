@@ -235,6 +235,7 @@
 
 
 </div>
+{if $stats}
 <div class="mini-charts">
                         <div class="row">
                             <div class="col-sm-6 col-md-3">
@@ -286,3 +287,4 @@
                             </div>
                         </div>
                     </div>
+{/if}

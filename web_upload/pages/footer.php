@@ -45,6 +45,8 @@ $theme->assign('show_gendata',      ($GLOBALS['config']['page.footer.allow_show_
 $theme->assign('gendata_queries',   $GLOBALS['db']->Queries);
 $theme->assign('gendata_time',      round($totaltime, 2));
 
+$theme->assign('splash_screen',     ($GLOBALS['config']['theme.splashscreen'] == "1"));
+
 $theme->display('page_footer.tpl');
 
 if(isset($_GET['p']))
@@ -185,7 +187,7 @@ window.addEvent('domready', function(){
 	}?>
 	</script>
 
-<?php if(is_object($log))$log->WriteLogEntries(); ?>
+<?php if(is_object($GLOBALS['log'])) $GLOBALS['log']->WriteLogEntries(); ?>
 	
 <!--[if lt IE 7]>
 <script defer type="text/javascript" src="./scripts/pngfix.js"></script>

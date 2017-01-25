@@ -1,6 +1,22 @@
 <?php
+    $_need_expired = true;
+    $_struct = $GLOBALS['db']->GetAll("DESCRIBE `" . DB_PREFIX . "_admins`");
+    foreach ($_struct as $_obj) {
+        if ($_obj['Field'] == "expired") {
+            $_need_expired = false;
+            break;
+        }
+    }
+    
+    if ($_need_expired) {
+        $_expired = $GLOBALS['db']->Execute("ALTER TABLE `" . DB_PREFIX . "_admins` 
+            ADD `expired` 	int(11) NULL;");
+        
+        if (!$_expired)
+            return false;
+    }
+    
 	$_admins = $GLOBALS['db']->Execute("ALTER TABLE `" . DB_PREFIX . "_admins` 
-			ADD `expired` 	int(11) NULL,
 			ADD `skype`		varchar(128) 	NULL,
 			ADD `comment`	varchar(128)	 NULL,
 			ADD `vk`		varchar(128) 	NULL,

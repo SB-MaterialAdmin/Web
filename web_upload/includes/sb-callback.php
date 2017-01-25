@@ -34,7 +34,7 @@ $xajax = new xajax();
 $xajax->setRequestURI(XAJAX_REQUEST_URI);
 global $userbank;
 
-$methods = array('admin' => array('AddMod', 'RemoveMod', 'AddGroup', 'RemoveGroup', 'RemoveAdmin', 'RemoveSubmission', 'RemoveServer', 'UpdageGroupPermissions', 'UpdateAdminPermissions', 'AddAdmin', 'SetupEditServer', 'AddServerGroupName', 'AddServer', 'AddBan', 'RehashAdmins', 'EditGroup', 'RemoveProtest', 'SendRcon', 'EditAdminPerms', 'AddComment', 'EditComment', 'RemoveComment', 'PrepareReban', 'ClearCache', 'ClearCacheAva', 'KickPlayer', 'PasteBan', 'GroupBan', 'BanMemberOfGroup', 'GetGroups', 'BanFriends', 'SendMessage', 'ViewCommunityProfile', 'SetupBan', 'CheckPassword', 'ChangePassword', 'CheckSrvPassword', 'ChangeSrvPassword', 'ChangeEmail', 'CheckVersion', 'SendMail', 'AddBlock', 'PrepareReblock', 'PrepareBlockFromBan', 'PasteBlock', 'removeExpiredAdmins', 'AddSupport', 'ChangeAdminsInfos', 'InstallMOD', 'UpdateGroupPermissions'), 'default' => array('Plogin', 'ServerHostPlayers', 'ServerHostProperty', 'ServerHostPlayers_list', 'ServerPlayers', 'LostPassword', 'RefreshServer', 'AddAdmin_pay', 'RehashAdmins_pay'));
+$methods = array('admin' => array('AddMod', 'RemoveMod', 'AddGroup', 'RemoveGroup', 'RemoveAdmin', 'RemoveSubmission', 'RemoveServer', 'UpdageGroupPermissions', 'UpdateAdminPermissions', 'AddAdmin', 'SetupEditServer', 'AddServerGroupName', 'AddServer', 'AddBan', 'RehashAdmins', 'EditGroup', 'RemoveProtest', 'SendRcon', 'EditAdminPerms', 'AddComment', 'EditComment', 'RemoveComment', 'PrepareReban', 'ClearCache', 'ClearCacheAva', 'KickPlayer', 'GroupBan', 'BanMemberOfGroup', 'GetGroups', 'BanFriends', 'SendMessage', 'ViewCommunityProfile', 'SetupBan', 'CheckPassword', 'ChangePassword', 'CheckSrvPassword', 'ChangeSrvPassword', 'ChangeEmail', 'CheckVersion', 'SendMail', 'AddBlock', 'PrepareReblock', 'PrepareBlockFromBan', 'removeExpiredAdmins', 'AddSupport', 'ChangeAdminsInfos', 'InstallMOD', 'UpdateGroupPermissions', 'PastePlayerData'), 'default' => array('Plogin', 'ServerHostPlayers', 'ServerHostProperty', 'ServerHostPlayers_list', 'ServerPlayers', 'LostPassword', 'RefreshServer', 'AddAdmin_pay', 'RehashAdmins_pay'));
 
 if(isset($_COOKIE['aid'], $_COOKIE['password']) && $userbank->CheckLogin($_COOKIE['password'], $_COOKIE['aid']))
     foreach ($methods['admin'] as $method)
@@ -208,7 +208,8 @@ function LostPassword($email)
     'X-Mailer: PHP/' . phpversion();
 	$m = EMail($email, "Сброс пароля SourceBans", $message, $headers);
 
-	$objResponse->addScript("ShowBox('Проверьте почту', 'На Ваш электронный ящик было отправлено письмо с ссылкой для сброса пароля.', 'blue', '', true);");
+	if ($m) $objResponse->addScript("ShowBox('Проверьте почту', 'На Ваш электронный ящик было отправлено письмо с ссылкой для сброса пароля.', 'blue', '', true);");
+	else $objResponse->addScript("ShowBox('Ошибка', 'Не удалось отправить письмо на Ваш электронный ящик. Напишите главному администратору.', 'red', '', true);");
 	return $objResponse;
 }
 
@@ -2196,89 +2197,6 @@ function KickPlayer($sid, $name)
 	return $objResponse;
 }
 
-function PasteBan($sid, $name, $type=0)
-{
-	$objResponse = new xajaxResponse();
-	global $userbank, $username;
-	
-	$sid = (int)$sid;
-	$type = (int)$type;
-	if(!$userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_BAN))
-	{
-		$objResponse->redirect("index.php?p=login&m=no_access", 0);
-		$log = new CSystemLog("w", "Ошибка доступа", $username . " пытался забанить, не имея на это прав.");
-		return $objResponse;
-	}
-	require INCLUDES_PATH.'/CServerControl.php';
-	//get the server data
-	$data = $GLOBALS['db']->GetRow("SELECT ip, port, rcon FROM ".DB_PREFIX."_servers WHERE sid = ?;", array($sid));
-	if(empty($data['rcon'])) {
-		$objResponse->addScript("$('dialog-control').setStyle('display', 'block');");
-		$objResponse->addScript("ShowBox('Ошибка', 'Не задан РКОН пароль для сервера ".$data['ip'].":".$data['port']."!', 'red', '', true);");
-		return $objResponse;
-	}
-
-	$r = new CServerControl();
-	$r->Connect($data['ip'], $data['port']);
-	if(!$r->AuthRcon($data['rcon']))
-	{
-		$GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_servers SET rcon = '' WHERE sid = ?;", array($sid));
-		$objResponse->addScript("$('dialog-control').setStyle('display', 'block');");
-		$objResponse->addScript("ShowBox('Ошибка', 'Неверный РКОН пароль для сервера ".$data['ip'].":".$data['port']."!', 'red', '', true);");
-		return $objResponse;
-	}
-
-	/* $ret = $r->SendCommand("status");
-	$search = preg_match_all(STATUS_PARSE,$ret,$matches,PREG_PATTERN_ORDER);
-	$i = 0;
-	$found = false;
-	$index = -1;
-	foreach($matches[2] AS $match) {
-		if($match == $name) {
-			$found = true;
-			$index = $i;
-			break;
-		}
-		$i++;
-	}
-	if($found) {
-		$steam = $matches[3][$index];
-		// Hack to support steam3 [U:1:X] representation.
-		if(strpos($steam, "[U:") === 0) {
-			$steam = renderSteam2(getAccountId($steam), 0);
-		}
-		$name = $matches[2][$index];
-		$ip = explode(":", $matches[8][$index]);
-		$ip = $ip[0];
-		$objResponse->addScript("$('nickname').value = '" . addslashes($name) . "'");
-		if($type==1)
-			$objResponse->addScript("$('type').options[1].selected = true");
-		$objResponse->addScript("$('steam').value = '" . $steam . "'");
-		$objResponse->addScript("$('ip').value = '" . $ip . "'");
-	} else {
-		$objResponse->addScript("ShowBox('Ошибка', 'Невозможно получить информацию о игроке ".addslashes(htmlspecialchars($name)).". Игрок покинул сервер! (".$data['ip'].":".$data['port'].") ', 'red', '', true);");
-		$objResponse->addScript("$('dialog-control').setStyle('display', 'block');");
-		return $objResponse;
-	} */
-	$ret = $r->SendCommand(sprintf("sb_getinfo %s", $name));
-	$pl  = explode("|", $ret);
-	if (count($pl) < 2) {
-		$objResponse->addScript("ShowBox('Ошибка', 'Невозможно получить информацию о игроке ".addslashes(htmlspecialchars($name)).". Игрок покинул сервер! (".$data['ip'].":".$data['port'].") ', 'red', '', true);");
-		$objResponse->addScript("$('dialog-control').setStyle('display', 'block');");
-		return $objResponse;
-	} else {
-		$objResponse->addScript("$('nickname').value = '" . addslashes($name) . "'");
-		if($type==1)
-			$objResponse->addScript("$('type').options[1].selected = true");
-		$objResponse->addScript("$('steam').value = '" . $pl[0] . "'");
-		$objResponse->addScript("$('ip').value = '" . $pl[1] . "'");
-	}
-	$objResponse->addScript("SwapPane(0);");
-	$objResponse->addScript("$('dialog-control').setStyle('display', 'block');");
-	$objResponse->addScript("$('dialog-placement').setStyle('display', 'none');");
-	return $objResponse;
-}
-
 function AddBan($nickname, $type, $steam, $ip, $length, $dfile, $dname, $reason, $fromsub, $udemo=false)
 {
 	$objResponse = new xajaxResponse();
@@ -2948,7 +2866,7 @@ function SendMail($subject, $message, $type, $id)
 
 function CheckVersion() {
     $objResponse = new xajaxResponse();
-    $relver = @file_get_contents("https://raw.githubusercontent.com/CrazyHackGUT/SB_Material_Design/master/updates.json");
+    $relver = @file_get_contents("https://raw.githubusercontent.com/CrazyHackGUT/SB_Material_Design/" . MA_BRANCH . "/updates.json");
     $version = 0;
 
     if (strlen($relver)<8 || $relver == "") {
@@ -2958,7 +2876,7 @@ function CheckVersion() {
         $reldata = json_decode($relver);
         $version = $reldata->release;
 
-        if(version_compare($reldata->release, theme_version) <= 0) {
+        if(version_compare($reldata->release, theme_version, ">")) {
             $VersionInformation  = "<div style=\"text-align: left\">";
             foreach ($reldata->changes as $change)
                 $VersionInformation .= "<strong>*</strong> ".$change."<br />";
@@ -3867,64 +3785,49 @@ function PrepareBlockFromBan($bid)
 	return $objResponse;
 }
 
-function PasteBlock($sid, $name)
-{
-	$objResponse = new xajaxResponse();
-	global $userbank, $username;
-	
-	$sid = (int)$sid;
-	if(!$userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_BAN))
-	{
-		$objResponse->redirect("index.php?p=login&m=no_access", 0);
-		$log = new CSystemLog("w", "Ошибка доступа", $username . " пытался вставить блок , не имея на это прав.");
-		return $objResponse;
-	}
-	require INCLUDES_PATH.'/CServerControl.php';
-	//get the server data
-	$data = $GLOBALS['db']->GetRow("SELECT ip, port, rcon FROM ".DB_PREFIX."_servers WHERE sid = ?;", array($sid));
-	if(empty($data['rcon'])) {
-		$objResponse->addScript("$('dialog-control').setStyle('display', 'block');");
-		$objResponse->addScript("ShowBox('Ошибка', 'Нет РКОН пароля сервера ".$data['ip'].":".$data['port']."!', 'red', '', true);");
-		return $objResponse;
-	}
+function PastePlayerData($sid, $name) {
+    global $userbank, $username;
+    $objResponse = new xajaxResponse();
 
-	$r = new CServerRcon();
-	$r->Connect($data['ip'], $data['port']);
-	
-	if(!$r->AuthRcon($data['rcon']))
-	{
-		$GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_servers SET rcon = '' WHERE sid = ?;", array($sid));
-		$objResponse->addScript("$('dialog-control').setStyle('display', 'block');");
-		$objResponse->addScript("ShowBox('Ошибка', 'Неверный РКОН пароль сервера ".$data['ip'].":".$data['port']."!', 'red', '', true);");
-		return $objResponse;
-	}
-
-	$ret = $r->SendCommand("status");
-	$search = preg_match_all(STATUS_PARSE,$ret,$matches,PREG_PATTERN_ORDER);
-	$i = 0;
-	$found = false;
-	$index = -1;
-	foreach($matches[2] AS $match) {
-		if($match == $name) {
-			$found = true;
-			$index = $i;
-			break;
-		}
-		$i++;
-	}
-	if($found) {
-		$steam = $matches[3][$index];
-		$name = $matches[2][$index];
-		$objResponse->addScript("$('nickname').value = '" . addslashes($name) . "'");
-		$objResponse->addScript("$('steam').value = '" . $steam . "'");
-	} else {
-		$objResponse->addScript("ShowBox('Ошибка', 'Нельзя получить информацию о игроке ".addslashes(htmlspecialchars($name)).". Игрок ушел с сервера! (".$data['ip'].":".$data['port'].") ', 'red', '', true);");
-		$objResponse->addScript("$('dialog-control').setStyle('display', 'block');");
-		return $objResponse;
-	}
-	$objResponse->addScript("SwapPane(0);");
-	$objResponse->addScript("$('dialog-control').setStyle('display', 'block');");
-	$objResponse->addScript("$('dialog-placement').setStyle('display', 'none');");
-	return $objResponse;
+    if (!$userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_BAN)) {
+        $objResponse->redirect("index.php?p=login&m=no_access", 0);
+        $log = new CSystemLog("w", "Ошибка доступа", $username . " пытался получить данные об игроке для добавления бана/блока , не имея на это прав.");
+        return $objResponse;
+    }
+    
+    sleep(1); // костыль против быстрого "пролёта" окошка о том, что игрок не найден
+    
+    $sid = (int) $sid;
+    $data = $GLOBALS['db']->GetRow("SELECT ip, port, rcon FROM ".DB_PREFIX."_servers WHERE sid = ?;", array($sid));
+    if (empty($data['rcon'])) {
+        $objResponse->addScript("$('dialog-control').setStyle('display', 'block');");
+        $objResponse->addScript("ShowBox('Ошибка', 'Нет РКОН пароля сервера <b>".$data['ip'].":".$data['port']."</b>! Получение данных об игроке невозможно!', 'red', '', true);");
+        return $objResponse;
+    }
+    
+    require(INCLUDES_PATH . '/CServerControl.php');
+    $CSInstance = new CServerControl();
+    $CSInstance->Connect($data['ip'], $data['port']);
+    if (!$CSInstance->AuthRcon($data['rcon'])) {
+        $GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_servers SET rcon = '' WHERE sid = ?;", array($sid));
+        $objResponse->addScript("$('dialog-control').setStyle('display', 'block');");
+        $objResponse->addScript("ShowBox('Ошибка', 'Неверный РКОН пароль сервера ".$data['ip'].":".$data['port']."!', 'red', '', true);");
+        return $objResponse;
+    }
+    
+    $client = getClientByName($CSInstance, $name);
+    if (!$client) {
+        $objResponse->addScript("ShowBox('Ошибка', 'Нельзя получить информацию о игроке ".addslashes(htmlspecialchars($name)).". Игрок ушел с сервера! (".$data['ip'].":".$data['port'].") ', 'red', '', true);");
+        $objResponse->addScript("$('dialog-control').setStyle('display', 'block');");
+        return $objResponse;
+    }
+    
+    // nickname, steam, ip
+    $objResponse->addAssign("nickname", "value", $client['name']);
+    $objResponse->addAssign("steam",    "value", $client['steam']);
+    $objResponse->addAssign("ip",       "value", $client['ip']);
+    $objResponse->addScript("swal.close();");
+    
+    return $objResponse;
 }
 ?>

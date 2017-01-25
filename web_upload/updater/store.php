@@ -26,6 +26,7 @@
 // *************************************************************************
 
  return [
+		352 =>  "SourceBans_MyArena.php",
 		356 =>  "SourceComms_DBStructure.php",
 		480 =>  "MATERIAL_Admin_Upgrade.php",
 		500 =>  "ThemeCustom_Header.php",
@@ -42,6 +43,7 @@
 		511 =>  "Menu_NewTab.php",
 		512 =>  "GenerationPage_Footer.php",
 		513 =>  "SteamAvatars_ExpireDrop.php",
-		514 =>  "OldServerSide.php"
+		514 =>  "OldServerSide.php",
+		515 =>  "Theme_CFG.php"
  ];
 ?>
