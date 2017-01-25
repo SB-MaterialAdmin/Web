@@ -6,7 +6,6 @@
 				<h2>Главные настройки<small>За дополнительной информацией или помощью наведите курсор мыши на знак вопроса.</small></h2>
 			</div>
 			<div class="card-body card-padding p-b-0">
-			
 				<div class="form-group m-b-5">
 					<label for="template_title" class="col-sm-3 control-label">{help_icon title="Заголовок" message="Задайте заголовок вкладки отображаемый в браузере."} Заголовок</label>
 					<div class="col-sm-9">
@@ -115,6 +114,25 @@
 				</div>
 				{display_material_checkbox name="footer_gendata" help_title="Время генерации" help_text="Включает отображение времени генерации страницы и кол-во выполненных запросов к БД в 'подвале'."}
 				
+				<div class="form-group m-b-5 form-inline">
+					<label for="maintenance" class="col-sm-3 control-label">{help_icon title="Обслуживание системы" message="Выберите операцию для обслуживания системы, после чего, нажмите 'Выполнить'."} Обслуживание системы</label>
+					<div class="col-sm-4 p-t-5">
+						<select class="selectpicker" name="maintenance" id="maintenance">
+							<option value="themecache">Очистить кеш шаблона</option>
+							<option value="avatarcache">Очистить кеш аватарок</option>
+							<option value="cleancountrycache">Очистить кеш стран банлиста</option>
+							<option value="bansexpired">Удалить истёкшие баны</option>
+							<option value="commsexpired">Удалить истёкшие блокировки чата</option>
+							<option value="adminsexpired">Удалить истёкших Администраторов</option>
+							<option value="rehashcountries">Обновить кеш стран в банлисте</option>
+							<option value="updatecountries">Обновить GeoIP базу</option>
+							<option value="optimizebd">Произвести оптимизацию БД</option>
+						</select>
+					</div>
+					<div class="col-sm-2 p-t-5">
+                        {sb_button text="Выполнить" icon="<i class='zmdi zmdi-check-all'></i>" class="bgm-green btn-icon-text" id="asettings" onclick="xajax_Maintenance($('maintenance').value);" submit=false}
+					</div>
+				</div>
 			</div>
 			
 			<div class="card-header">
@@ -224,21 +242,6 @@
 							<option value="2">Только Муты/Гаги</option>
 							<option value="3">Показывать все</option>
 						</select>
-					</div>
-				</div>
-				<div class="form-group m-b-5 form-inline">
-					<label for="maintenance" class="col-sm-3 control-label">{help_icon title="Обслуживание системы" message="Выберите операцию для обслуживания системы, после чего, нажмите 'Выполнить'."} Обслуживание системы</label>
-					<div class="col-sm-3 p-t-5">
-						<select class="selectpicker" name="maintenance" id="maintenance">
-							<option value="themecache">Очистить кеш шаблона</option>
-							<option value="avatarcache">Очистить кеш аватарок</option>
-							<option value="bansexpired">Удалить истёкшие баны</option>
-							<option value="commsexpired">Удалить истёкшие блокировки чата</option>
-							<option value="optimizebd">Произвести оптимизацию БД</option>
-						</select>
-					</div>
-					<div class="col-sm-2 p-t-5">
-                        {sb_button text="Выполнить" icon="<i class='zmdi zmdi-check-all'></i>" class="bgm-green btn-icon-text" id="asettings" onclick="xajax_Maintenance($('maintenance').value);" submit=false}
 					</div>
 				</div>
 				

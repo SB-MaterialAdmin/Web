@@ -3054,12 +3054,48 @@ function Maintenance($type) {
             break;
         }
         
+        case "adminsexpired": {
+            removeExpiredAdmins();
+            ShowBox_ajx("Успех", "Все истёкшие Администраторы удалены успешно.", "green", "", true, $objResponse);
+        }
+        
         case "optimizebd": {
             $tables = $GLOBALS['db']->GetAll("SHOW TABLES;");
             foreach ($tables as &$table)
                 $GLOBALS['db']->Execute(sprintf("OPTIMIZE TABLE `%s`;", $table[0]));
             
             ShowBox_ajx("Успех", "Оптимизация таблиц завершена.", "green", "", true, $objResponse);
+            break;
+        }
+        
+        case "cleancountrycache": {
+            $GLOBALS['db']->Execute("UPDATE `sb_bans` SET `country` = NULL;");
+            ShowBox_ajx("Успех", "Кеш стран банлиста очищен успешно.<br /><br /><span style=\"color: #f00;\">Внимание!</span> Это может отрицательно сказаться на первой загрузке каждой страницы Вашего банлиста. Рекомендуем произвести операцию \"Обновить кеш стран в банлисте\".", "green", "", true, $objResponse);
+            break;
+        }
+        
+        case "rehashcountries": {
+            $bans = $GLOBALS['db']->GetAll("SELECT `bid`, `ip` FROM `" . DB_PREFIX . "_bans` WHERE `country` IS NULL or `country` = 'zz'");
+            foreach ($bans as $ban) {
+                $GLOBALS['db']->Execute("UPDATE `" . DB_PREFIX . "_bans` SET `country` = " . $GLOBALS['db']->qstr(FetchIp($ban['ip'])) . " WHERE `bid` = " . (int)$ban['bid'] . ";");
+            }
+            
+            ShowBox_ajx("Успех", "Операция обновлений стран в кеше завершена.", "green", "", true, $objResponse);
+            break;
+        }
+        
+        case "updatecountries": {
+            if (!function_exists("zlib_decode")) {
+                ShowBox_ajx("Ошибка", "Невозможно произвести обновление GeoIP базы: недоступна функция <em>zlib_decode</em>.", "red", "", true, $objResponse);
+                return $objResponse;
+            }
+            
+            $CountryFile = INCLUDES_PATH . '/IpToCountry.csv';
+            if (@is_writable($CountryFile)) {
+                file_put_contents($CountryFile, zlib_decode(file_get_contents("http://software77.net/geo-ip/?DL=1&x=Download")));
+                ShowBox_ajx("Успех", "База GeoIP обновлена.", "green", "", true, $objResponse);
+            } else
+                ShowBox_ajx("Ошибка", "Невозможно произвести обновление GeoIP базы: запись в файл <em>/includes/IpToCountry.csv</em> запрещена. Установите права <b>777</b> на файл <em>/includes/IpToCountry.csv</em>", "red", "", true, $objResponse);
             break;
         }
         
