@@ -6,6 +6,26 @@
 				<h2>Управление шаблоном <small>Выберите подходящую для вас настройку данного шаблона.</small></h2>
 			</div>
 			<div class="card-body card-padding p-b-0">
+                <div class="form-group m-b-5">
+					<label for="splashscreen" class="col-sm-3 control-label">{help_icon title="Экран загрузки" message="Позволяет включать и выключать экран загрузки с надписью 'Please wait...'"} Экран загрузки</label>
+					<div class="col-sm-9 p-t-10">
+						<div class="toggle-switch p-b-5" data-ts-color="red">
+							<input type="checkbox" id="splashscreen" name="splashscreen" hidden="hidden" /> 
+							<label for="splashscreen" class="ts-helper checkbox-inline m-r-20" style="z-index:2;"></label> Включить?
+						</div>
+					</div>
+				</div>
+				
+				<div class="form-group m-b-5">
+					<label for="home_stats" class="col-sm-3 control-label">{help_icon title="Статистика проекта" message="Позволяет включать и выключать статистику проекта (кол-во админов, серверов, банов, мутов) на главной"} Статистика</label>
+					<div class="col-sm-9 p-t-10">
+						<div class="toggle-switch p-b-5" data-ts-color="red">
+							<input type="checkbox" id="home_stats" name="home_stats" hidden="hidden" /> 
+							<label for="home_stats" class="ts-helper checkbox-inline m-r-20" style="z-index:2;"></label> Включить?
+						</div>
+					</div>
+				</div>
+			
 				<div class="form-group m-b-5">
 					<label for="global_themes_t" class="col-sm-3 control-label">{help_icon title="Режимы" message="Позволяет переключаться между минимальным(скрытие главного меню) и обычным(всегда открытое главное меню) шаблоном. При минимальном режиме, пользователь сам может изменять себе вид переключателем справа сверху."} Режим</label>
 					<div class="col-sm-9 p-t-10">

@@ -45,6 +45,8 @@ $theme->assign('show_gendata',      ($GLOBALS['config']['page.footer.allow_show_
 $theme->assign('gendata_queries',   $GLOBALS['db']->Queries);
 $theme->assign('gendata_time',      round($totaltime, 2));
 
+$theme->assign('splash_screen',     ($GLOBALS['config']['theme.splashscreen'] == "1"));
+
 $theme->display('page_footer.tpl');
 
 if(isset($_GET['p']))

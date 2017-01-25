@@ -21,6 +21,7 @@
         </footer>
 
         <!-- Page Loader -->
+        {if $splash_screen}
         <div class="page-loader">
             <div class="preloader pls-blue">
                 <svg class="pl-circular" viewBox="25 25 50 50">
@@ -29,6 +30,7 @@
                 <p>Please wait...</p>
             </div>
         </div>
+        {/if}
         
 		<!-- Javascript Libraries -->
         <script type="text/javascript" src="themes/new_box/vendors/bower_components/jquery/dist/jquery.min.js" ></script>

@@ -216,5 +216,7 @@ $theme->assign('total_bans', $BanCount);
 $theme->assign('total_comms', $CommCount);
 $theme->assign('players_commed', $comms);
 
+$theme->assign('stats', ($GLOBALS['config']['theme.home.stats'] == "1"));
+
 $theme->display('page_dashboard.tpl');
 ?>
