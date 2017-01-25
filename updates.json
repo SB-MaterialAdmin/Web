@@ -1,13 +1,11 @@
 {
-    "release": "1.1.5",
+    "release": "1.1.5.1",
     "changes": [
-        "Исправлена ошибка пагинатора, когда при попытке открыть другую страницу с истёкшими админами, открывалась страница с неистёкшими админами.",
-        "Перемещена настройка SMTP в веб-часть.",
-        "Добавлена возможность переключиться на mail()",
-        "Обновлены иконки."
+        "Добавлена возможность выключать Splash Screen при загрузке SourceBans.",
+        "Исправлена ошибка, когда в админ панели писалось, что вышло новое обновление, даже если такого не происходило."
     ],
-    "download_url": "https://github.com/CrazyHackGUT/SB_Material_Design/archive/release_115.zip",
-    "changelist":   "https://github.com/CrazyHackGUT/SB_Material_Design/blob/master/changelist.md#%D0%A1%D0%BF%D0%B8%D1%81%D0%BE%D0%BA-%D0%B8%D0%B7%D0%BC%D0%B5%D0%BD%D0%B5%D0%BD%D0%B8%D0%B9-%D0%B2%D0%B5%D1%80%D1%81%D0%B8%D0%B8-115",
+    "download_url": "https://github.com/CrazyHackGUT/SB_Material_Design/archive/release_1151.zip",
+    "changelist":   "https://github.com/CrazyHackGUT/SB_Material_Design/blob/master/changelist.md",
     
     "mods_manifest": "http://dl.kruzefag.ru/SB_MaterialDesign/manifest.json"
 }
