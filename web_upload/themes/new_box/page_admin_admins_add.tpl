@@ -207,7 +207,7 @@
 			</div>
 			
 			<div class="card-body card-padding text-center">
-				{sb_button text="Добавить админа" onclick="ProcessAddAdmin();" icon="<i class='zmdi zmdi-account-add'></i>" class="bgm-green btn-icon-text" id="aadmin" submit=false}
+				{sb_button text="Добавить админа" onclick="ConvertSteamID_3to2('steam');ProcessAddAdmin();" icon="<i class='zmdi zmdi-account-add'></i>" class="bgm-green btn-icon-text" id="aadmin" submit=false}
 				&nbsp;
 				{sb_button text="Back" onclick="history.go(-1)" icon="<i class='zmdi zmdi-undo'></i>" class="bgm-red btn-icon-text" id="aback"}
 			</div>
