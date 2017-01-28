@@ -32,7 +32,7 @@ define('theme_name', "SourceBans Theme (DeluxeEdition)");
 define('theme_author', "ASTRO & XaH JoB & Vampir & SAZONISCHE & NoTiCE & CrazyHackGUT & Серый™");
 
 // Set the version of the theme here
-define('theme_version', "1.1.5.2-dev");
+define('theme_version', "1.1.5.2");
 
 // Set the link of the theme here
 define('theme_link', "https://github.com/CrazyHackGUT/SB_Material_Design");
