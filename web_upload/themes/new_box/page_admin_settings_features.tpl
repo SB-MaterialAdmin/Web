@@ -101,6 +101,23 @@
 				</div>
 				
 				{display_material_checkbox name="old_serverside" help_title="Режим совместимости с плагинами SB" help_text="Переключает веб-панель в режим совместимости со старой серверной частью SourceBans."}
+				
+				<div class="form-group form-inline m-b-5">
+					<label for="admin_warns" class="col-sm-3 control-label">{help_icon title="Предупреждения" message="Позволяет включить систему предупреждений для Администраторов."} Предупреждения</label>
+					
+					<div class="col-sm-1 p-t-10">
+						<div class="toggle-switch p-b-5" data-ts-color="red">
+							<input type="checkbox" id="admin_warns" name="admin_warns" hidden="hidden" /> 
+							<label for="admin_warns" class="ts-helper checkbox-inline m-r-20" style="z-index:2;"></label>
+						</div>
+					</div>
+					
+					<div class="col-sm-3">
+						<div class="fg-line">
+							<input type="text" class="form-control" id="admin_warns_max" name="admin_warns_max" placeholder="Максимальное кол-во предупреждений" value="{$maxWarnings}" style="width: 100%;" />
+						</div>
+					</div>
+				</div>
 			</div>
 
 			<div class="card-body card-padding text-center">
@@ -113,3 +130,11 @@
 </form>
 
 {if $old_serverside}<script>$('old_serverside').checked = true;</script>{/if}
+{if $warnings_enabled}<script>$('admin_warns').checked = true;</script>{/if}
+
+{literal}
+<script>$('admin_warns').onclick = function() {
+    $('admin_warns_max').disabled = !$('admin_warns').checked;
+}
+$('admin_warns').onclick();</script>
+{/literal}

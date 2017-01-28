@@ -6,7 +6,6 @@
 				<h2>Главные настройки<small>За дополнительной информацией или помощью наведите курсор мыши на знак вопроса.</small></h2>
 			</div>
 			<div class="card-body card-padding p-b-0">
-			
 				<div class="form-group m-b-5">
 					<label for="template_title" class="col-sm-3 control-label">{help_icon title="Заголовок" message="Задайте заголовок вкладки отображаемый в браузере."} Заголовок</label>
 					<div class="col-sm-9">
@@ -50,7 +49,7 @@
 						<a href="http://www.php.net/date" target="_blank">См.: PHP date</a>
 					</div>
 				</div>
-				<div class="form-group m-b-5">
+				<div class="form-group m-b-5 form-inline">
 					<label for="sel_timezoneoffset" class="col-sm-3 control-label">{help_icon title="Часовой пояс" message="Задайте часовой пояс."} Часовой пояс</label>
 					<div class="col-sm-5 p-t-5">
 						<select class="selectpicker" name="timezoneoffset" id="sel_timezoneoffset">
@@ -90,8 +89,16 @@
 							<option value="12" class="">(GMT +12:00) Auckland, Wellington, Fiji, Kamchatka</option>
 						</select>
 					</div>
+					<div class="col-sm-4 p-t-5">
+						<div class="checkbox m-b-15">
+							<label for="config_summertime">
+								<input type="checkbox" name="config_summertime" id="config_summertime" hidden="hidden" />
+								<i class="input-helper"></i> Летнее время
+							</label>
+						</div>
+					</div>
 				</div>
-				<div class="form-group m-b-5">
+{*				<div class="form-group m-b-5">
 					<label for="config_summertime" class="col-sm-3 control-label">{help_icon title="Летнее время" message="Включить автоматический переход на летнее время."} Летнее время</label>
 					<div class="col-sm-9">
 						<div class="checkbox m-b-15">
@@ -101,7 +108,7 @@
 							</label>
 						</div>
 					</div>
-				</div>
+				</div>*}
 				<div class="form-group m-b-5">
 					<label for="config_debug" class="col-sm-3 control-label">{help_icon title="Режим отладки" message="Включить режим отладки."} Режим отладки</label>
 					<div class="col-sm-9">
@@ -115,6 +122,26 @@
 				</div>
 				{display_material_checkbox name="footer_gendata" help_title="Время генерации" help_text="Включает отображение времени генерации страницы и кол-во выполненных запросов к БД в 'подвале'."}
 				
+				<div class="form-group m-b-5 form-inline">
+					<label for="maintenance" class="col-sm-3 control-label">{help_icon title="Обслуживание системы" message="Выберите операцию для обслуживания системы, после чего, нажмите 'Выполнить'."} Обслуживание системы</label>
+					<div class="col-sm-4 p-t-5">
+						<select class="selectpicker" name="maintenance" id="maintenance">
+							<option value="themecache">Очистить кеш шаблона</option>
+							<option value="avatarcache">Очистить кеш аватарок</option>
+							<option value="cleancountrycache">Очистить кеш стран банлиста</option>
+							<option value="bansexpired">Удалить истёкшие баны</option>
+							<option value="commsexpired">Удалить истёкшие блокировки чата</option>
+							<option value="adminsexpired">Удалить истёкших Администраторов</option>
+							<option value="warningsexpired">Удалить истёкшие Предупреждения</option>
+							<option value="rehashcountries">Обновить кеш стран в банлисте</option>
+							<option value="updatecountries">Обновить файл GeoIP</option>
+							<option value="optimizebd">Произвести оптимизацию БД</option>
+						</select>
+					</div>
+					<div class="col-sm-2 p-t-5">
+						{sb_button text="Выполнить" icon="<i class='zmdi zmdi-check-all'></i>" class="bgm-green btn-icon-text" id="asettings" onclick="xajax_Maintenance($('maintenance').value);" submit=false}
+					</div>
+				</div>
 			</div>
 			
 			<div class="card-header">
@@ -226,19 +253,6 @@
 						</select>
 					</div>
 				</div>
-				<div class="form-group m-b-5">
-					<label for="enable_submit" class="col-sm-3 control-label">{help_icon title="Очистить кэш" message="Кликните по этой кнопке, чтобы очистить папку themes_c или кеш аватарок администраторов."} Очистить кэш</label>
-					<div class="col-sm-9 p-t-10">
-						<div class="col-sm-12">
-							{sb_button text="Шаблона" onclick="xajax_ClearCache();" icon="<i class='zmdi zmdi-delete'></i>" class="bgm-red btn-icon-text" id="clearcache" submit=false}
-							<div id="clearcache.msg"></div>
-						</div>
-						<div class="col-sm-12 p-t-10">
-							{sb_button text="Аватарок" onclick="xajax_ClearCacheAva();" icon="<i class='zmdi zmdi-delete'></i>" class="bgm-red btn-icon-text" id="clearcache" submit=false}
-							<div id="clearcache.msg"></div>
-						</div>
-					</div>
-				</div>
 				
 			</div>
 			
@@ -324,12 +338,14 @@
 				
 				<!-- SMTP settings start -->
 				{display_material_checkbox name="smtp_enabled" help_title="Использовать SMTP" help_text="Включает использование SMTP-почты вместо mail()"}
-				{display_material_input name="smtp_host" help_title="Адрес почтового сервера" help_text="Здесь указывается адрес до почтового SMTP-сервера." placeholder="ssl://smtp.yandex.ru" value=$smtp_host}
-				{display_material_input name="smtp_port" help_title="Порт почтового сервера" help_text="Здесь указываете порт SMTP-сервера. Порт можно узнать из справочной системы вашего почтового сервиса." placeholder="465" value=$smtp_port}
-				{display_material_input name="smtp_username" help_title="Логин почтового аккаунта" help_text="Введите имя своего почтового ящика" placeholder="primer@yandex.ru" value=$smtp_username}
-				{display_material_input name="smtp_password" help_title="Пароль от почтового аккаунта" help_text="Укажите пароль от своего почтового аккаунта на указанном SMTP-сервере." value="*Скрыт*" placeholder=""}
-				{display_material_input name="smtp_charset" help_title="Кодировка сообщений" help_text="Укажите кодировку сообщений. Как правило, UTF-8 или Windows-1251" placeholder="UTF-8" value=$smtp_charset}
-				{display_material_input name="smtp_from" help_title="Имя отправителя" help_text="Введите в это поле, от чьего имени письма будут помечаться. Отображается при прочтении в поле 'От кого'." placeholder="[SourceBans] SMTP-sender" value=$smtp_from}
+				<div id='smtp'>
+					{display_material_input name="smtp_host" help_title="Адрес почтового сервера" help_text="Здесь указывается адрес до почтового SMTP-сервера." placeholder="ssl://smtp.yandex.ru" value=$smtp_host}
+					{display_material_input name="smtp_port" help_title="Порт почтового сервера" help_text="Здесь указываете порт SMTP-сервера. Порт можно узнать из справочной системы вашего почтового сервиса." placeholder="465" value=$smtp_port}
+					{display_material_input name="smtp_username" help_title="Логин почтового аккаунта" help_text="Введите имя своего почтового ящика" placeholder="primer@yandex.ru" value=$smtp_username}
+					{display_material_input name="smtp_password" help_title="Пароль от почтового аккаунта" help_text="Укажите пароль от своего почтового аккаунта на указанном SMTP-сервере." value="*Скрыт*" placeholder=""}
+					{display_material_input name="smtp_charset" help_title="Кодировка сообщений" help_text="Укажите кодировку сообщений. Как правило, UTF-8 или Windows-1251" placeholder="UTF-8" value=$smtp_charset}
+					{display_material_input name="smtp_from" help_title="Имя отправителя" help_text="Введите в это поле, от чьего имени письма будут помечаться. Отображается при прочтении в поле 'От кого'." placeholder="[SourceBans] SMTP-sender" value=$smtp_from}
+				</div>
 				<!-- SMTP settings  end  -->
 			</div>
 			
@@ -342,5 +358,16 @@
 	</div>
 		
 </form>
-<script>$('sel_timezoneoffset').value = "{$config_time}";</script>
-{if $smtp_enabled}<script>$('smtp_enabled').checked = true;</script>{/if}
+<script>$('sel_timezoneoffset').value = "{$config_time}";
+{if $smtp_enabled}$('smtp_enabled').checked = true;{/if}
+{literal}
+$('smtp_enabled').onclick = function() {
+	if ($('smtp_enabled').checked == false)
+		$('smtp').style.display = "none";
+	else
+		$('smtp').style.display = "";
+}
+{/literal}
+
+$('smtp_enabled').onclick();
+</script>

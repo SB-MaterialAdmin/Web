@@ -119,6 +119,9 @@
 											<li class="bgm-lightblue waves-effect"><a class="c-white" href="index.php?p=admin&c=admins&o=editpermissions&id={$admin.aid}">Привилегии</a></li>
 											<li class="bgm-lightblue waves-effect"><a class="c-white" href="index.php?p=admin&c=admins&o=editservers&id={$admin.aid}">Сервер</a></li>
 											<li class="bgm-lightblue waves-effect"><a class="c-white" href="index.php?p=admin&c=admins&o=editgroup&id={$admin.aid}">Группа</a></li>
+											{if $allow_warnings}
+												<li class="btn-warning waves-effect"><a class="c-white" href="index.php?p=admin&c=admins&o=warnings&id={$admin.aid}">Предупреждения ({$admin.warnings} из {$maxWarnings})</a></li>
+											{/if}
 											{if $permission_deleteadmin}
 												<li class="btn-danger waves-effect"><a class="c-white" href="#" onclick="{$admin.del_link_d}">Удалить</a></li>
 											{/if}

@@ -128,6 +128,8 @@ foreach($admins AS $admin)
 	else
 		$admin['lastvisit'] = SBDate($dateformat,$userbank->GetProperty("lastvisit", $admin['aid']));
 	$admin['avatar'] = GetUserAvatar($userbank->GetProperty('authid', $admin['aid']));
+
+	$admin['warnings'] = $GLOBALS['db']->GetOne("SELECT COUNT(*) FROM `" . DB_PREFIX . "_warns` WHERE `expires` > " . time() . " AND `arecipient` = " . (int) $admin['aid'] . ";");
 	array_push($admin_list, $admin);
 }
 
@@ -215,6 +217,8 @@ echo '<div id="0" style="display:none;">';
 	$theme->assign('btn_rem', $btn_rem);
 	$theme->assign('btn_href', $btn_href);
 	$theme->assign('btn_icon', $btn_icon);
+	$theme->assign('allow_warnings', ($GLOBALS['config']['admin.warns'] == "1"));
+	$theme->assign('maxWarnings', $GLOBALS['config']['admin.warns.max']);
 	$theme->display('page_admin_admins_list.tpl');
 echo '</div>';
 

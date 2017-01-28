@@ -130,7 +130,7 @@
 						<li id="chat-trigger" data-trigger="#chat">
                             <a href="#"><i class="tm-icon zmdi zmdi-comment-alt-text"></i></a>
                         </li>
-						
+						{if $supports_count == 0}<script type="text/javascript">$('chat-trigger').style.display = "none";</script>{/if}
                     </ul>
                 </li>
             </ul>

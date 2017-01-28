@@ -34,7 +34,7 @@ $xajax = new xajax();
 $xajax->setRequestURI(XAJAX_REQUEST_URI);
 global $userbank;
 
-$methods = array('admin' => array('AddMod', 'RemoveMod', 'AddGroup', 'RemoveGroup', 'RemoveAdmin', 'RemoveSubmission', 'RemoveServer', 'UpdageGroupPermissions', 'UpdateAdminPermissions', 'AddAdmin', 'SetupEditServer', 'AddServerGroupName', 'AddServer', 'AddBan', 'RehashAdmins', 'EditGroup', 'RemoveProtest', 'SendRcon', 'EditAdminPerms', 'AddComment', 'EditComment', 'RemoveComment', 'PrepareReban', 'ClearCache', 'ClearCacheAva', 'KickPlayer', 'GroupBan', 'BanMemberOfGroup', 'GetGroups', 'BanFriends', 'SendMessage', 'ViewCommunityProfile', 'SetupBan', 'CheckPassword', 'ChangePassword', 'CheckSrvPassword', 'ChangeSrvPassword', 'ChangeEmail', 'CheckVersion', 'SendMail', 'AddBlock', 'PrepareReblock', 'PrepareBlockFromBan', 'removeExpiredAdmins', 'AddSupport', 'ChangeAdminsInfos', 'InstallMOD', 'UpdateGroupPermissions', 'PastePlayerData'), 'default' => array('Plogin', 'ServerHostPlayers', 'ServerHostProperty', 'ServerHostPlayers_list', 'ServerPlayers', 'LostPassword', 'RefreshServer', 'AddAdmin_pay', 'RehashAdmins_pay'));
+$methods = array('admin' => array('AddMod', 'RemoveMod', 'AddGroup', 'RemoveGroup', 'RemoveAdmin', 'RemoveSubmission', 'RemoveServer', 'UpdageGroupPermissions', 'UpdateAdminPermissions', 'AddAdmin', 'SetupEditServer', 'AddServerGroupName', 'AddServer', 'AddBan', 'RehashAdmins', 'EditGroup', 'RemoveProtest', 'SendRcon', 'EditAdminPerms', 'AddComment', 'EditComment', 'RemoveComment', 'PrepareReban', 'Maintenance', 'KickPlayer', 'GroupBan', 'BanMemberOfGroup', 'GetGroups', 'BanFriends', 'SendMessage', 'ViewCommunityProfile', 'SetupBan', 'CheckPassword', 'ChangePassword', 'CheckSrvPassword', 'ChangeSrvPassword', 'ChangeEmail', 'CheckVersion', 'SendMail', 'AddBlock', 'PrepareReblock', 'PrepareBlockFromBan', 'removeExpiredAdmins', 'AddSupport', 'ChangeAdminsInfos', 'InstallMOD', 'UpdateGroupPermissions', 'PastePlayerData', 'AddWarning', 'RemoveWarning'), 'default' => array('Plogin', 'ServerHostPlayers', 'ServerHostProperty', 'ServerHostPlayers_list', 'ServerPlayers', 'LostPassword', 'RefreshServer', 'AddAdmin_pay', 'RehashAdmins_pay'));
 
 if(isset($_COOKIE['aid'], $_COOKIE['password']) && $userbank->CheckLogin($_COOKIE['password'], $_COOKIE['aid']))
     foreach ($methods['admin'] as $method)
@@ -3019,43 +3019,94 @@ function RemoveComment($cid, $ctype, $page)
 	return $objResponse;
 }
 
-function ClearCache()
-{
-	$objResponse = new xajaxResponse();
-	global $userbank, $username, $theme;
-	if (!$userbank->HasAccess(ADMIN_OWNER|ADMIN_WEB_SETTINGS))
-	{
-		$objResponse->redirect("index.php?p=login&m=no_access", 0);
-		$log = new CSystemLog("w", "Ошибка доступа", $username . " пытался очистить кэш, не имея на это прав.");
-		return $objResponse;
-	}
-
-	$theme->clear_compiled_tpl();
-
-	$objResponse->addScript("ShowBox('Кеш удалён', 'Кеш был успешно удалён!', 'green', '', true);");
-
-	return $objResponse;
-}
-
-function ClearCacheAva()
-{
-	$objResponse = new xajaxResponse();
-	global $userbank, $username;
-	if (!$userbank->HasAccess(ADMIN_OWNER|ADMIN_WEB_SETTINGS))
-	{
-		$objResponse->redirect("index.php?p=login&m=no_access", 0);
-		$log = new CSystemLog("w", "Ошибка доступа", $username . " пытался очистить кэш аватарок, не имея на это прав.");
-		return $objResponse;
-	}
-
-	$clr = $GLOBALS['db']->Execute(sprintf("TRUNCATE `%s_avatars`", DB_PREFIX));
-	if($clr){
-		$objResponse->addScript("ShowBox('Кеш удалён', 'Кеш был успешно удалён!', 'green', '', true);");
-	}else{
-		$objResponse->addScript("ShowBox('Ошибка', 'Не могу выполнить запрос на удаление!', 'red', '', true);");
-	}
-
-	return $objResponse;
+function Maintenance($type) {
+    global $userbank, $username, $theme;
+    
+    $objResponse = new xajaxResponse();
+    if (!$userbank->HasAccess(ADMIN_OWNER|ADMIN_WEB_SETTINGS)) {
+        ShowBox_ajx("Ошибка", "Вы не имеете прав для выполнения данного действия!", "red", "", true, $objResponse);
+        new CSystemLog("w", "Ошибка доступа", $usernake . " пытался произвести операцию по обслуживанию системы, не имея на это прав.");
+        return $objResponse;
+    }
+    
+    switch($type) {
+        case "themecache": {
+            $theme->clear_compiled_tpl();
+            ShowBox_ajx("Успех", "Кеш шаблона очищен успешно.", "green", "", true, $objResponse);
+            break;
+        }
+        
+        case "avatarcache": {
+            $GLOBALS['db']->Execute(sprintf("TRUNCATE `%s_avatars`", DB_PREFIX));
+            ShowBox_ajx("Успех", "Кеш аватарок очищен успешно.", "green", "", true, $objResponse);
+            break;
+        }
+        
+        case "bansexpired": {
+            $GLOBALS['db']->Execute(sprintf("DELETE FROM `%s_bans` WHERE `RemoveType` IS NOT NULL", DB_PREFIX));
+            ShowBox_ajx("Успех", "Истёкшие баны удалены успешно.", "green", "", true, $objResponse);
+            break;
+        }
+        
+        case "commsexpired": {
+            $GLOBALS['db']->Execute(sprintf("DELETE FROM `%s_comms` WHERE `RemoveType` IS NOT NULL", DB_PREFIX));
+            ShowBox_ajx("Успех", "Истёкшие муты удалены успешно.", "green", "", true, $objResponse);
+            break;
+        }
+        
+        case "optimizebd": {
+            $tables = $GLOBALS['db']->GetAll("SHOW TABLES;");
+            foreach ($tables as &$table)
+                $GLOBALS['db']->Execute(sprintf("OPTIMIZE TABLE `%s`;", $table[0]));
+            
+            ShowBox_ajx("Успех", "Оптимизация таблиц завершена.", "green", "", true, $objResponse);
+            break;
+        }
+        
+        case "cleancountrycache": {
+            $GLOBALS['db']->Execute("UPDATE `sb_bans` SET `country` = NULL;");
+            ShowBox_ajx("Успех", "Кеш стран банлиста очищен успешно.<br /><br /><span style=\"color: #f00;\">Внимание!</span> Это может отрицательно сказаться на первой загрузке каждой страницы Вашего банлиста. Рекомендуем произвести операцию \"Обновить кеш стран в банлисте\".", "green", "", true, $objResponse);
+            break;
+        }
+        
+        case "rehashcountries": {
+            $bans = $GLOBALS['db']->GetAll("SELECT `bid`, `ip` FROM `" . DB_PREFIX . "_bans` WHERE `country` IS NULL or `country` = 'zz'");
+            foreach ($bans as $ban) {
+                $GLOBALS['db']->Execute("UPDATE `" . DB_PREFIX . "_bans` SET `country` = " . $GLOBALS['db']->qstr(FetchIp($ban['ip'])) . " WHERE `bid` = " . (int)$ban['bid'] . ";");
+            }
+            
+            ShowBox_ajx("Успех", "Операция обновлений стран в кеше завершена.", "green", "", true, $objResponse);
+            break;
+        }
+        
+        case "updatecountries": {
+            if (!function_exists("zlib_decode")) {
+                ShowBox_ajx("Ошибка", "Невозможно произвести обновление GeoIP базы: недоступна функция <em>gzuncompress</em>.", "red", "", true, $objResponse);
+                return $objResponse;
+            }
+            
+            $CountryFile = INCLUDES_PATH . '/IpToCountry.csv';
+            if (@is_writable($CountryFile)) {
+                file_put_contents($CountryFile, zlib_decode(file_get_contents("http://software77.net/geo-ip/?DL=1&x=Download")));
+                ShowBox_ajx("Успех", "Файл GeoIP базы обновлён.", "green", "", true, $objResponse);
+            } else
+                ShowBox_ajx("Ошибка", "Невозможно произвести обновление GeoIP базы: запись в файл <em>/includes/IpToCountry.csv</em> запрещена. Установите права <b>777</b> на файл <em>/includes/IpToCountry.csv</em>", "red", "", true, $objResponse);
+            break;
+        }
+        
+        case "warningsexpired": {
+            $GLOBALS['db']->Execute(sprintf("DELETE FROM `%s_warns` WHERE `expires` < %d", DB_PREFIX, time()));
+            ShowBox_ajx("Успех", "Все истёкшие и снятые предупреждения были успешно удалены.", "green", "", true, $objResponse);
+            break;
+        }
+        
+        default: {
+            ShowBox_ajx("Ошибка", "Неизвестная операция", "red", "", true, $objResponse);
+            break;
+        }
+    }
+    
+    return $objResponse;
 }
 
 function RefreshServer($sid)
@@ -3827,6 +3878,59 @@ function PastePlayerData($sid, $name) {
     $objResponse->addAssign("steam",    "value", $client['steam']);
     $objResponse->addAssign("ip",       "value", $client['ip']);
     $objResponse->addScript("swal.close();");
+    
+    return $objResponse;
+}
+
+function AddWarning($id, $days, $reason) {
+	global $userbank;
+
+	$objResponse = new xajaxResponse();
+	if (!$userbank->HasAccess(ADMIN_OWNER|ADMIN_DELETE_ADMINS) || $userbank->GetProperty("srv_immunity", $admin['id']) > $userbank->GetProperty("srv_immunity")) {
+		ShowBox_ajx("Ошибка", "Отказано в доступе.", "red", "", true, $objResponse);
+		new CSystemLog("w", "Попытка несанцкионированного доступа", "Администратор пытался выдать предупреждение, не имея на это прав.");
+		return $objResponse;
+	}
+	
+	if ((int) $days <= 0) {
+        ShowBox_ajx("Ошибка", "Пожалуйста, введите число дней более нуля.", "red", "", true, $objResponse);
+        return $objResponse;
+	}
+
+	$removedAccess = false;
+
+	$GLOBALS['db']->Execute("INSERT INTO `" . DB_PREFIX . "_warns` (`arecipient`, `afrom`, `expires`, `reason`) VALUES(" . (int) $id . ", " . (int) $userbank->GetAid() . ", " . (time() + (86400 * (int) $days)) . ", " . $GLOBALS['db']->qstr($reason) . ");");
+	new CSystemLog("m", "Предупреждение выдано", "Администратор выдал предупреждение Администратору " . $userbank->getProperty('user', $id));
+
+	if ($GLOBALS['db']->GetOne("SELECT COUNT(*) FROM `" . DB_PREFIX . "_warns` WHERE `arecipient` = " . (int) $id) >= (int) $GLOBALS['config']['admin.warns.max']) {
+		$GLOBALS['db']->Execute("UPDATE `" . DB_PREFIX . "_admins` SET `expired` = 1 WHERE `aid` = " . (int) $id . ";");
+		new CSystemLog("m", "Аккаунт администратора деактивирован", "По причине превышения лимита максимально активных предупреждений, Администратор " . $userbank->getProperty('user', $id) . " отстраняется от Должности.");
+		$removedAccess = true;
+	}
+	$msg = "Предупреждение с причиной \"<em>".$reason."</em>\" выдано сроком на ".$days." дней.";
+	if ($removedAccess)
+		$msg .= "<br /><br />Поскольку Администратор превысил лимит максимально активных предупреждений, он <span style=\"color: #f00;\">отстранён от должности</span>.";
+
+	ShowBox_ajx("Успех", $msg, "green", "", true, $objResponse);
+	return $objResponse;
+}
+
+function RemoveWarning($warningId) {
+    global $userbank;
+
+    $objResponse = new xajaxResponse();
+    if (!$userbank->HasAccess(ADMIN_OWNER|ADMIN_DELETE_ADMINS)) {
+        ShowBox_ajx("Ошибка", "Отказано в доступе.", "red", "", true, $objResponse);
+        new CSystemLog("w", "Попытка несанцкионированного доступа", "Администратор пытался снять предупреждение, не имея на это прав.");
+        return $objResponse;
+    }
+
+    if ((int) $GLOBALS['db']->GetOne("SELECT COUNT(*) FROM `" . DB_PREFIX . "_warns` WHERE `expires` > " . time() . " AND `id` = ". (int) $warningId) == 1) {
+        ShowBox_ajx("Успех", "Предупреждение снято", "green", "", true, $objResponse);
+        new CSystemLog("m", "Предупреждение снято", "Администратор снял предупреждение Администратору " . $userbank->getProperty('user', $GLOBALS['db']->GetOne("SELECT `arecipient` FROM `" . DB_PREFIX . "_warns` WHERE `id` = " . (int) $warningId)) . " с идентификатором " . $warningId);
+        $GLOBALS['db']->Execute("UPDATE `" . DB_PREFIX . "_warns` SET `expires` = -1 WHERE `id` = " . (int) $warningId);
+    } else
+        ShowBox_ajx("Ошибка", "Действущее предупреждение с идентификатором " . $warningId . " не найдено. Может быть, оно уже истекло?", "red", "", true, $objResponse);
     
     return $objResponse;
 }
