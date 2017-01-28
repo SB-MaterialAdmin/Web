@@ -221,6 +221,12 @@ else
 				include TEMPLATES_PATH . "/admin.edit.adminservers.php";
 				RewritePageTitle("Редактировать доступ к серверам");
 			}
+		} elseif ($_GET['o'] == 'warnings' && $GLOBALS['config']['admin.warns'] == "1") {
+			$tabs = new CTabsMenu();
+			$tabs->addMenuItem("Назад", -1,"", "javascript:history.go(-1);", true);
+			$tabs->outputMenu();
+			include(TEMPLATES_PATH . '/admin.admins.warnings.php');
+			RewritePageTitle("Список предупреждений");
 		}
 	}
 	elseif($_GET['c'] == "servers")
