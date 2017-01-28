@@ -1,7 +1,7 @@
 # SourceBans - Material Design
 ![Образец](http://s09.radikal.ru/i182/1610/5f/e56ed82e77f8t.jpg)
 #### Основан на [SourceBans++ 1.5.4.7](https://sbpp.github.io/)
-#### Последняя актуальная версия: **1.1.5.1** *(от 25.01.2017)*
+#### Последняя актуальная версия: **1.1.5.2** *(от 28.01.2017)*
 Официальная тема рефорка на *[HLmod.ru](http://hlmod.ru/threads/alpha-material-admin-refork-na-osnove-sb-1-5-4-7-bootstrap-3.36382/)* и на *[MyArena.ru](http://forum.myarena.ru/index.php?/topic/35781-alpha-material-admin-refork-sb-1547/)*
 
 ### Ссылки на загрузку:

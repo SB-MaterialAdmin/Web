@@ -294,6 +294,8 @@ else
 
 			$old_serverside = (isset($_POST['old_serverside']) && $_POST['old_serverside'] == "on" ? 1 : 0);
 			
+			$admin_warns = (isset($_POST['admin_warns']) && $_POST['admin_warns'] == "on" ? 1 : 0);
+			
 			$edit = $GLOBALS['db']->Execute("REPLACE INTO ".DB_PREFIX."_settings (`value`, `setting`) VALUES
 											(" . (int)$exportpub . ", 'config.exportpublic'),
 											(" . (int)$kickit . ", 'config.enablekickit'),
@@ -303,7 +305,9 @@ else
 											(" . (int)$admininfos . ", 'config.enableadmininfos'),
 											(" . (int)$alladmininfos . ", 'config.changeadmininfos'),
 											(" . (int)$adminrehash . ", 'config.enableadminrehashing'),
-											(" . (int)$old_serverside . ", 'feature.old_serverside')");
+											(" . (int)$old_serverside . ", 'feature.old_serverside'),
+											(" . (int)$admin_warns . ", 'admin.warns'),
+											(" . (int)$_POST['admin_warns_max'] . ", 'admin.warns.max');");
 
 			?><script>setTimeout("ShowBox('Настройки опций изменены', 'Изменения были успешно применены!', 'green', 'index.php?p=admin&c=settings');", 1200);</script><?php
 		}
@@ -344,6 +348,8 @@ else
 	#########[Features Page]###############
 	echo '<div id="3" style="display:none;">';
 		$theme->assign('old_serverside', ($GLOBALS['config']['feature.old_serverside'] == "1"));
+		$theme->assign('maxWarnings', $GLOBALS['config']['admin.warns.max']);
+		$theme->assign('warnings_enabled', ($GLOBALS['config']['admin.warns'] == "1"));
 		$theme->display('page_admin_settings_features.tpl');
 	echo '</div>';
 	#########/[Features Page]###############

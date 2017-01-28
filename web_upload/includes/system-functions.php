@@ -1388,6 +1388,9 @@ function EMail($to, $subject, $message, $headers) { // SendMail - registered in 
         $func = "smtpmail";
     else
         $func = "mail";
+        
+    if ($func == "smtpmail")    
+        $headers = str_replace('Sourcebans@' . $_SERVER['HTTP_HOST'], $GLOBALS['config']['smtp.username'], $headers);
 
     return $func($to, $subject, $message, $headers);
 }
@@ -1480,7 +1483,7 @@ function parseStatus($selected) {
     return $response;
 }
 
-function kickClient($serverInstance, $identity, $reason = "Kicked with SourceBans WebPanel.") {
+function kickClient($serverInstance, $identity) {
     $client = null;
     if (filter_var($identity, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4))
         $client = getClientByIp($serverInstance, $identity);
@@ -1490,7 +1493,7 @@ function kickClient($serverInstance, $identity, $reason = "Kicked with SourceBan
     if (!$client)
         return false;
 
-    $serverInstance->sendCommand(sprintf("kickid \"%s\" \"%s\"", $client['steam'], $reason));
+    $serverInstance->sendCommand(sprintf("kickid \"%s\"", $client['steam']));
     return true;
 }
 ?>

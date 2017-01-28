@@ -104,7 +104,7 @@ function KickPlayer($check, $sid, $num) {
             $objResponse->addAssign("srvip_$num", "innerHTML", "<font size='1'><span title='".$sdata['ip'].":".$sdata['port']."'>".$ret['HostName']."</span></font>");
         
         require_once(INCLUDES_PATH . '/system-functions.php');
-        if (kickClient($r, $check, sprintf("Вы были забанены на этом сервере. Посетите http://%s%s для получения более подробной информации.", $_SERVER['HTTP_HOST'], $requri))) {
+        if (kickClient($r, $check)) {
             $objResponse->addAssign("srv_$num", "innerHTML", "<font color='green' size='1'><b>Найден и кикнут с сервера.</b></font>");
             $GLOBALS['db']->Execute("UPDATE `".DB_PREFIX."_bans` SET sid = '".(int) $sid."' WHERE authid = '".$check."' AND RemovedBy IS NULL;");
             $objResponse->addScript("set_counter('-1');");

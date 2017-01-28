@@ -44,6 +44,7 @@
 		512 =>  "GenerationPage_Footer.php",
 		513 =>  "SteamAvatars_ExpireDrop.php",
 		514 =>  "OldServerSide.php",
-		515 =>  "Theme_CFG.php"
+		515 =>  "Theme_CFG.php",
+		516 =>  "Warnings.php"
  ];
 ?>
