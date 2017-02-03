@@ -427,6 +427,11 @@ while (!$res->EOF)
 			$data['type_icon'] = '<img src="images/type_c.png" alt="Чат" border="0" align="absmiddle" />';
 			$gag_count = $gag_count - 1;
 			break;
+		case 3:
+			$data['type_icon'] = '<img src="images/type_silence.png" alt="Микрофон и чат" border=0 align="absmiddle" />';
+			$gag_count -= 1;
+			$mute_count -= 1;
+			break;
 		default:
 			$data['type_icon'] = '<img src="images/country/zz.gif" alt="Неизвестный тип блока" border="0" align="absmiddle" />';
 			break;
