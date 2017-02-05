@@ -1,11 +1,9 @@
 {
-    "release": "1.1.5.3",
+    "release": "1.1.5.4",
     "changes": [
-        "Добавлена ссылка на справочную статью на Wiki рядом с обслуживанием системы.",
-        "Исправлена ошибка, когда предупреждения корректно не выдавались.",
-        "Изменена ссылка на список разработчиков в футере сайта."
+        "Исправлена ошибка, когда можно было авторизоваться под Администратором без пароля."
     ],
-    "download_url": "https://github.com/CrazyHackGUT/SB_Material_Design/archive/release_1153.zip",
+    "download_url": "https://github.com/CrazyHackGUT/SB_Material_Design/archive/release_1154.zip",
     "changelist":   "https://github.com/CrazyHackGUT/SB_Material_Design/wiki/%D0%A1%D0%BF%D0%B8%D1%81%D0%BE%D0%BA-%D0%B8%D0%B7%D0%BC%D0%B5%D0%BD%D0%B5%D0%BD%D0%B8%D0%B9",
     
     "mods_manifest": "http://dl.kruzefag.ru/SB_MaterialDesign/manifest.json"
