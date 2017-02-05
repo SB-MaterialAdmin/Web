@@ -95,7 +95,7 @@ if(!defined("DEVELOPER_MODE") && !defined("IS_UPDATE") && file_exists(ROOT."/upd
 // ---------------------------------------------------
 //  Initial setup
 // ---------------------------------------------------
-#define('SB_GIT', true);
+
 if(!defined('SB_VERSION')){
 	define('SB_VERSION', '1.5.4.7');
 	define('MA_BRANCH', 'master');
