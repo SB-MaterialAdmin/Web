@@ -149,6 +149,10 @@ function Plogin($username, $password, $remember, $redirect, $nopass)
 {
 	global $userbank;
 	$objResponse = new xajaxResponse();
+	if (empty($password)) {
+		ShowBox_ajx("Информация", "Не введён пароль. Введите пароль, и повторите попытку ещё раз.", "blue", "", true, $objResponse);
+		return $objResponse;
+	}
 	$q = $GLOBALS['db']->GetRow("SELECT `aid`, `password`, `expired` FROM `" . DB_PREFIX . "_admins` WHERE `user` = ?", array($username));
 	if($q)
 		$aid = $q[0];
