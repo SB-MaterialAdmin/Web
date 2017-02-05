@@ -132,10 +132,15 @@
 							<option value="bansexpired">Удалить истёкшие баны</option>
 							<option value="commsexpired">Удалить истёкшие блокировки чата</option>
 							<option value="adminsexpired">Удалить истёкших Администраторов</option>
+							<option value="commentsclean">Удалить все комментарии</option>
+							<option value="protests">Удалить все протесты банов</option>
+							<option value="reports">Удалить все предложения бана (репорты)</option>
+							<option value="banlogclean">Очистить историю заблокированных соединений</option>
 							<option value="warningsexpired">Удалить истёкшие Предупреждения</option>
 							<option value="rehashcountries">Обновить кеш стран в банлисте</option>
 							<option value="updatecountries">Обновить файл GeoIP</option>
 							<option value="optimizebd">Произвести оптимизацию БД</option>
+							<option value="avatarupdate">Пересобрать кеш аватарок</option>
 						</select>
 					</div>
 					<div class="col-sm-2 p-t-5">
