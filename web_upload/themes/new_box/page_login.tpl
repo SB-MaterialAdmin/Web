@@ -47,7 +47,7 @@
 									<div class="form-group">
 										-{if $login_allowed}-<label class="col-sm-2 control-label">Другие способы</label>-{/if}-
 										<div class="col-sm-10 p-t-10">
-											-{sb_button text="Войти через STEAM" onclick="window.location.href='steam_aut.php?login'" icon="<i class='zmdi zmdi-steam'></i>" class="btn-icon-text bgm-bluegray"}-
+											-{sb_button text="Войти через STEAM" onclick="window.location.href='steam_auth.php?login'" icon="<i class='zmdi zmdi-steam'></i>" class="btn-icon-text bgm-bluegray"}-
 										</div>
 									</div>
 									-{/if}-

@@ -237,7 +237,8 @@
 </div>
 {if $stats}
 <div class="mini-charts">
-                        <div class="row">
+                    <div class="row">
+                        <a href="index.php?p=adminlist">
                             <div class="col-sm-6 col-md-3">
                                 <div class="mini-charts-item bgm-cyan">
                                     <div class="clearfix">
@@ -249,8 +250,10 @@
                                     </div>
                                 </div>
                             </div>
+						</a>
                             
-                            <div class="col-sm-6 col-md-3">
+                        <a href="index.php?p=banlist">    
+							<div class="col-sm-6 col-md-3">
                                 <div class="mini-charts-item bgm-lightgreen">
                                     <div class="clearfix">
                                         <div class="chart stats-bar-2"></div>
@@ -261,8 +264,10 @@
                                     </div>
                                 </div>
                             </div>
+						</a>
                             
-                            <div class="col-sm-6 col-md-3">
+                        <a href="index.php?p=servers">    
+							<div class="col-sm-6 col-md-3">
                                 <div class="mini-charts-item bgm-orange">
                                     <div class="clearfix">
                                         <div class="chart stats-line"></div>
@@ -273,8 +278,10 @@
                                     </div>
                                 </div>
                             </div>
+						</a>
                             
-                            <div class="col-sm-6 col-md-3">
+                        <a href="index.php?p=commslist">    
+							<div class="col-sm-6 col-md-3">
                                 <div class="mini-charts-item bgm-bluegray">
                                     <div class="clearfix">
                                         <div class="chart stats-line-2"></div>
@@ -285,6 +292,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+						</a>
                     </div>
+                </div>
 {/if}

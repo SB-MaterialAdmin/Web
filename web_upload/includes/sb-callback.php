@@ -3100,6 +3100,39 @@ function Maintenance($type) {
             break;
         }
         
+        case "avatarupdate": {
+            Maintenance("avatarcache");
+            $users = $GLOBALS['db']->GetAll(sprintf("SELECT `authid` FROM `%s_admins`", DB_PREFIX));
+            foreach ($users as &$user)
+                GetUserAvatar($user['authid']);
+            ShowBox_ajx("Успех", "Кеш аватаров Администраторов обновлён.", "green", "", true, $objResponse);
+            break;
+        }
+        
+        case "commentsclean": {
+            $GLOBALS['db']->Execute(sprintf("TRUNCATE `%s_comments`;", DB_PREFIX));
+            ShowBox_ajx("Успех", "Все комментарии были успешно удалены.", "green", "", true, $objResponse);
+            break;
+        }
+        
+        case "banlogclean": {
+            $GLOBALS['db']->Execute(sprintf("TRUNCATE `%s_banlog`;", DB_PREFIX));
+            ShowBox_ajx("Успех", "История заблокированных соединений к серверам успешно очищена.", "green", "", true, $objResponse);
+            break;
+        }
+        
+        case "protests": {
+            $GLOBALS['db']->Execute(sprintf("TRUNCATE `%s_protests`;", DB_PREFIX));
+            ShowBox_ajx("Успех", "Протесты успешно удалены.", "green", "", true, $objResponse);
+            break;
+        }
+        
+        case "reports": {
+            $GLOBALS['db']->Execute(sprintf("TRUNCATE `%s_submissions`;", DB_PREFIX));
+            ShowBox_ajx("Успех", "Предложения бана (репорты) успешно удалены.", "green", "", true, $objResponse);
+            break;
+        }
+        
         default: {
             ShowBox_ajx("Ошибка", "Неизвестная операция", "red", "", true, $objResponse);
             break;

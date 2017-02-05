@@ -32,10 +32,10 @@ define('theme_name', "SourceBans Theme (DeluxeEdition)");
 define('theme_author', "ASTRO & XaH JoB & Vampir & SAZONISCHE & NoTiCE & CrazyHackGUT & Серый™");
 
 // Set the version of the theme here
-define('theme_version', "1.1.5.2");
+define('theme_version', "1.1.5.3");
 
 // Set the link of the theme here
-define('theme_link', "https://github.com/CrazyHackGUT/SB_Material_Design");
+define('theme_link', "https://discord.gg/BrTP9Cu");
 
 // Set the screenshot filename for your theme (must be inside your theme folder) 
 // Must be:  250px wide  X 170px High
