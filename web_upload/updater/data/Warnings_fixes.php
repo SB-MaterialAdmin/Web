@@ -31,9 +31,7 @@ $data = scandir(SB_ICONS);
 foreach ($data as &$obj) {
     if (!is_file(sprintf("%s/%s", SB_ICONS, $obj)))
         continue;
-    new CSystemLog("m", "Icon exists", sprintf("%s/%s", SB_ICONS, $obj));
 
-    new CSystemLog("m", "Icon: query", "Icon: " . $obj . "<br />Query: " . $GLOBALS['db']->GetOne(sprintf("SELECT COUNT(`icon`) FROM `%s_mods` WHERE `icon` = %s;", DB_PREFIX, $GLOBALS['db']->qstr(obj))));
     if ((int) $GLOBALS['db']->GetOne(sprintf("SELECT COUNT(`icon`) FROM `%s_mods` WHERE `icon` = %s;", DB_PREFIX, $GLOBALS['db']->qstr($obj))) == 0) {
         unlink(sprintf("%s/%s", SB_ICONS, $obj));
     }
