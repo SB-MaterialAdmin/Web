@@ -50,6 +50,6 @@ jQuery(window).load(function(){
     } 
 	
     if (jQuery('.admin-content')[0]) {
-        notify(' Подробно ознакомьтесь с данными на это странице!', 'info', 'top', 'right', 'animated fadeInRight', 'animated bounceOut', 5800);
+        notify(' Подробно ознакомьтесь с данными на этой странице!', 'info', 'top', 'right', 'animated fadeInRight', 'animated bounceOut', 5800);
     } */
 });

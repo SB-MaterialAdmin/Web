@@ -24,6 +24,7 @@
 <link href="themes/{$theme_name}/css/app.min.1.css" rel="stylesheet" />
 <link href="themes/{$theme_name}/css/app.min.2.css" rel="stylesheet" />
 <link href="themes/{$theme_name}/css/css_sup.css" rel="stylesheet" />
+<link href="themes/{$theme_name}/css/custom.css" rel="stylesheet" />
 
 {$tiny_mce_js}
 {$xajax_functions}
@@ -47,7 +48,7 @@
 						</a>
 					</li>
 				{else}
-					<li class="hidden-xs">
+					<li class="logo-img">
 						<a href="index.php">
 							<img src="{$header_logo}" alt="" />
 						</a>

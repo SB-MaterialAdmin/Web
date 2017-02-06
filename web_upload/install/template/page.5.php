@@ -309,7 +309,7 @@ define('SB_WP_URL','{sbwpurl}');       				//URL of SourceBans Site
 				</div>
 
 				<div class="lv-body p-15">
-					Наводите курсор мыши на кнопки '?' для получения дополнительной информации.
+					Наводите курсор мыши на иконку '?' для получения дополнительной информации.
 				</div>
 				
 				<div class="lv-header-alt clearfix">
@@ -370,7 +370,7 @@ define('SB_WP_URL','{sbwpurl}');       				//URL of SourceBans Site
 					</div>
 					<br /><br />
 					<div class="p-10" align="center">
-						<button type="submit" onclick="CheckInput();" name="button" class="btn btn-primary waves-effect" id="button">Ok</button>
+						<button type="submit" onclick="CheckInput();" name="button" class="btn btn-primary waves-effect" id="button">Готово</button>
 					</div>
 				</div>
 				</div>

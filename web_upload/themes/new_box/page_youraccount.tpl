@@ -32,7 +32,7 @@
 						<label for="current_vk" class="col-sm-3 control-label">ВКонтакте</label>
 						<div class="col-sm-9">
 							<div class="fg-line">
-								<input type="text" class="form-control input-sm" id="current_vk" name="current_vk" -{if NOT $vk}- placeholder="Введите данные(только ID, без 'https://vk.com/')" -{else}- value="-{$vk}-"-{/if}->
+								<input type="text" class="form-control input-sm" id="current_vk" name="current_vk" -{if NOT $vk}- placeholder="Ваш ID Вконтакте (без https://vk.com/)" -{else}- value="-{$vk}-"-{/if}->
 							</div>
 						</div>
 					</div>
@@ -41,7 +41,7 @@
 						<label for="current_skype" class="col-sm-3 control-label">Skype</label>
 						<div class="col-sm-9">
 							<div class="fg-line">
-								<input type="text" class="form-control input-sm" id="current_skype" name="current_skype" -{if NOT $skype}- placeholder="Введите данные(логин)"-{else}-value="-{$skype}-"-{/if}->
+								<input type="text" class="form-control input-sm" id="current_skype" name="current_skype" -{if NOT $skype}- placeholder="Ваш логин Skype"-{else}-value="-{$skype}-"-{/if}->
 							</div>
 						</div>
 					</div>
