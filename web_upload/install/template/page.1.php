@@ -60,8 +60,7 @@
 			</div>
 
 			<div class="lv-body p-15">                                    
-				Перед установкой этого программного обеспечения, Вы должны прочесть и принять условия лицензионного соглашения. Если Вы не согласны с условиями, создавайте свою систему банов.<br />
-				Объяснения этого лицензионного соглашения можно прочесть <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" target="_blank">здесь</a>.
+				Перед установкой этого программного обеспечения, Вы должны прочитать и принять условия лицензионного соглашения, представленного ниже (<a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" target="_blank">CC BY-NC-SA 3.0</a>)
 			</div>
 
 			<div class="lv-header-alt clearfix">
@@ -102,13 +101,13 @@ Creative Commons Attribution-NonCommercial-ShareAlike 3.0.
 						<div class="checkbox m-b-15">
 							<label for="accept">
 								<input type="checkbox" name="accept" id="accept" hidden="hidden" />
-								<i class="input-helper"></i> Я прочёл и принимаю условия
+								<i class="input-helper"></i> Я принимаю условия лицензионного соглашения
 							</label>
 						</div>
 					</div>
 
 					<div class="col-sm-6" align="right">
-						<button onclick="checkAccept()" class="btn btn-primary waves-effect" id="button" name="button">Принимаю</button>
+						<button onclick="checkAccept()" class="btn btn-primary waves-effect" id="button" name="button">Продолжить</button>
 					</div>
 				</div>
 			</div>

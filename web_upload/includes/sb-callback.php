@@ -202,13 +202,13 @@ function LostPassword($email)
 	$query = $GLOBALS['db']->Execute("UPDATE `" . DB_PREFIX . "_admins` SET `validate` = ? WHERE `email` = ?", array($validation, $email));
 	$message = "";
 	$message .= "Привет " . $q['user'] . "\n";
-	$message .= "Вы запросили смену пароля в системе Sourcebans.\n";
+	$message .= "Вы запросили смену пароля в системе SourceBans.\n";
 	$message .= "Для завершения процедуры смены пароля перейдите по ссылке ниже.\n";
 	$message .= "ПРИМЕЧАНИЕ: если Вы не запрашивали смену пароля, просто проигнорируйте это сообщение.\n\n";
 
 	$message .= "http://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] . "?p=lostpassword&email=". RemoveCode($email) . "&validation=" . $validation;
 
-	$headers = 'From: Sourcebans@' . $_SERVER['HTTP_HOST'] . "\n" .
+	$headers = 'From: SourceBans@' . $_SERVER['HTTP_HOST'] . "\n" .
     'X-Mailer: PHP/' . phpversion();
 	$m = EMail($email, "Сброс пароля SourceBans", $message, $headers);
 
@@ -796,7 +796,7 @@ function AddServer($ip, $port, $rcon, $rcon2, $mod, $enabled, $group, $group_nam
 	}
 
 
-	$objResponse->addScript("ShowBox('Сервер добавлен', 'Выш сервер был успешно создан.', 'green', 'index.php?p=admin&c=servers');");
+	$objResponse->addScript("ShowBox('Сервер добавлен', 'Ваш сервер был успешно создан.', 'green', 'index.php?p=admin&c=servers');");
     $objResponse->addScript("TabToReload();");
     $log = new CSystemLog("m", "Сервер добавлен", "Сервер (" . $ip . ":" . $port . ") добавлен");
 	return $objResponse;

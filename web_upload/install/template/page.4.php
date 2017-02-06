@@ -82,12 +82,12 @@
 				</div>
 
 				<div class="lv-body p-15">
-					На этой странице будет происходишь установка данных в базу данных.
+					На этой странице производится создание таблиц и установка начальных данных в базу данных.
 				</div>
 				
 				<div class="lv-header-alt clearfix">
 					<div class="lvh-label">
-						<span class="c-black">Установка таблиц</span>
+						<span class="c-black">Создание таблиц и установка начальных данных</span>
 					</div>
 				</div>
 				
@@ -99,7 +99,7 @@
 							<?php
 						}else{
 							?>
-							<script>setTimeout("ShowBox('Успешно', 'Таблицы успешно созданы', 'green', '', true);", 1200);</script>
+							<script>setTimeout("ShowBox('Успешно', 'Все необходимые таблицы и данные успешно созданы.</br>Закройте окно и нажмите \"Продолжить\"', 'green', '', true);", 1200);</script>
 							<?php
 						}
 						?>
@@ -117,7 +117,7 @@
 					</div>
 					<br /><br />
 					<div class="p-10" align="center">
-						<button type="submit" onclick="next()" name="button" class="btn btn-primary waves-effect" id="button">Ok</button>
+						<button type="submit" onclick="next()" name="button" class="btn btn-primary waves-effect" id="button">Продолжить</button>
 					</div>
 				</div>
 			</div>

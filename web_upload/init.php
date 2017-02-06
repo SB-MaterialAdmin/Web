@@ -77,7 +77,7 @@ if(!defined("DEVELOPER_MODE") && !defined("IS_UPDATE") && file_exists(ROOT."/ins
 {
 	if($_SERVER['HTTP_HOST'] != "localhost")
 	{
-		echo "Из соображений безопасности, удалите, Пожалуйста, директорию /install/ с сервера перед тем, как работать с системой.";
+		echo "Для обеспечения безопасности работы SourceBans, удалите или переименуйте папку /install";
 		die();
 	}
 }
@@ -86,7 +86,7 @@ if(!defined("DEVELOPER_MODE") && !defined("IS_UPDATE") && file_exists(ROOT."/upd
 {
 	if($_SERVER['HTTP_HOST'] != "localhost")
 	{
-		echo "Выполняется редирект на обновление SourceBans...";
+		echo "Выполняется перенаправление на страницу обновления SourceBans...";
 		echo "<script>setTimeout(function() { window.location.replace('./updater'); }, 2000);</script>";
 		die();
 	}

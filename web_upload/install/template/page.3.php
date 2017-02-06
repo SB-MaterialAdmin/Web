@@ -84,7 +84,7 @@ if(isset($_POST['username'], $_POST['password'], $_POST['server'], $_POST['port'
 				</div>
 
 				<div class="lv-body p-15">
-					На этой странице перечислены все требования для работы веб-панели SourceBans. Система сверит их с текущими данными. На этой странице будут также перечислены некоторые рекомендациями.
+					Ниже представлены все технические требования для корректной работы SourceBans. В случае несоответствия, установщик выделит красным все проблемные требования в текущей системе.
 				</div>
 				
 				<div class="lv-header-alt clearfix">
@@ -338,7 +338,7 @@ if(isset($_POST['username'], $_POST['password'], $_POST['server'], $_POST['port'
 					</div>
 					&nbsp;
 					<div class="p-10" align="center">
-						<button onclick="next()" class="btn btn-primary waves-effect" id="button" name="button">Далее</button>
+						<button onclick="next()" class="btn btn-primary waves-effect" id="button" name="button">Продолжить</button>
 						<button onclick="$('sendback').submit();" name="button" class="btn btn-info waves-effect" id="button">Перепроверить</button>
 					</div>
 					<input type="hidden" name="postd" value="1">

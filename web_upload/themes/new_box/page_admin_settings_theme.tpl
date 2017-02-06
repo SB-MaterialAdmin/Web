@@ -7,7 +7,7 @@
 			</div>
 			<div class="card-body card-padding p-b-0">
                 <div class="form-group m-b-5">
-					<label for="splashscreen" class="col-sm-3 control-label">{help_icon title="Экран загрузки" message="Позволяет включать и выключать экран загрузки с надписью 'Please wait...'"} Экран загрузки</label>
+					<label for="splashscreen" class="col-sm-3 control-label">{help_icon title="Экран загрузки" message="Позволяет включать и выключать экран загрузки с надписью 'Загрузка...'"} Экран загрузки</label>
 					<div class="col-sm-9 p-t-10">
 						<div class="toggle-switch p-b-5" data-ts-color="red">
 							<input type="checkbox" id="splashscreen" name="splashscreen" hidden="hidden" /> 

@@ -187,7 +187,7 @@
 							</div>
 						</div>
 						<div class="p-10" align="center">
-							<button onclick="checkAccept()" class="btn btn-primary waves-effect" id="button" name="button">Далее</button>
+							<button onclick="checkAccept()" class="btn btn-primary waves-effect" id="button" name="button">Продолжить</button>
 						</div>
 						<input type="hidden" name="postd" value="1">
 					</div>

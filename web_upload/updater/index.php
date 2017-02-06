@@ -34,12 +34,12 @@
  include INCLUDES_PATH . "/CUpdate.php";
  $updater = new CUpdater();
  
- $setup = "Проверка текущей версии SourceBans...<b> " . $updater->getCurrentRevision() . "</b>";
+ $setup = "Проверка текущей версии SourceBans: <b> " . $updater->getCurrentRevision() . "</b>";
  if(!$updater->needsUpdate())
  {
 	if (IS_AJAX)
 		die(json_encode(['result' => false, 'reason' => "Система в обновлениях не нуждается."]));
-	$setup .= "<br /><br />Обновления не нужны. Удалите папку <b>updater</b>!";
+	$setup .= "<br /><br />Обновление не требуется, удалите папку /<b>updater</b>";
 	$theme->assign('setup', $setup);
 	$theme->assign('progress', "");
 	$theme->display('updater.tpl');
