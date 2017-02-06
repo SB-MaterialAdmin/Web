@@ -62,7 +62,7 @@
 																<br />
 																<b>IP : Порт - {$server.ip}:{$server.port}</b><br><br>
 																<!--<button type='submit' onclick="document.location = 'steam://connect/{$server.ip}:{$server.port}'" name='button' class='btn bgm-teal btn-icon-text waves-effect' id='button'><i class='zmdi zmdi-input-hdmi'></i> Подключиться</button>-->
-																<button type='button' onclick="ShowBox('Обновление..','<b>Обновление данных сервера...</b><br><i>Please Wait!</i>', 'blue', '', true, 1000);document.getElementById('dialog-control').setStyle('display', 'none');xajax_RefreshServer({$server.sid});" name='button' class='btn bgm-amber btn-icon-text waves-effect' id='button'><i class='zmdi zmdi zmdi-refresh-alt'></i>Обновить статус</button>
+																<button type='button' onclick="ShowBox('Обновление..','<b>Обновление данных сервера...</b><br><i>Пожалуйста подождите!</i>', 'blue', '', true, 1000);document.getElementById('dialog-control').setStyle('display', 'none');xajax_RefreshServer({$server.sid});" name='button' class='btn bgm-amber btn-icon-text waves-effect' id='button'><i class='zmdi zmdi zmdi-refresh-alt'></i>Обновить статус</button>
 																<br />
 																<br />
 															</div>
