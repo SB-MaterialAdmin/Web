@@ -13156,6 +13156,7 @@ a.lv-footer:hover {
 .table > tbody > tr:last-child > td,
 .table > tfoot > tr:last-child > td {
   padding-bottom: 20px;
+  line-height: 32px;
 }
 
 .table-striped td,
@@ -13173,6 +13174,8 @@ a.lv-footer:hover {
 .table-bordered > tbody > tr > th {
   border-bottom: 0;
   border-left: 0;
+  line-height: 32px;
+  padding: 2px;
 }
 
 .table-bordered > tbody > tr > td:last-child,

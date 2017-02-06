@@ -38,6 +38,7 @@ $totaltime = ($finish - $start);
 
 $theme->assign('UPDATE_NUM', $GLOBALS['config']['config.version']);
 $theme->assign('THEME_VERSION', theme_version);
+$theme->assign('BRANCH', MA_BRANCH);
 $theme->assign('THEME_LINK', theme_link);
 $theme->assign('SB_VERSION', SB_VERSION);
 
