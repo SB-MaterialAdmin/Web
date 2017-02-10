@@ -1,10 +1,10 @@
 <?php
 /**************************************************************************
- * Эта программа является частью SourceBans MATERIAL Admin.
+ * Эта программа является частью SourceBans ++.
  *
- * Все права защищены © 2016-2017 Sergey Gut <webmaster@kruzefag.ru>
+ * Все права защищены © 2014-2016 Sarabveer Singh <me@sarabveer.me>
  *
- * SourceBans MATERIAL Admin распространяется под лицензией
+ * SourceBans++ распространяется под лицензией
  * Creative Commons Attribution-NonCommercial-ShareAlike 3.0.
  *
  * Вы должны были получить копию лицензии вместе с этой работой. Если нет,
@@ -22,35 +22,23 @@
  * Эта программа базируется на работе, охватываемой следующим авторским
  *                                                           правом (ами):
  *
- *  * SourceBans ++
- *    Copyright © 2014-2016 Sarabveer Singh
+ *  * SourceBans 1.4.11
+ *    Copyright © 2007-2014 SourceBans Team - Part of GameConnect
  *    Выпущено под лицензией CC BY-NC-SA 3.0
- *    Страница: <https://sbpp.github.io/>
+ *    Страница: <http://www.sourcebans.net/> - <http://www.gameconnect.net/>
+ *
+ *  * SourceBans TF2 Theme v1.0
+ *    Copyright © 2014 IceMan
+ *    Страница: <https://forums.alliedmods.net/showthread.php?t=252533>
  *
  ***************************************************************************/
 
- return [
-		352 =>  "SourceBans_MyArena.php",
-		356 =>  "SourceComms_DBStructure.php",
-		480 =>  "MATERIAL_Admin_Upgrade.php",
-		500 =>  "ThemeCustom_Header.php",
-		501 =>  "Voucher_System_1.php",
-		502 =>  "Voucher_System_2.php",
-		503 =>  "ThemeCustom_Background_1.php",
-		504 =>  "ThemeCustom_Background_2.php",
-		505 =>  "SteamAvatars.php",
-		506 =>  "Dashboard_Comms.php",
-		507 =>  "ShowAdminInfo_Banlist.php",
-		508 =>  "ChangePersonalAdminInfo_Profile.php",
-		509 =>  "Menu.php",
-		510 =>  "SMTP.php",
-		511 =>  "Menu_NewTab.php",
-		512 =>  "GenerationPage_Footer.php",
-		513 =>  "SteamAvatars_ExpireDrop.php",
-		514 =>  "OldServerSide.php",
-		515 =>  "Theme_CFG.php",
-		516 =>  "Warnings.php",
-		517 =>  "Warnings_fixes.php"
-		// 518 =>  "StaticPages.php"
- ];
-?>
+if (!defined('IN_SB')) {echo("You should not be here. Only follow links!");die();}
+class CStaticPages {
+    public static function IsPageExists($pagerule) {
+        return false; // disabled
+        /*
+        $pagerule = $GLOBALS['db']->qstr($pagerule);
+        return ($GLOBALS['db']->GetOne(sprintf("SELECT COUNT(*) FROM `%s_pages` WHERE `url` = %s", DB_PREFIX, $pagerule)) == 1); */
+    }
+}

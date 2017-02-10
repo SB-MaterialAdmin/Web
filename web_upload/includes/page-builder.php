@@ -1,29 +1,33 @@
 <?php
-// *************************************************************************
-//  This file is part of SourceBans++.
-//
-//  Copyright (C) 2014-2016 Sarabveer Singh <me@sarabveer.me>
-//
-//  SourceBans++ is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation, per version 3 of the License.
-//
-//  SourceBans++ is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-//
-//  You should have received a copy of the GNU General Public License
-//  along with SourceBans++. If not, see <http://www.gnu.org/licenses/>.
-//
-//  This file is based off work covered by the following copyright(s):  
-//
-//   SourceBans 1.4.11
-//   Copyright (C) 2007-2015 SourceBans Team - Part of GameConnect
-//   Licensed under GNU GPL version 3, or later.
-//   Page: <http://www.sourcebans.net/> - <https://github.com/GameConnect/sourcebansv1>
-//
-// *************************************************************************
+/**************************************************************************
+ * Эта программа является частью SourceBans MATERIAL Admin.
+ *
+ * Все права защищены © 2016-2017 Sergey Gut <webmaster@kruzefag.ru>
+ *
+ * SourceBans MATERIAL Admin распространяется под лицензией
+ * Creative Commons Attribution-NonCommercial-ShareAlike 3.0.
+ *
+ * Вы должны были получить копию лицензии вместе с этой работой. Если нет,
+ * см. <http://creativecommons.org/licenses/by-nc-sa/3.0/>.
+ *
+ * ПРОГРАММНОЕ ОБЕСПЕЧЕНИЕ ПРЕДОСТАВЛЯЕТСЯ «КАК ЕСТЬ», БЕЗ КАКИХ-ЛИБО
+ * ГАРАНТИЙ, ЯВНЫХ ИЛИ ПОДРАЗУМЕВАЕМЫХ, ВКЛЮЧАЯ, НО НЕ ОГРАНИЧИВАЯСЬ,
+ * ГАРАНТИИ ПРИГОДНОСТИ ДЛЯ КОНКРЕТНЫХ ЦЕЛЕЙ И НЕНАРУШЕНИЯ. НИ ПРИ КАКИХ
+ * ОБСТОЯТЕЛЬСТВАХ АВТОРЫ ИЛИ ПРАВООБЛАДАТЕЛИ НЕ НЕСУТ ОТВЕТСТВЕННОСТИ ЗА
+ * ЛЮБЫЕ ПРЕТЕНЗИИ, ИЛИ УБЫТКИ, НЕЗАВИСИМО ОТ ДЕЙСТВИЯ ДОГОВОРА,
+ * ГРАЖДАНСКОГО ПРАВОНАРУШЕНИЯ ИЛИ ИНАЧЕ, ВОЗНИКАЮЩИЕ ИЗ, ИЛИ В СВЯЗИ С
+ * ПРОГРАММНЫМ ОБЕСПЕЧЕНИЕМ ИЛИ ИСПОЛЬЗОВАНИЕМ ИЛИ ИНЫМИ ДЕЙСТВИЯМИ
+ * ПРОГРАММНОГО ОБЕСПЕЧЕНИЯ.
+ *
+ * Эта программа базируется на работе, охватываемой следующим авторским
+ *                                                           правом (ами):
+ *
+ *  * SourceBans ++
+ *    Copyright © 2014-2016 Sarabveer Singh
+ *    Выпущено под лицензией CC BY-NC-SA 3.0
+ *    Страница: <https://sbpp.github.io/>
+ *
+ ***************************************************************************/
 
 $_GET['p'] = isset($_GET['p']) ? $_GET['p'] : 'default';
 $_GET['p'] = trim($_GET['p']);
@@ -35,44 +39,41 @@ switch ($_GET['p'])
 	case "logout":
 		logout();
 		Header("Location: index.php");
+		exit(0);
 		break;
 	case "admin":
 		$page = INCLUDES_PATH . "/admin.php";
 		break;
 	case "submit":
-		RewritePageTitle("Submit a Ban");
+		RewritePageTitle("Репорт");
 		$page = TEMPLATES_PATH . "/page.submit.php";
 		break;
 	case "banlist":
-		RewritePageTitle("Ban List");
+		RewritePageTitle("Банлист");
 		$page = TEMPLATES_PATH ."/page.banlist.php";
 		break;
 	case "commslist":
-		RewritePageTitle("Communications Block List");
+		RewritePageTitle("Блокировки чата");
 		$page = TEMPLATES_PATH ."/page.commslist.php";
 		break;
 	case "servers":
-		RewritePageTitle("Server List");
+		RewritePageTitle("Сервера");
 		$page = TEMPLATES_PATH . "/page.servers.php";
 		break;
-	//case "serverinfo":
-	//	RewritePageTitle("Server Info");
-	//	$page = TEMPLATES_PATH . "/page.serverinfo.php";
-	//	break;
 	case "protest":
-		RewritePageTitle("Protest a Ban");
+		RewritePageTitle("Протест бана");
 		$page = TEMPLATES_PATH . "/page.protest.php";
 		break;
 	case "account":
-		RewritePageTitle("Your Account");
+		RewritePageTitle("Ваш аккаунт");
 		$page = TEMPLATES_PATH . "/page.youraccount.php";
 		break;
 	case "lostpassword":
-		RewritePageTitle("Lost your password");
+		RewritePageTitle("Забыли пароль");
 		$page = TEMPLATES_PATH . "/page.lostpassword.php";
 		break;
 	case "home":
-		RewritePageTitle("Dashboard");
+		RewritePageTitle("Главная");
 		$page = TEMPLATES_PATH . "/page.home.php";
 		break;
 	case "search_bans":
@@ -92,34 +93,48 @@ switch ($_GET['p'])
 		$page = TEMPLATES_PATH . "/page.adminlist.php";
 		break;
 	default:
-		switch($GLOBALS['config']['config.defaultpage'])
-		{
-			case 1:
-				RewritePageTitle("Ban List");
-				$page = TEMPLATES_PATH . "/page.banlist.php";
-				$_GET['p'] = "banlist";
-				break;
-			case 2:
-				RewritePageTitle("Server Info");
-				$page = TEMPLATES_PATH . "/page.servers.php";
-				$_GET['p'] = "servers";
-				break;
-			case 3:
-				RewritePageTitle("Submit a Ban");
-				$page = TEMPLATES_PATH . "/page.submit.php";
-				$_GET['p'] = "submit";
-				break;
-			case 4:
-				RewritePageTitle("Protest a Ban");
-				$page = TEMPLATES_PATH . "/page.protest.php";
-				$_GET['p'] = "protest";
-				break;
-			default: //case 0:
-				RewritePageTitle("Dashboard");
-				$page = TEMPLATES_PATH . "/page.home.php";
-				$_GET['p'] = "home";
-				break;
-		}
+		require_once(INCLUDES_PATH . "/CStaticPages.php");
+		if (CStaticPages::IsPageExists($_GET['p'])) {
+			
+		} else
+			switch($GLOBALS['config']['config.defaultpage'])
+			{
+				case 1:
+					RewritePageTitle("Банлист");
+					$page = TEMPLATES_PATH . "/page.banlist.php";
+					$_GET['p'] = "banlist";
+					break;
+				case 2:
+					RewritePageTitle("Сервера");
+					$page = TEMPLATES_PATH . "/page.servers.php";
+					$_GET['p'] = "servers";
+					break;
+				case 3:
+					RewritePageTitle("Репорт");
+					$page = TEMPLATES_PATH . "/page.submit.php";
+					$_GET['p'] = "submit";
+					break;
+				case 4:
+					RewritePageTitle("Протест бана");
+					$page = TEMPLATES_PATH . "/page.protest.php";
+					$_GET['p'] = "protest";
+					break;
+				case 5:
+					RewritePageTitle("Блокировки чата");
+					$page = TEMPLATES_PATH ."/page.commslist.php";
+					$_GET['p'] = 'commslist';
+					break;
+				case 6:
+					$page = TEMPLATES_PATH . "/page.static.php";
+					$_GET['p'] = $GLOBALS['db']->GetOne("SELECT `url` FROM `" . DB_PREFIX . "_pages` WHERE `id` = " . (int) $GLOBALS['config']['config.defaultpage.static_id'] . ';');
+					break;
+				case 0:
+					RewritePageTitle("Главная");
+					$page = TEMPLATES_PATH . "/page.home.php";
+					$_GET['p'] = "home";
+					break;
+			}
+		break;
 }
 
 // Начинаем буферизовать вывод. Необходимо для более корректной работы хандлера ошибок.
@@ -138,4 +153,7 @@ BuildBreadcrumbs();
 if(!empty($page))
 	include $page;
 include_once(TEMPLATES_PATH . '/footer.php');
+
+$page = ob_get_clean();
+echo(str_replace("[{(REWRITE_page_title)}]", $GLOBALS['TitleRewrite'], $page));
 ?>

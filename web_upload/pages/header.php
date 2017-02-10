@@ -1,29 +1,33 @@
-<?php 
-// *************************************************************************
-//  This file is part of SourceBans++.
-//
-//  Copyright (C) 2014-2016 Sarabveer Singh <me@sarabveer.me>
-//
-//  SourceBans++ is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation, per version 3 of the License.
-//
-//  SourceBans++ is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-//
-//  You should have received a copy of the GNU General Public License
-//  along with SourceBans++. If not, see <http://www.gnu.org/licenses/>.
-//
-//  This file is based off work covered by the following copyright(s):  
-//
-//   SourceBans 1.4.11
-//   Copyright (C) 2007-2015 SourceBans Team - Part of GameConnect
-//   Licensed under GNU GPL version 3, or later.
-//   Page: <http://www.sourcebans.net/> - <https://github.com/GameConnect/sourcebansv1>
-//
-// *************************************************************************
+<?php
+/**************************************************************************
+ * Эта программа является частью SourceBans MATERIAL Admin.
+ *
+ * Все права защищены © 2016-2017 Sergey Gut <webmaster@kruzefag.ru>
+ *
+ * SourceBans MATERIAL Admin распространяется под лицензией
+ * Creative Commons Attribution-NonCommercial-ShareAlike 3.0.
+ *
+ * Вы должны были получить копию лицензии вместе с этой работой. Если нет,
+ * см. <http://creativecommons.org/licenses/by-nc-sa/3.0/>.
+ *
+ * ПРОГРАММНОЕ ОБЕСПЕЧЕНИЕ ПРЕДОСТАВЛЯЕТСЯ «КАК ЕСТЬ», БЕЗ КАКИХ-ЛИБО
+ * ГАРАНТИЙ, ЯВНЫХ ИЛИ ПОДРАЗУМЕВАЕМЫХ, ВКЛЮЧАЯ, НО НЕ ОГРАНИЧИВАЯСЬ,
+ * ГАРАНТИИ ПРИГОДНОСТИ ДЛЯ КОНКРЕТНЫХ ЦЕЛЕЙ И НЕНАРУШЕНИЯ. НИ ПРИ КАКИХ
+ * ОБСТОЯТЕЛЬСТВАХ АВТОРЫ ИЛИ ПРАВООБЛАДАТЕЛИ НЕ НЕСУТ ОТВЕТСТВЕННОСТИ ЗА
+ * ЛЮБЫЕ ПРЕТЕНЗИИ, ИЛИ УБЫТКИ, НЕЗАВИСИМО ОТ ДЕЙСТВИЯ ДОГОВОРА,
+ * ГРАЖДАНСКОГО ПРАВОНАРУШЕНИЯ ИЛИ ИНАЧЕ, ВОЗНИКАЮЩИЕ ИЗ, ИЛИ В СВЯЗИ С
+ * ПРОГРАММНЫМ ОБЕСПЕЧЕНИЕМ ИЛИ ИСПОЛЬЗОВАНИЕМ ИЛИ ИНЫМИ ДЕЙСТВИЯМИ
+ * ПРОГРАММНОГО ОБЕСПЕЧЕНИЯ.
+ *
+ * Эта программа базируется на работе, охватываемой следующим авторским
+ *                                                           правом (ами):
+ *
+ *  * SourceBans ++
+ *    Copyright © 2014-2016 Sarabveer Singh
+ *    Выпущено под лицензией CC BY-NC-SA 3.0
+ *    Страница: <https://sbpp.github.io/>
+ *
+ ***************************************************************************/
 
 global $userbank, $theme, $xajax,$user,$start;
 $time = microtime();
@@ -139,7 +143,7 @@ $theme->assign('theme_color',  $th_style);
 $theme->assign('def_ch_chenger',  $def_ch);
 $theme->assign('def_body_chenger',  $def_body);
 $theme->assign('xajax_functions',  $xajax->printJavascript("scripts", "xajax.js"));
-$theme->assign('header_title', $GLOBALS['config']['template.title']);
+$theme->assign('header_title', str_replace("[{(page_title)}]", "[{(REWRITE_page_title)}]", $GLOBALS['config']['template.title']));
 $theme->assign('vay4er_act', $GLOBALS['config']['page.vay4er']);
 $theme->assign('header_logo', $GLOBALS['config']['template.logo']);
 $theme->assign('username', $userbank->GetProperty("user"));

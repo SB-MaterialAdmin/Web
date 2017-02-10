@@ -1,10 +1,10 @@
 <?php
 /**************************************************************************
- * Эта программа является частью SourceBans ++.
+ * Эта программа является частью SourceBans MATERIAL Admin.
  *
- * Все права защищены © 2014-2016 Sarabveer Singh <me@sarabveer.me>
+ * Все права защищены © 2016-2017 Sergey Gut <webmaster@kruzefag.ru>
  *
- * SourceBans++ распространяется под лицензией
+ * SourceBans MATERIAL Admin распространяется под лицензией
  * Creative Commons Attribution-NonCommercial-ShareAlike 3.0.
  *
  * Вы должны были получить копию лицензии вместе с этой работой. Если нет,
@@ -22,18 +22,14 @@
  * Эта программа базируется на работе, охватываемой следующим авторским
  *                                                           правом (ами):
  *
- *  * SourceBans 1.4.11
- *    Copyright © 2007-2014 SourceBans Team - Part of GameConnect
+ *  * SourceBans ++
+ *    Copyright © 2014-2016 Sarabveer Singh
  *    Выпущено под лицензией CC BY-NC-SA 3.0
- *    Страница: <http://www.sourcebans.net/> - <http://www.gameconnect.net/>
- *
- *  * SourceBans TF2 Theme v1.0
- *    Copyright © 2014 IceMan
- *    Страница: <https://forums.alliedmods.net/showthread.php?t=252533>
+ *    Страница: <https://sbpp.github.io/>
  *
  ***************************************************************************/
 
-if (!defined('IN_SB')) {echo("You should not be here. Only follow links!");die();}
+if (!defined('IN_SB')) {echo("Вы не должны быть здесь. Используйте только ссылки внутри системы!");die();}
 
 class CDonate {
     private $hooks = array();
