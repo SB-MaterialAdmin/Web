@@ -557,7 +557,7 @@ while (!$res->EOF)
 		$modicon = $res->fields['mod_icon'];
 	}
 
-	$data['mod_icon'] = '<img src="images/games/' .$modicon . '" alt="MOD" border="0" align="absmiddle" />';
+	$data['mod_icon'] = '<img src="data/games/' .$modicon . '" alt="MOD" border="0" align="absmiddle" />';
 	$data['country_icon'] = $data['country'] . ' &nbsp;';
 
     if($res->fields['history_count'] > 1)

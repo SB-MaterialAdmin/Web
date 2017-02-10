@@ -27,7 +27,7 @@
 					<td style="border-bottom: solid 1px #ccc" height='16'>{$server.sid}</td>
 					<td style="border-bottom: solid 1px #ccc" height='16' id="host_{$server.sid}"><i>Запрашиваем данные с сервера...</i></td>
 					<td style="border-bottom: solid 1px #ccc" height='16' id="players_{$server.sid}">Н/Д</td>
-					<td style="border-bottom: solid 1px #ccc" height='16'><img src="images/games/{$server.icon}"></td>
+					<td style="border-bottom: solid 1px #ccc" height='16'><img src="data/games/{$server.icon}"></td>
 					<td style="border-bottom: solid 1px #ccc" height='16'>
 					
 					{if $server.rcon_access}

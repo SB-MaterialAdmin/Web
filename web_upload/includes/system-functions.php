@@ -725,18 +725,18 @@ function GetMapImage($map, $game=false)
 {
 	if($game){
 		if(@file_exists(SB_MAP_LOCATION . "/".$game."/" . $map . ".jpg"))
-			$map_icon = "images/maps/".$game."/" . $map . ".jpg";
+			$map_icon = "data/maps/".$game."/" . $map . ".jpg";
 		else{
 			if(@file_exists(SB_MAP_LOCATION . "/" . $map . ".jpg"))
-				$map_icon = "images/maps/" . $map . ".jpg";
+				$map_icon = "data/maps/" . $map . ".jpg";
 			else
-				$map_icon = "images/maps/nomap.jpg";
+				$map_icon = "data/maps/nomap.jpg";
 		}
 	}else{
 		if(@file_exists(SB_MAP_LOCATION . "/" . $map . ".jpg"))
-			$map_icon = "images/maps/" . $map . ".jpg";
+			$map_icon = "data/maps/" . $map . ".jpg";
 		else
-			$map_icon = "images/maps/nomap.jpg";
+			$map_icon = "data/maps/nomap.jpg";
 	}
 	return $map_icon;
 }
@@ -745,9 +745,9 @@ function GetMapImage($map, $game=false)
 function GetMapImage($map)
 {
 	if(@file_exists(SB_MAP_LOCATION . "/" . $map . ".jpg"))
-		return "images/maps/" . $map . ".jpg";
+		return "data/maps/" . $map . ".jpg";
 	else
-		return "images/maps/nomap.jpg";
+		return "data/maps/nomap.jpg";
 }
 */
 function CheckExt($filename, $ext)
@@ -1202,7 +1202,7 @@ function GetUserAvatar($sid = -1) {
     
     $communityid = false;
     $res = false;
-    $AvatarFile = sprintf("themes/new_box/img/profile-pics/%d.jpg", rand(1,9));
+    $AvatarFile = sprintf("theme/img/profile-pics/%d.jpg", rand(1,9));
     $sid = ($sid==-1)?($userbank->is_logged_in()?$userbank->getProperty("authid"):0):$sid;
     
     if ($sid) $communityid = GetCommunityIDFromSteamID2($sid);

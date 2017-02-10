@@ -4,7 +4,7 @@
 <div class="card">
 	<div class="card-header">
 			<h2>
-				<img class="gameicon" src="images/games/{$game.icon}" style="width: 20px;height: 20px;" /> 
+				<img class="gameicon" src="data/games/{$game.icon}" style="width: 20px;height: 20px;" /> 
                 {$game.name}
 				<small>Полный список администраторов на доступных игровых серверах с подробной информацией.</small>
 			</h2>

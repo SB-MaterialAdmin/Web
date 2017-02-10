@@ -4,19 +4,21 @@
 	$web_cfg = "<?php
 if (!defined('IN_SB')) {echo('Вы не должны быть здесь. Используйте только ссылки внутри системы!');die();}
 
-define('DB_HOST',   '{server}');
-define('DB_USER',   '{user}');
-define('DB_PASS',   '{pass}');
-define('DB_NAME',   '{db}');
-define('DB_PREFIX', '{prefix}');
-define('DB_PORT',   '{port}');
+/* Настройки БД */
+define('DB_HOST',           '{server}');
+define('DB_USER',           '{user}');
+define('DB_PASS',           '{pass}');
+define('DB_NAME',           '{db}');
+define('DB_PREFIX',         '{prefix}');
+define('DB_PORT',           '{port}');
 
-define('STEAMAPIKEY','{steamapikey}');
-define('SB_WP_URL','{sbwpurl}');
+/* Прочее */
+define('STEAMAPIKEY',       '{steamapikey}');
+define('SB_WP_URL',         '{sbwpurl}');
 
 // Декомментируйте (уберите два слеша) перед следующими двумя строками только если у вас имеются проблемы в работе SourceBans MATERIAL Admin.
-//define('DEVELOPER_MODE', true);
-//define('SB_MEM', '128M');
+//define('DEVELOPER_MODE',    true);
+//define('SB_MEM',            '128M');
 ?>";
 
 	$srv_cfg = '"Databases"
@@ -72,9 +74,9 @@ define('SB_WP_URL','{sbwpurl}');
 	$srv_cfg = str_replace("{db}", $_POST['database'], $srv_cfg);
 	$srv_cfg = str_replace("{port}", $_POST['port'], $srv_cfg);
 	
-	if(is_writable("../config.php"))
+	if(is_writable("../data/config.php"))
 	{
-		$config = fopen(ROOT . "../config.php", "w");
+		$config = fopen(ROOT . "../data/config.php", "w");
 		fwrite($config, $web_cfg);
 		fclose($config);
 	}

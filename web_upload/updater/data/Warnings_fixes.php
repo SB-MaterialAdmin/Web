@@ -26,7 +26,7 @@ if ($GLOBALS['db']->GetOne("SELECT `icon` FROM `" . DB_PREFIX . "_mods` WHERE `m
                                 WHERE `modfolder` = 'tf';");
 }
 
-/* Удаление неиспользуемого контента в /images/games/ */
+/* Удаление неиспользуемого контента в /data/games/ */
 $data = scandir(SB_ICONS);
 foreach ($data as &$obj) {
     if (!is_file(sprintf("%s/%s", SB_ICONS, $obj)))

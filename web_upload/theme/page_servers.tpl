@@ -1,5 +1,5 @@
 {if $IN_SERVERS_PAGE}
-{if $IN_SERVERS_PAGE && $access_bans}<div class="alert alert-info servers_pg" role="alert"><h4>Подсказка:</h4><span class="p-l-10">Нажмите на <mark><!--<img src="themes/new_box/img/inn.png" style="width: 20px;height: 20px;" />-->&nbsp;<i class="zmdi zmdi-label c-white" style="font-size: 17px;"></i>&nbsp;</mark> возле ника игрока, чтобы вызвать меню управления игроком.</span></div>{/if}
+{if $IN_SERVERS_PAGE && $access_bans}<div class="alert alert-info servers_pg" role="alert"><h4>Подсказка:</h4><span class="p-l-10">Нажмите на <mark><!--<img src="theme/img/inn.png" style="width: 20px;height: 20px;" />-->&nbsp;<i class="zmdi zmdi-label c-white" style="font-size: 17px;"></i>&nbsp;</mark> возле ника игрока, чтобы вызвать меню управления игроком.</span></div>{/if}
 	<div class="card">
 		<!--<div class="card-header">
 			<h2>Список серверов</h2>
@@ -17,7 +17,7 @@
 					</tr>
 					{foreach from=$server_list item=server}
 						<tr id="opener_{$server.sid}" class="opener" style="cursor:pointer;" onmouseout="this.className=''" onmouseover="this.className='active'">
-							<td class="text-center"><img src="images/games/{$server.icon}" border="0" /></td>
+							<td class="text-center"><img src="data/games/{$server.icon}" border="0" /></td>
 							<td class="text-center" id="os_{$server.sid}"></td>
 							<td class="text-center" id="vac_{$server.sid}"></td>
 							<td id="host_{$server.sid}"><i>Получение сведений о сервере...</i></td>
@@ -101,7 +101,7 @@
 				<tbody>
 					{foreach from=$server_list item=server}
 						<tr id="opener_{$server.sid}" style="cursor:pointer;" onmouseout="this.className=''" onmouseover="this.className='active'" onclick="{$server.evOnClick}">
-							<td class="text-center"><img src="images/games/{$server.icon}" border="0" /></td>
+							<td class="text-center"><img src="data/games/{$server.icon}" border="0" /></td>
 							<td class="text-center hidden-xs" id="os_{$server.sid}"></td>
 							<td class="text-center hidden-xs" id="vac_{$server.sid}"></td>
 							<td id="host_{$server.sid}"><i>Получение сведений о сервере...</i></td>

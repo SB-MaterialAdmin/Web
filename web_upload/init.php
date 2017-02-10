@@ -32,27 +32,29 @@
 // ---------------------------------------------------
 //  Directories
 // ---------------------------------------------------
-define('ROOT', dirname(__FILE__) . "/");
-define('SCRIPT_PATH', ROOT . 'scripts');
-define('TEMPLATES_PATH', ROOT . 'pages');
-define('INCLUDES_PATH', ROOT . 'includes');
-define('SB_DEMO_LOCATION','demos');
-define('SB_ICON_LOCATION','images/games');
-define('SB_MAP_LOCATION', ROOT . 'images/maps');
-define('SB_ICONS', ROOT . SB_ICON_LOCATION);
-define('SB_DEMOS', ROOT . SB_DEMO_LOCATION);
+define('ROOT',              dirname(__FILE__) . "/");
+define('SCRIPT_PATH',       ROOT . 'scripts');
+define('TEMPLATES_PATH',    ROOT . 'pages');
+define('INCLUDES_PATH',     ROOT . 'includes');
+define('DATA_PATH',         ROOT . 'data/');
 
-define('SB_THEMES', ROOT . 'themes/');
-define('SB_THEMES_COMPILE', ROOT . 'themes_c/');
+define('SB_DEMO_LOCATION',  'demo');
+define('SB_ICON_LOCATION',  'games');
+define('SB_MAP_LOCATION',   DATA_PATH . 'maps');
+define('SB_DEMOS',          DATA_PATH . SB_DEMO_LOCATION);
+define('SB_ICONS',          DATA_PATH . SB_ICONS_LOCATION);
 
-define('IN_SB', true);
-define('SB_AID', isset($_COOKIE['aid'])?$_COOKIE['aid']:null);
+define('SB_THEME',          ROOT . 'theme/');
+define('SB_THEME_COMPILE',  DATA_PATH . 'theme/');
+
+define('IN_SB',             true);
+define('SB_AID',            isset($_COOKIE['aid'])?$_COOKIE['aid']:null);
 define('XAJAX_REQUEST_URI', './index.php');
 
 include_once(INCLUDES_PATH . "/CSystemLog.php");
 include_once(INCLUDES_PATH . "/CUserManager.php");
 include_once(INCLUDES_PATH . "/CUI.php");
-include_once("themes/new_box/theme.conf.php");
+include_once(SB_THEME . "theme.conf.php");
 // ---------------------------------------------------
 //  Fix some $_SERVER vars
 // ---------------------------------------------------
@@ -69,27 +71,23 @@ if(trim($_SERVER['PHP_SELF']) == '') $_SERVER['PHP_SELF'] = preg_replace("/(\?.*
 // ---------------------------------------------------
 //  Are we installed?
 // ---------------------------------------------------
-if(!file_exists(ROOT.'/config.php') || !include_once(ROOT . '/config.php')) {
+if(!file_exists(DATA_PATH.'/config.php') || !@include_once(DATA_PATH . '/config.php')) {
 	// No were not
-	if($_SERVER['HTTP_HOST'] != "localhost")
-	{
+	if($_SERVER['HTTP_HOST'] != "localhost") {
 		echo "SourceBans не установлен.";
 		die();
 	}
 }
-if(!defined("DEVELOPER_MODE") && !defined("IS_UPDATE") && file_exists(ROOT."/install"))
-{
-	if($_SERVER['HTTP_HOST'] != "localhost")
-	{
+
+if(!defined("DEVELOPER_MODE") && !defined("IS_UPDATE") && file_exists(ROOT."/install")) {
+	if($_SERVER['HTTP_HOST'] != "localhost") {
 		echo "Для обеспечения безопасности работы SourceBans, удалите или переименуйте папку /install";
 		die();
 	}
 }
 
-if(!defined("DEVELOPER_MODE") && !defined("IS_UPDATE") && file_exists(ROOT."/updater"))
-{
-	if($_SERVER['HTTP_HOST'] != "localhost")
-	{
+if(!defined("DEVELOPER_MODE") && !defined("IS_UPDATE") && file_exists(ROOT."/updater")) {
+	if($_SERVER['HTTP_HOST'] != "localhost") {
 		echo "Выполняется перенаправление на страницу обновления SourceBans...";
 		echo "<script>setTimeout(function() { window.location.replace('./updater'); }, 2000);</script>";
 		die();
@@ -286,26 +284,22 @@ require(INCLUDES_PATH . '/smarty/Smarty.class.php');
 
 global $theme, $userbank;
 
-define('SB_THEME', 'new_box');
-
-if(!@file_exists(SB_THEMES . SB_THEME . "/theme.conf.php"))
+if(!@file_exists(SB_THEME . "/theme.conf.php"))
 	die("<b>Ошибка шаблона</b>: Шаблон повреждён. Отсутствует файл <b>theme.conf.php</b>.");
 
-if(!@is_writable(SB_THEMES_COMPILE))
-	die("<b>Ошибка шаблона</b>: Папка <b>".SB_THEMES_COMPILE."</b> не перезаписываемая! Установите права 777 на папку через FTP-клиент.");
+if(!@is_writable(SB_THEME))
+	die("<b>Ошибка шаблона</b>: Папка <b>".SB_THEME_COMPILE."</b> не перезаписываемая! Установите права 777 на папку через FTP-клиент.");
 
 $theme = new Smarty();
-$theme->error_reporting 	= 	E_ALL ^ E_NOTICE;
-$theme->use_sub_dirs 		= 	false;
-$theme->compile_id			= 	SB_THEME;
-$theme->caching 			= 	false;
-$theme->template_dir 		= 	SB_THEMES . SB_THEME;
-$theme->compile_dir 		= 	SB_THEMES_COMPILE;
+$theme->error_reporting     =   E_ALL ^ E_NOTICE;
+$theme->use_sub_dirs        =   false;
+$theme->compile_id          =   "MATERIAL_Admin";
+$theme->caching             =   false;
+$theme->template_dir        =   SB_THEME;
+$theme->compile_dir         =   SB_THEME_COMPILE;
 
-if ((isset($_GET['debug']) && $_GET['debug'] == 1) || defined("DEVELOPER_MODE") )
-{
-	$theme->force_compile = true;
-}
+if ((isset($_GET['debug']) && $_GET['debug'] == 1) || defined("DEVELOPER_MODE"))
+    $theme->force_compile = true;
 
 // ---------------------------------------------------
 // Setup our user manager

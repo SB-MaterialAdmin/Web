@@ -550,8 +550,8 @@ while (!$res->EOF)
 		$modicon = $res->fields['mod_icon'];
 	}
 
-	//$data['mod_icon'] = '<img src="images/games/' .$modicon . '" alt="MOD" border="0" align="absmiddle" />&nbsp;' . $data['type_icon'];
-	$data['mod_icon'] = '<img src="images/games/' .$modicon . '" alt="MOD" border="0" align="absmiddle" />&nbsp;';
+	//$data['mod_icon'] = '<img src="data/games/' .$modicon . '" alt="MOD" border="0" align="absmiddle" />&nbsp;' . $data['type_icon'];
+	$data['mod_icon'] = '<img src="data/games/' .$modicon . '" alt="MOD" border="0" align="absmiddle" />&nbsp;';
 	
 	$data['type_icon_p'] = $data['type_icon'];
 	

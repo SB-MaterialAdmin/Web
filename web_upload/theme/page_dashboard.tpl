@@ -20,22 +20,22 @@
 				<div class="col-sm-12">
 					{if $dashboard_info_steam !=""}
 						<a class="col-xs-3" href="{$dashboard_info_steam}">
-							<img src="themes/new_box/img/social/steam-128.png" class="img-responsive" alt="">
+							<img src="theme/img/social/steam-128.png" class="img-responsive" alt="">
 						</a>
 					{/if}
 					{if $dashboard_info_vk !=""}
 						<a class="col-xs-3" href="{$dashboard_info_vk}">
-						<img src="themes/new_box/img/social/vk-128.png" class="img-responsive" alt="">
+						<img src="theme/img/social/vk-128.png" class="img-responsive" alt="">
 					</a>
 					{/if}
 					{if $dashboard_info_yout !=""}
 						<a class="col-xs-3" href="{$dashboard_info_yout}">
-						<img src="themes/new_box/img/social/youtube-128.png" class="img-responsive" alt="">
+						<img src="theme/img/social/youtube-128.png" class="img-responsive" alt="">
 					</a>
 					{/if}
 					{if $dashboard_info_face !=""}
 						<a class="col-xs-3" href="{$dashboard_info_face}">
-						<img src="themes/new_box/img/social/facebook-128.png" class="img-responsive" alt="">
+						<img src="theme/img/social/facebook-128.png" class="img-responsive" alt="">
 					</a>
 					{/if}
 				</div>
@@ -82,22 +82,22 @@
 						<div class="col-sm-12">
 							{if $dashboard_info_steam !=""}
 								<a class="col-xs-3" href="{$dashboard_info_steam}">
-									<img src="themes/new_box/img/social/steam-128.png" class="img-responsive" alt="">
+									<img src="theme/img/social/steam-128.png" class="img-responsive" alt="">
 								</a>
 							{/if}
 							{if $dashboard_info_vk !=""}
 								<a class="col-xs-3" href="{$dashboard_info_vk}">
-								<img src="themes/new_box/img/social/vk-128.png" class="img-responsive" alt="">
+								<img src="theme/img/social/vk-128.png" class="img-responsive" alt="">
 							</a>
 							{/if}
 							{if $dashboard_info_yout !=""}
 								<a class="col-xs-3" href="{$dashboard_info_yout}">
-								<img src="themes/new_box/img/social/youtube-128.png" class="img-responsive" alt="">
+								<img src="theme/img/social/youtube-128.png" class="img-responsive" alt="">
 							</a>
 							{/if}
 							{if $dashboard_info_face !=""}
 								<a class="col-xs-3" href="{$dashboard_info_face}">
-								<img src="themes/new_box/img/social/facebook-128.png" class="img-responsive" alt="">
+								<img src="theme/img/social/facebook-128.png" class="img-responsive" alt="">
 							</a>
 							{/if}
 						</div>
@@ -177,7 +177,7 @@
 					<tbody>
 						{foreach from=$players_banned item=player}
 							<tr {if $player.unbanned}class="info f-500"{/if} onclick="{$player.link_url}" style="cursor:pointer;">
-								<td align="center"><img src="images/games/{$player.icon}" width="16" alt="MOD" title="MOD" /></td>
+								<td align="center"><img src="data/games/{$player.icon}" width="16" alt="MOD" title="MOD" /></td>
 								<td class="{if $player.unbanned}c-cyan{else}c-cyan{/if}"><span data-toggle="tooltip" data-placement="top" title="" data-original-title="{$player.created_info}">{$player.created}</span></td>
 								<td>
 									{if empty($player.short_name)}

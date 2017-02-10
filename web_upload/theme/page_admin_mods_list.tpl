@@ -16,7 +16,7 @@
 				<tr id="mid_{$mod.mid}">
 				<td class="text-left">{$mod.name|htmlspecialchars}</td>
 				<td class="text-center">{$mod.modfolder|htmlspecialchars}</td>
-				<td class="text-center"><img src="images/games/{$mod.icon}" width="16"></td>
+				<td class="text-center"><img src="data/games/{$mod.icon}" width="16"></td>
 				<td class="text-center">{$mod.steam_universe|htmlspecialchars}</td>{if $permission_editmods || $permission_deletemods}
 				<td class="text-right">
 					{if $permission_editmods}
