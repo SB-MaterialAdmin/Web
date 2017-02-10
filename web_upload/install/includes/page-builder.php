@@ -29,16 +29,8 @@ $_GET['step'] = isset($_GET['step']) ? $_GET['step'] : 'default';
 
 switch ($_GET['step'])
 {
-	case "6":
-		RewritePageTitle("Шаг 6 - Импорт AMXBans");
-		$page = TEMPLATES_PATH . "/page.6.php";
-		break;
-	case "5":
-		RewritePageTitle("Шаг 5 - Установка");
-		$page = TEMPLATES_PATH . "/page.5.php";
-		break;
 	case "4":
-		RewritePageTitle("Шаг 4 - Создание таблиц");
+		RewritePageTitle("Шаг 4 - Установка");
 		$page = TEMPLATES_PATH . "/page.4.php";
 		break;
 	case "3":

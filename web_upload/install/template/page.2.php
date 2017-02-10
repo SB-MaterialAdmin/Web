@@ -1,22 +1,28 @@
 <?php
-	if(!defined("IN_SB")){echo "You should not be here. Only follow links!";die();}
+	if (!defined('IN_SB')) {echo("Вы не должны быть здесь. Используйте только ссылки внутри системы!");die();}
 	if(isset($_POST['postd']))
 	{
 		if(empty($_POST['server']) ||empty($_POST['port']) ||empty($_POST['username']) ||empty($_POST['database']) ||empty($_POST['prefix']))
 		{
-			echo "<script>setTimeout(\"ShowBox('Внимание!', 'Заколните необходимые поля.', 'blue', '', true)\", 1000);</script>";
+			echo "<script>setTimeout(\"ShowBox('Внимание!', 'Заколните все необходимые поля.', 'red', '', true)\", 1000);</script>";
 		}
 		else
 		{
-			require(ROOT . "../includes/adodb/adodb.inc.php");
-			include_once(ROOT . "../includes/adodb/adodb-errorhandler.inc.php");
-			$server = "mysqli://" . $_POST['username'] . ":" . $_POST['password'] . "@" . $_POST['server'] . ":" . $_POST['port'] . "/" . $_POST['database'];
-			$db = ADONewConnection($server);
+			try {
+					$pdo_options =  [
+						PDO::ATTR_ERRMODE               => PDO::ERRMODE_EXCEPTION,
+						PDO::ATTR_DEFAULT_FETCH_MODE    => PDO::FETCH_ASSOC
+					];
+
+					$db = new PDO(sprintf("mysql:host=%s;dbname=%s;charset=utf8;port=%d", $_POST['server'], $_POST['database'], intval($_POST['port'])), $_POST['username'], $_POST['password'], $pdo_options);
+			} catch (PDOException $e) {}
+			
 			if(!$db) {
-				echo "<script>setTimeout(\"ShowBox('Ошибка', 'ошибка соединения с сервером баз данных. <br />Проверьте введенные данные', 'red', '', true);\", 1200);</script>";
+				echo "<script>setTimeout(\"ShowBox('Ошибка', 'Ошибка соединения с сервером базы данных.<br />Проверьте правильность введённых данных.', 'red', '', true);\", 1200);</script>";
 			} else if(strlen($_POST['prefix']) > 9) {
 				echo "<script>setTimeout(\"ShowBox('Ошибка', 'Префикс таблиц не может быть длиннее 9 символов.<br />Исправьте это.', 'red', '', true);\", 1200);</script>";
 			} else {
+				ob_end_clean();
 				?>
 				<form action="index.php?step=3" method="post" name="send" id="send">
 					<input type="hidden" name="username" value="<?php echo $_POST['username']?>">
@@ -29,8 +35,9 @@
 					<input type="hidden" name="sb-wp-url" value="<?php echo $_POST['sb-wp-url']?>">
 				</form>
 				<script>
-				$('send').submit();
+				document.getElementById('send').submit();
 				</script> <?php
+				exit(0);
 			}
 		}
 	}
@@ -72,14 +79,6 @@
 
 				<div class="lv-item media">
 					<div class="lv-avatar bgm-orange pull-left">4</div>
-					<div class="media-body">
-						<div class="lv-title">Шаг: Создание таблиц</div>
-						<div class="lv-small"><i class="zmdi zmdi-time zmdi-hc-fw c-blue"></i> Следующий шаг</div>
-					</div>
-				</div>
-
-				<div class="lv-item media">
-					<div class="lv-avatar bgm-orange pull-left">5</div>
 					<div class="media-body">
 						<div class="lv-title">Шаг: Установка</div>
 						<div class="lv-small"><i class="zmdi zmdi-time zmdi-hc-fw c-blue"></i> Следующий шаг</div>

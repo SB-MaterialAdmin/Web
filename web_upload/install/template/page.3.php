@@ -1,25 +1,19 @@
 <?php
-if(!defined("IN_SB")){echo "You should not be here. Only follow links!";die();}
+if (!defined('IN_SB')) {echo("Вы не должны быть здесь. Используйте только ссылки внутри системы!");die();}
 $errors = 0;
 $warnings = 0;
 
 if(isset($_POST['username'], $_POST['password'], $_POST['server'], $_POST['port'], $_POST['database'])) {
-	require(ROOT . "../includes/adodb/adodb.inc.php");
-	include_once(ROOT . "../includes/adodb/adodb-errorhandler.inc.php");
-	$server = "mysqli://" . $_POST['username'] . ":" . $_POST['password'] . "@" . $_POST['server'] . ":" . $_POST['port'] . "/" . $_POST['database'];
-	$db = ADONewConnection($server);
-	$db->Execute("SET NAMES `utf8`");
-	$vars = $db->Execute("SHOW VARIABLES");
-	$sql_version = "";
-	while(!$vars->EOF)
-	{
-		if($vars->fields['Variable_name'] == "version")
-		{
-			$sql_version = $vars->fields['Value'];
-			break;
-		}
-		$vars->MoveNext();
-	}
+	try {
+		$pdo_options =  [
+						PDO::ATTR_ERRMODE               => PDO::ERRMODE_EXCEPTION,
+						PDO::ATTR_DEFAULT_FETCH_MODE    => PDO::FETCH_ASSOC
+						];
+
+		$db = new PDO(sprintf("mysql:host=%s;dbname=%s;charset=utf8;port=%d", $_POST['server'], $_POST['database'], intval($_POST['port'])), $_POST['username'], $_POST['password'], $pdo_options);
+	} catch (PDOException $e) {}
+	
+	$sql_version = $db->getAttribute(PDO::ATTR_SERVER_VERSION);
 } else {
 	$sql_version = "Невозможно соединиться, не введены детали базы данных. (Вернитесь назад и введите данные заново.)";
 }
@@ -59,14 +53,6 @@ if(isset($_POST['username'], $_POST['password'], $_POST['server'], $_POST['port'
 
 				<div class="lv-item media">
 					<div class="lv-avatar bgm-orange pull-left">4</div>
-					<div class="media-body">
-						<div class="lv-title">Шаг: Создание таблиц</div>
-						<div class="lv-small"><i class="zmdi zmdi-time zmdi-hc-fw c-blue"></i> Следующий шаг</div>
-					</div>
-				</div>
-
-				<div class="lv-item media">
-					<div class="lv-avatar bgm-orange pull-left">5</div>
 					<div class="media-body">
 						<div class="lv-title">Шаг: Установка</div>
 						<div class="lv-small"><i class="zmdi zmdi-time zmdi-hc-fw c-blue"></i> Следующий шаг</div>

@@ -1,5 +1,5 @@
 <?php
-	if(!defined("IN_SB")){echo "You should not be here. Only follow links!";die();}
+	if (!defined('IN_SB')) {echo("Вы не должны быть здесь. Используйте только ссылки внутри системы!");die();}
 ?>
 
 <div class="card m-b-0" id="messages-main">
@@ -36,14 +36,6 @@
 			<div class="lv-item media">
 				<div class="lv-avatar bgm-orange pull-left">4</div>
 				<div class="media-body">
-					<div class="lv-title">Шаг: Создание таблиц</div>
-					<div class="lv-small"><i class="zmdi zmdi-time zmdi-hc-fw c-blue"></i> Следующий шаг</div>
-				</div>
-			</div>
-
-			<div class="lv-item media">
-				<div class="lv-avatar bgm-orange pull-left">5</div>
-				<div class="media-body">
 					<div class="lv-title">Шаг: Установка</div>
 					<div class="lv-small"><i class="zmdi zmdi-time zmdi-hc-fw c-blue"></i> Следующий шаг</div>
 				</div>
@@ -72,26 +64,32 @@
 				<form action="index.php?p=submit" method="POST" enctype="multipart/form-data">
 					<div id="submit-main">
 						<textarea class="form-control" id="license" cols="105" rows="15" name="license">
-Эта программа является частью SourceBans ++.
+ Эта программа является частью SourceBans MATERIAL Admin.
+ 
+ Все права защищены © 2016-2017 Sergey Gut <webmaster@kruzefag.ru>
+ 
+ SourceBans MATERIAL Admin распространяется под лицензией
+ Creative Commons Attribution-NonCommercial-ShareAlike 3.0.
+ 
+ Вы должны были получить копию лицензии вместе с этой работой. Если нет,
+ см. <http://creativecommons.org/licenses/by-nc-sa/3.0/>.
+ 
+ ПРОГРАММНОЕ ОБЕСПЕЧЕНИЕ ПРЕДОСТАВЛЯЕТСЯ «КАК ЕСТЬ», БЕЗ КАКИХ-ЛИБО
+ ГАРАНТИЙ, ЯВНЫХ ИЛИ ПОДРАЗУМЕВАЕМЫХ, ВКЛЮЧАЯ, НО НЕ ОГРАНИЧИВАЯСЬ,
+ ГАРАНТИИ ПРИГОДНОСТИ ДЛЯ КОНКРЕТНЫХ ЦЕЛЕЙ И НЕНАРУШЕНИЯ. НИ ПРИ КАКИХ
+ ОБСТОЯТЕЛЬСТВАХ АВТОРЫ ИЛИ ПРАВООБЛАДАТЕЛИ НЕ НЕСУТ ОТВЕТСТВЕННОСТИ ЗА
+ ЛЮБЫЕ ПРЕТЕНЗИИ, ИЛИ УБЫТКИ, НЕЗАВИСИМО ОТ ДЕЙСТВИЯ ДОГОВОРА,
+ ГРАЖДАНСКОГО ПРАВОНАРУШЕНИЯ ИЛИ ИНАЧЕ, ВОЗНИКАЮЩИЕ ИЗ, ИЛИ В СВЯЗИ С
+ ПРОГРАММНЫМ ОБЕСПЕЧЕНИЕМ ИЛИ ИСПОЛЬЗОВАНИЕМ ИЛИ ИНЫМИ ДЕЙСТВИЯМИ
+ ПРОГРАММНОГО ОБЕСПЕЧЕНИЯ.
 
-Все права защищены © 2014-2016 Sarabveer Singh <me@sarabveer.me>
+ Эта программа базируется на работе, охватываемой следующим авторским
+                                                           правом (ами):
 
-SourceBans++ is под лицензией
-Creative Commons Attribution-NonCommercial-ShareAlike 3.0.
-
-Вы должны были получить копию лицензии вместе с этой работой. Если нет, см <http://creativecommons.org/licenses/by-nc-sa/3.0/>.
-
-ПРОГРАММНОЕ ОБЕСПЕЧЕНИЕ ПРЕДОСТАВЛЯЕТСЯ «КАК ЕСТЬ», БЕЗ КАКИХ-ЛИБО ГАРАНТИЙ, ЯВНЫХ ИЛИ ПОДРАЗУМЕВАЕМЫХ, ВКЛЮЧАЯ, НО НЕ ОГРАНИЧИВАЯСЬ, ГАРАНТИИ ПРИГОДНОСТИ ДЛЯ КОНКРЕТНЫХ ЦЕЛЕЙ И НЕНАРУШЕНИЯ. НИ ПРИ КАКИХ ОБСТОЯТЕЛЬСТВАХ АВТОРЫ ИЛИ ПРАВООБЛАДАТЕЛИ НЕ НЕСУТ ОТВЕТСТВЕННОСТИ ЗА ЛЮБЫЕ ПРЕТЕНЗИИ, ИЛИ УБЫТКИ, НЕЗАВИСИМО ОТ ДЕЙСТВИЯ ДОГОВОРА, ГРАЖДАНСКОГО ПРАВОНАРУШЕНИЯ ИЛИ ИНАЧЕ, ВОЗНИКАЮЩИЕ ИЗ, ИЛИ В СВЯЗИ С ПРОГРАММНЫМ ОБЕСПЕЧЕНИЕМ ИЛИ ИСПОЛЬЗОВАНИЕМ ИЛИ ИНЫМИ ДЕЙСТВИЯМИ ПРОГРАММНОГО ОБЕСПЕЧЕНИЯ.
-
-Эта программа базируется на работе, охватываемой следующим авторским правом (ами):
-	SourceBans 1.4.11
-	Copyright © 2007-2014 SourceBans Team - Part of GameConnect
-	Licensed under CC BY-NC-SA 3.0
-	Страница: <http://www.sourcebans.net/> - <http://www.gameconnect.net/>
-
-	SourceBans TF2 Theme v1.0
-	Copyright © 2014 IceMan
-	Страница: <https://forums.alliedmods.net/showthread.php?t=252533>
+  * SourceBans ++
+    Copyright © 2014-2016 Sarabveer Singh
+    Выпущено под лицензией CC BY-NC-SA 3.0
+    Страница: <https://sbpp.github.io/>
 						</textarea>
 					</div>
 				</form>

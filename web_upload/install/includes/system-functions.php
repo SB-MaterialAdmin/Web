@@ -336,4 +336,23 @@ function TryAutodetectURL() {
     
     return sprintf("%s://%s%s", $proto, $domain, $uri[0]);
 }
+
+function ProcessQueriesFile($hDatabase, $filename) {
+    $errors = 0;
+    
+    $file = file_get_contents($filename);
+    $file = str_replace("{prefix}", $_POST['prefix'], $file);
+    $querys = explode(";", $file);
+    foreach($querys AS $q) {
+        if(strlen($q) > 2) {
+            try {
+                $hDatabase->exec(stripslashes($q) . ";");
+            } catch (PDOException $e) {
+                $errors++;
+            }
+        }	
+    }
+    
+    return $errors;
+}
 ?>
