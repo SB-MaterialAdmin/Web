@@ -3094,12 +3094,12 @@ function Maintenance($type) {
                 return $objResponse;
             }
             
-            $CountryFile = INCLUDES_PATH . '/IpToCountry.csv';
+            $CountryFile = DATA_PATH . '/IpToCountry.csv';
             if (@is_writable($CountryFile)) {
                 file_put_contents($CountryFile, zlib_decode(file_get_contents("http://software77.net/geo-ip/?DL=1&x=Download")));
                 ShowBox_ajx("Успех", "Файл GeoIP базы обновлён.", "green", "", true, $objResponse);
             } else
-                ShowBox_ajx("Ошибка", "Невозможно произвести обновление GeoIP базы: запись в файл <em>/includes/IpToCountry.csv</em> запрещена. Установите права <b>777</b> на файл <em>/includes/IpToCountry.csv</em>", "red", "", true, $objResponse);
+                ShowBox_ajx("Ошибка", "Невозможно произвести обновление GeoIP базы: запись в файл <em>/data/IpToCountry.csv</em> запрещена. Установите права <b>777</b> на файл <em>/data/IpToCountry.csv</em>", "red", "", true, $objResponse);
             break;
         }
         

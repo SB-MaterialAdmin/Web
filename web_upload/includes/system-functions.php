@@ -691,7 +691,7 @@ function FetchIp($ip)
 {
 	$ip = sprintf('%u', ip2long($ip));
 	if(!isset($_SESSION['CountryFetchHndl']) || !is_resource($_SESSION['CountryFetchHndl'])) {
-		$handle = fopen(INCLUDES_PATH.'/IpToCountry.csv', "r");
+		$handle = fopen(DATA_PATH . '/IpToCountry.csv', "r");
 		$_SESSION['CountryFetchHndl'] = $handle;
 	}
 	else {

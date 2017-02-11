@@ -116,6 +116,13 @@ define('SB_WP_URL',         '{sbwpurl}');
 				// Setup Settings
 				ProcessQueriesFile($db, INCLUDES_PATH . "/data.sql");
 				
+				// Install IpToCountry
+				if (@is_writable($CountryFile) || !function_exists("zlib_decode")) {
+					file_put_contents($CountryFile, zlib_decode(file_get_contents("http://software77.net/geo-ip/?DL=1&x=Download")));
+				} else {
+					echo("<script>setTimeout(function() { ShowBox('Ошибка', 'Не удалось загрузить последнюю базу данных GeoIP. Нет прав на запись, или недоступна функция <em>zlib_decode</em>. Вам необходимо вручную установить GeoIP. Подробнее на Нашей вики, <a href=\'https://github.com/CrazyHackGUT/SB_Material_Design/wiki/GeoIP:-%D1%80%D1%83%D1%87%D0%BD%D0%B0%D1%8F-%D1%83%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%BA%D0%B0\'>здесь.' , 'red', '', true); }, 1250);</script>");
+				}
+				
 				?>
 					<div class="card m-b-0"  id="messages-main">
 						<div class="ms-menu">
@@ -353,6 +360,14 @@ define('SB_WP_URL',         '{sbwpurl}');
 							</div>
 						</div>
 								
+					</div>
+					<div class="lv-header-alt clearfix">
+						<div class="lvh-label">
+							<span class="c-black">Информация</span>
+						</div>
+						<div class="lv-body p-15">
+							<br />Следующий этап может занять некоторое время. Будет устанавливаться структура БД, а так же загружаться файл GeoIP базы из Интернета. В течении этого времени, не закрывайте вкладку установщика. Это займёт менее полминуты, если у Вашего веб-сервера хорошая скорость соединения к удалённым серверам.
+						</div>
 					</div>
 					<br /><br />
 					<div class="p-10" align="center">
