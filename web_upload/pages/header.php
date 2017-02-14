@@ -112,19 +112,17 @@ function toCommunityID($id) {
     }
 }
 
-$res = $GLOBALS['db']->Execute("SELECT authid, vk, comment, skype, user FROM `".DB_PREFIX."_admins` WHERE `support` = '1'");
-$supports = array();
-while (!$res->EOF)
-{
-    $suppurt_inf = array();
+$dbres = $GLOBALS['db']->query("SELECT authid, vk, comment, skype, user FROM `".DB_PREFIX."_admins` WHERE `support` = '1'");
+$supports = [];
+while ($res = $dbres->fetch(PDO::FETCH_LAZY)) {
+	$suppurt_inf = [];
 	
-	$suppurt_inf['user'] = stripslashes($res->fields['user']);
-	$suppurt_inf['comment'] = $res->fields['comment'];
-	$suppurt_inf['vk'] = $res->fields['vk'];
-	$suppurt_inf['skype'] = $res->fields['skype'];
-	$suppurt_inf['authid'] = toCommunityID($res->fields['authid']);
-	$suppurt_inf['avatarka'] = GetUserAvatar($res->fields['authid']);
-
+	$suppurt_inf['user'] = stripslashes($res->user);
+	$suppurt_inf['comment'] = $res->comment;
+	$suppurt_inf['vk'] = $res->vk;
+	$suppurt_inf['skype'] = $res->skype;
+	$suppurt_inf['authid'] = toCommunityID($res->authid);
+	$suppurt_inf['avatarka'] = $GLOBALS['AvatarMgr']->getUserAvatar($res->authid);
 	
 	array_push($supports,$suppurt_inf);
 	$res->MoveNext();
@@ -133,11 +131,8 @@ while (!$res->EOF)
 
 $theme->assign('supports_list', $supports);
 $theme->assign('supports_count', count($supports));
-////////
-////////
-////////
 
-$theme->assign('avatar', GetUserAvatar($userbank->GetProperty('authid')));
+$theme->assign('avatar', $GLOBALS['AvatarMgr']->getUserAvatar($userbank->GetProperty('authid')));
 $theme->assign('theme_bg',  $bg_value);
 $theme->assign('theme_color',  $th_style);
 $theme->assign('def_ch_chenger',  $def_ch);
@@ -148,6 +143,5 @@ $theme->assign('vay4er_act', $GLOBALS['config']['page.vay4er']);
 $theme->assign('header_logo', $GLOBALS['config']['template.logo']);
 $theme->assign('username', $userbank->GetProperty("user"));
 $theme->assign('logged_in', $userbank->is_logged_in());
-$theme->assign('theme_name', isset($GLOBALS['config']['config.theme'])?$GLOBALS['config']['config.theme']:'default');
 $theme->display('page_header.tpl');
 ?>

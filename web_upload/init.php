@@ -122,22 +122,51 @@ error_reporting(E_ALL ^ E_NOTICE);
 
 
 // ---------------------------------------------------
-//  Setup our DB
+//  Setup DB connection with PDO.
 // ---------------------------------------------------
-include_once(INCLUDES_PATH . "/adodb/adodb.inc.php");
-include_once(INCLUDES_PATH . "/adodb/adodb-errorhandler.inc.php");
-$GLOBALS['db'] = ADONewConnection("mysqli://".DB_USER.':'.DB_PASS.'@'.DB_HOST.':'.DB_PORT.'/'.DB_NAME);
+try {
+    $pdo_options =  [
+        PDO::ATTR_ERRMODE               => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE    => PDO::FETCH_ASSOC
+    ];
+
+    require_once(INCLUDES_PATH . "/CDB.php");
+    $GLOBALS['db'] = new CPDO(sprintf("mysql:host=%s;dbname=%s;charset=utf8;port=%d", DB_HOST, DB_NAME, intval(DB_PORT)), DB_USER, DB_PASS, $pdo_options);
+} catch (PDOException $e) {
+    echo("Не удалось подключиться к Базе Данных.<br /><br />");
+    echo($e->getMessage());
+    exit(1);
+}
 $GLOBALS['log'] = new CSystemLog();
+$GLOBALS['db_version'] = $GLOBALS['db']->getAttribute(PDO::ATTR_SERVER_VERSION);
 
-if( !is_object($GLOBALS['db']) )
-				die();
-				
-$mysql_server_info = $GLOBALS['db']->ServerInfo();
-$GLOBALS['db_version'] = $mysql_server_info['version'];
+// ---------------------------------------------------
+//  Read settings and push to global array
+// ---------------------------------------------------
+$GLOBALS['config'] = array();
+$res = $GLOBALS['db']->query('SELECT * FROM `' . DB_PREFIX . '_settings`');
+while ($row = $res->fetch(PDO::FETCH_LAZY)) {
+    $GLOBALS['config'][$row->setting] = $row->value;
+}
 
-$debug = $GLOBALS['db']->Execute("SELECT value FROM `".DB_PREFIX."_settings` WHERE setting = 'config.debug';");
-if($debug->fields['value']=="1") {
-	define("DEVELOPER_MODE", true);
+if ($GLOBALS['config']['config.debug'] == "1") {
+    define("DEVELOPER_MODE", true);
+}
+
+define('SB_BANS_PER_PAGE', $GLOBALS['config']['banlist.bansperpage']);
+define('MIN_PASS_LENGTH', $GLOBALS['config']['config.password.minlength']);
+$dateformat = !empty($GLOBALS['config']['config.dateformat'])?$GLOBALS['config']['config.dateformat']:"m-d-y H:i";
+
+$offset = (empty($GLOBALS['config']['config.timezone'])?0:$GLOBALS['config']['config.timezone'])*3600;
+date_default_timezone_set("GMT");
+$abbrarray = timezone_abbreviations_list();
+foreach ($abbrarray as $abbr) {
+    foreach ($abbr as $city) {
+        if ($city['offset'] == $offset && $city['dst'] == $GLOBALS['config']['config.summertime']) {
+            date_default_timezone_set($city['timezone_id']);
+            break 2;
+        }
+    }
 }
 
 // ---------------------------------------------------
@@ -230,45 +259,6 @@ define('ALL_WEB', ADMIN_LIST_ADMINS|ADMIN_ADD_ADMINS|ADMIN_EDIT_ADMINS|ADMIN_DEL
 define('ALL_SERVER', SM_RESERVED_SLOT.SM_GENERIC.SM_KICK.SM_BAN.SM_UNBAN.SM_SLAY.SM_MAP.SM_CVAR.SM_CONFIG.SM_VOTE.SM_PASSWORD.SM_RCON.
 					 SM_CHEATS.SM_CUSTOM1.SM_CUSTOM2.SM_CUSTOM3. SM_CUSTOM4.SM_CUSTOM5.SM_CUSTOM6.SM_ROOT);
 
-$GLOBALS['db']->Execute("SET NAMES utf8;");
-					 
-$res = $GLOBALS['db']->Execute("SELECT * FROM ".DB_PREFIX."_settings GROUP BY `setting`, `value`");
-$GLOBALS['config'] = array();
-while (!$res->EOF)
-{
-	$setting = array($res->fields['setting'] => $res->fields['value']);
-	$GLOBALS['config'] = array_merge_recursive($GLOBALS['config'], $setting);
-	$res->MoveNext();
-}
-
-define('SB_BANS_PER_PAGE', $GLOBALS['config']['banlist.bansperpage']);
-define('MIN_PASS_LENGTH', $GLOBALS['config']['config.password.minlength']);
-$dateformat = !empty($GLOBALS['config']['config.dateformat'])?$GLOBALS['config']['config.dateformat']:"m-d-y H:i";
-
-if(version_compare(PHP_VERSION, "5") != -1)
-{
-    $offset = (empty($GLOBALS['config']['config.timezone'])?0:$GLOBALS['config']['config.timezone'])*3600;
-    date_default_timezone_set("GMT");
-    $abbrarray = timezone_abbreviations_list();
-    foreach ($abbrarray as $abbr) {
-        foreach ($abbr as $city) {
-            if ($city['offset'] == $offset && $city['dst'] == $GLOBALS['config']['config.summertime']) {
-                date_default_timezone_set($city['timezone_id']);
-                break 2;
-            }
-        }
-    }
-}
-else 
-{
-    if(empty($GLOBALS['config']['config.timezone']))
-    {
-        define('SB_TIMEZONE', 0);
-    } else {
-        define('SB_TIMEZONE', $GLOBALS['config']['config.timezone']);
-    }
-}
-
 // if(empty($GLOBALS['config']['config.timezone']))
 // {
 	// date_default_timezone_set("Europe/London");
@@ -312,4 +302,10 @@ if (!defined('IS_UPDATE') && isset($_COOKIE['password']))
     $p = $_COOKIE['password'];
 
 $userbank = new CUserManager($l, $p);
+
+// ---------------------------------------------------
+// Setup our user manager
+// ---------------------------------------------------
+require_once(INCLUDES_PATH . '/CAvatarManager.php');
+$GLOBALS['AvatarMgr'] = new CAvatarManager();
 ?>

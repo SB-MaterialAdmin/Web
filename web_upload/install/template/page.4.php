@@ -10,7 +10,7 @@ define('DB_USER',           '{user}');
 define('DB_PASS',           '{pass}');
 define('DB_NAME',           '{db}');
 define('DB_PREFIX',         '{prefix}');
-define('DB_PORT',           '{port}');
+define('DB_PORT',           {port});
 
 /* Прочее */
 define('STEAMAPIKEY',       '{steamapikey}');
@@ -72,7 +72,7 @@ define('SB_WP_URL',         '{sbwpurl}');
 	$srv_cfg = str_replace("{user}", $_POST['username'], $srv_cfg);
 	$srv_cfg = str_replace("{pass}", $_POST['password'], $srv_cfg);
 	$srv_cfg = str_replace("{db}", $_POST['database'], $srv_cfg);
-	$srv_cfg = str_replace("{port}", $_POST['port'], $srv_cfg);
+	$srv_cfg = str_replace("{port}", intval($_POST['port']), $srv_cfg);
 	
 	if(is_writable("../data/config.php"))
 	{

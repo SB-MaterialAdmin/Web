@@ -131,7 +131,7 @@ foreach($admins AS $admin)
 		$admin['lastvisit'] = "Никогда";
 	else
 		$admin['lastvisit'] = SBDate($dateformat,$userbank->GetProperty("lastvisit", $admin['aid']));
-	$admin['avatar'] = GetUserAvatar($userbank->GetProperty('authid', $admin['aid']));
+	$admin['avatar'] = $GLOBALS['AvatarMgr']->getUserAvatar($userbank->GetProperty('authid', $admin['aid']));
 
 	$admin['warnings'] = $GLOBALS['db']->GetOne("SELECT COUNT(*) FROM `" . DB_PREFIX . "_warns` WHERE `expires` > " . time() . " AND `arecipient` = " . (int) $admin['aid'] . ";");
 	array_push($admin_list, $admin);

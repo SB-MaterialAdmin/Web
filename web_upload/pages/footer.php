@@ -46,8 +46,15 @@ $theme->assign('BRANCH', MA_BRANCH);
 $theme->assign('THEME_LINK', theme_link);
 $theme->assign('SB_VERSION', SB_VERSION);
 
+// Queries Count
+$queries = 0;
+$res = $GLOBALS['db']->query("SHOW STATUS WHERE `variable_name` LIKE 'com_%';");
+while ($row = $res->fetch(PDO::FETCH_LAZY)) {
+    $queries += intval($row->value);
+}
+
 $theme->assign('show_gendata',      ($GLOBALS['config']['page.footer.allow_show_data'] == "1"));
-$theme->assign('gendata_queries',   $GLOBALS['db']->Queries);
+$theme->assign('gendata_queries',   $queries);
 $theme->assign('gendata_time',      round($totaltime, 2));
 
 $theme->assign('splash_screen',     ($GLOBALS['config']['theme.splashscreen'] == "1"));

@@ -188,9 +188,9 @@ function BuildPageTabs()
 	global $userbank;
 
 	// NEW MENU, V2.0
-	$items = $GLOBALS['db']->GetAll(sprintf("SELECT * FROM `%s_menu` WHERE `enabled` = 1 ORDER BY `priority` DESC", DB_PREFIX));
-	foreach ($items as &$item)
-		AddTab($item['text'], $item['url'], $item['description'], ($item['newtab']=="1"));
+	$items = $GLOBALS['db']->query(sprintf("SELECT * FROM `%s_menu` WHERE `enabled` = 1 ORDER BY `priority` DESC", DB_PREFIX));
+	while ($item = $items->fetch(PDO::FETCH_LAZY))
+		AddTab($item->text, $item->url, $item->description, ($item->newtab == "1"));
 
 	if ($userbank->is_admin())
 		AddTab("<i class='zmdi zmdi-star zmdi-hc-fw'></i> Админ-Панель", "index.php?p=admin", "Панель для администраторов. Управление серверами, администраторами, настройками.");
@@ -1184,49 +1184,6 @@ function strip_31_ascii($string)
 function GetCommunityIDFromSteamID2($sid) {
     $parts = explode(':', str_replace('STEAM_', '' ,$sid)); 
     return bcadd(bcadd('76561197960265728', $parts[1]), bcmul($parts[2], '2'));
-}
-
-function GetUserAvatar($sid = -1) {
-    global $userbank;
-    
-    static $avatarCache = null;
-    if (!$avatarCache) {
-        $query = $GLOBALS['db']->Execute(sprintf("SELECT * FROM `%s_avatars`", DB_PREFIX));
-        $avatarCache = [];
-
-        while (!$query->EOF) {
-            $avatarCache[$query->fields['authid']] = $query->fields['url'];
-            $query->MoveNext();
-        }
-    }
-    
-    $communityid = false;
-    $res = false;
-    $AvatarFile = sprintf("theme/img/profile-pics/%d.jpg", rand(1,9));
-    $sid = ($sid==-1)?($userbank->is_logged_in()?$userbank->getProperty("authid"):0):$sid;
-    
-    if ($sid) $communityid = GetCommunityIDFromSteamID2($sid);
-    if ($communityid)
-        $res = isset($avatarCache[$communityid]) ? $avatarCache[$communityid] : null;
-    
-    if ($res)
-        $AvatarFile = $res;
-    else if ($communityid) {
-        $SteamResponse = @json_decode(file_get_contents(sprintf("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=%s&steamids=%s", STEAMAPIKEY, $communityid)));
-        if (isset($SteamResponse->response->players[0]->avatarfull))
-            $AvatarFile = $SteamResponse->response->players[0]->avatarfull;
-        
-        // Add file to memory cache
-        $avatarCache[$communityid] = $AvatarFile;
-        
-        // And insert to DB
-        $query = null;
-        $AF = $GLOBALS['db']->qstr($AvatarFile);
-        if ($res) $query = sprintf("UPDATE `%s_avatars` SET `url` = %s", DB_PREFIX, $AF);
-        else $query = sprintf("INSERT INTO `%s_avatars` (`authid`, `url`) VALUES ('%s', %s)", DB_PREFIX, $communityid, $AF);
-        $GLOBALS['db']->Execute($query);
-    }
-    return $AvatarFile;
 }
 
 function normalize_files_array($files = []) {

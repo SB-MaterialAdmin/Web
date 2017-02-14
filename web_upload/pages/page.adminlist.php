@@ -113,7 +113,7 @@ for ($iServer = 0; $iServer < $iServerCount; $iServer++) {
     for ($iAdmin = 0; $iAdmin < $iAdminCount; $iAdmin++) {
         $administrator = $admins[$iAdmin];
         if ($administrator['srv'] == $servers[$iServer]['sid'] && !IsExpired($administrator)) {
-            $administrator['avatar'] = GetUserAvatar($administrator['authid']);
+            $administrator['avatar'] = $GLOBALS['AvatarMgr']->getUserAvatar($administrator['authid']);
             $administrator['authid'] = SteamIDToCommunityID($administrator['authid']);
                 
             $servers[$iServer]['adminlist'][$administrator['aid']] = $administrator;

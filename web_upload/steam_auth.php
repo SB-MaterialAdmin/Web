@@ -75,17 +75,15 @@ else {
     $aid = 0;
     $password = '';
     
-    $result = $GLOBALS['db']->Execute(sprintf("SELECT aid,password,expired FROM %s_admins WHERE authid LIKE '%%%s'", DB_PREFIX, str_replace('STEAM_0:', '', $SteamID)));
-	while(!$result->EOF) {
-        $exp = $result->fields['expired'];
+    $result = $GLOBALS['db']->query(sprintf("SELECT aid,password,expired FROM %s_admins WHERE authid LIKE '%%%s'", DB_PREFIX, str_replace('STEAM_0:', '', $SteamID)));
+	while($res = $result->fetch(PDO::FETCH_LAZY)) {
+        $exp = $res['expired'];
         if (($exp > 0 && $exp > time()) || $exp == '0' || $exp == '') {
             $AdminsNum++;
-            $aid      = $result->fields['aid'];
-            $password = $result->fields['password'];
+            $aid      = $res['aid'];
+            $password = $res['password'];
         } else
             $ExpiredAdmin = true;
-        
-        $result->MoveNext();
     }
     
     if ($AdminsNum > 1)

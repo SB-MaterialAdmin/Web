@@ -36,10 +36,10 @@ define('IN_HOME', true);
 
 //$GLOBALS['TitleRewrite'] = "HOME";
 
-$res = $GLOBALS['db']->Execute("SELECT count(name) FROM ".DB_PREFIX."_banlog");
-$totalstopped = (int)$res->fields[0];
+$res = $GLOBALS['db']->query("SELECT count(name) FROM ".DB_PREFIX."_banlog")->fetch(PDO::FETCH_LAZY);
+$totalstopped = (int)$res[0];
 
-$res = $GLOBALS['db']->Execute("SELECT bl.name, time, bl.sid, bl.bid, b.type, b.authid, b.ip
+$query = $GLOBALS['db']->query("SELECT bl.name, time, bl.sid, bl.bid, b.type, b.authid, b.ip
 								FROM ".DB_PREFIX."_banlog AS bl
 								LEFT JOIN ".DB_PREFIX."_bans AS b ON b.bid = bl.bid
 								ORDER BY time DESC LIMIT 10");
@@ -47,7 +47,7 @@ $res = $GLOBALS['db']->Execute("SELECT bl.name, time, bl.sid, bl.bid, b.type, b.
 $GLOBALS['server_qry'] = "";
 $stopped = array();
 $blcount = 0;
-while (!$res->EOF)
+while ($res = $query->fetch(PDO::FETCH_LAZY))
 {
 	$info = array();
 	//$info['date'] = SBDate($dateformat,$res->fields[1]);
@@ -70,21 +70,20 @@ while (!$res->EOF)
     $GLOBALS['server_qry'] .= "xajax_ServerHostProperty(".$res->fields['sid'].", 'block_".$res->fields['sid']."_$blcount', 'title', 100);";
         
     array_push($stopped,$info);
-	$res->MoveNext();
     ++$blcount;
 }
 
-$res = $GLOBALS['db']->Execute("SELECT count(bid) FROM ".DB_PREFIX."_bans");
-$BanCount = (int)$res->fields[0];
+$res = $GLOBALS['db']->query("SELECT count(bid) FROM ".DB_PREFIX."_bans")->fetch(PDO::FETCH_LAZY);
+$BanCount = (int)$res[0];
 
-$res = $GLOBALS['db']->Execute("SELECT bid, ba.ip, ba.authid, ba.name, created, ends, length, reason, ba.aid, ba.sid, ad.user, CONCAT(se.ip,':',se.port), se.sid, mo.icon, ba.RemoveType, ba.type
+$query = $GLOBALS['db']->query("SELECT bid, ba.ip, ba.authid, ba.name, created, ends, length, reason, ba.aid, ba.sid, ad.user, CONCAT(se.ip,':',se.port), se.sid, mo.icon, ba.RemoveType, ba.type
 			    				FROM ".DB_PREFIX."_bans AS ba 
 			    				LEFT JOIN ".DB_PREFIX."_admins AS ad ON ba.aid = ad.aid
 			    				LEFT JOIN ".DB_PREFIX."_servers AS se ON se.sid = ba.sid
 			    				LEFT JOIN ".DB_PREFIX."_mods AS mo ON mo.mid = se.modid
 			    				ORDER BY created DESC LIMIT 10");
 $bans = array();
-while (!$res->EOF)
+while ($res = $query->fetch(PDO::FETCH_LAZY))
 {
         $info = array();
 	if ($res->fields['length'] == 0)
@@ -132,20 +131,19 @@ while (!$res->EOF)
 	}
 	
 	array_push($bans,$info);
-	$res->MoveNext();
 }
 
-$res = $GLOBALS['db']->Execute("SELECT count(bid) FROM ".DB_PREFIX."_comms");
-$CommCount = (int)$res->fields[0];
+$res = $GLOBALS['db']->query("SELECT count(bid) FROM ".DB_PREFIX."_comms")->fetch(PDO::FETCH_LAZY);
+$CommCount = (int)$res[0];
 	
-$res = $GLOBALS['db']->Execute("SELECT bid, ba.authid, ba.type, ba.name, created, ends, length, reason, ba.aid, ba.sid, ad.user, CONCAT(se.ip,':',se.port), se.sid, mo.icon, ba.RemoveType, ba.type
+$query = $GLOBALS['db']->query("SELECT bid, ba.authid, ba.type, ba.name, created, ends, length, reason, ba.aid, ba.sid, ad.user, CONCAT(se.ip,':',se.port), se.sid, mo.icon, ba.RemoveType, ba.type
 				    				FROM ".DB_PREFIX."_comms AS ba 
 				    				LEFT JOIN ".DB_PREFIX."_admins AS ad ON ba.aid = ad.aid
 				    				LEFT JOIN ".DB_PREFIX."_servers AS se ON se.sid = ba.sid
 				    				LEFT JOIN ".DB_PREFIX."_mods AS mo ON mo.mid = se.modid
 				    				ORDER BY created DESC LIMIT 10");
 $comms = array();
-while (!$res->EOF)
+while ($res = $query->fetch(PDO::FETCH_LAZY))
 {
         $info = array();
 	if ($res->fields['length'] == 0)
@@ -188,12 +186,11 @@ while (!$res->EOF)
 	}
 		
 	array_push($comms,$info);
-	$res->MoveNext();
 }
 
-$counts = $GLOBALS['db']->GetRow("SELECT 
+$counts = $GLOBALS['db']->query("SELECT 
          (SELECT COUNT(aid) FROM `" . DB_PREFIX . "_admins` WHERE aid > 0) AS admins,
-         (SELECT COUNT(sid) FROM `" . DB_PREFIX . "_servers`) AS servers"); // +
+         (SELECT COUNT(sid) FROM `" . DB_PREFIX . "_servers`) AS servers")->fetch(PDO::FETCH_LAZY); // +
 
 		 
 $theme->assign('total_admins', $counts['admins']); // +

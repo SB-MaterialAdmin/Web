@@ -38,7 +38,7 @@ $xajax = new xajax();
 $xajax->setRequestURI(XAJAX_REQUEST_URI);
 global $userbank;
 
-$methods = array('admin' => array('AddMod', 'RemoveMod', 'AddGroup', 'RemoveGroup', 'RemoveAdmin', 'RemoveSubmission', 'RemoveServer', 'UpdageGroupPermissions', 'UpdateAdminPermissions', 'AddAdmin', 'SetupEditServer', 'AddServerGroupName', 'AddServer', 'AddBan', 'RehashAdmins', 'EditGroup', 'RemoveProtest', 'SendRcon', 'EditAdminPerms', 'AddComment', 'EditComment', 'RemoveComment', 'PrepareReban', 'Maintenance', 'KickPlayer', 'GroupBan', 'BanMemberOfGroup', 'GetGroups', 'BanFriends', 'SendMessage', 'ViewCommunityProfile', 'SetupBan', 'CheckPassword', 'ChangePassword', 'CheckSrvPassword', 'ChangeSrvPassword', 'ChangeEmail', 'CheckVersion', 'SendMail', 'AddBlock', 'PrepareReblock', 'PrepareBlockFromBan', 'removeExpiredAdmins', 'AddSupport', 'ChangeAdminsInfos', 'InstallMOD', 'UpdateGroupPermissions', 'PastePlayerData', 'AddWarning', 'RemoveWarning'), 'default' => array('Plogin', 'ServerHostPlayers', 'ServerHostProperty', 'ServerHostPlayers_list', 'ServerPlayers', 'LostPassword', 'RefreshServer', 'AddAdmin_pay', 'RehashAdmins_pay'));
+$methods = array('admin' => array('AddMod', 'RemoveMod', 'AddGroup', 'RemoveGroup', 'RemoveAdmin', 'RemoveSubmission', 'RemoveServer', 'UpdageGroupPermissions', 'UpdateAdminPermissions', 'AddAdmin', 'SetupEditServer', 'AddServerGroupName', 'AddServer', 'AddBan', 'RehashAdmins', 'EditGroup', 'RemoveProtest', 'SendRcon', 'EditAdminPerms', 'AddComment', 'EditComment', 'RemoveComment', 'PrepareReban', 'Maintenance', 'KickPlayer', 'GroupBan', 'BanMemberOfGroup', 'GetGroups', 'BanFriends', 'SendMessage', 'ViewCommunityProfile', 'SetupBan', 'CheckPassword', 'ChangePassword', 'CheckSrvPassword', 'ChangeSrvPassword', 'ChangeEmail', 'CheckVersion', 'SendMail', 'AddBlock', 'PrepareReblock', 'PrepareBlockFromBan', 'removeExpiredAdmins', 'AddSupport', 'ChangeAdminsInfos', 'UpdateGroupPermissions', 'PastePlayerData', 'AddWarning', 'RemoveWarning'), 'default' => array('Plogin', 'ServerHostPlayers', 'ServerHostProperty', 'ServerHostPlayers_list', 'ServerPlayers', 'LostPassword', 'RefreshServer', 'AddAdmin_pay', 'RehashAdmins_pay'));
 
 if(isset($_COOKIE['aid'], $_COOKIE['password']) && $userbank->CheckLogin($_COOKIE['password'], $_COOKIE['aid']))
     foreach ($methods['admin'] as $method)
@@ -50,25 +50,25 @@ foreach ($methods['default'] as $method)
 global $userbank;
 $username = $userbank->GetProperty("user");
 
-function InstallMOD($modfolder, $status = 0) {
+/* function InstallMOD($modfolder, $status = 0) {
     global $userbank;
     
     $objResponse = new xajaxResponse();
     $objResponse->addAlert("Выключено. Находится в стадии разработки");
     return $objResponse;
     
-    /* TODO: Добавить загрузку данных из репозитория */
+    // TODO: Добавить загрузку данных из репозитория
     $mapformat = str_replace('{%folder%}', $GameData['folder'], $RepoData['mapformat']);
     $PathIcon = sprintf('%s/%s', SB_ICON_LOCATION, $GameData['icon']);
     $PathMaps = sprintf('%s/%s', SB_MAP_LOCATION, $mapformat);
     
     if ($status == 0) {
-        /* Build install dialog */
+        // Build install Dialog
         $objResponse->addAssign("install_log", "innerHTML", "[".SBDate($GLOBALS['config']['config.dateformat'], time())."] Загрузка файлов с зеркала...");
         $objResponse->addAssign("install_current", "innerHTML", "Загрузка файлов с зеркала");
         $objResponse->addScript('xajax_InstallMOD("'.$modfolder.'", 1);');
     } else if ($status == 1) {
-        /* Download files */
+        // Download files
         file_put_contents($PathIcon, sprintf('%s%s%s', $RepoData['mirror'], $RepoData['icons_dir'], $GameData['icon']));
         file_put_contents($PathMaps, sprintf('%s%s%s', $RepoData['mirror'], $RepoData['maps_dir'], $mapformat));
         
@@ -77,7 +77,7 @@ function InstallMOD($modfolder, $status = 0) {
         
         $objResponse->addScript('xajax_InstallMOD("'.$modfolder.'", 2);');
     } else if ($status == 2) {
-        /* Decompress maps dir */
+        // Decompress maps dir
         decompress_tar($PathMaps, SB_MAP_LOCATION.'/'.$GameData['folder'].'/');
         
         $objResponse->addAppend("install_log", "innerHTML", "<br />[".SBDate($GLOBALS['config']['config.dateformat'], time())."] Удаление временных файлов");
@@ -85,7 +85,7 @@ function InstallMOD($modfolder, $status = 0) {
         
         $objResponse->addScript('xajax_InstallMOD("'.$modfolder.'", 3);');
     } else if ($status == 3) {
-        /* Insert to DB */
+        // Insert to DB
         $GLOBALS['db']->Execute(sprintf("INSERT INTO `%s_mods` (`name`, `icon`, `modfolder`, `steam_universe`, `enabled`) VALUES (%s, %s, %s, %d, 1);", DB_PREFIX, $GLOBALS['db']->qstr($GameData['name']), $GLOBALS['db']->qstr($GameData['icon']), $GLOBALS['db']->qstr($GameData['folder']), (int) $GameData['steamcode']));
     
         $objResponse->addAppend("install_log", "innerHTML", "<br />[".SBDate($GLOBALS['config']['config.dateformat'], time())."] Завершено.");
@@ -93,7 +93,7 @@ function InstallMOD($modfolder, $status = 0) {
     }
     
     return $objResponse;
-}
+} */
 
 function AddSupport($aid)
 {
@@ -112,7 +112,9 @@ function AddSupport($aid)
 	}
 	
 
-	$res = $GLOBALS['db']->GetOne("SELECT `support` FROM `".DB_PREFIX."_admins` WHERE `aid` = '".$aid."'");
+	$resStmt = $GLOBALS['db']->prepare("SELECT `support` FROM `".DB_PREFIX."_admins` WHERE `aid` = ?");
+	$res = $resStmt->execute([$aid]);
+	$res = $resStmt->fetch(PDO::FETCH_LAZY);
 	if($res == "1"){
 		$chek = "0";
 		$chek1 = "убран";
@@ -120,12 +122,14 @@ function AddSupport($aid)
 		$chek = "1";
 		$chek1 = "добавлен";
 	}	
-	$query = $GLOBALS['db']->Execute("UPDATE `" . DB_PREFIX . "_admins` SET `support` = ? WHERE `aid` = '".$aid."'", array((int)$chek));
+	$queryStmt = $GLOBALS['db']->prepare("UPDATE `" . DB_PREFIX . "_admins` SET `support` = ? WHERE `aid` = ?");
+	$query = $queryStmt->execute([intval($chek), $aid]);
 	if($query)
 		$objResponse->addScript('ShowBox("Support-List", "Администратор был '.$chek1.', обновите страницу, чтобы увидеть результат, либо продолжайте дальнейшую работу.", "blue", "", true);');
 	
 	return $objResponse;
 }
+
 function removeExpiredAdmins()
 {
 	global $userbank, $username;
@@ -137,7 +141,7 @@ function removeExpiredAdmins()
 		$log = new CSystemLog("w", "Ошибка доступа", $username . " пытался удалить истёкших админов, не имея на это прав.");
 		return $objResponse;
 	}
-	if($GLOBALS['db']->Execute("DELETE FROM `".DB_PREFIX."_admins` WHERE `expired` < ".time()." AND `expired` <> 0")) {
+	if($GLOBALS['db']->exec("DELETE FROM `".DB_PREFIX."_admins` WHERE `expired` < " . intval(time()) . " AND `expired` <> 0")) {
 		$objResponse->addScript('ShowBox("Успешно!", "Все истёкшие админки удалены.", "green", "index.php?p=admin&c=admins");');
 		$log = new CSystemLog("m", "Удаление админов", $username . " удалил всех истёкших админов.");
 	}
@@ -157,9 +161,12 @@ function Plogin($username, $password, $remember, $redirect, $nopass)
 		ShowBox_ajx("Информация", "Не введён пароль. Введите пароль, и повторите попытку ещё раз.", "blue", "", true, $objResponse);
 		return $objResponse;
 	}
-	$q = $GLOBALS['db']->GetRow("SELECT `aid`, `password`, `expired` FROM `" . DB_PREFIX . "_admins` WHERE `user` = ?", array($username));
-	if($q)
+	$qStatement = $GLOBALS['db']->prepare("SELECT `aid`, `password`, `expired` FROM `" . DB_PREFIX . "_admins` WHERE `user` = ?");
+	$q = $qStatement->execute([$username]);
+	if($q) {
+		$q = $qStatement->fetch(PDO::FETCH_LAZY);
 		$aid = $q[0];
+    }
 	if($q && strlen($q[1]) == 0 && count($q) != 0)
 	{
 		$objResponse->addScript('ShowBox("Информация", "Вы не можете залогиниться. Не установлен пароль.", "blue", "", true);');

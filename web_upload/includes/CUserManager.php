@@ -34,6 +34,11 @@ class CUserManager
 	var $aid = -1;
 	var $admins = array();
 	
+	private $stmt_getadmin;
+	private $stmt_updatelastonline;
+	private $stmt_getalladmins;
+	private $stmt_addadmin;
+	
 	/**
 	 * Class constructor
 	 *
@@ -43,6 +48,19 @@ class CUserManager
 	 */
 	function __construct($aid, $password)
 	{
+		// Prepare statements.
+		$this->stmt_getadmin = $GLOBALS['db']->prepare("SELECT adm.user user, adm.authid authid, adm.password password, adm.gid gid, adm.email email, adm.validate validate, adm.extraflags extraflags, 
+									   adm.immunity admimmunity,sg.immunity sgimmunity, adm.srv_password srv_password, adm.srv_group srv_group, adm.srv_flags srv_flags,sg.flags sgflags,
+									   wg.flags wgflags, wg.name wgname, adm.lastvisit lastvisit, adm.expired expired, adm.skype skype, adm.comment comment, adm.vk vk
+									   FROM `" . DB_PREFIX . "_admins` AS adm
+									   LEFT JOIN `" . DB_PREFIX . "_groups` AS wg ON adm.gid = wg.gid
+									   LEFT JOIN `" . DB_PREFIX . "_srvgroups` AS sg ON adm.srv_group = sg.name
+									   WHERE adm.aid = ?");
+		
+		$this->stmt_updatelastonline 	= $GLOBALS['db']->prepare("UPDATE `" . DB_PREFIX . "_admins` SET `lastvisit` = UNIX_TIMESTAMP() WHERE `aid` = ?");
+		$this->stmt_getalladmins 		= $GLOBALS['db']->prepare("SELECT` aid` FROM `" . DB_PREFIX . "_admins`");
+		$this->stmt_addadmin 			= $GLOBALS['db']->prepare("INSERT INTO `".DB_PREFIX."_admins` (`user`, `authid`, `password`, `gid`, `email`, `extraflags`, `immunity`, `srv_group`, `srv_flags`, `srv_password`, `expired`, `skype`, `comment`, `vk`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		
 		if($this->CheckLogin($password, $aid))
 		{
 			$this->aid = $aid;
@@ -73,16 +91,10 @@ class CUserManager
 		if(isset($this->admins[$aid]) && !empty($this->admins[$aid]))
 			return $this->admins[$aid];
 		// Not in the manager, so we need to get them from DB
-		$res = $GLOBALS['db']->GetRow("SELECT adm.user user, adm.authid authid, adm.password password, adm.gid gid, adm.email email, adm.validate validate, adm.extraflags extraflags, 
-									   adm.immunity admimmunity,sg.immunity sgimmunity, adm.srv_password srv_password, adm.srv_group srv_group, adm.srv_flags srv_flags,sg.flags sgflags,
-									   wg.flags wgflags, wg.name wgname, adm.lastvisit lastvisit, adm.expired expired, adm.skype skype, adm.comment comment, adm.vk vk
-									   FROM " . DB_PREFIX . "_admins AS adm
-									   LEFT JOIN " . DB_PREFIX . "_groups AS wg ON adm.gid = wg.gid
-									   LEFT JOIN " . DB_PREFIX . "_srvgroups AS sg ON adm.srv_group = sg.name
-									   WHERE adm.aid = $aid");
-		
-		if(!$res)	
+		$dbres = $this->stmt_getadmin->execute([$aid]);
+		if(!$dbres)	
 			return 0;  // ohnoes some type of db error
+		$res = $dbres->fetch(PDO::FETCH_LAZY);
 		
 		$user = array();	
 		//$user['user'] = stripslashes($res[0]);
@@ -191,7 +203,7 @@ class CUserManager
 			
 		if($password == $this->admins[$aid]['password'])
 		{
-			$GLOBALS['db']->Execute("UPDATE `" . DB_PREFIX . "_admins` SET `lastvisit` = UNIX_TIMESTAMP() WHERE `aid` = '$aid'");
+			$this->stmt_updatelastonline->execute([$aid]);
 			return true;
 		}
 		else 
@@ -266,8 +278,8 @@ class CUserManager
 	
 	function GetAllAdmins()
 	{
-		$res = $GLOBALS['db']->GetAll("SELECT aid FROM " . DB_PREFIX . "_admins");
-		foreach($res AS $admin)
+		$res = $this->stmt_getalladmins->execute();
+		foreach($res as $admin)
 			$this->GetUserArray($admin['aid']);
 		return $this->admins;
 	}
@@ -290,10 +302,8 @@ class CUserManager
 	
 	function AddAdmin($name, $steam, $password, $email, $web_group, $web_flags, $srv_group, $srv_flags, $immunity, $srv_password, $period, $skype, $comment, $vk)
 	{		
-		$add_admin = $GLOBALS['db']->Prepare("INSERT INTO ".DB_PREFIX."_admins(user, authid, password, gid, email, extraflags, immunity, srv_group, srv_flags, srv_password, expired, skype, comment, vk)
-											 VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
-		$GLOBALS['db']->Execute($add_admin,array($name, $steam, $this->encrypt_password($password), $web_group, $email, $web_flags, $immunity, $srv_group, $srv_flags, $srv_password, $period, $skype, $comment, $vk));
-		return ($add_admin) ? (int)$GLOBALS['db']->Insert_ID() : -1;
+		$this->stmt_addadmin->execute([$name, $steam, $this->encrypt_password($password), $web_group, $email, $web_flags, $immunity, $srv_group, $srv_flags, $srv_password, $period, $skype, $comment, $vk]);
+		return ($add_admin) ? (int)$GLOBALS['db']->lastInsertId() : -1;
 	}
 }
 ?>

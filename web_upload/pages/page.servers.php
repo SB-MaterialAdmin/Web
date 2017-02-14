@@ -44,20 +44,20 @@ else
 		$number = -1;
 }
 
-$res = $GLOBALS['db']->Execute("SELECT se.sid, se.ip, se.port, se.modid, se.rcon, md.icon FROM ".DB_PREFIX."_servers se LEFT JOIN ".DB_PREFIX."_mods md ON md.mid=se.modid WHERE se.sid > 0 AND se.enabled = 1 ORDER BY se.modid, se.sid");
+$query = $GLOBALS['db']->query("SELECT se.sid, se.ip, se.port, se.modid, se.rcon, md.icon FROM ".DB_PREFIX."_servers se LEFT JOIN ".DB_PREFIX."_mods md ON md.mid=se.modid WHERE se.sid > 0 AND se.enabled = 1 ORDER BY se.modid, se.sid");
 $servers = array();
 $i=0;
-while (!$res->EOF)
+while ($res = $query->fetch(PDO::FETCH_LAZY))
 {
-	if(isset($_SESSION['getInfo.' . $res->fields[1] . '.' . $res->fields[2]]))
+	if(isset($_SESSION['getInfo.' . $res[1] . '.' . $res[2]]))
 	{
-		$_SESSION['getInfo.' . $res->fields[1] . '.' . $res->fields[2]] = "";
+		$_SESSION['getInfo.' . $res[1] . '.' . $res[2]] = "";
 	}
 	$info = array();
-	$info['sid'] = $res->fields[0];
-	$info['ip'] = $res->fields[1];
-	$info['port'] = $res->fields[2];
-	$info['icon'] = $res->fields[5];
+	$info['sid'] = $res[0];
+	$info['ip'] = $res[1];
+	$info['port'] = $res[2];
+	$info['icon'] = $res[5];
 	$info['index'] = $i;
 	if(defined('IN_HOME'))
 		$info['evOnClick'] = "window.location = 'index.php?p=servers&s=".$info['index']."';";	
@@ -65,7 +65,6 @@ while (!$res->EOF)
 	$GLOBALS['server_qry'] .= "xajax_ServerHostPlayers({$info['sid']}, 'servers', '', '".$i."', '".$number."', '".defined('IN_HOME')."', 70);";
 	array_push($servers,$info);
 	$i++;
-	$res->MoveNext();
 }
 
 $theme->assign('access_bans', ($userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_BAN)?true:false));

@@ -90,9 +90,8 @@ class CSystemLog {
 				$logentry['query'] = "N/A";
 			if(isset($GLOBALS['db']))
 			{
-				$sm_log_entry = $GLOBALS['db']->Prepare("INSERT INTO ".DB_PREFIX."_log(type,title,message, function, query, aid, host, created)
-						VALUES (?,?,?,?,?,?,?,?)");
-				$GLOBALS['db']->Execute($sm_log_entry,array($logentry['type'], $logentry['title'], $logentry['msg'], (string)$logentry['parent_function'],$logentry['query'], $logentry['aid'], $logentry['host'], $logentry['created']));
+				$sm_log_entry = $GLOBALS['db']->prepare("INSERT INTO ".DB_PREFIX."_log(type,title,message, function, query, aid, host, created) VALUES (?,?,?,?,?,?,?,?)");
+				$sm_log_entry->execute([$logentry['type'], $logentry['title'], $logentry['msg'], (string)$logentry['parent_function'],$logentry['query'], $logentry['aid'], $logentry['host'], $logentry['created']]);
 			}
 		}
 		unset($this->log_list);
@@ -104,9 +103,8 @@ class CSystemLog {
 			$this->query = "N/A";
 		if(isset($GLOBALS['db']))
 		{
-			$sm_log_entry = $GLOBALS['db']->Prepare("INSERT INTO ".DB_PREFIX."_log(type,title,message, function, query, aid, host, created)
-						VALUES (?,?,?,?,?,?,?,?)");
-			$GLOBALS['db']->Execute($sm_log_entry,array($this->type, $this->title, $this->msg, (string)$this->parent_function,$this->query, $this->aid, $this->host, $this->created));
+			$sm_log_entry = $GLOBALS['db']->prepare("INSERT INTO ".DB_PREFIX."_log(type,title,message, function, query, aid, host, created) VALUES (?,?,?,?,?,?,?,?)");
+			$sm_log_entry->execute([$this->type, $this->title, $this->msg, (string)$this->parent_function,$this->query, $this->aid, $this->host, $this->created]);
 		}
 	}
 	
@@ -129,12 +127,17 @@ class CSystemLog {
 				
 		$start = (int)$start;
 		$limit = (int)$limit;
-		$sm_logs = $GLOBALS['db']->GetAll("SELECT ad.user, l.type, l.title, l.message, l.function, l.query, l.host, l.created, l.aid 
+		$sm_logs_q = $GLOBALS['db']->query("SELECT ad.user, l.type, l.title, l.message, l.function, l.query, l.host, l.created, l.aid 
 										   FROM ".DB_PREFIX."_log AS l
 										   LEFT JOIN ".DB_PREFIX."_admins AS ad ON l.aid = ad.aid
 										   ".$searchstring."
 										   ORDER BY l.created DESC 
 										   LIMIT $start, $limit");
+		$sm_logs = [];
+		while ($q = $sm_logs_q->fetch(PDO::FETCH_LAZY)) {
+			$sm_logs[] = (array)$q;
+		}
+		
 		return $sm_logs;
 	}
 	
