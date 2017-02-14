@@ -307,5 +307,6 @@ $userbank = new CUserManager($l, $p);
 // Setup our user manager
 // ---------------------------------------------------
 require_once(INCLUDES_PATH . '/CAvatarManager.php');
-$GLOBALS['AvatarMgr'] = new CAvatarManager();
+// $GLOBALS['AvatarMgr'] = new CAvatarManager($GLOBALS['config']['avatarmgr.default']);
+$GLOBALS['AvatarMgr'] = new CAvatarManager("./theme/img/profile-pics/" . rand(1, 9) . ".jpg");
 ?>
