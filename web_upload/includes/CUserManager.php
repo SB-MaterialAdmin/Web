@@ -94,7 +94,7 @@ class CUserManager
 		$dbres = $this->stmt_getadmin->execute([$aid]);
 		if(!$dbres)	
 			return 0;  // ohnoes some type of db error
-		$res = $dbres->fetch(PDO::FETCH_LAZY);
+		$res = $this->stmt_getadmin->fetch(PDO::FETCH_LAZY);
 		
 		$user = array();	
 		//$user['user'] = stripslashes($res[0]);
