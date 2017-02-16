@@ -30,16 +30,23 @@
  ***************************************************************************/
 
 class CPDO extends PDO {
+    public $exceptions;
+
     public function __construct($dsn, $username, $password, $options) {
         parent::__construct($dsn, $username, $password, $options);
+        $this->exceptions = false;
     }
     
     private function checkQuery($query, $params) {
-        $hStatement = parent::prepare($query);
-        $res = $hStatement->execute($params);
+        try {
+            $hStatement = parent::prepare($query);
+            $res = $hStatement->execute($params);
+        } catch (PDOException $e) {
+            return false;
+        }
         if (!$res)
             return false;
-        
+
         return $hStatement;
     }
 
@@ -49,7 +56,11 @@ class CPDO extends PDO {
         if (!$hStatement)
             return null;
 
-        $row = $hStatement->fetch(PDO::FETCH_LAZY);
+        try {
+            $row = $hStatement->fetch(PDO::FETCH_LAZY);
+        } catch (PDOException $e) {
+            return false;
+        }
         return $row;
     }
 
@@ -65,7 +76,11 @@ class CPDO extends PDO {
 
         $data = array();
         while ($row = $hStatement->fetch(PDO::FETCH_LAZY)) {
-            $data[] = $row;
+            try {
+                $data[] = $row;
+            } catch (PDOException $e) {
+                return false;
+            }
         }
         return $data;
     }
