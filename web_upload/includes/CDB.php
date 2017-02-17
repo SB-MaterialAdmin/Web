@@ -42,7 +42,10 @@ class CPDO extends PDO {
             $hStatement = parent::prepare($query);
             $res = $hStatement->execute($params);
         } catch (PDOException $e) {
-            return false;
+            if (!$this->exceptions)
+                return false;
+            else
+                throw;
         }
         if (!$res)
             return false;
@@ -59,7 +62,10 @@ class CPDO extends PDO {
         try {
             $row = $hStatement->fetch(PDO::FETCH_LAZY);
         } catch (PDOException $e) {
-            return false;
+            if (!$this->exceptions)
+                return false;
+            else
+                throw;
         }
         return $row;
     }
@@ -76,11 +82,7 @@ class CPDO extends PDO {
 
         $data = array();
         while ($row = $hStatement->fetch(PDO::FETCH_LAZY)) {
-            try {
-                $data[] = $row;
-            } catch (PDOException $e) {
-                return false;
-            }
+            $data[] = $row;
         }
         return $data;
     }
@@ -99,7 +101,14 @@ class CPDO extends PDO {
         if (get_class($statement) !== "PDOStatement")
             return false;
 
-        return new CPDO_Result($statement, $params);
+        try {
+            return new CPDO_Result($statement, $params);
+        } catch (PDOException $e) {
+            if (!$this->exceptions)
+                return false;
+            else
+                throw;
+        }
     }
 
     public function qstr($string) {
@@ -120,12 +129,16 @@ class CPDO_Result {
     protected $values;
 
     public function __construct($hStatement, $Params = array()) {
-        $this->hStatement = $hStatement;
-        $this->hStatement->execute($Params);
-        $this->EOF = $this->hStatement->nextRowset();
+        try {
+            $this->hStatement = $hStatement;
+            $this->hStatement->execute($Params);
+            $this->EOF = $this->hStatement->nextRowset();
         
-        if ($this->EOF) {
-            $this->MoveNext();
+            if ($this->EOF) {
+                $this->MoveNext();
+            }
+        } catch (PDOException $e) {
+            throw;
         }
     }
 
