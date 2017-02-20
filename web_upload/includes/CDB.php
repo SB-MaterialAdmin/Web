@@ -60,7 +60,7 @@ class CPDO extends PDO {
             return null;
 
         try {
-            $row = $hStatement->fetch(PDO::FETCH_LAZY);
+            $row = $hStatement->fetch(PDO::FETCH_BOTH);
         } catch (PDOException $e) {
             if (!$this->exceptions)
                 return false;
@@ -81,7 +81,7 @@ class CPDO extends PDO {
             return null;
 
         $data = array();
-        while ($row = $hStatement->fetch(PDO::FETCH_LAZY)) {
+        while ($row = $hStatement->fetch(PDO::FETCH_BOTH)) {
             $data[] = $row;
         }
         return $data;
@@ -143,7 +143,7 @@ class CPDO_Result {
     }
 
     public function MoveNext() {
-        $this->values = $this->hStatement->fetch(PDO::FETCH_LAZY);
+        $this->values = $this->hStatement->fetch(PDO::FETCH_BOTH);
         $this->EOF = $this->hStatement->nextRowset();
     }
 }
