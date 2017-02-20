@@ -52,8 +52,11 @@ BuildPageHeader();
 BuildPageTabs();
 BuildSubMenu();
 BuildContHeader();
+
+echo('<div class="card m-b-0"  id="messages-main">');
+BuildStepsTheme();
+
 if(!empty($page))
 	include $page;
 include_once(TEMPLATES_PATH . '/footer.php');
 ob_end_flush();
-?>

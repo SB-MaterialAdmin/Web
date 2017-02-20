@@ -18,48 +18,6 @@ if(isset($_POST['username'], $_POST['password'], $_POST['server'], $_POST['port'
 	$sql_version = "Невозможно соединиться, не введены детали базы данных. (Вернитесь назад и введите данные заново.)";
 }
 ?>
-
-
-<div class="card m-b-0" id="messages-main">
-		<div class="ms-menu">
-			<div class="ms-block p-10">
-				<span class="c-black"><b>Процесс</b></span>
-			</div>
-
-			<div class="listview lv-user" id="install-progress">
-				<div class="lv-item media">
-					<div class="lv-avatar bgm-orange pull-left">1</div>
-					<div class="media-body">
-						<div class="lv-title"><del>Шаг: Лицензия</del></div>
-						<div class="lv-small"><i class="zmdi zmdi-timer-off zmdi-hc-fw c-red"></i> <del>Предыдущий шаг</del></div>
-					</div>
-				</div>
-
-				<div class="lv-item media">
-					<div class="lv-avatar bgm-orange pull-left">2</div>
-					<div class="media-body">
-						<div class="lv-title"><del>Шаг: База данных</del></div>
-						<div class="lv-small"><i class="zmdi zmdi-timer-off zmdi-hc-fw c-red"></i> <del>Предыдущий шаг</del></div>
-					</div>
-				</div>
-
-				<div class="lv-item media active">
-					<div class="lv-avatar bgm-red pull-left">3</div>
-					<div class="media-body">
-						<div class="lv-title">Шаг: Системные требования</div>
-						<div class="lv-small"><i class="zmdi zmdi-badge-check zmdi-hc-fw c-green"></i> Текущий шаг</div>
-					</div>
-				</div>
-
-				<div class="lv-item media">
-					<div class="lv-avatar bgm-orange pull-left">4</div>
-					<div class="media-body">
-						<div class="lv-title">Шаг: Установка</div>
-						<div class="lv-small"><i class="zmdi zmdi-time zmdi-hc-fw c-blue"></i> Следующий шаг</div>
-					</div>
-				</div>
-			</div>
-		</div>
 		
 		<div class="ms-body" id="submit-main-full">
 			<div class="listview lv-message">

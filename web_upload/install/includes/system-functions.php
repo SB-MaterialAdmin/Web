@@ -117,6 +117,29 @@ function BuildContHeader()
 	include TEMPLATES_PATH . "/content.header.php";
 }
 
+function BuildStepsTheme($iStep) {
+    $steps = array(
+        "Лицензия",
+        "Настройка",
+        "Системные требования",
+        "Установка"
+    );
+
+    require_once(INCLUDES_PATH . '\CStepsManager.php');
+    $StepsManager = new CStepsManager();
+    foreach ($steps as &$step)
+        $StepsManager->addStep($step);
+
+    for ($i = 1; $i<4; $i++) {
+        if ($iStep < $i)
+            $StepsManager->setState($i, "<del>Предыдущий шаг</del>", "red");
+        else
+            $StepsManager->setState($i, "Следующий шаг", "blue");
+    }
+
+    $StepsManager->render();
+}
+
 
 /**
  * Adds a tab to the page

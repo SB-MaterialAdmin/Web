@@ -1,47 +1,6 @@
 <?php
 	if (!defined('IN_SB')) {echo("Вы не должны быть здесь. Используйте только ссылки внутри системы!");die();}
 ?>
-
-<div class="card m-b-0" id="messages-main">
-	<div class="ms-menu">
-		<div class="ms-block p-10">
-			<span class="c-black"><b>Процесс</b></span>
-		</div>
-
-		<div class="listview lv-user" id="install-progress">
-			<div class="lv-item media active">
-				<div class="lv-avatar bgm-red pull-left">1</div>
-				<div class="media-body">
-					<div class="lv-title">Шаг: Лицензия</div>
-					<div class="lv-small"><i class="zmdi zmdi-badge-check zmdi-hc-fw c-green"></i> Текущий шаг</div>
-				</div>
-			</div>
-
-			<div class="lv-item media">
-				<div class="lv-avatar bgm-orange pull-left">2</div>
-				<div class="media-body">
-					<div class="lv-title">Шаг: База данных</div>
-					<div class="lv-small"><i class="zmdi zmdi-time zmdi-hc-fw c-blue"></i> Следующий шаг</div>
-				</div>
-			</div>
-
-			<div class="lv-item media">
-				<div class="lv-avatar bgm-orange pull-left">3</div>
-				<div class="media-body">
-					<div class="lv-title">Шаг: Системные требования</div>
-					<div class="lv-small"><i class="zmdi zmdi-time zmdi-hc-fw c-blue"></i> Следующий шаг</div>
-				</div>
-			</div>
-
-			<div class="lv-item media">
-				<div class="lv-avatar bgm-orange pull-left">4</div>
-				<div class="media-body">
-					<div class="lv-title">Шаг: Установка</div>
-					<div class="lv-small"><i class="zmdi zmdi-time zmdi-hc-fw c-blue"></i> Следующий шаг</div>
-				</div>
-			</div>
-		</div>
-	</div>
 	
 	<div class="ms-body">
 		<div class="listview lv-message">
