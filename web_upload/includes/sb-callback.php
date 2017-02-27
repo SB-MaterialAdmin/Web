@@ -1960,8 +1960,8 @@ function ServerHostPlayers($sid, $type="servers", $obId="", $tplsid="", $open=""
 													<div class=\'modal-body\'>\
 														<p class=\"m-b-10\"><button class=\"btn btn-link btn-block\" data-dismiss=\"modal\" onclick=\"KickPlayerConfirm('.$sid.', \''.str_replace('"', '"', $player["Name"]).'\', 0);\">Кикнуть</button></p>\
 														<p class=\"m-b-10\"><button class=\"btn btn-link btn-block\" href=\"#\" data-dismiss=\'modal\' onclick=\"ViewCommunityProfile('.$sid.', \''.str_replace('"', '\"', $player["Name"]).'\');\">Профиль</button></p>\
-														<p class=\"m-b-10\"><a href=\"index.php?p=admin&c=bans&action=pasteBan&sid='.$sid.'&pName='.str_replace('"', '\"', $player["Name"]).'\"><button class=\"btn btn-link btn-block\">Бан</button></a></p>\
-														<p class=\"m-b-10\"><a href=\"index.php?p=admin&c=comms&action=pasteBan&sid='.$sid.'&pName='.str_replace('"', '\"', $player["Name"]).'\"><button class=\"btn btn-link btn-block\">Заглушить</button></a></p>\
+														<p class=\"m-b-10\"><a href=\"index.php?p=admin&c=bans&action=pasteBan&sid='.$sid.'&pName='.urlencode(str_replace('"', '\"', $player["Name"])).'\"><button class=\"btn btn-link btn-block\">Бан</button></a></p>\
+														<p class=\"m-b-10\"><a href=\"index.php?p=admin&c=comms&action=pasteBan&sid='.$sid.'&pName='.urlencode(str_replace('"', '\"', $player["Name"])).'\"><button class=\"btn btn-link btn-block\">Заглушить</button></a></p>\
 														<p class=\"m-b-10\"><button class=\"btn btn-link btn-block\" href=\"#\" data-dismiss=\'modal\' onclick=\"OpenMessageBox('.$sid.', \''.str_replace('"', '\"', $player["Name"]).'\', 1);\">Отправить сообщение</button></p>\
 													</div>\
 													<!--<div class=\'modal-footer\'>\
