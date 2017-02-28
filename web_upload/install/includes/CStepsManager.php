@@ -34,13 +34,14 @@ class CStepsManager {
 
     public function addStep($stepName) {
         $this->steps[] = array(
-            'name'  => $stepName,
-            'state' => 'green',
-            'desc'  => 'Текущий шаг'
+            'name'      => $stepName,
+            'state'     => 'green',
+            'desc'      => 'Текущий шаг',
+            'completed' => false
         );
     }
 
-    public function setState($stepNumber, $stepDesc, $stepState) {
+    public function setState($stepNumber, $stepDesc, $stepState, $stepCompleted) {
         $stepNumber--;
         if (!isset($this->steps[$stepNumber]))
             return false;

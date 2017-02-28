@@ -35,7 +35,7 @@ if (!defined('IN_SB')) {echo("Вы не должны быть здесь. Исп
     <div class="lv-avatar bgm-orange pull-left"><?= $stepCount ?></div>
 
     <div class="media-body">
-        <div class="lv-title"><del>Шаг: <?= $step['name'] ?></del></div>
+        <div class="lv-title"><?php if ($step['completed']): ?><del><?php endif; ?>Шаг: <?= $step['name'] ?><?php if ($step['completed']): ?></del><?php endif; ?></div>
 		<div class="lv-small"><i class="zmdi zmdi-timer-off zmdi-hc-fw c-<?= $step['state'] ?>"></i> <?= $step['desc'] ?></div>
     </div>
 </div>
