@@ -125,7 +125,6 @@ while ($res = $dbres->fetch(PDO::FETCH_LAZY)) {
 	$suppurt_inf['avatarka'] = $GLOBALS['AvatarMgr']->getUserAvatar($res->authid);
 	
 	array_push($supports,$suppurt_inf);
-	$res->MoveNext();
 }
 
 
