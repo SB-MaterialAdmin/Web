@@ -26,10 +26,18 @@
 // *************************************************************************
 
 $_GET['step'] = isset($_GET['step']) ? $_GET['step'] : 'default';
+if (file_exists(ROOT . '../data/installer_ban.php')) {
+    $_GET['step'] = "banned";
+}
 $step = 1;
 
 switch ($_GET['step'])
 {
+    case "banned":
+        RewritePageTitle("Установщик заблокирован.");
+        $page = TEMPLATES_PATH . '/page.banned.php';
+        $step = 5;
+        break;
 	case "4":
 		RewritePageTitle("Шаг 4 - Установка");
 		$page = TEMPLATES_PATH . "/page.4.php";

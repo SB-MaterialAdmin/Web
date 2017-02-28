@@ -43,6 +43,7 @@
 	}
 	?>
 
+	<form action="" method="post" name="submit" id="submit">
 		<div class="ms-body">
 			<div class="listview lv-message">
 				<div class="lv-header-alt clearfix">
@@ -142,7 +143,7 @@
 							</div>
 						</div>
 						<div class="p-10" align="center">
-							<button onclick="checkAccept()" class="btn btn-primary waves-effect" id="button" name="button">Продолжить</button>
+							<button type="submit" class="btn btn-primary waves-effect" id="button" name="button">Продолжить</button>
 						</div>
 						<input type="hidden" name="postd" value="1">
 					</div>

@@ -191,25 +191,25 @@ if(isset($_POST['username'], $_POST['password'], $_POST['server'], $_POST['port'
 									<td>Н/A</td>
 									<td>Перезаписываемая</td>
 									<?php 
-										if(is_writable("../data")){
+										if(is_writable("../data/")){
 											$class = "success c-white";
 										} else {  $class = "danger c-white"; $errors++; }
 									?>
 									<td class="<?= $class ?>"><?= is_writable("../data") ? "Да" : "Нет" ?></td>
 								</tr>
 								<tr>
-									<td>Папка для демок (/data/demos)</td>
+									<td>Папка для демок (/data/demo/)</td>
 									<td>Н/A</td>
 									<td>Перезаписываемая</td>
 									<?php 
-										if(is_writable("../data/demos")){
+										if(is_writable("../data/demo/")){
 											$class = "success c-white";
 										} else { $class = "danger c-white"; $errors++; }
 									?>
-									<td class="<?= $class ?>"><?= is_writable("../data/demos") ? "Да" : "Нет" ?></td>
+									<td class="<?= $class ?>"><?= is_writable("../data/demo") ? "Да" : "Нет" ?></td>
 								</tr>
 								<tr>
-									<td>Папка кэша (/data/theme/)</td>
+									<td>Папка кеша (/data/theme/)</td>
 									<td>Н/A</td>
 									<td>Перезаписываемая</td>
 									<?php 
@@ -220,22 +220,22 @@ if(isset($_POST['username'], $_POST['password'], $_POST['server'], $_POST['port'
 									<td class="<?= $class ?>"><?= is_writable("../data/theme") ? "Да" : "Нет" ?></td>
 								</tr>
 								<tr>
-									<td>Папка иконок МОДов (/data/games)</td>
+									<td>Папка иконок МОДов (/data/games/)</td>
 									<td>Н/A</td>
 									<td>Перезаписываемая</td>
 									<?php 
-										if(is_writable("../data/games")){
+										if(is_writable("../data/games/")){
 											$class = "success c-white";
 										} else {  $class = "danger c-white"; $errors++; }
 									?>
 									<td class="<?= $class ?>"><?= is_writable("../data/games") ? "Да" : "Нет" ?></td>
 								</tr>
 								<tr>
-									<td>Папка изображений карт (/data/maps)</td>
+									<td>Папка изображений карт (/data/maps/)</td>
 									<td>Н/A</td>
 									<td>Перезаписываемая</td>
 									<?php 
-										if(is_writable("../data/maps")){
+										if(is_writable("../data/maps/")){
 											$class = "success c-white";
 										} else {  $class = "danger c-white"; $errors++; }
 									?>
