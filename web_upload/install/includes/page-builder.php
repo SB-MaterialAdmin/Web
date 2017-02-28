@@ -26,20 +26,24 @@
 // *************************************************************************
 
 $_GET['step'] = isset($_GET['step']) ? $_GET['step'] : 'default';
+$step = 1;
 
 switch ($_GET['step'])
 {
 	case "4":
 		RewritePageTitle("Шаг 4 - Установка");
 		$page = TEMPLATES_PATH . "/page.4.php";
+		$step = 4;
 		break;
 	case "3":
 		RewritePageTitle("Шаг 3 - Проверка системных требований");
 		$page = TEMPLATES_PATH . "/page.3.php";
+		$step = 3;
 		break;
 	case "2":
 		RewritePageTitle("Шаг 2 - Детали базы данных");
 		$page = TEMPLATES_PATH . "/page.2.php";
+		$step = 2;
 		break;
 	default:
 		RewritePageTitle("Шаг 1 - Лицензионное соглашение");
@@ -54,7 +58,7 @@ BuildSubMenu();
 BuildContHeader();
 
 echo('<div class="card m-b-0"  id="messages-main">');
-BuildStepsTheme();
+BuildStepsTheme($step);
 
 if(!empty($page))
 	include $page;

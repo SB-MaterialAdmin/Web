@@ -53,7 +53,7 @@ class CStepsManager {
     public function render() {
         $stepCount = 1;
         include(TEMPLATES_PATH . '/steps_start.php');
-        foreach ($steps as &$step) {
+        foreach ($this->steps as &$step) {
             include(TEMPLATES_PATH . '/step.php');
             $stepCount++;
         }

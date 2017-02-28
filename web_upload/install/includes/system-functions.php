@@ -125,7 +125,7 @@ function BuildStepsTheme($iStep) {
         "Установка"
     );
 
-    require_once(INCLUDES_PATH . '\CStepsManager.php');
+    require_once(INCLUDES_PATH . '/CStepsManager.php');
     $StepsManager = new CStepsManager();
     foreach ($steps as &$step)
         $StepsManager->addStep($step);
