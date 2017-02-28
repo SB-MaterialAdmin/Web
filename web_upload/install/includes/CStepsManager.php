@@ -48,6 +48,7 @@ class CStepsManager {
 
         $this->steps[$stepNumber]['desc'] = $stepDesc;
         $this->steps[$stepNumber]['state'] = $stepState;
+        $this->steps[$stepNumber]['completed'] = $stepCompleted;
         return true;
     }
     

@@ -133,7 +133,7 @@ function BuildStepsTheme($iStep) {
     for ($i = 1; $i<4; $i++) {
         if ($iStep > $i)
             $StepsManager->setState($i, "<del>Предыдущий шаг</del>", "red", true);
-        else
+        else if ($iStep < $i)
             $StepsManager->setState($i, "Следующий шаг", "blue", false);
     }
 
