@@ -39,7 +39,7 @@ define('INCLUDES_PATH',     ROOT . 'includes');
 define('DATA_PATH',         ROOT . 'data/');
 
 define('SB_DEMO_LOCATION',  'demo');
-define('SB_ICON_LOCATION',  'games');
+define('SB_ICONS_LOCATION',  'games');
 define('SB_MAP_LOCATION',   DATA_PATH . 'maps');
 define('SB_DEMOS',          DATA_PATH . SB_DEMO_LOCATION);
 define('SB_ICONS',          DATA_PATH . SB_ICONS_LOCATION);
@@ -80,7 +80,7 @@ if(!file_exists(DATA_PATH.'/config.php') || !@include_once(DATA_PATH . '/config.
 }
 
 if(!defined("DEVELOPER_MODE") && !defined("IS_UPDATE") && file_exists(ROOT."/install")) {
-	if($_SERVER['HTTP_HOST'] != "localhost") {
+	if($_SERVER['HTTP_HOST'] != "localhost" || !file_exists(DATA_PATH . "installer_ban.php")) {
 		echo "Для обеспечения безопасности работы SourceBans, удалите или переименуйте папку /install";
 		die();
 	}
@@ -111,7 +111,6 @@ define('SB_SALT', 'SourceBans');
 // ---------------------------------------------------
 //  Setup PHP
 // ---------------------------------------------------
-ini_set('include_path', '.:/php/includes:' . INCLUDES_PATH .'/adodb');
 ini_set('date.timezone', 'GMT');
 
 if(defined("SB_MEM"))
@@ -131,7 +130,7 @@ try {
     ];
 
     require_once(INCLUDES_PATH . "/CDB.php");
-    $GLOBALS['db'] = new CPDO(sprintf("mysql:host=%s;dbname=%s;charset=utf8;port=%d", DB_HOST, DB_NAME, intval(DB_PORT)), DB_USER, DB_PASS, $pdo_options);
+    $GLOBALS['db'] = new Database(sprintf("mysql:host=%s;dbname=%s;charset=utf8;port=%d", DB_HOST, DB_NAME, intval(DB_PORT)), DB_USER, DB_PASS, $pdo_options);
 } catch (PDOException $e) {
     echo("Не удалось подключиться к Базе Данных.<br /><br />");
     echo($e->getMessage());
@@ -304,9 +303,11 @@ if (!defined('IS_UPDATE') && isset($_COOKIE['password']))
 $userbank = new CUserManager($l, $p);
 
 // ---------------------------------------------------
-// Setup our user manager
+// Setup our avatar manager
 // ---------------------------------------------------
-require_once(INCLUDES_PATH . '/CAvatarManager.php');
-// $GLOBALS['AvatarMgr'] = new CAvatarManager($GLOBALS['config']['avatarmgr.default']);
-$GLOBALS['AvatarMgr'] = new CAvatarManager("./theme/img/profile-pics/" . rand(1, 9) . ".jpg");
+if (!defined('IS_UPDATE')) {
+    require_once(INCLUDES_PATH . '/CAvatarManager.php');
+    // $GLOBALS['AvatarMgr'] = new CAvatarManager($GLOBALS['config']['avatarmgr.default']);
+    $GLOBALS['AvatarMgr'] = new CAvatarManager("./theme/img/profile-pics/" . rand(1, 9) . ".jpg");
+}
 ?>

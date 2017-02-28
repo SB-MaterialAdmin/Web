@@ -29,7 +29,7 @@
  *
  ***************************************************************************/
 
-class CPDO extends PDO {
+class Database extends PDO {
     public $exceptions;
 
     public function __construct($dsn, $username, $password, $options) {
@@ -45,7 +45,7 @@ class CPDO extends PDO {
             if (!$this->exceptions)
                 return false;
             else
-                throw;
+                throw $e;
         }
         if (!$res)
             return false;
@@ -65,7 +65,7 @@ class CPDO extends PDO {
             if (!$this->exceptions)
                 return false;
             else
-                throw;
+                throw $e;
         }
         return $row;
     }
@@ -107,7 +107,7 @@ class CPDO extends PDO {
             if (!$this->exceptions)
                 return false;
             else
-                throw;
+                throw $e;
         }
     }
 
@@ -138,7 +138,7 @@ class CPDO_Result {
                 $this->MoveNext();
             }
         } catch (PDOException $e) {
-            throw;
+            throw $e;
         }
     }
 
