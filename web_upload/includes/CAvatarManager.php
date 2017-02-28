@@ -56,17 +56,15 @@ class CAvatarManager {
             $data = array();
             $query = sprintf("REPLACE INTO `%s_avatars` (`authid`, `url`) VALUES ", DB_PREFIX);
 
-            for ($updateQuery = 0; $updateQuery < $updates; $updateQuery) {
-                $query = sprintf("%s (?, ?)", $query);
+            for ($updateQuery = 0; $updateQuery < $updates; $updateQuery++) {
+                $query .= " (?, ?)";
                 if ($updateQuery+1 != $updates) {
-                    $query = sprintf("%s, ", $query);
+                    $query .= ",";
                 } else {
-                    $query = sprintf("%s;", $query);
+                    $query .= ";";
                 }
 
-                $sid = $this->upd[$updateQuery];
-                $data[] = $sid;
-                $data[] = $this->cache[$sid];
+                array_push($data, $this->upd[$updateQuery], $this->cache[$this->upd[$updateQuery]]);
             }
 
             $GLOBALS['db']->prepare($query);
@@ -77,16 +75,15 @@ class CAvatarManager {
             $data = array();
             $query = sprintf("DELETE FROM `%s_avatars` WHERE ", DB_PREFIX);
 
-            for ($deleteQuery = 0; $deleteQuery < $deletes; $deleteQuery) {
-                $query = sprintf("%s`authid` = ?", $query);
+            for ($deleteQuery = 0; $deleteQuery < $deletes; $deleteQuery++) {
+                $query .= "`authid` = ?";
                 if ($deleteQuery+1 != $deletes) {
-                    $query = sprintf("%s AND ", $query);
+                    $query .= " AND ";
                 } else {
-                    $query = sprintf("%s;", $query);
+                    $query .= ";";
                 }
 
-                $sid = $this->del[$deleteQuery];
-                $data[] = $sid;
+                array_push($data, $this->del[$deleteQuery]);
             }
 
             $GLOBALS['db']->prepare($query);

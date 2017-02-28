@@ -35,7 +35,7 @@ define('theme_author', "ASTRO & XaH JoB & Vampir & SAZONISCHE & NoTiCE & CrazyHa
 define('theme_version', "1.1.6");
 
 // Set the link of the theme here
-define('theme_link', "https://discord.gg/BrTP9Cu");
+define('theme_link', "https://github.com/CrazyHackGUT/SB_Material_Design");
 
 // Set the screenshot filename for your theme (must be inside your theme folder) 
 // Must be:  250px wide  X 170px High

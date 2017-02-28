@@ -87,8 +87,8 @@ class Database extends PDO {
         return $data;
     }
 
-    public function Prepare($query, $options = NULL) {
-        return parent::prepare($query);
+    public function Prepare($query, $options = array()) {
+        return parent::prepare($query, $options);
     }
 
     public function Execute($statement, $params = array()) {
@@ -98,7 +98,7 @@ class Database extends PDO {
         if (is_string($statement))
             $statement = $this->prepare($statement);
 
-        if (get_class($statement) !== "PDOStatement")
+        if (@get_class($statement) !== "PDOStatement")
             return false;
 
         try {

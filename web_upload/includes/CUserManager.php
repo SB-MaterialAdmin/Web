@@ -49,7 +49,7 @@ class CUserManager
 	function __construct($aid, $password)
 	{
 		// Prepare statements.
-		$this->stmt_getadmin = $GLOBALS['db']->prepare("SELECT adm.user user, adm.authid authid, adm.password password, adm.gid gid, adm.email email, adm.validate validate, adm.extraflags extraflags, 
+		$this->stmt_getadmin            = $GLOBALS['db']->prepare("SELECT adm.user user, adm.authid authid, adm.password password, adm.gid gid, adm.email email, adm.validate validate, adm.extraflags extraflags, 
 									   adm.immunity admimmunity,sg.immunity sgimmunity, adm.srv_password srv_password, adm.srv_group srv_group, adm.srv_flags srv_flags,sg.flags sgflags,
 									   wg.flags wgflags, wg.name wgname, adm.lastvisit lastvisit, adm.expired expired, adm.skype skype, adm.comment comment, adm.vk vk
 									   FROM `" . DB_PREFIX . "_admins` AS adm
