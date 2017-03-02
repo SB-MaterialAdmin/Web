@@ -69,4 +69,14 @@ native SBBanPlayer(client, target, time, String:reason[]);
  *********************************************************/
 native SBGetAdminExpire(AdminId:admin);
 
+/*********************************************************
+ * Event: On player Banned.
+ *
+ * @param client    The client index of the admin who is banning the client.
+ * @param target    The client index of the player to ban
+ * @param time      The time to ban the player for (in minutes, 0 = permanent)
+ * @param reason    The reason to ban the player from the server
+ *********************************************************/
+forward SB_OnAddedBan(client, target, time, String:reason[]);
+
 //Yarr!

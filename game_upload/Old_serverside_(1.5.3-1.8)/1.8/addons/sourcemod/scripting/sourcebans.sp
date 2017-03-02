@@ -125,6 +125,7 @@ new bool:g_bConnecting = false;
 new serverID = -1;
 
 new Handle:g_AdminsExpired = INVALID_HANDLE;
+new Handle:g_hOnBanAddedForward;
 
 public Plugin:myinfo = 
 {
@@ -144,6 +145,7 @@ public bool:AskPluginLoad(Handle:myself, bool:late, String:error[], err_max)
 	RegPluginLibrary("sourcebans");
 	CreateNative("SBBanPlayer", Native_SBBanPlayer);
 	CreateNative("SBGetAdminExpire", Native_GetAdminExpire);
+	g_hOnBanAddedForward = CreateGlobalForward("SB_OnAddedBan", ET_Ignore, Param_Cell, Param_Cell, Param_Cell, Param_String);
 	LateLoaded = late;
 	
 	#if SOURCEMOD_V_MAJOR >= 1 && SOURCEMOD_V_MINOR >= 3
@@ -195,20 +197,6 @@ public OnPluginStart()
 	g_AdminsExpired = CreateArray(2);
 	
 	BuildPath(Path_SM, logFile, sizeof(logFile), "logs/sourcebans.log");
-	g_bConnecting = true;
-	
-	// Catch config error and show link to FAQ
-	if (!SQL_CheckConfig("sourcebans"))
-	{
-		if (ReasonMenuHandle != INVALID_HANDLE)
-			CloseHandle(ReasonMenuHandle);
-		if (HackingMenuHandle != INVALID_HANDLE)
-			CloseHandle(HackingMenuHandle);
-		LogToFile(logFile, "Database failure: Could not find Database conf \"sourcebans\". See FAQ: https://sarabveer.github.io/SourceBans-Fork/faq/");
-		SetFailState("Database failure: Could not find Database conf \"sourcebans\"");
-		return;
-	}
-	SQL_TConnect(GotDatabase, "sourcebans");
 	
 	BuildPath(Path_SM, groupsLoc, sizeof(groupsLoc), "configs/sourcebans/sb_admin_groups.cfg");
 	
@@ -346,6 +334,9 @@ public OnMapEnd()
 			PlayerDataPack[i] = INVALID_HANDLE;
 		}
 	}
+
+	CloseHandle(DB);
+	DB = INVALID_HANDLE;
 }
 
 // CLIENT CONNECTION FUNCTIONS //
@@ -1041,7 +1032,7 @@ public GotDatabase(Handle:owner, Handle:hndl, const String:error[], any:data)
 {
 	if (hndl == INVALID_HANDLE)
 	{
-		LogToFile(logFile, "Database failure: %s. See FAQ: https://sarabveer.github.io/SourceBans-Fork/faq/", error);
+		LogToFile(logFile, "Database failure: %s. See FAQ: http://hlmod.ru/posts/290247/", error);
 		g_bConnecting = false;
 		
 		// Parse the overrides backup!
@@ -2430,6 +2421,13 @@ public bool:CreateBan(client, target, time, String:reason[])
 		ReplyToCommand(admin, "[SM] %t", "Check Menu");
 	}
 	
+	Call_StartForward(g_hOnBanAddedForward);
+	Call_PushCell(client);
+	Call_PushCell(target);
+	Call_PushCell(time);
+	Call_PushString(reason);
+	Call_Finish();
+	
 	return true;
 }
 
@@ -2632,6 +2630,23 @@ stock ResetSettings()
 	
 	ResetMenu();
 	ReadConfig();
+	ConnectToDB();
+}
+
+stock ConnectToDB() {
+	g_bConnecting = true;
+
+	if (!SQL_CheckConfig("sourcebans"))
+	{
+		if (ReasonMenuHandle != INVALID_HANDLE)
+			CloseHandle(ReasonMenuHandle);
+		if (HackingMenuHandle != INVALID_HANDLE)
+			CloseHandle(HackingMenuHandle);
+		LogToFile(logFile, "Database failure: Could not find Database conf \"sourcebans\". See FAQ: http://hlmod.ru/posts/290247/");
+		SetFailState("Database failure: Could not find Database conf \"sourcebans\"");
+		return;
+	}
+	SQL_TConnect(GotDatabase, "sourcebans");
 }
 
 stock ParseBackupConfig_Overrides()
