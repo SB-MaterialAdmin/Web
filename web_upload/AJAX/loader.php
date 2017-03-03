@@ -28,10 +28,14 @@
  *    Страница: <https://sbpp.github.io/>
  *
  ***************************************************************************/
- 
-// Шесть месяцев назад лишь двое знали, как это работает - я и Бог. Сейчас это знает уже только Бог.
-require_once('init.php');
-require_once(INCLUDES_PATH . "/user-functions.php");
-require_once(INCLUDES_PATH . "/system-functions.php");
-require_once(ROOT . '/AJAX/loader.php');
-require_once(INCLUDES_PATH . "/page-builder.php");
+
+require_once(__DIR__ . '/xajax.inc.php');
+require_once(__DIR__ . '/AJAX.php');
+
+$GLOBALS['ajax'] = new AJAX("./AJAX/callback.php");
+foreach (scandir(__DIR__ . '/functions/') as $obj) {
+    if ($obj == "." || $obj == "..")
+        continue;
+
+    $GLOBALS['ajax']->RegisterFunctions(__DIR__ . DIRECTORY_SEPARATOR . "functions" . DIRECTORY_SEPARATOR . $obj . DIRECTORY_SEPARATOR);
+}

@@ -49,7 +49,7 @@ define('SB_THEME_COMPILE',  DATA_PATH . 'theme/');
 
 define('IN_SB',             true);
 define('SB_AID',            isset($_COOKIE['aid'])?$_COOKIE['aid']:null);
-define('XAJAX_REQUEST_URI', './index.php');
+define('XAJAX_REQUEST_URI', './AJAX/callback.php');
 
 include_once(INCLUDES_PATH . "/CSystemLog.php");
 include_once(INCLUDES_PATH . "/CUserManager.php");
@@ -310,4 +310,9 @@ if (!defined('IS_UPDATE')) {
     // $GLOBALS['AvatarMgr'] = new CAvatarManager($GLOBALS['config']['avatarmgr.default']);
     $GLOBALS['AvatarMgr'] = new CAvatarManager("./theme/img/profile-pics/" . rand(1, 9) . ".jpg");
 }
-?>
+
+// ---------------------------------------------------
+// Setup global Links
+// ---------------------------------------------------
+$GLOBALS['urls'] = array();
+$GLOBALS['urls']['FAQ'] = "https://github.com/CrazyHackGUT/SB_Material_Design/wiki/FAQ";

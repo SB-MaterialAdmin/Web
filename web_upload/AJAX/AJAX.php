@@ -28,10 +28,49 @@
  *    Страница: <https://sbpp.github.io/>
  *
  ***************************************************************************/
- 
-// Шесть месяцев назад лишь двое знали, как это работает - я и Бог. Сейчас это знает уже только Бог.
-require_once('init.php');
-require_once(INCLUDES_PATH . "/user-functions.php");
-require_once(INCLUDES_PATH . "/system-functions.php");
-require_once(ROOT . '/AJAX/loader.php');
-require_once(INCLUDES_PATH . "/page-builder.php");
+
+class AJAX {
+    private $xajax      = null;
+    private $methods    = array();
+
+    public function __construct($uri) {
+        $this->xajax = new xajax();
+        $this->xajax->setRequestURI($uri);
+    }
+
+    public function RegisterFunctions($dir) {
+        if (!file_exists($dir . '/manifest.php') || !file_exists($dir . '/init.php')) {
+            return false;
+        }
+
+        if (!@include($dir . '/init.php'))
+            return false;
+
+        $methods = require_once($dir . '/manifest.php');
+        foreach ($methods as $method => $file) {
+            $this->xajax->registerFunction($method);
+            $this->methods[$method] = $file;
+        }
+
+        return true;
+    }
+
+    public function run() {
+        $req = array();
+
+        if ($this->xajax->getRequestMode() == XAJAX_POST)
+            $req = $_POST;
+        else
+            $req = $_GET;
+
+        if (!isset($req['xajax']) || !isset($this->methods[$req['xajax']]))
+            return false;
+
+        require_once($this->methods[$req['xajax']]);
+        $this->xajax->processRequests();
+    }
+
+    public function getXajaxInstance() {
+        return $this->xajax;
+    }
+}

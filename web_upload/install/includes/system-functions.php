@@ -351,13 +351,13 @@ function getRequestProtocol() {
 function TryAutodetectURL() {
     if (isset($_SERVER['HTTP_REFERER']) && !empty($_SERVER['HTTP_REFERER'])) {
         $uri = explode("/install", $_SERVER['HTTP_REFERER']);
-        return $uri[0];
+        return $uri[0] . "/";
     }
     $proto  = getRequestProtocol();
     $domain = $_SERVER['SERVER_NAME'];
     $uri    = explode("/install", $_SERVER['REQUEST_URI']);
     
-    return sprintf("%s://%s%s", $proto, $domain, $uri[0]);
+    return sprintf("%s://%s%s/", $proto, $domain, $uri[0]);
 }
 
 function ProcessQueriesFile($hDatabase, $filename) {

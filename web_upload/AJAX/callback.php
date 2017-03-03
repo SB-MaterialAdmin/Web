@@ -30,8 +30,9 @@
  ***************************************************************************/
  
 // Шесть месяцев назад лишь двое знали, как это работает - я и Бог. Сейчас это знает уже только Бог.
-require_once('init.php');
+require_once('./../init.php');
 require_once(INCLUDES_PATH . "/user-functions.php");
 require_once(INCLUDES_PATH . "/system-functions.php");
 require_once(ROOT . '/AJAX/loader.php');
-require_once(INCLUDES_PATH . "/page-builder.php");
+Header("Content-Type: text/xml; charset=utf-8");
+$GLOBALS['ajax']->run();
