@@ -34,5 +34,4 @@ require_once('./../init.php');
 require_once(INCLUDES_PATH . "/user-functions.php");
 require_once(INCLUDES_PATH . "/system-functions.php");
 require_once(ROOT . '/AJAX/loader.php');
-Header("Content-Type: text/xml; charset=utf-8");
 $GLOBALS['ajax']->run();

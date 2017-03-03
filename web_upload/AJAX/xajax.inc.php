@@ -783,7 +783,7 @@ class xajax
 			
 		}
 		if ($this->bCleanBuffer) while (@ob_end_clean());
-		print $oResponse->getOutput();
+		echo($oResponse->getOutput());
 		if ($this->bErrorHandler) restore_error_handler();
 		
 		if ($this->bExitAllowed)
