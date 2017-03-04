@@ -58,7 +58,7 @@ class CUserManager
 									   WHERE adm.aid = ?");
 		
 		$this->stmt_updatelastonline 	= $GLOBALS['db']->prepare("UPDATE `" . DB_PREFIX . "_admins` SET `lastvisit` = UNIX_TIMESTAMP() WHERE `aid` = ?");
-		$this->stmt_getalladmins 		= $GLOBALS['db']->prepare("SELECT` aid` FROM `" . DB_PREFIX . "_admins`");
+		$this->stmt_getalladmins 		= $GLOBALS['db']->prepare("SELECT `aid` FROM `" . DB_PREFIX . "_admins`");
 		$this->stmt_addadmin 			= $GLOBALS['db']->prepare("INSERT INTO `".DB_PREFIX."_admins` (`user`, `authid`, `password`, `gid`, `email`, `extraflags`, `immunity`, `srv_group`, `srv_flags`, `srv_password`, `expired`, `skype`, `comment`, `vk`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 		
 		if($this->CheckLogin($password, $aid))

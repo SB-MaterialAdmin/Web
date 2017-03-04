@@ -276,7 +276,7 @@ global $theme, $userbank;
 if(!@file_exists(SB_THEME . "/theme.conf.php"))
 	die("<b>Ошибка шаблона</b>: Шаблон повреждён. Отсутствует файл <b>theme.conf.php</b>.");
 
-if(!@is_writable(SB_THEME))
+if(!@is_writable(SB_THEME_COMPILE))
 	die("<b>Ошибка шаблона</b>: Папка <b>".SB_THEME_COMPILE."</b> не перезаписываемая! Установите права 777 на папку через FTP-клиент.");
 
 $theme = new Smarty();
