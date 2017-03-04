@@ -125,16 +125,16 @@ class Database extends PDO {
 
 class CPDO_Result {
     private $hStatement;
-    protected $EOF;
-    protected $values;
+    private $hiddenEOF;
+    private $hiddenValues;
 
     public function __construct($hStatement, $Params = array()) {
         try {
             $this->hStatement = $hStatement;
             $this->hStatement->execute($Params);
-            $this->EOF = $this->hStatement->nextRowset();
+            $this->hiddenEOF = !$this->hStatement->nextRowset();
         
-            if ($this->EOF) {
+            if ($this->hiddenEOF) {
                 $this->MoveNext();
             }
         } catch (PDOException $e) {
@@ -143,7 +143,16 @@ class CPDO_Result {
     }
 
     public function MoveNext() {
-        $this->values = $this->hStatement->fetch(PDO::FETCH_BOTH);
-        $this->EOF = $this->hStatement->nextRowset();
+        $this->hiddenValues = $this->hStatement->fetch(PDO::FETCH_BOTH);
+        $this->hiddenEOF = !$this->hStatement->nextRowset();
+    }
+
+    public function __get($name) {
+        if ($name == "EOF")
+            return $this->hiddenEOF;
+        else if ($name == "values")
+            return $this->hiddenValues;
+        else
+            return null;
     }
 }

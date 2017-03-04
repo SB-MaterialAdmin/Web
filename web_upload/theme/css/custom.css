@@ -1,2 +1,8 @@
 li.logo-img { margin-top: -5px; }
 li.logo-img img { width: 270px; }
+
+/* Цвет RCON-а */
+.lv-message .lv-item:not(.right) .ms-item {
+    background: #000000;
+    color: #fff;
+}
