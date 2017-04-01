@@ -1,12 +1,12 @@
 # SourceBans - Material Design
 ![Образец](http://s09.radikal.ru/i182/1610/5f/e56ed82e77f8t.jpg)
 #### Основан на [SourceBans++ 1.5.4.7](https://sbpp.github.io/)
-#### Последняя актуальная версия: **1.1.5.3** *(от 05.02.2017)*
+#### Последняя актуальная версия: **1.1.6** *(от 28.04.2017)*
 Официальная тема рефорка на *[HLmod.ru](http://hlmod.ru/threads/v1-1-5-2-material-admin-refork-sb-1-5-4-7.38415/)* и на *[MyArena.ru](http://forum.myarena.ru/index.php?/topic/35781-alpha-material-admin-refork-sb-1547/)*
 
 ### Ссылки на загрузку:
 - **Dev-ветка (1.1.6)** (временно недоступно)
-- **[Stable-релиз (1.1.5.3)](https://github.com/CrazyHackGUT/SB_Material_Design/archive/release_1153.zip)**
+- **[Stable-релиз (1.1.5.4)](https://github.com/CrazyHackGUT/SB_Material_Design/archive/release_1154.zip)**
 
 [Список всех планируемых изменений (TODO)](https://github.com/CrazyHackGUT/SB_Material_Design/blob/master/TODO.md)
 
