@@ -9,12 +9,20 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	CreateNative("MAOffSetClientMuteType", Native_OffSetClientMuteType);
 	CreateNative("MAGetClientMuteType", Native_GetClientMuteType);
 	CreateNative("MAGetConfigSetting", Native_GetConfigSetting);
-	CreateNative("MAGetDatabaseConnect", Native_GetDatabaseConnect);
+	CreateNative("MAGetDatabase", Native_GetDatabase);
+	CreateNative("MALog", Native_Log);
 }
 
-public int Native_GetDatabaseConnect(Handle plugin, int numParams)
+public int Native_GetDatabase(Handle plugin, int numParams)
 {
 	return view_as<int>(CloneHandle(g_dDatabase, plugin));
+}
+
+public int Native_Log(Handle plugin, int numParams)
+{
+	char sBufer[256];
+	FormatNativeString(0, 1, 2, sizeof(sBufer), _, sBufer);
+	LogToFile(g_sLogFile, sBufer);
 }
 
 public int Native_GetConfigSetting(Handle plugin, int numParams)
@@ -23,10 +31,7 @@ public int Native_GetConfigSetting(Handle plugin, int numParams)
 	GetNativeStringLength(1, iLen);
 
 	if (iLen <= 0)
-	{
-		ThrowNativeError(SP_ERROR_NATIVE, "Error: Config Setting invalid.");
-		return false;
-	}
+		return ThrowNativeError(SP_ERROR_NATIVE, "Error: Config Setting invalid.");
 
 	char sSetting[126],
 		 sValue[512];
@@ -73,13 +78,6 @@ public int Native_GetConfigSetting(Handle plugin, int numParams)
 		else
 			sValue = "0";
 	}
-	else if(StrEqual("MassBan", sSetting, false))
-	{
-		if(g_bMassBan)
-			sValue = "1";
-		else
-			sValue = "0";
-	}
 	else if(StrEqual("ActionOnTheMy", sSetting, false))
 	{
 		if(g_bActionOnTheMy)
@@ -108,6 +106,8 @@ public int Native_GetConfigSetting(Handle plugin, int numParams)
 		else
 			sValue = "0";
 	}
+	else if(StrEqual("MassBan", sSetting, false))
+		IntToString(g_iMassBan, sValue, sizeof(sValue));
 	else if(StrEqual("ServerBanTime", sSetting, false))
 		IntToString(g_iServerBanTime, sValue, sizeof(sValue));
 	else if(StrEqual("ServerID", sSetting, false))
@@ -120,11 +120,14 @@ public int Native_GetConfigSetting(Handle plugin, int numParams)
 		FloatToString(g_fRetryTime, sValue, sizeof(sValue));
 	else if(StrEqual("ShowAdminAction", sSetting, false))
 		IntToString(g_iShowAdminAction, sValue, sizeof(sValue));
+	else if(StrEqual("BasecommTime", sSetting, false))
+		IntToString(g_iBasecommTime, sValue, sizeof(sValue));
+	else if(StrEqual("ServerImmune", sSetting, false))
+		IntToString(g_iServerImmune, sValue, sizeof(sValue));
+	else if(StrEqual("BanTypMenu", sSetting, false))
+		IntToString(g_iBanTypMenu, sValue, sizeof(sValue));
 	else
-	{
-		ThrowNativeError(SP_ERROR_NATIVE, "Error: Config Setting invalid.");
-		return false;
-	}
+		return ThrowNativeError(SP_ERROR_NATIVE, "Error: Config Setting invalid.");
 
 	SetNativeString(2, sValue, sizeof(sValue), false);
 	return true;
@@ -133,27 +136,26 @@ public int Native_GetConfigSetting(Handle plugin, int numParams)
 public int Native_OffBan(Handle plugin, int numParams)
 {
 	int iClient = GetNativeCell(1);
-	GetNativeString(2, g_sTarget[iClient][TSTEAMID], sizeof(g_sTarget[][]));
-	GetNativeString(3, g_sTarget[iClient][TIP], sizeof(g_sTarget[][]));
-	GetNativeString(4, g_sTarget[iClient][TNAME], sizeof(g_sTarget[][]));
-	g_iTarget[iClient][TTIME] = GetNativeCell(5);
-	GetNativeString(6, g_sTarget[iClient][TREASON], sizeof(g_sTarget[][]));
+	int iType = GetNativeCell(2);
+	GetNativeString(3, g_sTarget[iClient][TSTEAMID], sizeof(g_sTarget[][]));
+	GetNativeString(4, g_sTarget[iClient][TIP], sizeof(g_sTarget[][]));
+	GetNativeString(5, g_sTarget[iClient][TNAME], sizeof(g_sTarget[][]));
+	g_iTarget[iClient][TTIME] = GetNativeCell(6);
+	GetNativeString(7, g_sTarget[iClient][TREASON], sizeof(g_sTarget[][]));
+	
+	if (iType < 3 && iType > 0)
+		g_iTargetType[iClient] = iType;
+	else
+		return ThrowNativeError(SP_ERROR_NATIVE, "Ban Error: Invalid Type.");
 	
 	if (iClient && IsClientInGame(iClient))
 	{
 		if (GetUserAdmin(iClient) == INVALID_ADMIN_ID)
-		{
-			ThrowNativeError(SP_ERROR_NATIVE, "Ban Error: Player is not an admin.");
-			return false;
-		}
+			return ThrowNativeError(SP_ERROR_NATIVE, "Ban Error: Player is not an admin.");
 		
 		if (!CheckAdminFlags(iClient, ADMFLAG_BAN))
-		{
-			ThrowNativeError(SP_ERROR_NATIVE, "Ban Error: Player does not have BAN flag.");
-			return false;
-		}
+			return ThrowNativeError(SP_ERROR_NATIVE, "Ban Error: Player does not have BAN flag.");
 	}
-	g_iTargetType[iClient] = TYPE_BAN;
 	
 	CheckBanInBd(iClient, 0, 1, g_sTarget[iClient][TSTEAMID]);
 	return true;
@@ -163,29 +165,25 @@ public int Native_BanPlayer(Handle plugin, int numParams)
 {
 	int iClient = GetNativeCell(1);
 	int iTarget = GetNativeCell(2);
-	g_iTarget[iClient][TTIME] = GetNativeCell(3);
-	GetNativeString(4, g_sTarget[iClient][TREASON], sizeof(g_sTarget[][]));
+	int iType = GetNativeCell(3);
+	g_iTarget[iClient][TTIME] = GetNativeCell(4);
+	GetNativeString(5, g_sTarget[iClient][TREASON], sizeof(g_sTarget[][]));
+	
+	if (iType < 3 && iType > 0)
+		g_iTargetType[iClient] = iType;
+	else
+		return ThrowNativeError(SP_ERROR_NATIVE, "Ban Error: Invalid Type.");
 	
 	if (iClient && IsClientInGame(iClient))
 	{
 		if (GetUserAdmin(iClient) == INVALID_ADMIN_ID)
-		{
-			ThrowNativeError(SP_ERROR_NATIVE, "Ban Error: Player is not an admin.");
-			return false;
-		}
+			return ThrowNativeError(SP_ERROR_NATIVE, "Ban Error: Player is not an admin.");
 		
 		if (!CheckAdminFlags(iClient, ADMFLAG_BAN))
-		{
-			ThrowNativeError(SP_ERROR_NATIVE, "Ban Error: Player does not have BAN flag.");
-			return false;
-		}
+			return ThrowNativeError(SP_ERROR_NATIVE, "Ban Error: Player does not have BAN flag.");
 	}
-	if (!iTarget && !IsClientInGame(iTarget))
-	{
-		ThrowNativeError(SP_ERROR_NATIVE, "Ban Error: Player no game.");
-		return false;
-	}
-	g_iTargetType[iClient] = TYPE_BAN;
+	if (!iTarget || !IsClientInGame(iTarget))
+		return ThrowNativeError(SP_ERROR_NATIVE, "Ban Error: Player no game.");
 	
 	CreateDB(iClient, iTarget);
 	return true;
@@ -201,16 +199,10 @@ public int Native_UnBanPlayer(Handle plugin, int numParams)
 	if (iClient && IsClientInGame(iClient))
 	{
 		if (GetUserAdmin(iClient) == INVALID_ADMIN_ID)
-		{
-			ThrowNativeError(SP_ERROR_NATIVE, "UnBan Error: Player is not an admin.");
-			return false;
-		}
+			return ThrowNativeError(SP_ERROR_NATIVE, "UnBan Error: Player is not an admin.");
 		
 		if (!CheckAdminFlags(iClient, ADMFLAG_UNBAN))
-		{
-			ThrowNativeError(SP_ERROR_NATIVE, "UnBan Error: Player does not have UNBAN flag.");
-			return false;
-		}
+			return ThrowNativeError(SP_ERROR_NATIVE, "UnBan Error: Player does not have UNBAN flag.");
 	}
 	g_iTargetType[iClient] = TYPE_UNBAN;
 	
@@ -228,37 +220,25 @@ public int Native_SetClientMuteType(Handle plugin, int numParams)
 {
 	int iClient = GetNativeCell(1);
 	int iTarget = GetNativeCell(2);
-	g_iTarget[iClient][TTIME] = GetNativeCell(3);
-	GetNativeString(4, g_sTarget[iClient][TREASON], sizeof(g_sTarget[][]));
-	int iType = GetNativeCell(5);
+	GetNativeString(3, g_sTarget[iClient][TREASON], sizeof(g_sTarget[][]));
+	int iType = GetNativeCell(4);
+	g_iTarget[iClient][TTIME] = GetNativeCell(5);
 	
-	if (iType > 2 && iType < 10 && iType != 6)
+	if (iType > 4 && iType < 11)
 		g_iTargetType[iClient] = iType;
 	else
-	{
-		ThrowNativeError(SP_ERROR_NATIVE, "Mute Error: Invalid Type.");
-		return false;
-	}
+		return ThrowNativeError(SP_ERROR_NATIVE, "Mute Error: Invalid Type.");
 	
 	if (iClient && IsClientInGame(iClient))
 	{
 		if (GetUserAdmin(iClient) == INVALID_ADMIN_ID)
-		{
-			ThrowNativeError(SP_ERROR_NATIVE, "Mute Error: Player is not an admin.");
-			return false;
-		}
+			return ThrowNativeError(SP_ERROR_NATIVE, "Mute Error: Player is not an admin.");
 		
 		if (!CheckAdminFlags(iClient, ADMFLAG_CHAT))
-		{
-			ThrowNativeError(SP_ERROR_NATIVE, "Mute Error: Player does not have CHAT flag.");
-			return false;
-		}
+			return ThrowNativeError(SP_ERROR_NATIVE, "Mute Error: Player does not have CHAT flag.");
 	}
-	if (!iTarget && !IsClientInGame(iTarget))
-	{
-		ThrowNativeError(SP_ERROR_NATIVE, "Mute Error: Player no game.");
-		return false;
-	}
+	if (!iTarget || !IsClientInGame(iTarget))
+		return ThrowNativeError(SP_ERROR_NATIVE, "Mute Error: Player no game.");
 	
 	DoCreateDB(iClient, iTarget);
 	return true;
@@ -270,31 +250,22 @@ public int Native_OffSetClientMuteType(Handle plugin, int numParams)
 	GetNativeString(2, g_sTarget[iClient][TSTEAMID], sizeof(g_sTarget[][]));
 	GetNativeString(3, g_sTarget[iClient][TIP], sizeof(g_sTarget[][]));
 	GetNativeString(4, g_sTarget[iClient][TNAME], sizeof(g_sTarget[][]));
-	g_iTarget[iClient][TTIME] = GetNativeCell(5);
-	GetNativeString(6, g_sTarget[iClient][TREASON], sizeof(g_sTarget[][]));
-	int iType = GetNativeCell(7);
+	GetNativeString(5, g_sTarget[iClient][TREASON], sizeof(g_sTarget[][]));
+	int iType = GetNativeCell(6);
+	g_iTarget[iClient][TTIME] = GetNativeCell(7);
 	
-	if (iType > 2 && iType < 10 && iType != 6)
+	if (iType > 4 && iType < 11)
 		g_iTargetType[iClient] = iType;
 	else
-	{
-		ThrowNativeError(SP_ERROR_NATIVE, "Mute Error: Invalid Type.");
-		return false;
-	}
+		return ThrowNativeError(SP_ERROR_NATIVE, "Mute Error: Invalid Type.");
 	
 	if (iClient && IsClientInGame(iClient))
 	{
 		if (GetUserAdmin(iClient) == INVALID_ADMIN_ID)
-		{
-			ThrowNativeError(SP_ERROR_NATIVE, "Mute Error: Player is not an admin.");
-			return false;
-		}
+			return ThrowNativeError(SP_ERROR_NATIVE, "Mute Error: Player is not an admin.");
 		
 		if (!CheckAdminFlags(iClient, ADMFLAG_CHAT))
-		{
-			ThrowNativeError(SP_ERROR_NATIVE, "Mute Error: Player does not have CHAT flag.");
-			return false;
-		}
+			return ThrowNativeError(SP_ERROR_NATIVE, "Mute Error: Player does not have CHAT flag.");
 	}
 	
 	DoCreateDB(iClient, 0);
@@ -324,6 +295,20 @@ void FireOnClientMuted(int iClient, int iTarget, const char[] sIp, const char[] 
 	Call_PushCell(iTime);
 	Call_PushString(sReason);
 	Call_Finish();
+	
+	if (iTarget)
+	{
+		switch(iType)
+		{
+			case 1:	BaseComm_SetClientMute(iTarget, true);
+			case 2:	BaseComm_SetClientGag(iTarget, true);
+			case 3:
+			{
+				BaseComm_SetClientMute(iTarget, true);
+				BaseComm_SetClientGag(iTarget, true);
+			}
+		}
+	}
 }
 
 void FireOnClientUnMuted(int iClient, int iTarget, const char[] sIp, const char[] sSteamID, const char[] sName, int iType, const char[] sReason)
@@ -342,6 +327,20 @@ void FireOnClientUnMuted(int iClient, int iTarget, const char[] sIp, const char[
 	Call_PushCell(iType);
 	Call_PushString(sReason);
 	Call_Finish();
+	
+	if (iTarget)
+	{
+		switch(iType)
+		{
+			case 1:	BaseComm_SetClientMute(iTarget, false);
+			case 2:	BaseComm_SetClientGag(iTarget, false);
+			case 3:
+			{
+				BaseComm_SetClientMute(iTarget, false);
+				BaseComm_SetClientGag(iTarget, false);
+			}
+		}
+	}
 }
 
 void FireOnClientBanned(int iClient, int iTarget, const char[] sIp, const char[] sSteamID, const char[] sName, int iTime, const char[] sReason)
@@ -393,8 +392,70 @@ void FireOnClientUnBanned(int iClient, const char[] sIp, const char[] sSteamID, 
 	Call_Finish();
 }
 
+void FireOnConnectDatabase(Database db)
+{
+ 	static Handle hForward;
+	
+	if(hForward == null)
+		hForward = CreateGlobalForward("MAOnConnectDatabase", ET_Ignore, Param_Cell);
+	
+	Call_StartForward(hForward);
+	Call_PushCell(db);
+	Call_Finish();
+}
+
 public Action TimerOnConfigSettingForward(Handle timer, any data)
 {
 	Call_StartForward(g_hOnConfigSettingForward);
 	Call_Finish();	
+}
+
+public void BaseComm_OnClientMute(int iClient, bool bState)
+{
+	if (!iClient || !IsClientInGame(iClient))
+		return;
+
+	if (bState)
+	{
+		if (g_iTargetMuteType[iClient] == 0 || g_iTargetMuteType[iClient] == 2)
+		{
+			strcopy(g_sTarget[0][TREASON], sizeof(g_sTarget[][]), "Muted through base commands natives");
+			g_iTarget[0][TTIME] = g_iBasecommTime;
+			g_iTargetType[0] = TYPE_MUTE;
+			DoCreateDB(0, iClient);
+		}
+	}
+	else
+	{
+		if (g_iTargetMuteType[iClient] == 1 || g_iTargetMuteType[iClient] == 3)
+		{
+			g_iTargetType[0] = TYPE_UNMUTE;
+			CreateDB(0, iClient);
+		}
+	}
+}
+
+public void BaseComm_OnClientGag(int iClient, bool bState)
+{
+	if (!iClient || !IsClientInGame(iClient))
+		return;
+
+	if (bState)
+	{
+		if (g_iTargetMuteType[iClient] < 2)
+		{
+			strcopy(g_sTarget[0][TREASON], sizeof(g_sTarget[][]), "Gag through base commands natives");
+			g_iTarget[0][TTIME] = g_iBasecommTime;
+			g_iTargetType[0] = TYPE_GAG;
+			DoCreateDB(0, iClient);
+		}
+	}
+	else
+	{
+		if (g_iTargetMuteType[iClient] > 1)
+		{
+			g_iTargetType[0] = TYPE_UNGAG;
+			CreateDB(0, iClient);
+		}
+	}
 }

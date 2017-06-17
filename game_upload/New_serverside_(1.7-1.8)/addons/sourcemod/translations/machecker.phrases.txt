@@ -1,0 +1,32 @@
+"Phrases"
+{
+	"Player connect"
+	{
+		"#format"		"{1:s},{2:d}"
+		"en"    		"Player \"{1}\" has {2} previous ban"
+		"ru"    		"Игрок \"{1}\" имеет {2} бан(а)"
+	}
+	"Database not ready"
+	{
+		"en"    		"Error: Database not ready."
+		"ru"    		"Ошибка: База данных не готова."
+	}
+	"DB error while retrieving bans"
+	{
+		"#format"		"{1:s},{2:s}"
+		"en"    		"DB error while retrieving bans for {1}:\n{2}"
+		"ru"    		"Ошибка БД при получении банов для {1}:\n {2}"
+	}
+	"No bans found"
+	{
+		"#format"		"{1:s}"
+		"en"    		"No bans found for {1}."
+		"ru"    		"Баны для {1} не найдены."
+	}
+	"Listing bans"
+	{
+		"#format"		"{1:s}"
+		"en"    		"Listing bans for {1}."
+		"ru"    		"Список банов для {1}."
+	}
+}

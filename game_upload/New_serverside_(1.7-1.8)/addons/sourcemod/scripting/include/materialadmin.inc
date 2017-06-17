@@ -1,16 +1,16 @@
 #if defined _materialadmin_included
-  #endinput
+#endinput
 #endif
 #define _materialadmin_included
 
-public SharedPlugin:__pl_materialadmin = 
+public SharedPlugin __pl_materialadmin = 
 {
 	name = "materialadmin",
 	file = "materialadmin.smx",
 #if defined REQUIRE_PLUGIN
-    required = 1
+	required = 1
 #else
-    required = 0
+	required = 0
 #endif
 };
 
@@ -25,74 +25,83 @@ public __pl_materialadmin_SetNTVOptional()
 	MarkNativeAsOptional("MAOffSetClientMuteType");
 	MarkNativeAsOptional("MAGetClientMuteType");
 	MarkNativeAsOptional("MAGetConfigSetting");
-	MarkNativeAsOptional("MAGetDatabaseConnect");
+	MarkNativeAsOptional("MAGetDatabase");
+	MarkNativeAsOptional("MALog");
 }
 #endif
 
-/*********************************************************
- * Получение хендель бд
- *********************************************************/
-native Database MAGetDatabaseConnect();
+#define MAPREFIX 		"[MA] "
+#define MAVERSION 		"0.5.5 beta"
+#define MADEBUG 		1 	//тестовый режим
 
 /*********************************************************
- * Офлайн бан
- *
- * @param iClient	Клиент ид админа
- * @param sSteamID	Стим айди
- * @param sIp		Айпи
- * @param sName		Ник
- * @param iTime		Время (0 - навсегда) мин
- * @param sReason	Причина (можно указать в виде "")
- * @return			true, false
- *********************************************************/
-native bool MAOffBanPlayer(int iClient, char[] sSteamID, char[] sIp, char[] sName, int iTime, char[] sReason);
+* Получение хендель бд
+*********************************************************/
+native Database MAGetDatabase();
+
+#define MA_BAN_STEAM		1
+#define MA_BAN_IP			2
+/*********************************************************
+* Офлайн бан
+*
+* @param iClient	Клиент ид админа
+* @param iType		Тип (MA_BAN_STEAM - стим, MA_BAN_IP - ип)
+* @param sSteamID	Стим айди
+* @param sIp		Айпи
+* @param sName		Ник
+* @param iTime		Время (0 - навсегда) мин
+* @param sReason	Причина (можно указать в виде "")
+* @return			true, false
+*********************************************************/
+native bool MAOffBanPlayer(int iClient, int iType, char[] sSteamID, char[] sIp, char[] sName, int iTime, char[] sReason);
 
 /*********************************************************
- * Бан
- *
- * @param iClient	Клиент ид админа
- * @param iTarget	Клиент ид
- * @param iTime		Время (0 - навсегда) мин
- * @param sReason	Причина (можно указать в виде "")
- * @return			true, false
- *********************************************************/
-native bool MABanPlayer(int iClient, int iTarget, int iTime, char[] sReason);
+* Бан
+*
+* @param iClient	Клиент ид админа
+* @param iTarget	Клиент ид
+* @param iType		Тип (MA_BAN_STEAM - стим, MA_BAN_IP - ип)
+* @param iTime		Время (0 - навсегда) мин
+* @param sReason	Причина (можно указать в виде "")
+* @return			true, false
+*********************************************************/
+native bool MABanPlayer(int iClient, int iTarget, int iType, int iTime, char[] sReason);
 
 /*********************************************************
- * Разбан
- *
- * @param iClient	Клиент ид админа
- * @param sId		Айпи или Стим (в старом виде STEAM_)
- * @param sReason	Причина (можно указать в виде "")
- * @return			true, false
- *********************************************************/
+* Разбан
+*
+* @param iClient	Клиент ид админа
+* @param sId		Айпи или Стим (в старом виде STEAM_)
+* @param sReason	Причина (можно указать в виде "")
+* @return			true, false
+*********************************************************/
 native bool MAUnBanPlayer(int iClient, char[] sId, char[] sReason);
 
 /*********************************************************
- * Временная админка
- *
- * @param idAdmin	Ид админа
- * @return			время в UNIX_TIMESTAMP
- *********************************************************/
+* Временная админка
+*
+* @param idAdmin	Ид админа
+* @return			время в UNIX_TIMESTAMP
+*********************************************************/
 native int MAGetAdminExpire(AdminId idAdmin);
 
-#define MA_GAG			3
-#define MA_MUTE			4
-#define MA_SILENCE		5
-#define MA_UNGAG		7
-#define MA_UNMUTE		8
-#define MA_UNSILENCE	9
+#define MA_GAG			5
+#define MA_MUTE			6
+#define MA_SILENCE		7
+#define MA_UNGAG		8
+#define MA_UNMUTE		9
+#define MA_UNSILENCE	10
 /*********************************************************
- * Мут
- *
- * @param iClient	Клиент ид админа
- * @param iTarget	Клиент ид
- * @param iTime		Время (0 - навсегда) мин (При размуте можно указать 0)
- * @param sReason	Причина (можно указать в виде "")
- * @param iType		Тип (MA_GAG,MA_UNGAG - текстовый чат, MA_MUTE,MA_UNMUTE - голосовой чат, MA_SILENCE,MA_UNSILENCE - всё вместе)
- * @return			true, false
- *********************************************************/
-native bool MASetClientMuteType(int iClient, int iTarget, int iTime, char[] sReason, int iType);
+* Мут
+*
+* @param iClient	Клиент ид админа
+* @param iTarget	Клиент ид
+* @param sReason	Причина (можно указать в виде "")
+* @param iType		Тип (MA_GAG,MA_UNGAG - текстовый чат, MA_MUTE,MA_UNMUTE - голосовой чат, MA_SILENCE,MA_UNSILENCE - всё вместе)
+* @param iTime		Время (0 - навсегда) мин (При размуте можно не указать)
+* @return			true, false
+*********************************************************/
+native bool MASetClientMuteType(int iClient, int iTarget, char[] sReason, int iType, int iTime = 0);
 
 /*********************************************************
  * Оффлайн мут
@@ -101,12 +110,12 @@ native bool MASetClientMuteType(int iClient, int iTarget, int iTime, char[] sRea
  * @param sSteamID	Стим айди
  * @param sIp		Айпи (При размуте можно указать в виде "", но используется в логах)
  * @param sName		Ник	(При размуте можно указать в виде "", но используется в логах)
- * @param iTime		Время (0 - навсегда) мин (При размуте можно указать 0)
  * @param sReason	Причина (можно указать в виде "")
  * @param iType		Тип (MA_GAG,MA_UNGAG - текстовый чат, MA_MUTE,MA_UNMUTE - голосовой чат, MA_SILENCE,MA_UNSILENCE - всё вместе)
+ * @param iTime		Время (0 - навсегда) мин (При размуте можно не указать)
  * @return			true, false
  *********************************************************/
-native bool MAOffSetClientMuteType(int iClient, char[] sSteamID, char[] sIp, char[] sName, int iTime, char[] sReason, int iType);
+native bool MAOffSetClientMuteType(int iClient, char[] sSteamID, char[] sIp, char[] sName, char[] sReason, int iType, int iTime = 0);
 
 /*********************************************************
  * Узнать тип мута
@@ -128,7 +137,7 @@ native int MAGetClientMuteType(int iClient);
  * @param iTime		Время
  * @param sReason	Причина 
  *********************************************************/
- forward void MAOnClientMuted(int iClient, int iTarget, char[] sIp, char[] sSteamID, char[] sName, int iType, int iTime, char[] sReason);
+forward void MAOnClientMuted(int iClient, int iTarget, char[] sIp, char[] sSteamID, char[] sName, int iType, int iTime, char[] sReason);
  
  /*********************************************************
  * Событие включение голосовго или текстового чата
@@ -142,7 +151,7 @@ native int MAGetClientMuteType(int iClient);
  * @param iTime		Время
  * @param sReason	Причина
  *********************************************************/
- forward void MAOnClientUnMuted(int iClient, int iTarget, char[] sIp, char[] sSteamID, char[] sName, int iType, char[] sReason);
+forward void MAOnClientUnMuted(int iClient, int iTarget, char[] sIp, char[] sSteamID, char[] sName, int iType, char[] sReason);
 
  /*********************************************************
  * Событие бана клиента
@@ -155,7 +164,7 @@ native int MAGetClientMuteType(int iClient);
  * @param iTime		Время
  * @param sReason	Причина
  *********************************************************/
- forward void MAOnClientBanned(int iClient, int iTarget, char[] sIp, char[] sSteamID, char[] sName, int iTime, char[] sReason);
+forward void MAOnClientBanned(int iClient, int iTarget, char[] sIp, char[] sSteamID, char[] sName, int iTime, char[] sReason);
 
  /*********************************************************
  * Событие добавление бана
@@ -166,29 +175,41 @@ native int MAGetClientMuteType(int iClient);
  * @param iTime		Время
  * @param sReason	Причина
  *********************************************************/
- forward void MAOnClientAddBanned(int iClient, char[] sIp, char[] sSteamID, int iTime, char[] sReason);
+forward void MAOnClientAddBanned(int iClient, char[] sIp, char[] sSteamID, int iTime, char[] sReason);
 
- /*********************************************************
- * Событие разбана
- * 
- * @param iClient	Клиент ид админа
- * @param sIp		Разбан айпи
- * @param sSteamID	Разбан стима
- * @param sReason	Причина
- *********************************************************/
- forward void MAOnClientUnBanned(int iClient, char[] sIp, char[] sSteamID, char[] sReason);
-
- /*********************************************************
- * Получение настроек из конфига
- * Использовать тока в событие MAOnConfigSetting или после него, это примерно 2 секунды после запуска плагина или смены карты
- * 
- * @param sKey		Пишем сюда один из парамметров конфига
- * @param sValue	Возвращает сюда значение парамметра в строке, делайте строку не меньше 512 для получение больших значений
- * @return			true, false
- *********************************************************/
- native bool MAGetConfigSetting(char[] sKey, char[] sValue);
+/*********************************************************
+* Событие разбана
+* 
+* @param iClient	Клиент ид админа
+* @param sIp		Разбан айпи
+* @param sSteamID	Разбан стима
+* @param sReason	Причина
+*********************************************************/
+forward void MAOnClientUnBanned(int iClient, char[] sIp, char[] sSteamID, char[] sReason);
  
- /*********************************************************
- * Событие чтение конфига
- *********************************************************/
- forward void MAOnConfigSetting();
+/*********************************************************
+* Событие подключение к бд
+* 
+* @param db		бд
+*********************************************************/
+forward void MAOnConnectDatabase(Database db);
+
+/*********************************************************
+* Получение настроек из конфига
+* Использовать тока в событие MAOnConfigSetting или после него, это примерно 2 секунды после запуска плагина или смены карты
+* 
+* @param sKey		Пишем сюда один из парамметров конфига
+* @param sValue		Возвращает сюда значение парамметра в строке, делайте строку не меньше 512 для получение больших значений
+* @return			true, false
+*********************************************************/
+native bool MAGetConfigSetting(char[] sKey, char[] sValue);
+ 
+/*********************************************************
+* Событие чтение конфига
+*********************************************************/
+forward void MAOnConfigSetting();
+ 
+/*********************************************************
+* Логи
+*********************************************************/
+native void MALog(const char[] sLog, any ...);

@@ -1,11 +1,14 @@
-void ConnectSourceBan()
+void MAConnectDB()
 {
 	char sError[256];
 	g_dSQLite = SQLite_UseDatabase("maDatabase", sError, sizeof(sError));
 	if (!g_dSQLite)
 		SetFailState("Local Database failure (%s)", sError);
+	else
+		CreateTables();
 	
-	if (ConnectBd(g_dDatabase, true)) {
+	if (ConnectBd(g_dDatabase))
+	{
 		AdminHash();
 		SentBekapInBd();
 	}
@@ -13,32 +16,47 @@ void ConnectSourceBan()
 	InsertServerInfo();
 }
 
-bool ConnectBd(Database &db, bool bForceReconnect = false)
+bool ConnectBd(Database &db)
 {
-	if (!g_hTimerBekap && db || bForceReconnect) {
+	if (db)
+	{
 		delete db;
 		db = null;
-	} else {
-		db = g_dDatabase;
-		return true;
+	#if MADEBUG
+		LogToFile(g_sLogFile, "ConnectBd: lost");
+	#endif
 	}
-	
+
 	char sError[256];
 	if (SQL_CheckConfig("materialadmin"))
 		db = SQL_Connect("materialadmin", false, sError, sizeof(sError));
-	else {
+	else
+	{
 		LogToFile(g_sLogFile, "Database failure: Could not find Database conf \"materialadmin\"");
+		db = null;
+		FireOnConnectDatabase(db);
 		SetFailState("Database failure: Could not find Database conf \"materialadmin\"");
 		return false;
 	}
 	
-	if (db) {
-		g_dDatabase.SetCharset("utf8");
+	FireOnConnectDatabase(db);
+
+	if (db)
+	{
+		db.SetCharset("utf8");
+	#if MADEBUG
+		LogToFile(g_sLogFile, "ConnectBd: yes");
+	#endif
 		return true;
-	} else {
-		LogToFile(g_sLogFile, "[ERROR] Couldn't connect to database. %s", sError);
 	}
-	
+	else
+	{
+	#if MADEBUG
+		LogToFile(g_sLogFile, "ConnectBd: no");
+	#endif
+		LogToFile(g_sLogFile, "ConnectBd: %s", sError);
+	}
+
 	return false;
 }
 
@@ -46,22 +64,28 @@ void CreateTables()
 {
 	SQL_LockDatabase(g_dSQLite);
 	SQL_FastQuery(g_dSQLite, "PRAGMA encoding = \"UTF-8\"");
-	if(SQL_FastQuery(g_dSQLite, "CREATE TABLE IF NOT EXISTS `offline` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, \
-										`auth` VARCHAR(32) UNIQUE ON CONFLICT REPLACE,\
-										`ip` VARCHAR(24) NOT NULL, \
-										`name` VARCHAR(64) DEFAULT 'unknown',\
-										`disc_time` NUMERIC NOT NULL);") == false)
+	if(SQL_FastQuery(g_dSQLite, "\
+			CREATE TABLE IF NOT EXISTS `offline` (\
+			`id` INTEGER PRIMARY KEY AUTOINCREMENT,\
+			`auth` VARCHAR(32) UNIQUE ON CONFLICT REPLACE,\
+			`ip` VARCHAR(24) NOT NULL,\
+			`name` VARCHAR(64) DEFAULT 'unknown',\
+			`disc_time` NUMERIC NOT NULL);\
+		") == false)
 	{
 		char sError[256];
 		SQL_GetError(g_dSQLite, sError, sizeof(sError));
-		SetFailState("%s Query CREATE TABLE failed! %s", PREFIX, sError);
+		SetFailState("%s Query CREATE TABLE failed! %s", MAPREFIX, sError);
 	}
-	if(SQL_FastQuery(g_dSQLite, "CREATE TABLE IF NOT EXISTS `bekap` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, \
-										`query` text NOT NULL);") == false)
+	if(SQL_FastQuery(g_dSQLite, "\
+			CREATE TABLE IF NOT EXISTS `bekap` (\
+			`id` INTEGER PRIMARY KEY AUTOINCREMENT,\
+			`query` text NOT NULL);\
+		") == false)
 	{
 		char sError[256];
 		SQL_GetError(g_dSQLite, sError, sizeof(sError));
-		SetFailState("%s Query CREATE TABLE failed! %s", PREFIX, sError);
+		SetFailState("%s Query CREATE TABLE failed! %s", MAPREFIX, sError);
 	}
 	SQL_UnlockDatabase(g_dSQLite);
 }
@@ -71,7 +95,7 @@ void ClearHistories()
 {
 	char sQuery[64];
 	FormatEx(sQuery, sizeof(sQuery), "DROP TABLE  `offline`");
-	g_dSQLite.Query(SQL_Callback_DeleteClients, sQuery);
+	g_dSQLite.Query(SQL_Callback_DeleteClients, sQuery, _, DBPrio_High);
 }
 
 public void SQL_Callback_DeleteClients(Database db, DBResultSet dbRs, const char[] sError, any iData)
@@ -89,10 +113,13 @@ void SetOflineInfo(char[] sSteamID, char[] sName, char[] sIP)
 
 	g_dSQLite.Escape(sName, sEName, sizeof(sEName));
 
-	FormatEx(sQuery, sizeof(sQuery), "INSERT INTO `offline` (auth, ip, name, disc_time) VALUES \
-										('%s', '%s', '%s', %i)", sSteamID, sIP, sEName, GetTime());
-	g_dSQLite.Query(SQL_Callback_AddClient, sQuery);
-#if DEBUG
+	FormatEx(sQuery, sizeof(sQuery), "\
+			INSERT INTO `offline` (`auth`, `ip`, `name`, `disc_time`) \
+			VALUES ('%s', '%s', '%s', %i)", 
+		sSteamID, sIP, sEName, GetTime());
+
+	g_dSQLite.Query(SQL_Callback_AddClient, sQuery, _, DBPrio_High);
+#if MADEBUG
 	LogToFile(g_sLogFile, "SetOflineInfo:QUERY: %s", sQuery);
 #endif
 }
@@ -106,16 +133,20 @@ public void SQL_Callback_AddClient(Database db, DBResultSet dbRs, const char[] s
 void DelOflineInfo(char[] sSteamID)
 {
 	char sQuery[256];
-	FormatEx(sQuery, sizeof(sQuery), "DELETE FROM `offline` WHERE `auth` = '%s'", sSteamID);
-	g_dSQLite.Query(SQL_Callback_DeleteClient, sQuery);
-#if DEBUG
+
+	FormatEx(sQuery, sizeof(sQuery), "\
+			DELETE FROM `offline` WHERE `auth` = '%s'", 
+		sSteamID);
+
+	g_dSQLite.Query(SQL_Callback_DeleteClient, sQuery, _, DBPrio_High);
+#if MADEBUG
 	LogToFile(g_sLogFile, "DelOflineInfo:QUERY: %s", sQuery);
 #endif
 }
 
 public void SQL_Callback_DeleteClient(Database db, DBResultSet dbRs, const char[] sError, any iData)
 {
-	if (sError[0])
+	if (!dbRs || sError[0])
 		LogToFile(g_sLogFile, "SQL_Callback_DeleteClient: %s", sError);
 }
 
@@ -123,16 +154,26 @@ public void SQL_Callback_DeleteClient(Database db, DBResultSet dbRs, const char[
 void BdTargetOffline(int iClient)
 {
 	char sQuery[324];
-	FormatEx(sQuery, sizeof(sQuery), "SELECT `id`, `auth`, `name`, `disc_time` FROM `offline` ORDER BY `id` DESC LIMIT %d;", g_iOffMaxPlayers);
+
+	FormatEx(sQuery, sizeof(sQuery), "\
+			SELECT `id`, `auth`, `name`, `disc_time` \
+			FROM `offline` ORDER BY `id` DESC LIMIT %d;", 
+		g_iOffMaxPlayers);
+
 	g_dSQLite.Query(ShowTargetOffline, sQuery, iClient, DBPrio_High);
 }
 
 void BdGetInfoOffline(int iClient, int iId)
 {
 	char sQuery[224];
-	FormatEx(sQuery, sizeof(sQuery), "SELECT `auth`, `ip`, `name` FROM `offline` WHERE `id` = '%i'", iId);
+
+	FormatEx(sQuery, sizeof(sQuery), "\
+			SELECT `auth`, `ip`, `name` FROM `offline` \
+			WHERE `id` = '%i'", 
+		iId);
+
 	g_dSQLite.Query(SQL_Callback_GetInfoOffline, sQuery, iClient, DBPrio_High);
-#if DEBUG
+#if MADEBUG
 	LogToFile(g_sLogFile, "GetInfoOffline:QUERY: %s", sQuery);
 #endif
 }
@@ -167,15 +208,17 @@ void BdGetMuteType(int iClient, int iTarget, int iType)
 		GetClientAuthId(iTarget, TYPE_STEAM, g_sTarget[iClient][TSTEAMID], sizeof(g_sTarget[][]));
 	
 	char sQuery[524];
-	FormatEx(sQuery, sizeof(sQuery), "SELECT    type \
-            FROM        %s_comms \
-            WHERE       RemoveType IS NULL \
-                        AND authid REGEXP '^STEAM_[0-9]:%s$' \
-                        AND (length = '0' OR ends > UNIX_TIMESTAMP())", 
-			g_sDatabasePrefix, g_sTarget[iClient][TSTEAMID][8]);
+	FormatEx(sQuery, sizeof(sQuery), "\
+				SELECT  c.`type`, IF (a.`immunity` >= g.`immunity`, a.`immunity`, IFNULL(g.`immunity`, 0)) AS immunity, a.`authid` \
+				FROM `%s_comms` AS c \
+				LEFT JOIN `%s_admins` AS a ON a.`aid` = c.`aid` \
+				LEFT JOIN `%s_srvgroups` AS g ON g.`name` = a.`srv_group` \
+				WHERE `RemoveType` IS NULL  AND c.`authid` REGEXP '^STEAM_[0-9]:%s$' \
+                AND (`length` = 0 OR `ends` > UNIX_TIMESTAMP())", 
+		g_sDatabasePrefix, g_sDatabasePrefix, g_sDatabasePrefix, g_sTarget[iClient][TSTEAMID][8]);
 
 	g_dDatabase.Query(SQL_Callback_GetMuteType, sQuery, dPack, DBPrio_High);
-#if DEBUG
+#if MADEBUG
 	LogToFile(g_sLogFile, "GetMuteType:QUERY: %s", sQuery);
 #endif
 }
@@ -201,11 +244,18 @@ public void SQL_Callback_GetMuteType(Database db, DBResultSet dbRs, const char[]
 	
 
 	if (dbRs.FetchRow())
+	{
 		g_iTargetMuteType[iTarget] = dbRs.FetchInt(0);
+		dbRs.FetchString(2, g_sTargetMuteSteamAdmin[iTarget], sizeof(g_sTargetMuteSteamAdmin[]));
+		if (StrEqual(g_sTargetMuteSteamAdmin[iTarget], "STEAM_ID_SERVER"))
+			g_iTargenMuteImun[iTarget] = g_iServerImmune;
+		else
+			g_iTargenMuteImun[iTarget] = dbRs.FetchInt(1);
+	}
 	else
 		g_iTargetMuteType[iTarget] = 0;
 
-#if DEBUG
+#if MADEBUG
 	LogToFile(g_sLogFile, "GetMuteType:%N: %d", iTarget, g_iTargetMuteType[iTarget]);
 #endif
 
@@ -225,14 +275,13 @@ void BdDelMute(int iClient, int iTarget)
 		GetClientAuthId(iTarget, TYPE_STEAM, g_sTarget[iClient][TSTEAMID], sizeof(g_sTarget[][]));
 	
 	char sQuery[524];
-	FormatEx(sQuery, sizeof(sQuery), "DELETE \
-            FROM        %s_comms \
-            WHERE       RemoveType IS NULL \
-                        AND authid REGEXP '^STEAM_[0-9]:%s$' \
-                        AND (length = '0' OR ends > UNIX_TIMESTAMP())", 
-			g_sDatabasePrefix, g_sTarget[iClient][TSTEAMID][8]);
+	FormatEx(sQuery, sizeof(sQuery), "\
+			DELETE FROM `%s_comms` \
+			WHERE `RemoveType` IS NULL AND `authid` REGEXP '^STEAM_[0-9]:%s$' AND (`length` = 0 OR `ends` > UNIX_TIMESTAMP())", 
+		g_sDatabasePrefix, g_sTarget[iClient][TSTEAMID][8]);
+
 	g_dDatabase.Query(SQL_Callback_DelMute , sQuery, dPack, DBPrio_High);
-#if DEBUG
+#if MADEBUG
 	LogToFile(g_sLogFile, "BdDelMute:QUERY: %s", sQuery);
 #endif
 }
@@ -241,7 +290,7 @@ public void SQL_Callback_DelMute(Database db, DBResultSet dbRs, const char[] sEr
 {
 	if (!dbRs || sError[0])
 		LogToFile(g_sLogFile, "SQL_Callback_DelMute: %s", sError);
-#if DEBUG
+#if MADEBUG
 	if (dbRs && dbRs.RowCount)
 		LogToFile(g_sLogFile, "BdDelMute:yes");
 	else
@@ -252,6 +301,7 @@ public void SQL_Callback_DelMute(Database db, DBResultSet dbRs, const char[] sEr
 	dPack.Reset();
 	int iClient = dPack.ReadCell();
 	int iTarget = dPack.ReadCell();
+	delete dPack;
 
 	CreateDB(iClient, iTarget);
 }
@@ -259,20 +309,35 @@ public void SQL_Callback_DelMute(Database db, DBResultSet dbRs, const char[] sEr
 void CheckBanInBd(int iClient, int iTarget, int iType, char[] sSteamIp)
 {
 	char sQuery[324];
-	if (strncmp(sSteamIp, "STEAM_", 6) == 0)
-		FormatEx(sQuery, sizeof(sQuery), "SELECT bid FROM %s_bans WHERE (type = 0 AND authid = '%s') AND (length = '0' OR ends > UNIX_TIMESTAMP()) AND RemoveType IS NULL", g_sDatabasePrefix, sSteamIp);
-	else 
-		FormatEx(sQuery, sizeof(sQuery), "SELECT bid FROM %s_bans WHERE (type = 1 AND ip     = '%s') AND (length = '0' OR ends > UNIX_TIMESTAMP()) AND RemoveType IS NULL", g_sDatabasePrefix, sSteamIp);
+	if (sSteamIp[0] == 'S')
+	{
+		FormatEx(sQuery, sizeof(sQuery), "\
+				SELECT  c.`bid`, IF (a.`immunity` >= g.`immunity`, a.`immunity`, IFNULL(g.`immunity`, 0)) AS immunity, a.`authid` \
+				FROM `%s_bans` AS c \
+				LEFT JOIN `%s_admins` AS a ON a.`aid` = c.`aid` \
+				LEFT JOIN `%s_srvgroups` AS g ON g.`name` = a.`srv_group` \
+				WHERE `RemoveType` IS NULL  AND (`type` = 0 AND c.`authid` REGEXP '^STEAM_[0-9]:%s$') \
+                AND (`length` = 0 OR `ends` > UNIX_TIMESTAMP())", 
+			g_sDatabasePrefix, g_sDatabasePrefix, g_sDatabasePrefix, sSteamIp[8]);
+	}
+	else
+	{
+		FormatEx(sQuery, sizeof(sQuery), "\
+				SELECT  c.`bid`, IF (a.`immunity` >= g.`immunity`, a.`immunity`, IFNULL(g.`immunity`, 0)) AS immunity, a.`authid` \
+				FROM `%s_bans` AS c \
+				LEFT JOIN `%s_admins` AS a ON a.`aid` = c.`aid` \
+				LEFT JOIN `%s_srvgroups` AS g ON g.`name` = a.`srv_group` \
+				WHERE `RemoveType` IS NULL  AND (`type` = 1 AND c.`ip` = '%s') \
+                AND (`length` = 0 OR `ends` > UNIX_TIMESTAMP())", 
+			g_sDatabasePrefix, g_sDatabasePrefix, g_sDatabasePrefix, sSteamIp);
+	}
 
 	DataPack dPack = new DataPack();
-	if(iClient)
-		dPack.WriteCell(GetClientUserId(iClient));
-	else
-		dPack.WriteCell(iClient);
+	dPack.WriteCell((!iClient)?0:GetClientUserId(iClient));
 	dPack.WriteCell(iTarget);
 	dPack.WriteCell(iType);
 	dPack.WriteString(sSteamIp);
-#if DEBUG
+#if MADEBUG
 	LogToFile(g_sLogFile, "Checking ban in bd: %s. QUERY: %s", sSteamIp, sQuery);
 #endif
 	g_dDatabase.Query(SQL_Callback_CheckBanInBd , sQuery, dPack, DBPrio_High);
@@ -287,6 +352,7 @@ public void SQL_Callback_CheckBanInBd(Database db, DBResultSet dbRs, const char[
 	int iType = dPack.ReadCell();
 	char sSteamIp[56];
 	dPack.ReadString(sSteamIp, sizeof(sSteamIp));
+	delete dPack;
 	
 	if (!dbRs || sError[0])
 	{
@@ -299,10 +365,10 @@ public void SQL_Callback_CheckBanInBd(Database db, DBResultSet dbRs, const char[
 	{
 		if (dbRs.RowCount)
 		{
-			if (iClient)
+			if (iClient && IsClientInGame(iClient))
 				PrintToChat2(iClient, "%T", "Is already banned", iClient, sSteamIp);
 			else
-				ReplyToCommand(iClient, "%s %s is already banned", PREFIX, sSteamIp);
+				ReplyToCommand(iClient, "%s %s is already banned", MAPREFIX, sSteamIp);
 		}
 		else
 			CreateDB(iClient, iTarget, sSteamIp);
@@ -311,23 +377,62 @@ public void SQL_Callback_CheckBanInBd(Database db, DBResultSet dbRs, const char[
 	{
 		if (!dbRs.RowCount)
 		{
-			if (iClient)
+			if (iClient && IsClientInGame(iClient))
 				PrintToChat2(iClient, "%T", "No active bans", iClient, sSteamIp);
 			else
-				ReplyToCommand(iClient, "%s No active bans found for that filter %s", PREFIX, sSteamIp);
+				ReplyToCommand(iClient, "%s No active bans found for that filter %s", MAPREFIX, sSteamIp);
 		}
 		else
 		{
 			if (dbRs.FetchRow())
+			{
+				char sSteamID[MAX_STEAMID_LENGTH],
+					 sAdmin_SteamID[MAX_STEAMID_LENGTH];
+
+				dbRs.FetchString(2, sSteamID, sizeof(sSteamID));
+			
+				if (iClient && IsClientInGame(iClient))
+					GetClientAuthId(iClient, TYPE_STEAM, sAdmin_SteamID, sizeof(sAdmin_SteamID));
+				else
+					strcopy(sAdmin_SteamID, sizeof(sAdmin_SteamID), "STEAM_ID_SERVER");
+				
+				if (!StrEqual(sAdmin_SteamID, sSteamID))
+				{
+					int iAdminImun = GetImmuneAdmin(iClient);
+					int iTargetImun;
+					if (StrEqual(sSteamID, "STEAM_ID_SERVER"))
+						iTargetImun = g_iServerImmune;
+					else
+						iTargetImun = dbRs.FetchInt(1);
+				#if MADEBUG
+					LogToFile(g_sLogFile, "SQL_Callback_CheckBanInBd imune: (admin %N - %d)  (target %s - %d)", iClient, iAdminImun, sSteamIp, iTargetImun);
+				#endif
+					if (IsImune(iAdminImun, iTargetImun))
+						CreateDB(iClient, iTarget, sSteamIp);
+					else
+					{
+						if (iClient && IsClientInGame(iClient))
+							PrintToChat2(iClient, "%T", "No access un ban", iClient, sSteamIp);
+						return;
+					}
+				}
+
 				CreateDB(iClient, iTarget, sSteamIp);
+			}
 		}
 	}
 }
 
 void DoCreateDB(int iClient, int iTarget)
 {
-	if(g_iTargetType[iClient] > 2 && g_iTargetType[iClient] < 6)
+	if (g_iTargetType[iClient] >= TYPE_GAG && g_iTargetType[iClient] <= TYPE_SILENCE)
 	{
+		if (g_iTargetMuteType[iTarget] > 0)
+		{
+			if (!CheckUnMuteImun(iClient, iTarget))
+				return;
+		}
+
 		if (g_iTarget[iClient][TTIME] == -1)
 			BdDelMute(iClient, iTarget);
 		else
@@ -341,15 +446,15 @@ void DoCreateDB(int iClient, int iTarget)
 //занесение в бд
 void CreateDB(int iClient, int iTarget, char[] sSteamIp = "")
 {
-#if DEBUG
-	LogToFile(g_sLogFile,"Create bd: client %d, target %d, TargetType %d, TargetMuteType %d", iClient, iTarget, g_iTargetType[iClient], g_iTargetMuteType[iTarget]);
+#if MADEBUG
+	LogToFile(g_sLogFile,"Create bd: client %N, target %N, Type %d, MuteType %d", iClient, iTarget, g_iTargetType[iClient], g_iTargetMuteType[iTarget]);
 #endif
-	if (g_iTargetType[iClient] > 7 && g_iTargetMuteType[iTarget] == 0 && iTarget && GetClientListeningFlags(iTarget) == VOICE_MUTED)
+	if (iTarget && g_iTargetType[iClient] > TYPE_UNGAG && g_iTargetMuteType[iTarget] == 0 && GetClientListeningFlags(iTarget) == VOICE_MUTED)
 	{
-		SetClientListeningFlags(iClient, VOICE_NORMAL);
+		SetClientListeningFlags(iTarget, VOICE_NORMAL);
 		return;
 	}
-	else if (g_iTargetType[iClient] > 6 && g_iTargetMuteType[iTarget] == 0)
+	else if (iTarget && g_iTargetType[iClient] > TYPE_SILENCE && g_iTargetMuteType[iTarget] == 0)
 		return;
 	
 	char sBanName[MAX_NAME_LENGTH*2+1],
@@ -359,178 +464,139 @@ void CreateDB(int iClient, int iTarget, char[] sSteamIp = "")
 		 sLength[64],
 		 sAdmin_SteamID[MAX_STEAMID_LENGTH],
 		 sAdminIp[MAX_IP_LENGTH],
-		 sAdminName[MAX_NAME_LENGTH];
+		 sAdminName[MAX_NAME_LENGTH],
+		 sQueryAdmin[512],
+		 sQueryTime[126];
 		 
 	int iTime;
 	int iCreated = GetTime();
+	char sServer[256];
+	if(g_iServerID == -1)
+		FormatEx(sServer, sizeof(sServer), "(SELECT `sid` FROM `%s_servers` WHERE `ip` = '%s' AND `port` = '%s' LIMIT 1)", g_sDatabasePrefix, g_sServerIP, g_sServerPort);
+	else
+		IntToString(g_iServerID, sServer, sizeof(sServer));
 	
-	if (iClient)
+	if (iClient && IsClientInGame(iClient))
 	{
 		GetClientAuthId(iClient, TYPE_STEAM, sAdmin_SteamID, sizeof(sAdmin_SteamID));
 		GetClientIP(iClient, sAdminIp, sizeof(sAdminIp));
 		GetClientName(iClient, sAdminName, sizeof(sAdminName));
+		FormatEx(sQueryAdmin, sizeof(sQueryAdmin), "\
+				IFNULL((SELECT aid FROM %s_admins a INNER JOIN %s_admins_servers_groups asg ON (a.aid = asg.admin_id AND asg.server_id = %s) \
+				WHERE (a.authid REGEXP '^STEAM_[0-9]:%s$')), 0)", 
+			g_sDatabasePrefix, g_sDatabasePrefix, sServer, sAdmin_SteamID[8]);
 	}
 	else
 	{
 		strcopy(sAdmin_SteamID, sizeof(sAdmin_SteamID), "STEAM_ID_SERVER");
 		strcopy(sAdminIp, sizeof(sAdminIp), g_sServerIP);
 		FormatEx(sAdminName, sizeof(sAdminName), "%T", "Server", iClient);
+		strcopy(sQueryAdmin, sizeof(sQueryAdmin), "0");
 	}
 	
-	if (iTarget)
+	if (iTarget && IsClientInGame(iTarget))
 	{
 		GetClientAuthId(iTarget, TYPE_STEAM, g_sTarget[iClient][TSTEAMID], sizeof(g_sTarget[][]));
 		GetClientIP(iTarget, g_sTarget[iClient][TIP], sizeof(g_sTarget[][]));
 		GetClientName(iTarget, g_sTarget[iClient][TNAME], sizeof(g_sTarget[][]));
+		
+		if (g_iTargetType[iClient] >= TYPE_GAG && g_iTargetType[iClient] <= TYPE_SILENCE)
+		{
+			g_iTargenMuteImun[iTarget] = GetImmuneAdmin(iClient);
+			strcopy(g_sTargetMuteSteamAdmin[iTarget], sizeof(g_sTargetMuteSteamAdmin[]), sAdmin_SteamID);
+		}
 	}
+	else
+	{
+		if (g_bOnileTarget[iClient])
+			return;
+	}
+	
+	strcopy(g_sNameReples[0], sizeof(g_sNameReples[]), g_sTarget[iClient][TNAME]); // ??????
 
 	if (g_iTarget[iClient][TTIME] == -1)
+	{
+		strcopy(sQueryTime, sizeof(sQueryTime), "length = '-1' ORDER BY `bid` DESC LIMIT 1");
 		iTime = g_iTarget[iClient][TTIME];
+	}
 	else
-		iTime = g_iTarget[iClient][TTIME]*60;
+	{
+		strcopy(sQueryTime, sizeof(sQueryTime), "(length = '0' OR ends > UNIX_TIMESTAMP()) AND RemoveType IS NULL");
+		if (g_iTarget[iClient][TTIME] == 0)
+			iTime = g_iTarget[iClient][TTIME];
+		else
+			iTime = g_iTarget[iClient][TTIME]*60;
+	}
 	
-	if(!iTime)
-		FormatEx(sLength, sizeof(sLength), "%T", "Permanent", iClient);
-	else if (iTime > 0)
-		FormatVrema(iClient, iTime, sLength, sizeof(sLength));
+	FormatVrema(iClient, iTime, sLength, sizeof(sLength));
 	
 	if (!g_sTarget[iClient][TREASON][0])
 		FormatEx(g_sTarget[iClient][TREASON], sizeof(g_sTarget[][]), "%T", "No reason", iClient);
 
 	g_dDatabase.Escape(g_sTarget[iClient][TREASON], sReason, sizeof(sReason));
 	g_dDatabase.Escape(g_sTarget[iClient][TNAME], sBanName, sizeof(sBanName));
-#if DEBUG
+#if MADEBUG
 	LogToFile(g_sLogFile,"name do %s : posle %s", g_sTarget[iClient][TNAME], sBanName);
 #endif
 
 	switch(g_iTargetType[iClient])
 	{
-		case TYPE_ADDBAN:
-		{
-			if (iTarget)
-			{
-				int iTyp;
-				if (strncmp(sSteamIp, "STEAM_", 6) == 0)
-					iTyp = 0;
-				else
-					iTyp = 1;
-				
-				if(g_iServerID == -1) 
-				{
-					FormatEx(sQuery, sizeof(sQuery), "INSERT INTO %s_bans (type, ip, authid, name, created, ends, length, reason, aid, adminIp, sid, country) \
-													VALUES (%d, '%s', '%s', '%s', UNIX_TIMESTAMP(), UNIX_TIMESTAMP() + %d, %d, '%s', \
-													IFNULL((SELECT aid FROM %s_admins WHERE authid = '%s' OR authid REGEXP '^STEAM_[0-9]:%s$'),'0'), '%s', \
-													(SELECT sid FROM %s_servers WHERE ip = '%s' AND port = '%s' LIMIT 0,1), ' ')", 
-					g_sDatabasePrefix, iTyp, g_sTarget[iClient][TIP], g_sTarget[iClient][TSTEAMID], sBanName, iTime, iTime, sReason, g_sDatabasePrefix, sAdmin_SteamID, sAdmin_SteamID[8], 
-					sAdminIp, g_sDatabasePrefix, g_sServerIP, g_sServerPort);
-				}
-				else
-				{
-					FormatEx(sQuery, sizeof(sQuery), "INSERT INTO %s_bans (type, ip, authid, name, created, ends, length, reason, aid, adminIp, sid, country) \
-													VALUES (%d, '%s', '%s', '%s', UNIX_TIMESTAMP(), UNIX_TIMESTAMP() + %d, %d, '%s', \
-													IFNULL((SELECT aid FROM %s_admins WHERE authid = '%s' OR authid REGEXP '^STEAM_[0-9]:%s$'),'0'), '%s', \
-													%d, ' ')",
-					g_sDatabasePrefix, iTyp, g_sTarget[iClient][TIP], g_sTarget[iClient][TSTEAMID], sBanName, iTime, iTime, sReason, g_sDatabasePrefix, sAdmin_SteamID, 
-					sAdmin_SteamID[8], sAdminIp, g_iServerID);	
-				}
-				FireOnClientBanned(iClient, iTarget, g_sTarget[iClient][TIP], g_sTarget[iClient][TSTEAMID], g_sTarget[iClient][TNAME], g_iTarget[iClient][TTIME], g_sTarget[iClient][TREASON]);
-				ShowAdminAction(iClient, "%T", "Banned show", iClient, g_iTarget[iClient][TTIME], sLength, g_sTarget[iClient][TREASON]);
-				CreateSayBanned(sAdminName, iTarget, iCreated, iTime, sLength, g_sTarget[iClient][TREASON]);
-				FormatEx(sLog, sizeof(sLog), "\"%L\" add banned \"%s (%s IP_%s)\" (minutes \"%d\") (reason \"%s\")", iClient, g_sTarget[iClient][TNAME], g_sTarget[iClient][TSTEAMID], 
-										g_sTarget[iClient][TIP], g_iTarget[iClient][TTIME], g_sTarget[iClient][TREASON]);
-			}
-			else
-			{
-				if (strncmp(sSteamIp, "STEAM_", 6) == 0)
-				{
-					if(g_iServerID == -1) 
-					{
-						FormatEx(sQuery, sizeof(sQuery), "INSERT INTO %s_bans (type, authid, created, ends, length, reason, aid, adminIp, sid, country) VALUES \
-														(0, '%s', UNIX_TIMESTAMP(), UNIX_TIMESTAMP() + %d, %d, '%s', \
-														(SELECT `aid` FROM %s_admins WHERE `authid` = '%s' LIMIT 0,1), '%s', \
-														(SELECT `sid` FROM %s_servers WHERE `ip` = '%s' AND `port` = '%s' LIMIT 0,1), ' ')", 
-						g_sDatabasePrefix, sSteamIp, iTime, iTime, sReason, g_sDatabasePrefix, sAdmin_SteamID, sAdminIp, g_sDatabasePrefix, g_sServerIP, g_sServerPort);
-					}
-					else
-					{
-						FormatEx(sQuery, sizeof(sQuery), "INSERT INTO %s_bans (type, authid, created, ends, length, reason, aid, adminIp, sid, country) VALUES \
-														(0, '%s', UNIX_TIMESTAMP(), UNIX_TIMESTAMP() + %d, %d, '%s', \
-														(SELECT `aid` FROM %s_admins WHERE `authid` = '%s' LIMIT 0,1), '%s', %d, ' ')", 
-														g_sDatabasePrefix, sSteamIp, iTime, iTime, sReason, g_sDatabasePrefix, sAdmin_SteamID, sAdminIp, g_iServerID);	
-					}
-					FireOnClientAddBanned(iClient, "", sSteamIp, g_iTarget[iClient][TTIME], g_sTarget[iClient][TREASON]);
-				}
-				else
-				{
-					if(g_iServerID == -1) 
-					{
-						FormatEx(sQuery, sizeof(sQuery), "INSERT INTO %s_bans (type, ip, created, ends, length, reason, aid, adminIp, sid, country) VALUES \
-														(1, '%s', UNIX_TIMESTAMP(), UNIX_TIMESTAMP() + %d, %d, '%s', \
-														(SELECT `aid` FROM %s_admins WHERE `authid` = '%s' LIMIT 0,1), '%s', \
-														(SELECT `sid` FROM %s_servers WHERE `ip` = '%s' AND `port` = '%s' LIMIT 0,1), ' ')", 
-						g_sDatabasePrefix, sSteamIp, iTime, iTime, sReason, g_sDatabasePrefix, sAdmin_SteamID, sAdminIp, g_sDatabasePrefix, g_sServerIP, g_sServerPort);
-					}
-					else
-					{
-						FormatEx(sQuery, sizeof(sQuery), "INSERT INTO %s_bans (type, ip, created, ends, length, reason, aid, adminIp, sid, country) VALUES \
-														(1, '%s', UNIX_TIMESTAMP(), UNIX_TIMESTAMP() + %d, %d, '%s', \
-														(SELECT `aid` FROM %s_admins WHERE `authid` = '%s' LIMIT 0,1), '%s', %d, ' ')", 
-														g_sDatabasePrefix, sSteamIp, iTime, iTime, sReason, g_sDatabasePrefix, sAdmin_SteamID, sAdminIp, g_iServerID);	
-					}
-					FireOnClientAddBanned(iClient, sSteamIp, "", g_iTarget[iClient][TTIME], g_sTarget[iClient][TREASON]);
-				}
-				ShowAdminAction(iClient, "%T", "Banned show", iClient, sSteamIp, sLength, g_sTarget[iClient][TREASON]);
-				FormatEx(sLog, sizeof(sLog), "\"%L\" add banned \"%s\" (minutes \"%d\") (reason \"%s\")", iClient, sSteamIp, g_iTarget[iClient][TTIME], g_sTarget[iClient][TREASON]);
-			}
-		}
 		case TYPE_UNBAN:
 		{
-			if (strncmp(sSteamIp, "STEAM_", 6) == 0)
+			if (sSteamIp[0] == 'S')
 			{
-				FormatEx(sQuery, sizeof(sQuery), "UPDATE %s_bans SET RemovedBy = (SELECT aid FROM %s_admins WHERE authid = '%s' OR authid REGEXP '^STEAM_[0-9]:%s$'),\
-											RemoveType = 'U', RemovedOn = UNIX_TIMESTAMP(), ureason = '%s' WHERE (type = 0 AND authid = '%s') AND (length = '0' OR ends > UNIX_TIMESTAMP()) AND RemoveType IS NULL", 
-				g_sDatabasePrefix, g_sDatabasePrefix, sAdmin_SteamID, sAdmin_SteamID[8], sReason, sSteamIp);
+				FormatEx(sQuery, sizeof(sQuery), "\
+						UPDATE `%s_bans` SET `RemovedBy` = %s, `RemoveType` = 'U', `RemovedOn` = UNIX_TIMESTAMP(), `ureason` = '%s' \
+						WHERE (`type` = 0 AND `authid`REGEXP '^STEAM_[0-9]:%s$') AND (`length` = 0 OR `ends` > UNIX_TIMESTAMP()) AND `RemoveType` IS NULL", 
+					g_sDatabasePrefix, sQueryAdmin, sReason, sSteamIp[8]);
 				ServerCommand("removeid %s", sSteamIp);
 				FireOnClientUnBanned(iClient, "", sSteamIp, g_sTarget[iClient][TREASON]);
 			}
 			else 
 			{
-				FormatEx(sQuery, sizeof(sQuery), "UPDATE %s_bans SET RemovedBy = (SELECT aid FROM %s_admins WHERE authid = '%s' OR authid REGEXP '^STEAM_[0-9]:%s$'),\
-											RemoveType = 'U', RemovedOn = UNIX_TIMESTAMP(), ureason = '%s' WHERE (type = 1 AND ip     = '%s') AND (length = '0' OR ends > UNIX_TIMESTAMP()) AND RemoveType IS NULL", 
-				g_sDatabasePrefix, g_sDatabasePrefix, sAdmin_SteamID, sAdmin_SteamID[8], sReason, sSteamIp);
+				FormatEx(sQuery, sizeof(sQuery), "\
+						UPDATE `%s_bans` SET `RemovedBy` = %s, `RemoveType` = 'U', `RemovedOn` = UNIX_TIMESTAMP(), `ureason` = '%s' \
+						WHERE (`type` = 1 AND `ip` = '%s') AND (`length` = 0 OR `ends` > UNIX_TIMESTAMP()) AND `RemoveType` IS NULL", 
+					g_sDatabasePrefix, sQueryAdmin, sReason, sSteamIp);
 				ServerCommand("removeip %s", sSteamIp);
 				FireOnClientUnBanned(iClient, sSteamIp, "", g_sTarget[iClient][TREASON]);
 			}
-			
-			ShowAdminAction(iClient, "%T", "UnBanned show", iClient, sSteamIp);
+			ShowAdminAction(iClient, "%t", "UnBanned show", sSteamIp);
 			FormatEx(sLog, sizeof(sLog), "\"%L\" unbanned \"%s\" (reason \"%s\")", iClient, sSteamIp, g_sTarget[iClient][TREASON]);
 		}
-		case TYPE_BAN:
+		case TYPE_BAN, TYPE_BANIP, TYPE_ADDBAN:
 		{
-			if(g_iServerID == -1) 
-			{
-				FormatEx(sQuery, sizeof(sQuery), "INSERT INTO %s_bans (ip, authid, name, created, ends, length, reason, aid, adminIp, sid, country) \
-												VALUES ('%s', '%s', '%s', UNIX_TIMESTAMP(), UNIX_TIMESTAMP() + %d, %d, '%s', \
-												IFNULL((SELECT aid FROM %s_admins WHERE authid = '%s' OR authid REGEXP '^STEAM_[0-9]:%s$'),'0'), '%s', \
-												(SELECT sid FROM %s_servers WHERE ip = '%s' AND port = '%s' LIMIT 0,1), ' ')", 
-				g_sDatabasePrefix, g_sTarget[iClient][TIP], g_sTarget[iClient][TSTEAMID], sBanName, iTime, iTime, sReason, g_sDatabasePrefix, sAdmin_SteamID, sAdmin_SteamID[8], 
-				sAdminIp, g_sDatabasePrefix, g_sServerIP, g_sServerPort);
-			}
+			int iTyp;
+			if (g_iTargetType[iClient] == TYPE_BAN || g_iTargetType[iClient] == TYPE_ADDBAN && sSteamIp[0] == 'S')
+				iTyp = 0;
 			else
+				iTyp = 1;
+			
+			if (g_iTargetType[iClient] <= TYPE_BANIP || g_iTargetType[iClient] == TYPE_ADDBAN && iTarget)
 			{
-				FormatEx(sQuery, sizeof(sQuery), "INSERT INTO %s_bans (ip, authid, name, created, ends, length, reason, aid, adminIp, sid, country) \
-												VALUES ('%s', '%s', '%s', UNIX_TIMESTAMP(), UNIX_TIMESTAMP() + %d, %d, '%s', \
-												IFNULL((SELECT aid FROM %s_admins WHERE authid = '%s' OR authid REGEXP '^STEAM_[0-9]:%s$'),'0'), '%s', \
-												%d, ' ')",
-				g_sDatabasePrefix, g_sTarget[iClient][TIP], g_sTarget[iClient][TSTEAMID], sBanName, iTime, iTime, sReason, g_sDatabasePrefix, sAdmin_SteamID, 
-				sAdmin_SteamID[8], sAdminIp, g_iServerID);	
+				FormatEx(sQuery, sizeof(sQuery), "\
+						INSERT INTO `%s_bans` (`type`, `ip`, `authid`, `name`, `created`, `ends`, `length`, `reason`, `aid`, `adminIp`, `sid`, `country`) \
+						VALUES (%d, '%s', '%s', '%s', UNIX_TIMESTAMP(), UNIX_TIMESTAMP() + %d, %d, '%s', %s, '%s', %s, ' ')", 
+					g_sDatabasePrefix, iTyp, g_sTarget[iClient][TIP], g_sTarget[iClient][TSTEAMID], sBanName, iTime, iTime, sReason, sQueryAdmin, sAdminIp, sServer);
+				
+				FireOnClientBanned(iClient, iTarget, g_sTarget[iClient][TIP], g_sTarget[iClient][TSTEAMID], g_sTarget[iClient][TNAME], g_iTarget[iClient][TTIME], g_sTarget[iClient][TREASON]);
+				ShowAdminAction(iClient, "%t", "Banned show", g_sTarget[iClient][TNAME], sLength, g_sTarget[iClient][TREASON]);
+				if (iTarget)
+					CreateSayBanned(sAdminName, iTarget, iCreated, iTime, sLength, g_sTarget[iClient][TREASON]);
+				FormatEx(sLog, sizeof(sLog), "\"%L\" %s banned \"%s (%s IP_%s)\" (minutes \"%d\") (reason \"%s\")", (g_iTargetType[iClient] == TYPE_ADDBAN)?"add":"", iClient, g_sTarget[iClient][TNAME], 
+											g_sTarget[iClient][TSTEAMID], g_sTarget[iClient][TIP], g_iTarget[iClient][TTIME], g_sTarget[iClient][TREASON]);
 			}
-			FireOnClientBanned(iClient, iTarget, g_sTarget[iClient][TIP], g_sTarget[iClient][TSTEAMID], g_sTarget[iClient][TNAME], g_iTarget[iClient][TTIME], g_sTarget[iClient][TREASON]);
-			ShowAdminAction(iClient, "%T", "Banned show", iClient, g_sTarget[iClient][TNAME], sLength, g_sTarget[iClient][TREASON]);
-			if (iTarget)
-				CreateSayBanned(sAdminName, iTarget, iCreated, iTime, sLength, g_sTarget[iClient][TREASON]);
-			FormatEx(sLog, sizeof(sLog), "\"%L\" banned \"%s (%s IP_%s)\" (minutes \"%d\") (reason \"%s\")", iClient, g_sTarget[iClient][TNAME], g_sTarget[iClient][TSTEAMID], 
-										g_sTarget[iClient][TIP], g_iTarget[iClient][TTIME], g_sTarget[iClient][TREASON]);
+			else if (g_iTargetType[iClient] == TYPE_ADDBAN)
+			{
+				FormatEx(sQuery, sizeof(sQuery), "\
+						INSERT INTO `%s_bans` (`type`, `ip`, `authid`, `created`, `ends`, `length`, `reason`, `aid`, `adminIp`, `sid`, `country`) \
+						VALUES (%d, '%s', '%s', UNIX_TIMESTAMP(), UNIX_TIMESTAMP() + %d, %d, '%s', %s, '%s', %s, ' ')", 
+					g_sDatabasePrefix, iTyp, iTyp?sSteamIp:"", !iTyp?sSteamIp:"", iTime, iTime, sReason, sQueryAdmin, sAdminIp, sServer);
+				
+				FireOnClientAddBanned(iClient, sSteamIp, "", g_iTarget[iClient][TTIME], g_sTarget[iClient][TREASON]);
+				ShowAdminAction(iClient, "%t", "Banned show", sSteamIp, sLength, g_sTarget[iClient][TREASON]);
+				FormatEx(sLog, sizeof(sLog), "\"%L\" add banned \"%s\" (minutes \"%d\") (reason \"%s\")", iClient, sSteamIp, g_iTarget[iClient][TTIME], g_sTarget[iClient][TREASON]);
+			}
 		}
 		case TYPE_GAG, TYPE_MUTE, TYPE_SILENCE:
 		{
@@ -543,38 +609,24 @@ void CreateDB(int iClient, int iTarget, char[] sSteamIp = "")
 					iType = TYPEGAG;
 					if (g_iTargetMuteType[iTarget] == TYPEMUTE)
 					{
-						if(iTime == -1)
-						{
-							FormatEx(sQuery, sizeof(sQuery), "UPDATE  %s_comms \
-								SET     type = 3 , reason = '%s', created = UNIX_TIMESTAMP(), ends = UNIX_TIMESTAMP() + %d, length = %d \
-								WHERE   type = 1 AND authid = '%s' AND length = '-1' ORDER BY `bid` DESC LIMIT 1", 
-								g_sDatabasePrefix, sReason, iTime, iTime, g_sTarget[iClient][TSTEAMID]);
-						}
-						else
-						{
-							FormatEx(sQuery, sizeof(sQuery), "UPDATE  %s_comms \
-								SET     type = 3 , reason = '%s', created = UNIX_TIMESTAMP(), ends = UNIX_TIMESTAMP() + %d, length = %d \
-								WHERE   type = 1 AND authid = '%s' AND (length = '0' OR ends > UNIX_TIMESTAMP()) AND RemoveType IS NULL", 
-								g_sDatabasePrefix, sReason, iTime, iTime, g_sTarget[iClient][TSTEAMID]);
-						}
+						FormatEx(sQuery, sizeof(sQuery), "\
+								UPDATE `%s_comms` \
+								SET `type` = 3 , `reason` = '%s', `created` = UNIX_TIMESTAMP(), `ends` = UNIX_TIMESTAMP() + %d, \
+								`length` = %d, `aid` = %s, `adminIp` = '%s', `sid` = %s \
+								WHERE `type` = 1 AND `authid` REGEXP '^STEAM_[0-9]:%s$' AND %s", 
+							g_sDatabasePrefix, sReason, iTime, iTime, sQueryAdmin, sAdminIp, sServer, g_sTarget[iClient][TSTEAMID][8], sQueryTime);
+
 						bSetQ = false;
 					}
 					else if (g_iTargetMuteType[iTarget] == TYPEGAG)
 					{
-						if(iTime == -1)
-						{
-							FormatEx(sQuery, sizeof(sQuery), "UPDATE  %s_comms \
-								SET     reason = '%s', created = UNIX_TIMESTAMP(), ends = UNIX_TIMESTAMP() + %d, length = %d \
-								WHERE   type = 2 AND authid = '%s' AND length = '-1' ORDER BY `bid` DESC LIMIT 1", 
-								g_sDatabasePrefix, sReason, iTime, iTime, g_sTarget[iClient][TSTEAMID]);
-						}
-						else
-						{
-							FormatEx(sQuery, sizeof(sQuery), "UPDATE  %s_comms \
-								SET     reason = '%s', created = UNIX_TIMESTAMP(), ends = UNIX_TIMESTAMP() + %d, length = %d \
-								WHERE   type = 2 AND authid = '%s' AND (length = '0' OR ends > UNIX_TIMESTAMP()) AND RemoveType IS NULL", 
-								g_sDatabasePrefix, sReason, iTime, iTime, g_sTarget[iClient][TSTEAMID]);
-						}
+						FormatEx(sQuery, sizeof(sQuery), "\
+								UPDATE `%s_comms` \
+								SET `reason` = '%s', `created` = UNIX_TIMESTAMP(), `ends` = UNIX_TIMESTAMP() + %d, \
+								`length` = %d, `aid` = %s, `adminIp` = '%s', `sid` = %s \
+								WHERE `type` = 2 AND `authid` REGEXP '^STEAM_[0-9]:%s$' AND %s", 
+							g_sDatabasePrefix, sReason, iTime, iTime, sQueryAdmin, sAdminIp, sServer, g_sTarget[iClient][TSTEAMID][8], sQueryTime);
+						
 						bSetQ = false;
 					}
 					if (iTarget)
@@ -583,7 +635,7 @@ void CreateDB(int iClient, int iTarget, char[] sSteamIp = "")
 						PrintToChat2(iTarget, "%T", "Target gag", iTarget, sLength, g_sTarget[iClient][TREASON]);
 					}
 					FireOnClientMuted(iClient, iTarget, g_sTarget[iClient][TIP], g_sTarget[iClient][TSTEAMID], g_sTarget[iClient][TNAME], TYPEGAG, g_iTarget[iClient][TTIME], g_sTarget[iClient][TREASON]);
-					ShowAdminAction(iClient, "%T", "Gag show", iClient, g_sTarget[iClient][TNAME], sLength, g_sTarget[iClient][TREASON]);
+					ShowAdminAction(iClient, "%t", "Gag show", g_sTarget[iClient][TNAME], sLength, g_sTarget[iClient][TREASON]);
 					FormatEx(sLog, sizeof(sLog), "\"%L\" gag \"%s (%s IP_%s)\" (minutes \"%d\") (reason \"%s\")", iClient, g_sTarget[iClient][TNAME], g_sTarget[iClient][TSTEAMID], 
 										g_sTarget[iClient][TIP], g_iTarget[iClient][TTIME], g_sTarget[iClient][TREASON]);
 				}
@@ -592,38 +644,24 @@ void CreateDB(int iClient, int iTarget, char[] sSteamIp = "")
 					iType = TYPEMUTE;
 					if (g_iTargetMuteType[iTarget] == TYPEGAG)
 					{
-						if(iTime == -1)
-						{
-							FormatEx(sQuery, sizeof(sQuery), "UPDATE  %s_comms \
-								SET     type = 3 , reason = '%s', created = UNIX_TIMESTAMP(), ends = UNIX_TIMESTAMP() + %d, length = %d \
-								WHERE   type = 2 AND authid = '%s' AND length = '-1' ORDER BY `bid` DESC LIMIT 1", 
-								g_sDatabasePrefix, sReason, iTime, iTime, g_sTarget[iClient][TSTEAMID]);
-						}
-						else
-						{
-							FormatEx(sQuery, sizeof(sQuery), "UPDATE  %s_comms \
-								SET     type = 3 , reason = '%s', created = UNIX_TIMESTAMP(), ends = UNIX_TIMESTAMP() + %d, length = %d \
-								WHERE   type = 2 AND authid = '%s' AND (length = '0' OR ends > UNIX_TIMESTAMP()) AND RemoveType IS NULL", 
-								g_sDatabasePrefix, sReason, iTime, iTime, g_sTarget[iClient][TSTEAMID]);
-						}
+						FormatEx(sQuery, sizeof(sQuery), "\
+								UPDATE `%s_comms` \
+								SET `type` = 3 , `reason` = '%s', `created` = UNIX_TIMESTAMP(), `ends` = UNIX_TIMESTAMP() + %d, \
+								`length` = %d, `aid` = %s, `adminIp` = '%s', `sid` = %s \
+								WHERE `type` = 2 AND `authid` REGEXP '^STEAM_[0-9]:%s$' AND %s", 
+							g_sDatabasePrefix, sReason, iTime, iTime, sQueryAdmin, sAdminIp, sServer, g_sTarget[iClient][TSTEAMID][8], sQueryTime);
+						
 						bSetQ = false;
 					}
 					else if (g_iTargetMuteType[iTarget] == TYPEMUTE)
 					{
-						if(iTime == -1)
-						{
-							FormatEx(sQuery, sizeof(sQuery), "UPDATE  %s_comms \
-								SET     reason = '%s', created = UNIX_TIMESTAMP(), ends = UNIX_TIMESTAMP() + %d, length = %d \
-								WHERE   type = 1 AND authid = '%s' AND length = '-1' ORDER BY `bid` DESC LIMIT 1", 
-								g_sDatabasePrefix, sReason, iTime, iTime, g_sTarget[iClient][TSTEAMID]);
-						}
-						else
-						{
-							FormatEx(sQuery, sizeof(sQuery), "UPDATE  %s_comms \
-								SET     reason = '%s', created = UNIX_TIMESTAMP(), ends = UNIX_TIMESTAMP() + %d, length = %d \
-								WHERE   type = 1 AND authid = '%s' AND (length = '0' OR ends > UNIX_TIMESTAMP()) AND RemoveType IS NULL", 
-								g_sDatabasePrefix, sReason, iTime, iTime, g_sTarget[iClient][TSTEAMID]);
-						}
+						FormatEx(sQuery, sizeof(sQuery), "\
+								UPDATE `%s_comms` \
+								SET `reason` = '%s', `created` = UNIX_TIMESTAMP(), `ends` = UNIX_TIMESTAMP() + %d, \
+								`length` = %d, `aid` = %s, `adminIp` = '%s', `sid` = %s \
+								WHERE `type` = 1 AND `authid` REGEXP '^STEAM_[0-9]:%s$' AND %s", 
+							g_sDatabasePrefix, sReason, iTime, iTime, sQueryAdmin, sAdminIp, sServer, g_sTarget[iClient][TSTEAMID][8], sQueryTime);
+						
 						bSetQ = false;
 					}
 					if (iTarget)
@@ -632,7 +670,7 @@ void CreateDB(int iClient, int iTarget, char[] sSteamIp = "")
 						PrintToChat2(iTarget, "%T", "Target mute", iTarget, sLength, g_sTarget[iClient][TREASON]);
 					}
 					FireOnClientMuted(iClient, iTarget, g_sTarget[iClient][TIP], g_sTarget[iClient][TSTEAMID], g_sTarget[iClient][TNAME], TYPEMUTE, g_iTarget[iClient][TTIME], g_sTarget[iClient][TREASON]);
-					ShowAdminAction(iClient, "%T", "Mute show", iClient, g_sTarget[iClient][TNAME], sLength, g_sTarget[iClient][TREASON]);
+					ShowAdminAction(iClient, "%t", "Mute show", g_sTarget[iClient][TNAME], sLength, g_sTarget[iClient][TREASON]);
 					FormatEx(sLog, sizeof(sLog), "\"%L\" mute \"%s (%s IP_%s)\" (minutes \"%d\") (reason \"%s\")", iClient, g_sTarget[iClient][TNAME], g_sTarget[iClient][TSTEAMID], 
 										g_sTarget[iClient][TIP], g_iTarget[iClient][TTIME], g_sTarget[iClient][TREASON]);
 				}
@@ -641,56 +679,35 @@ void CreateDB(int iClient, int iTarget, char[] sSteamIp = "")
 					iType = TYPESILENCE;
 					if (g_iTargetMuteType[iTarget] == TYPEGAG)
 					{
-						if(iTime == -1)
-						{
-							FormatEx(sQuery, sizeof(sQuery), "UPDATE  %s_comms \
-								SET     type = 3 , reason = '%s', created = UNIX_TIMESTAMP(), ends = UNIX_TIMESTAMP() + %d, length = %d \
-								WHERE   type = 2 AND authid = '%s' AND length = '-1' ORDER BY `bid` DESC LIMIT 1", 
-								g_sDatabasePrefix, sReason, iTime, iTime, g_sTarget[iClient][TSTEAMID]);
-						}
-						else
-						{
-							FormatEx(sQuery, sizeof(sQuery), "UPDATE  %s_comms \
-								SET     type = 3, reason = '%s', created = UNIX_TIMESTAMP(), ends = UNIX_TIMESTAMP() + %d, length = %d \
-								WHERE   type = 2 AND authid = '%s' AND (length = '0' OR ends > UNIX_TIMESTAMP()) AND RemoveType IS NULL", 
-								g_sDatabasePrefix, sReason, iTime, iTime, g_sTarget[iClient][TSTEAMID]);
-						}
+						FormatEx(sQuery, sizeof(sQuery), "\
+								UPDATE `%s_comms` \
+								SET `type` = 3 , `reason` = '%s', `created` = UNIX_TIMESTAMP(), `ends` = UNIX_TIMESTAMP() + %d, \
+								`length` = %d, `aid` = %s, `adminIp` = '%s', `sid` = %s \
+								WHERE `type` = 2 AND `authid` REGEXP '^STEAM_[0-9]:%s$' AND %s", 
+							g_sDatabasePrefix, sReason, iTime, iTime, sQueryAdmin, sAdminIp, sServer, g_sTarget[iClient][TSTEAMID][8], sQueryTime);
+						
 						bSetQ = false;
 					}
 					else if (g_iTargetMuteType[iTarget] == TYPEMUTE)
 					{
-						if(iTime == -1)
-						{
-							FormatEx(sQuery, sizeof(sQuery), "UPDATE  %s_comms \
-								SET     type = 3 , reason = '%s', created = UNIX_TIMESTAMP(), ends = UNIX_TIMESTAMP() + %d, length = %d \
-								WHERE   type = 1 AND authid = '%s' AND length = '-1' ORDER BY `bid` DESC LIMIT 1", 
-								g_sDatabasePrefix, sReason, iTime, iTime, g_sTarget[iClient][TSTEAMID]);
-						}
-						else
-						{
-							FormatEx(sQuery, sizeof(sQuery), "UPDATE  %s_comms \
-								SET     type = 3, reason = '%s', created = UNIX_TIMESTAMP(), ends = UNIX_TIMESTAMP() + %d, length = %d \
-								WHERE   type = 1 AND authid = '%s' AND (length = '0' OR ends > UNIX_TIMESTAMP()) AND RemoveType IS NULL", 
-								g_sDatabasePrefix, sReason, iTime, iTime, g_sTarget[iClient][TSTEAMID]);
-						}
+						FormatEx(sQuery, sizeof(sQuery), "\
+								UPDATE `%s_comms` \
+								SET `type` = 3 , `reason` = '%s', `created` = UNIX_TIMESTAMP(), `ends` = UNIX_TIMESTAMP() + %d, \
+								`length` = %d, `aid` = %s, `adminIp` = '%s', `sid` = %s \
+								WHERE `type` = 1 AND `authid` REGEXP '^STEAM_[0-9]:%s$' AND %s", 
+							g_sDatabasePrefix, sReason, iTime, iTime, sQueryAdmin, sAdminIp, sServer, g_sTarget[iClient][TSTEAMID][8], sQueryTime);
+						
 						bSetQ = false;
 					}
 					else if (g_iTargetMuteType[iTarget] == TYPESILENCE)
 					{
-						if(iTime == -1)
-						{
-							FormatEx(sQuery, sizeof(sQuery), "UPDATE  %s_comms \
-								SET     reason = '%s', created = UNIX_TIMESTAMP(), ends = UNIX_TIMESTAMP() + %d, length = %d \
-								WHERE   type = 3 AND authid = '%s' AND length = '-1' ORDER BY `bid` DESC LIMIT 1", 
-								g_sDatabasePrefix, sReason, iTime, iTime, g_sTarget[iClient][TSTEAMID]);
-						}
-						else
-						{
-							FormatEx(sQuery, sizeof(sQuery), "UPDATE  %s_comms \
-								SET     reason = '%s', created = UNIX_TIMESTAMP(), ends = UNIX_TIMESTAMP() + %d, length = %d \
-								WHERE   type = 3 AND authid = '%s' AND (length = '0' OR ends > UNIX_TIMESTAMP()) AND RemoveType IS NULL", 
-								g_sDatabasePrefix, sReason, iTime, iTime, g_sTarget[iClient][TSTEAMID]);
-						}
+						FormatEx(sQuery, sizeof(sQuery), "\
+								UPDATE `%s_comms` \
+								SET `reason` = '%s', `created` = UNIX_TIMESTAMP(), `ends` = UNIX_TIMESTAMP() + %d, \
+								`length` = %d, `aid` = %s, `adminIp` = '%s', `sid` = %s \
+								WHERE `type` = 3 AND `authid` REGEXP '^STEAM_[0-9]:%s$' AND %s", 
+							g_sDatabasePrefix, sReason, iTime, iTime, sQueryAdmin, sAdminIp, sServer, g_sTarget[iClient][TSTEAMID][8], sQueryTime);
+
 						bSetQ = false;
 					}
 					if (iTarget)
@@ -699,7 +716,7 @@ void CreateDB(int iClient, int iTarget, char[] sSteamIp = "")
 						PrintToChat2(iTarget, "%T", "Target silence", iTarget, sLength, g_sTarget[iClient][TREASON]);
 					}
 					FireOnClientMuted(iClient, iTarget, g_sTarget[iClient][TIP], g_sTarget[iClient][TSTEAMID], g_sTarget[iClient][TNAME], TYPESILENCE, g_iTarget[iClient][TTIME], g_sTarget[iClient][TREASON]);
-					ShowAdminAction(iClient, "%T", "Silence show", iClient, g_sTarget[iClient][TNAME], sLength, g_sTarget[iClient][TREASON]);
+					ShowAdminAction(iClient, "%t", "Silence show", g_sTarget[iClient][TNAME], sLength, g_sTarget[iClient][TREASON]);
 					FormatEx(sLog, sizeof(sLog), "\"%L\" silence \"%s (%s IP_%s)\" (minutes \"%d\") (reason \"%s\")", iClient, g_sTarget[iClient][TNAME], g_sTarget[iClient][TSTEAMID], 
 										g_sTarget[iClient][TIP], g_iTarget[iClient][TTIME], g_sTarget[iClient][TREASON]);
 				}
@@ -710,26 +727,14 @@ void CreateDB(int iClient, int iTarget, char[] sSteamIp = "")
 					g_iTargenMuteTime[iTarget] = iCreated + iTime;
 				else
 					g_iTargenMuteTime[iTarget] = iTime;
-				strcopy(g_iTargetMuteReason[iTarget], sizeof(g_iTargetMuteReason[]), g_sTarget[iClient][TREASON]);
+				strcopy(g_sTargetMuteReason[iTarget], sizeof(g_sTargetMuteReason[]), g_sTarget[iClient][TREASON]);
 			}
 			if(bSetQ)
 			{
-				if(g_iServerID == -1)
-				{
-					FormatEx(sQuery, sizeof(sQuery), "INSERT INTO     %s_comms (authid, name, created, ends, length, reason, aid, adminIp, sid, type) \
-													VALUES         ('%s', '%s', UNIX_TIMESTAMP(), UNIX_TIMESTAMP() + %d, %d, '%s', \
-													IFNULL((SELECT aid FROM %s_admins WHERE authid = '%s' OR authid REGEXP '^STEAM_[0-9]:%s$'), '0'), '%s', \
-													(SELECT sid FROM %s_servers WHERE ip = '%s' AND port = '%s' LIMIT 0,1), %d)", 
-					g_sDatabasePrefix, g_sTarget[iClient][TSTEAMID], sBanName, iTime, iTime, sReason, g_sDatabasePrefix, sAdmin_SteamID, sAdmin_SteamID[8], sAdminIp, g_sDatabasePrefix, 
-					g_sServerIP, g_sServerPort, iType);
-				}
-				else
-				{
-					FormatEx(sQuery, sizeof(sQuery), "INSERT INTO     %s_comms (authid, name, created, ends, length, reason, aid, adminIp, sid, type) \
-													VALUES         ('%s', '%s', UNIX_TIMESTAMP(), UNIX_TIMESTAMP() + %d, %d, '%s', \
-													IFNULL((SELECT aid FROM %s_admins WHERE authid = '%s' OR authid REGEXP '^STEAM_[0-9]:%s$'), '0'), '%s', %d, %d)", 
-					g_sDatabasePrefix, g_sTarget[iClient][TSTEAMID], sBanName, iTime, iTime, sReason, g_sDatabasePrefix, sAdmin_SteamID, sAdmin_SteamID[8], sAdminIp, g_iServerID, iType);
-				}
+				FormatEx(sQuery, sizeof(sQuery), "\
+						INSERT INTO `%s_comms` (`authid`, `name`, `created`, `ends`, `length`, `reason`, `aid`, `adminIp`, `sid`, `type`) \
+						VALUES ('%s', '%s', UNIX_TIMESTAMP(), UNIX_TIMESTAMP() + %d, %d, '%s', %s, '%s', %s, %d)", 
+					g_sDatabasePrefix, g_sTarget[iClient][TSTEAMID], sBanName, iTime, iTime, sReason, sQueryAdmin, sAdminIp, sServer, iType);
 			}
 		}
 		case TYPE_UNGAG, TYPE_UNMUTE, TYPE_UNSILENCE:
@@ -743,10 +748,10 @@ void CreateDB(int iClient, int iTarget, char[] sSteamIp = "")
 					iType = TYPEGAG;
 					if (g_iTargetMuteType[iTarget] == TYPESILENCE)
 					{
-						FormatEx(sQuery, sizeof(sQuery), "UPDATE  %s_comms \
-							SET     type = 1 \
-							WHERE   type = 3 AND authid = '%s' AND (length = '0' OR ends > UNIX_TIMESTAMP()) AND RemoveType IS NULL", 
-							g_sDatabasePrefix, g_sTarget[iClient][TSTEAMID]);
+						FormatEx(sQuery, sizeof(sQuery), "\
+								UPDATE `%s_comms` SET `type` = 1, `aid` = %s \
+								WHERE `type` = 3 AND `authid` REGEXP '^STEAM_[0-9]:%s$' AND (`length` = 0 OR `ends` > UNIX_TIMESTAMP()) AND `RemoveType` IS NULL", 
+							g_sDatabasePrefix, sQueryAdmin, g_sTarget[iClient][TSTEAMID][8]);
 						bSetQ = false;
 					}
 					if (iTarget)
@@ -755,19 +760,19 @@ void CreateDB(int iClient, int iTarget, char[] sSteamIp = "")
 						PrintToChat2(iTarget, "%T", "Target ungag", iTarget);
 					}
 					FireOnClientUnMuted(iClient, iTarget, g_sTarget[iClient][TIP], g_sTarget[iClient][TSTEAMID], g_sTarget[iClient][TNAME], TYPEGAG, g_sTarget[iClient][TREASON]);
-					ShowAdminAction(iClient, "%T", "UnGag show", iClient, g_sTarget[iClient][TNAME]);
+					ShowAdminAction(iClient, "%t", "UnGag show", g_sTarget[iClient][TNAME]);
 					FormatEx(sLog, sizeof(sLog), "\"%L\" un gag \"%s (%s IP_%s)\" (reason \"%s\")", iClient, g_sTarget[iClient][TNAME], g_sTarget[iClient][TSTEAMID], 
-										g_sTarget[iClient][TIP], g_sTarget[iClient][TREASON]);
+												g_sTarget[iClient][TIP], g_sTarget[iClient][TREASON]);
 				}
 				case TYPE_UNMUTE:
 				{
 					iType = TYPEMUTE;
 					if (g_iTargetMuteType[iTarget] == TYPESILENCE)
 					{
-						FormatEx(sQuery, sizeof(sQuery), "UPDATE  %s_comms \
-							SET     type = 2 \
-							WHERE   type = 3 AND authid = '%s' AND (length = '0' OR ends > UNIX_TIMESTAMP()) AND RemoveType IS NULL", 
-							g_sDatabasePrefix, g_sTarget[iClient][TSTEAMID]);
+						FormatEx(sQuery, sizeof(sQuery), "\
+								UPDATE `%s_comms` SET `type` = 2, `aid` = %s  \
+								WHERE `type` = 3 AND `authid` REGEXP '^STEAM_[0-9]:%s$' AND (`length` = 0 OR `ends` > UNIX_TIMESTAMP()) AND `RemoveType` IS NULL", 
+							g_sDatabasePrefix, sQueryAdmin, g_sTarget[iClient][TSTEAMID][8]);
 						bSetQ = false;
 					}
 					if (iTarget)
@@ -776,19 +781,20 @@ void CreateDB(int iClient, int iTarget, char[] sSteamIp = "")
 						PrintToChat2(iTarget, "%T", "Target unmute", iTarget);
 					}
 					FireOnClientUnMuted(iClient, iTarget, g_sTarget[iClient][TIP], g_sTarget[iClient][TSTEAMID], g_sTarget[iClient][TNAME], TYPEMUTE, g_sTarget[iClient][TREASON]);
-					ShowAdminAction(iClient, "%T", "UnMute show", iClient, g_sTarget[iClient][TNAME]);
+					ShowAdminAction(iClient, "%t", "UnMute show", g_sTarget[iClient][TNAME]);
 					FormatEx(sLog, sizeof(sLog), "\"%L\" un mute \"%s (%s IP_%s)\" (reason \"%s\")", iClient, g_sTarget[iClient][TNAME], g_sTarget[iClient][TSTEAMID], 
-										g_sTarget[iClient][TIP], g_sTarget[iClient][TREASON]);
+												g_sTarget[iClient][TIP], g_sTarget[iClient][TREASON]);
 				}
 				case TYPE_UNSILENCE:
 				{
 					iType = TYPESILENCE;
 					if (g_iTargetMuteType[iTarget] < TYPESILENCE)
 					{
-						FormatEx(sQuery, sizeof(sQuery), "UPDATE  %s_comms \
-							SET     RemovedBy = (SELECT aid FROM %s_admins WHERE authid = '%s' OR authid REGEXP '^STEAM_[0-9]:%s$'), RemoveType = 'U', RemovedOn = UNIX_TIMESTAMP(), ureason = '%s' \
-							WHERE 	authid = '%s' AND (length = '0' OR ends > UNIX_TIMESTAMP()) AND RemoveType IS NULL", 
-							g_sDatabasePrefix, g_sDatabasePrefix, sAdmin_SteamID, sAdmin_SteamID[8], sReason, g_sTarget[iClient][TSTEAMID]);
+						FormatEx(sQuery, sizeof(sQuery), "\
+								UPDATE `%s_comms` \
+								SET `RemovedBy` = %s, `RemoveType` = 'U', `RemovedOn` = UNIX_TIMESTAMP(), `ureason` = '%s' \
+								WHERE `authid` REGEXP '^STEAM_[0-9]:%s$' AND (`length` = 0 OR `ends` > UNIX_TIMESTAMP()) AND `RemoveType` IS NULL", 
+							g_sDatabasePrefix, sQueryAdmin, sReason, g_sTarget[iClient][TSTEAMID][8]);
 						bSetQ = false;
 					}
 					if (iTarget)
@@ -797,35 +803,30 @@ void CreateDB(int iClient, int iTarget, char[] sSteamIp = "")
 						PrintToChat2(iTarget, "%T", "Target unsilence", iTarget);
 					}
 					FireOnClientUnMuted(iClient, iTarget, g_sTarget[iClient][TIP], g_sTarget[iClient][TSTEAMID], g_sTarget[iClient][TNAME], TYPESILENCE, g_sTarget[iClient][TREASON]);
-					ShowAdminAction(iClient, "%T", "UnSilence show", iClient, g_sTarget[iClient][TNAME]);
+					ShowAdminAction(iClient, "%t", "UnSilence show", g_sTarget[iClient][TNAME]);
 					FormatEx(sLog, sizeof(sLog), "\"%L\" un silence \"%s (%s IP_%s)\" (reason \"%s\")", iClient, g_sTarget[iClient][TNAME], g_sTarget[iClient][TSTEAMID], 
-										g_sTarget[iClient][TIP], g_sTarget[iClient][TREASON]);
+												g_sTarget[iClient][TIP], g_sTarget[iClient][TREASON]);
 				}
 			}
 			if(bSetQ)
 			{
-				FormatEx(sQuery, sizeof(sQuery), "UPDATE  %s_comms \
-						SET     RemovedBy = (SELECT aid FROM %s_admins WHERE authid = '%s' OR authid REGEXP '^STEAM_[0-9]:%s$'), RemoveType = 'U', RemovedOn = UNIX_TIMESTAMP(), ureason = '%s' \
-						WHERE   type = %d AND authid = '%s' AND (length = '0' OR ends > UNIX_TIMESTAMP()) AND RemoveType IS NULL", 
-						g_sDatabasePrefix, g_sDatabasePrefix, sAdmin_SteamID, sAdmin_SteamID[8], sReason, iType, g_sTarget[iClient][TSTEAMID]);
+				FormatEx(sQuery, sizeof(sQuery), "\
+						UPDATE `%s_comms` \
+						SET `RemovedBy` = %s, `RemoveType` = 'U', `RemovedOn` = UNIX_TIMESTAMP(), `ureason` = '%s' \
+						WHERE `type` = %d AND `authid` REGEXP '^STEAM_[0-9]:%s$' AND (`length` = 0 OR `ends` > UNIX_TIMESTAMP()) AND `RemoveType` IS NULL", 
+					g_sDatabasePrefix, sQueryAdmin, sReason, iType, g_sTarget[iClient][TSTEAMID][8]);
 			}
 		}
 	}
 	
 	DataPack dPack = new DataPack();
-	if(iClient)
-		dPack.WriteCell(GetClientUserId(iClient));
-	else
-		dPack.WriteCell(iClient);
-	if(sSteamIp[0])
-		dPack.WriteString(sSteamIp);
-	else
-		dPack.WriteString(g_sTarget[iClient][TNAME]);
+	dPack.WriteCell((!iClient)?0:GetClientUserId(iClient));
+	dPack.WriteString(sSteamIp[0]?sSteamIp:g_sTarget[iClient][TNAME]);
 	dPack.WriteString(sQuery);
 
 	g_dDatabase.SetCharset("utf8");
 	g_dDatabase.Query(VerifyInsert, sQuery, dPack, DBPrio_High);
-#if DEBUG
+#if MADEBUG
 	LogToFile(g_sLogFile,"create bd: %s", sQuery);
 #endif
 	LogAction(iClient, -1, sLog);
@@ -839,26 +840,28 @@ public void VerifyInsert(Database db, DBResultSet dbRs, const char[] sError, any
 	int iClient = GetClientOfUserId(dPack.ReadCell());
 	char sTargetName[MAX_NAME_LENGTH];
 	dPack.ReadString(sTargetName, sizeof(sTargetName));
-
 	
 	if (!dbRs || sError[0])
 	{
 		LogToFile(g_sLogFile, "Verify Insert Query Failed: %s", sError);
-		char sQuery[1024];
-		dPack.ReadString(sQuery, sizeof(sQuery));
-		BekapStart(sQuery);
+		if (sError[0] == 'C' || sError[0] == 'L')
+		{
+			char sQuery[1024];
+			dPack.ReadString(sQuery, sizeof(sQuery));
+			BekapStart(sQuery);
+		}
 
-		if (iClient)
+		if (iClient && IsClientInGame(iClient))
 			PrintToChat2(iClient, "%T", "Failed to bd", iClient, sTargetName);
 		else
-			ReplyToCommand(iClient, "%s Failed to add to the database %s", PREFIX, sTargetName);
+			ReplyToCommand(iClient, "%s Failed to add to the database %s", MAPREFIX, sTargetName);
 	}
 	else
 	{
-		if (iClient)
+		if (iClient && IsClientInGame(iClient))
 			PrintToChat2(iClient, "%T", "Added to bd", iClient, sTargetName);
 		else
-			ReplyToCommand(iClient, "%s Added to the database %s", PREFIX, sTargetName);
+			ReplyToCommand(iClient, "%s Added to the database %s", MAPREFIX, sTargetName);
 	}
 	
 	delete dPack;
@@ -870,7 +873,7 @@ void CheckClientBan(int iClient)
 	char sSteamID[MAX_STEAMID_LENGTH];
 	GetClientAuthId(iClient, TYPE_STEAM, sSteamID, sizeof(sSteamID));
 	
-	if (sSteamID[0] == 'B' || sSteamID[9] == 'L' || g_dDatabase == null)
+	if (sSteamID[0] == 'B' || sSteamID[9] == 'L' || !g_dDatabase)
 		return;
 	
 	char sQuery[1204],
@@ -879,27 +882,27 @@ void CheckClientBan(int iClient)
 	
 	if(!g_bIgnoreBanServer)
 	{
-		FormatEx(sQuery, sizeof(sQuery), "SELECT a.bid, a.length, a.created, a.reason, b.user FROM %s_bans a LEFT JOIN %s_admins b ON a.aid=b.aid \
-					WHERE ((a.type = 0 AND a.authid REGEXP '^STEAM_[0-9]:%s$') OR (a.type = 1 AND a.ip = '%s')) \
-					AND (a.length = '0' OR a.ends > UNIX_TIMESTAMP()) AND a.RemoveType IS NULL", g_sDatabasePrefix, g_sDatabasePrefix, sSteamID[8], sIp);
+		FormatEx(sQuery, sizeof(sQuery), "\
+				SELECT a.`bid`, a.`length`, a.`created`, a.`reason`, b.`user` FROM `%s_bans` a LEFT JOIN `%s_admins` b ON a.`aid` = b.`aid` \
+				WHERE ((a.`type` = 0 AND a.`authid` REGEXP '^STEAM_[0-9]:%s$') OR (a.`type` = 1 AND a.`ip` = '%s')) \
+				AND (a.`length` = 0 OR a.`ends` > UNIX_TIMESTAMP()) AND a.`RemoveType` IS NULL", 
+			g_sDatabasePrefix, g_sDatabasePrefix, sSteamID[8], sIp);
 	}
 	else
 	{
+		char sServer[256];
 		if(g_iServerID == -1)
-		{
-			FormatEx(sQuery, sizeof(sQuery), "SELECT a.bid, a.length, a.created, a.reason, b.user FROM %s_bans a LEFT JOIN %s_admins b ON a.aid=b.aid \
-						WHERE ((a.type = 0 AND a.authid REGEXP '^STEAM_[0-9]:%s$') OR (a.type = 1 AND a.ip = '%s')) \
-						AND (a.length = '0' OR a.ends > UNIX_TIMESTAMP()) AND a.RemoveType IS NULL AND a.sid = (SELECT sid FROM %s_servers WHERE ip = '%s' AND port = '%s' LIMIT 0,1)", 
-						g_sDatabasePrefix, g_sDatabasePrefix, sSteamID[8], sIp, g_sDatabasePrefix, g_sServerIP, g_sServerPort);
-		}
+			FormatEx(sServer, sizeof(sServer), "(SELECT `sid` FROM `%s_servers` WHERE `ip` = '%s' AND `port` = '%s' LIMIT 1)", g_sDatabasePrefix, g_sServerIP, g_sServerPort);
 		else
-		{
-			FormatEx(sQuery, sizeof(sQuery), "SELECT a.bid, a.length, a.created, a.reason, b.user FROM %s_bans a LEFT JOIN %s_admins b ON a.aid=b.aid \
-						WHERE ((a.type = 0 AND a.authid REGEXP '^STEAM_[0-9]:%s$') OR (a.type = 1 AND a.ip = '%s')) \
-						AND (a.length = '0' OR a.ends > UNIX_TIMESTAMP()) AND a.RemoveType IS NULL AND a.sid = %d", g_sDatabasePrefix, g_sDatabasePrefix, sSteamID[8], sIp, g_iServerID);
-		}
+			IntToString(g_iServerID, sServer, sizeof(sServer));
+		
+		FormatEx(sQuery, sizeof(sQuery), "\
+				SELECT a.`bid`, a.`length`, a.`created`, a.`reason`, b.`user` FROM `%s_bans` a LEFT JOIN `%s_admins` b ON a.`aid` = b.`aid` \
+				WHERE ((a.`type` = 0 AND a.`authid` REGEXP '^STEAM_[0-9]:%s$') OR (a.`type` = 1 AND a.`ip` = '%s')) \
+				AND (a.`length` = 0 OR a.`ends` > UNIX_TIMESTAMP()) AND a.`RemoveType` IS NULL AND a.`sid` = %s", 
+			g_sDatabasePrefix, g_sDatabasePrefix, sSteamID[8], sIp, sServer);
 	}
-#if DEBUG
+#if MADEBUG
 	LogToFile(g_sLogFile, "Checking ban for: %s. QUERY: %s", sSteamID, sQuery);
 #endif
 	
@@ -917,7 +920,7 @@ public void VerifyBan(Database db, DBResultSet dbRs, const char[] sError, any iU
 
 	int iClient = GetClientOfUserId(iUserId);
 
-	if (!iClient)
+	if (!iClient || !IsClientInGame(iClient))
 		return;
 
 	char sSteamID[MAX_STEAMID_LENGTH];
@@ -954,22 +957,20 @@ public void VerifyBan(Database db, DBResultSet dbRs, const char[] sError, any iU
 		GetClientIP(iClient, sIP, sizeof(sIP));
 		GetClientName(iClient, sName, sizeof(sName));
 		g_dDatabase.Escape(sName, sEName, sizeof(sEName));
-
-		if (g_iServerID == -1)
-		{
-			FormatEx(sQuery, sizeof(sQuery), "INSERT INTO %s_banlog (sid ,time ,name ,bid) VALUES  \
-												((SELECT sid FROM %s_servers WHERE ip = '%s' AND port = '%s' LIMIT 0,1), UNIX_TIMESTAMP(), '%s', \
-												(SELECT bid FROM %s_bans WHERE ((type = 0 AND authid REGEXP '^STEAM_[0-9]:%s$') OR (type = 1 AND ip = '%s')) AND RemoveType IS NULL LIMIT 0,1))", 
-												g_sDatabasePrefix, g_sDatabasePrefix, g_sServerIP, g_sServerPort, sEName, g_sDatabasePrefix, sSteamID[8], sIP);
-		}
+		
+		char sServer[256];
+		if(g_iServerID == -1)
+			FormatEx(sServer, sizeof(sServer), "(SELECT `sid` FROM `%s_servers` WHERE `ip` = '%s' AND `port` = '%s' LIMIT 1)", g_sDatabasePrefix, g_sServerIP, g_sServerPort);
 		else
-		{
-			FormatEx(sQuery, sizeof(sQuery), "INSERT INTO %s_banlog (sid ,time ,name ,bid) VALUES  \
-												(%d, UNIX_TIMESTAMP(), '%s', \
-												(SELECT bid FROM %s_bans WHERE ((type = 0 AND authid REGEXP '^STEAM_[0-9]:%s$') OR (type = 1 AND ip = '%s')) AND RemoveType IS NULL LIMIT 0,1))", 
-												g_sDatabasePrefix, g_iServerID, sEName, g_sDatabasePrefix, sSteamID[8], sIP);
-		}
-	#if DEBUG
+			IntToString(g_iServerID, sServer, sizeof(sServer));
+
+		FormatEx(sQuery, sizeof(sQuery), "\
+				INSERT INTO `%s_banlog` (`sid` ,`time` ,`name` ,`bid`) \
+				VALUES (%s, UNIX_TIMESTAMP(), '%s', (SELECT `bid` FROM `%s_bans` WHERE ((`type` = 0 AND `authid` REGEXP '^STEAM_[0-9]:%s$') \
+				OR (`type` = 1 AND `ip` = '%s')) AND `RemoveType` IS NULL LIMIT 0,1))", 
+			g_sDatabasePrefix, sServer, sEName, g_sDatabasePrefix, sSteamID[8], sIP);
+
+	#if MADEBUG
 		LogToFile(g_sLogFile, "Ban log: QUERY: %s", sQuery);
 	#endif
 		g_dDatabase.SetCharset("utf8");
@@ -1000,38 +1001,15 @@ public void VerifyBan(Database db, DBResultSet dbRs, const char[] sError, any iU
 		if (g_iServerBanTime > 0)
 		{
 			DataPack dPack = new DataPack();
-			if (g_bServerBanTyp)
-				dPack.WriteString(sSteamID);
-			else
-				dPack.WriteString(sIP);
+			dPack.WriteString(g_bServerBanTyp?sSteamID:sIP);
 			CreateTimer(0.5, TimerBan, dPack);
 		}
 	}
 	else
 	{
 		g_bBanClientConnect[iClient] = false;
-		g_bNewConnect[iClient] = true;
+		CheckClientAdmin(iClient, sSteamID);
 		CheckClientMute(iClient, sSteamID);
-		
-		AdminId idAdmin = GetUserAdmin(iClient);
-		if(idAdmin != INVALID_ADMIN_ID)
-		{
-			int iExpire = GetAdminExpire(idAdmin);
-			if (iExpire)
-			{
-				if(iExpire > GetTime())
-				{
-					DataPack dPack = new DataPack();
-					dPack.WriteCell(GetClientUserId(iClient));
-					dPack.WriteCell(iExpire);
-					CreateTimer(15.0, TimerAdminExpire, dPack);
-				}
-				else
-					RemoveAdmin(idAdmin);
-			}
-		}
-		else
-			DelOflineInfo(sSteamID);	
 	}
 }
 
@@ -1048,40 +1026,35 @@ void CheckClientMute(int iClient, char[] sSteamID)
 	
 	if (!g_bIgnoreMuteServer)
 	{
-		FormatEx(sQuery, sizeof(sQuery), 
-				"SELECT    (ends - UNIX_TIMESTAMP()), type, ends, reason \
-				FROM        %s_comms \
-				WHERE       RemoveType IS NULL \
-							AND authid REGEXP '^STEAM_[0-9]:%s$' \
-							AND (length = '0' OR ends > UNIX_TIMESTAMP())", 
-		g_sDatabasePrefix, sSteamID[8]);
+		FormatEx(sQuery, sizeof(sQuery), "\
+				SELECT (c.`ends` - UNIX_TIMESTAMP()), c.`type`, c.`length`, c.`reason`, \
+                IF (a.`immunity` >= g.`immunity`, a.`immunity`, IFNULL(g.`immunity`, 0)) AS immunity, a.`authid` \
+				FROM `%s_comms` AS c \
+				LEFT JOIN `%s_admins` AS a ON a.`aid` = c.`aid` \
+				LEFT JOIN `%s_srvgroups` AS g ON g.`name` = a.`srv_group` \
+				WHERE `RemoveType` IS NULL  AND c.`authid` REGEXP '^STEAM_[0-9]:%s$' \
+                AND (`length` = 0 OR `ends` > UNIX_TIMESTAMP())", 
+			g_sDatabasePrefix, g_sDatabasePrefix, g_sDatabasePrefix, sSteamID[8]);
 	}
 	else
 	{
-		if (g_iServerID == -1)
-		{
-			FormatEx(sQuery, sizeof(sQuery), 
-					"SELECT    (ends - UNIX_TIMESTAMP()), type, ends, reason \
-					FROM        %s_comms \
-					WHERE       RemoveType IS NULL \
-								AND authid REGEXP '^STEAM_[0-9]:%s$' \
-								AND (length = '0' OR ends > UNIX_TIMESTAMP())\
-								AND sid = (SELECT sid FROM %s_servers WHERE ip = '%s' AND port = '%s' LIMIT 0,1)", 
-			g_sDatabasePrefix, sSteamID[8], g_sDatabasePrefix, g_sServerIP, g_sServerPort);
-		}
+		char sServer[256];
+		if(g_iServerID == -1)
+			FormatEx(sServer, sizeof(sServer), "(SELECT `sid` FROM `%s_servers` WHERE `ip` = '%s' AND `port` = '%s' LIMIT 1)", g_sDatabasePrefix, g_sServerIP, g_sServerPort);
 		else
-		{
-			FormatEx(sQuery, sizeof(sQuery), 
-					"SELECT    (ends - UNIX_TIMESTAMP()), type, ends, reason \
-					FROM        %s_comms \
-					WHERE       RemoveType IS NULL \
-								AND authid REGEXP '^STEAM_[0-9]:%s$' \
-								AND (length = '0' OR ends > UNIX_TIMESTAMP())\
-								AND sid = %d", 
-			g_sDatabasePrefix, sSteamID[8], g_iServerID);
-		}
+			IntToString(g_iServerID, sServer, sizeof(sServer));
+
+		FormatEx(sQuery, sizeof(sQuery), "\
+				SELECT (c.`ends` - UNIX_TIMESTAMP()), c.`type`, c.`length`, c.`reason`, \
+                IF (a.`immunity` >= g.`immunity`, a.`immunity`, IFNULL(g.`immunity`, 0)) AS immunity, a.`authid` \
+				FROM `%s_comms` AS c \
+				LEFT JOIN `%s_admins` AS a ON a.`aid` = c.`aid` \
+				LEFT JOIN `%s_srvgroups` AS g ON g.`name` = a.`srv_group` \
+				WHERE `RemoveType` IS NULL  AND c.`authid` REGEXP '^STEAM_[0-9]:%s$' \
+                AND (`length` = 0 OR `ends` > UNIX_TIMESTAMP()) AND `sid` = %s", 
+			g_sDatabasePrefix, g_sDatabasePrefix, g_sDatabasePrefix, sSteamID[8], sServer);
 	}
-#if DEBUG
+#if MADEBUG
 	LogToFile(g_sLogFile, "Check Mute: %s. QUERY: %s", sSteamID, sQuery);
 #endif
 	g_dDatabase.Query(VerifyMute, sQuery, GetClientUserId(iClient), DBPrio_High);
@@ -1097,7 +1070,7 @@ public void VerifyMute(Database db, DBResultSet dbRs, const char[] sError, any i
 
 	int iClient = GetClientOfUserId(iUserId);
 	
-	if (!iClient)
+	if (!iClient || !IsClientInGame(iClient))
 		return;
 
 	if (dbRs.FetchRow())
@@ -1107,11 +1080,17 @@ public void VerifyMute(Database db, DBResultSet dbRs, const char[] sError, any i
 		if (iType > 1)
 		{
 			g_iTargenMuteTime[iClient] = dbRs.FetchInt(2);
-			dbRs.FetchString(3, g_iTargetMuteReason[iClient], sizeof(g_iTargetMuteReason[]));
+			dbRs.FetchString(3, g_sTargetMuteReason[iClient], sizeof(g_sTargetMuteReason[]));
+
+			dbRs.FetchString(5, g_sTargetMuteSteamAdmin[iClient], sizeof(g_sTargetMuteSteamAdmin[]));
+			if (StrEqual(g_sTargetMuteSteamAdmin[iClient], "STEAM_ID_SERVER"))
+				g_iTargenMuteImun[iClient] = g_iServerImmune;
+			else
+				g_iTargenMuteImun[iClient] = dbRs.FetchInt(4);
 		}
 			
-	#if DEBUG
-		LogToFile(g_sLogFile, "Fetched from DB: time %d, type %d", iTime, iType);
+	#if MADEBUG
+		LogToFile(g_sLogFile, "CheckClientMute: set %N, time %d, type %d", iClient, iTime, iType);
 	#endif
 			
 		g_iTargetMuteType[iClient] = iType;
@@ -1128,8 +1107,8 @@ public void VerifyMute(Database db, DBResultSet dbRs, const char[] sError, any i
 	}
 	else
 	{
-	#if DEBUG
-		LogToFile(g_sLogFile, "Fetched from DB: set %N type 0", iClient);
+	#if MADEBUG
+		LogToFile(g_sLogFile, "CheckClientMute: set %N type 0", iClient);
 	#endif
 		g_iTargetMuteType[iClient] = 0;
 	}
@@ -1139,10 +1118,32 @@ public void VerifyMute(Database db, DBResultSet dbRs, const char[] sError, any i
 // работа с админами
 void AdminHash()
 {
+	if (g_dDatabase)
+	{
+		DeleteFile(g_sGroupsLoc);
+		DeleteFile(g_sAdminsLoc);
+		DeleteFile(g_sOverridesLoc);
+		DumpAdminCache(AdminCache_Groups, true);
+		DumpAdminCache(AdminCache_Overrides, true);
+		DumpAdminCache(AdminCache_Admins, true);
+	}
+	else
+	{
+		ReadOverrides();
+		ReadGroups();
+		ReadUsers();
+		return;
+	}
+	
 	char sQuery[204];
-	FormatEx(sQuery, sizeof(sQuery), "SELECT type, name, flags FROM %s_overrides", g_sDatabasePrefix);
+
+	FormatEx(sQuery, sizeof(sQuery), "\
+			SELECT `type`, `name`, `flags` \
+			FROM `%s_overrides`", 
+		g_sDatabasePrefix);
+
 	g_dDatabase.SetCharset("utf8");
-	g_dDatabase.Query(OverridesDone, sQuery);
+	g_dDatabase.Query(OverridesDone, sQuery, _, DBPrio_High);
 }
 
 public void OverridesDone(Database db, DBResultSet dbRs, const char[] sError, any iData)
@@ -1176,7 +1177,7 @@ public void OverridesDone(Database db, DBResultSet dbRs, const char[] sError, an
 				kvOverrides.SetString(sName, sFlags);
 			}
 			
-		#if DEBUG
+		#if MADEBUG
 			LogToFile(g_sLogFile, "Adding override (%s, %s, %s)", sType, sName, sFlags);
 		#endif
 		}
@@ -1189,9 +1190,16 @@ public void OverridesDone(Database db, DBResultSet dbRs, const char[] sError, an
 	ReadOverrides();
 	
 	char sQuery[254];
-	FormatEx(sQuery, sizeof(sQuery), "SELECT name, flags, immunity FROM %s_srvgroups ORDER BY id", g_sDatabasePrefix);
+
+	FormatEx(sQuery, sizeof(sQuery), "\
+			SELECT `name`, `flags`, `immunity`, `maxbantime`, `maxmutetime` \
+			FROM `%s_srvgroups` ORDER BY `id`", 
+		g_sDatabasePrefix);
+#if MADEBUG
+	LogToFile(g_sLogFile, "GroupsDone:QUERY: %s", sQuery);
+#endif
 	g_dDatabase.SetCharset("utf8");
-	g_dDatabase.Query(GroupsDone, sQuery);
+	g_dDatabase.Query(GroupsDone, sQuery, _, DBPrio_High);
 }
 
 public void GroupsDone(Database db, DBResultSet dbRs, const char[] sError, any iData)
@@ -1202,8 +1210,10 @@ public void GroupsDone(Database db, DBResultSet dbRs, const char[] sError, any i
 	{
 		char sGrpName[128], 
 			sGrpFlags[32];
-		int iImmunity;
-	#if DEBUG
+		int iImmunity,
+			iMaxBanTime = -1,
+			iMaxMuteTime = -1;
+	#if MADEBUG
 		int	iGrpCount = 0;
 	#endif
 		KeyValues kvGroups = new KeyValues("groups");
@@ -1221,6 +1231,18 @@ public void GroupsDone(Database db, DBResultSet dbRs, const char[] sError, any i
 			dbRs.FetchString(0, sGrpName, sizeof(sGrpName));
 			dbRs.FetchString(1, sGrpFlags, sizeof(sGrpFlags));
 			iImmunity = dbRs.FetchInt(2);
+		#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR == 7
+			if (!SQL_IsFieldNull(dbRs, 3))
+		#else
+			if (!dbRs.IsFieldNull(3))
+		#endif
+				iMaxBanTime = dbRs.FetchInt(3);
+		#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR == 7
+			if (!SQL_IsFieldNull(dbRs, 4))
+		#else
+			if (!dbRs.IsFieldNull(4))
+		#endif
+				iMaxMuteTime = dbRs.FetchInt(4);
 			
 			TrimString(sGrpName);
 			TrimString(sGrpFlags);
@@ -1234,10 +1256,13 @@ public void GroupsDone(Database db, DBResultSet dbRs, const char[] sError, any i
 				kvGroups.SetString("flags", sGrpFlags);
 			if (iImmunity)
 				kvGroups.SetNum("immunity", iImmunity);
+			
+			kvGroups.SetNum("maxbantime", iMaxBanTime);
+			kvGroups.SetNum("maxmutetime", iMaxMuteTime);
 				
 			kvGroups.Rewind();
 			
-		#if DEBUG
+		#if MADEBUG
 			LogToFile(g_sLogFile, "Add %s Group", sGrpName);
 			iGrpCount++;
 		#endif
@@ -1246,15 +1271,22 @@ public void GroupsDone(Database db, DBResultSet dbRs, const char[] sError, any i
 		kvGroups.ExportToFile(g_sGroupsLoc);
 		delete kvGroups;
 		
-	#if DEBUG
+	#if MADEBUG
 		LogToFile(g_sLogFile, "Finished loading %i groups.", iGrpCount);
 	#endif
 	}
 	
 	// Load the group overrides
 	char sQuery[512];
-	FormatEx(sQuery, sizeof(sQuery), "SELECT sg.name, so.type, so.name, so.access FROM %s_srvgroups_overrides so LEFT JOIN %s_srvgroups sg ON sg.id = so.group_id ORDER BY sg.id", g_sDatabasePrefix, g_sDatabasePrefix);
-	g_dDatabase.Query(LoadGroupsOverrides, sQuery);
+
+	FormatEx(sQuery, sizeof(sQuery), "\
+			SELECT sg.`name`, so.`type`, so.`name`, so.`access` \
+			FROM `%s_srvgroups_overrides` so LEFT JOIN `%s_srvgroups` sg ON sg.`id` = so.`group_id` ORDER BY sg.`id`", 
+		g_sDatabasePrefix, g_sDatabasePrefix);
+#if MADEBUG
+	LogToFile(g_sLogFile, "LoadGroupsOverrides:QUERY: %s", sQuery);
+#endif
+	g_dDatabase.Query(LoadGroupsOverrides, sQuery, _, DBPrio_High);
 }
 
 public void LoadGroupsOverrides(Database db, DBResultSet dbRs, const char[] sError, any iData)
@@ -1302,7 +1334,7 @@ public void LoadGroupsOverrides(Database db, DBResultSet dbRs, const char[] sErr
 				kvGroups.Rewind();
 			}
 			
-		#if DEBUG
+		#if MADEBUG
 			LogToFile(g_sLogFile, "Adding group %s override (%s, %s)", sGroupName, sType, sCommand);
 		#endif
 		}
@@ -1313,31 +1345,27 @@ public void LoadGroupsOverrides(Database db, DBResultSet dbRs, const char[] sErr
 	
 	ReadGroups();
 	
-	char sQuery[1204];
-	if (g_iServerID == -1)
-	{
-		FormatEx(sQuery, sizeof(sQuery), "SELECT authid, srv_password, (SELECT name FROM %s_srvgroups WHERE name = srv_group AND flags != '') AS srv_group, srv_flags, user, immunity, expired  \
-						FROM %s_admins_servers_groups AS asg \
-						LEFT JOIN %s_admins AS a ON a.aid = asg.admin_id \
-						WHERE (expired > UNIX_TIMESTAMP() OR expired = 0 OR expired = NULL) AND \
-						((server_id = (SELECT sid FROM %s_servers WHERE ip = '%s' AND port = '%s' LIMIT 0,1)  \
-						OR srv_group_id = ANY (SELECT group_id FROM %s_servers_groups WHERE server_id = (SELECT sid FROM %s_servers WHERE ip = '%s' AND port = '%s' LIMIT 0,1)))) \
-						GROUP BY aid, authid, srv_password, srv_group, srv_flags, user", 
-				g_sDatabasePrefix, g_sDatabasePrefix, g_sDatabasePrefix, g_sDatabasePrefix, g_sServerIP, g_sServerPort, g_sDatabasePrefix, g_sDatabasePrefix, g_sServerIP, g_sServerPort);
-	} 
-	else 
-	{
-		FormatEx(sQuery, sizeof(sQuery), "SELECT authid, srv_password, (SELECT name FROM %s_srvgroups WHERE name = srv_group AND flags != '') AS srv_group, srv_flags, user, immunity, expired  \
-						FROM %s_admins_servers_groups AS asg \
-						LEFT JOIN %s_admins AS a ON a.aid = asg.admin_id \
-						WHERE (expired > UNIX_TIMESTAMP() OR expired = 0 OR expired = NULL) AND \
-						(server_id = %d OR srv_group_id = ANY (SELECT group_id FROM %s_servers_groups WHERE server_id = %d)) \
-						GROUP BY aid, authid, srv_password, srv_group, srv_flags, user", 
-				g_sDatabasePrefix, g_sDatabasePrefix, g_sDatabasePrefix, g_iServerID, g_sDatabasePrefix, g_iServerID);
-	}
-	g_aAdminsExpired.Clear();
+	char sQuery[1204],
+		sServer[256];
+	if(g_iServerID == -1)
+		FormatEx(sServer, sizeof(sServer), "(SELECT `sid` FROM `%s_servers` WHERE `ip` = '%s' AND `port` = '%s' LIMIT 1)", g_sDatabasePrefix, g_sServerIP, g_sServerPort);
+	else
+		IntToString(g_iServerID, sServer, sizeof(sServer));
+
+	FormatEx(sQuery, sizeof(sQuery), "\
+			SELECT `authid`, `srv_password`, (SELECT `name` FROM `%s_srvgroups` WHERE `name` = `srv_group` AND `flags` != '') \
+			AS `srv_group`, `srv_flags`, `user`, `immunity`, `expired`, `extraflags`  \
+			FROM `%s_admins_servers_groups` AS asg LEFT JOIN `%s_admins` AS a ON a.`aid` = asg.`admin_id` \
+			WHERE (`expired` > UNIX_TIMESTAMP() OR `expired` = 0 OR `expired` = NULL) \
+			AND `authid` != 'STEAM_ID_SERVER' \
+			AND ((`server_id` = %s OR `srv_group_id` = ANY (SELECT `group_id` FROM `%s_servers_groups` \
+			WHERE `server_id` = %s))) GROUP BY `aid`, `authid`, `srv_password`, `srv_group`, `srv_flags`, `user`", 
+		g_sDatabasePrefix, g_sDatabasePrefix, g_sDatabasePrefix, sServer, g_sDatabasePrefix, sServer);
+#if MADEBUG
+	LogToFile(g_sLogFile, "AdminsDone:QUERY: %s", sQuery);
+#endif
 	g_dDatabase.SetCharset("utf8");
-	g_dDatabase.Query(AdminsDone, sQuery);
+	g_dDatabase.Query(AdminsDone, sQuery, _, DBPrio_High);
 }
 
 public void AdminsDone(Database db, DBResultSet dbRs, const char[] sError, any iData)
@@ -1353,11 +1381,12 @@ public void AdminsDone(Database db, DBResultSet dbRs, const char[] sError, any i
 			sGroups[256],
 			sFlags[32],
 			sName[66];
-	#if DEBUG
+	#if MADEBUG
 		int iAdmCount = 0;
 	#endif
 		int iImmunity = 0,
-			iExpire = 0;
+			iExpire = 0,
+			iExtraflags = 0;
 		KeyValues kvAdmins = new KeyValues("admins");
 		
 		while (dbRs.MoreRows)
@@ -1378,6 +1407,7 @@ public void AdminsDone(Database db, DBResultSet dbRs, const char[] sError, any i
 			
 			iImmunity = dbRs.FetchInt(5);
 			iExpire = dbRs.FetchInt(6);
+			iExtraflags = dbRs.FetchInt(7);
 			
 			TrimString(sName);
 			TrimString(sIdentity);
@@ -1387,6 +1417,11 @@ public void AdminsDone(Database db, DBResultSet dbRs, const char[] sError, any i
 			kvAdmins.JumpToKey(sName, true);
 				
 			kvAdmins.SetString("auth", sAuthType);
+			
+			if (g_iGameTyp >= GAMETYP_CSGO) // костыль из-за говно игры
+				ReplaceString(sIdentity, sizeof(sIdentity), "STEAM_0", "STEAM_1");
+			else
+				ReplaceString(sIdentity, sizeof(sIdentity), "STEAM_1", "STEAM_0");
 			kvAdmins.SetString("identity", sIdentity);
 				
 			if (sFlags[0])
@@ -1403,10 +1438,12 @@ public void AdminsDone(Database db, DBResultSet dbRs, const char[] sError, any i
 			
 			if (iExpire)
 				kvAdmins.SetNum("expire", iExpire);
+			
+			kvAdmins.SetNum("webflag", iExtraflags);
 				
 			kvAdmins.Rewind();
 			
-		#if DEBUG
+		#if MADEBUG
 			LogToFile(g_sLogFile, "Add %s (%s) admin", sName, sIdentity);
 			++iAdmCount;
 		#endif
@@ -1414,7 +1451,7 @@ public void AdminsDone(Database db, DBResultSet dbRs, const char[] sError, any i
 		
 		kvAdmins.ExportToFile(g_sAdminsLoc);
 		delete kvAdmins;
-	#if DEBUG
+	#if MADEBUG
 		LogToFile(g_sLogFile, "Finished loading %i admins.", iAdmCount);
 	#endif
 	}
@@ -1430,10 +1467,10 @@ void BekapStart(char[] sQuery)
 	char sQuerys[2524],
 		sEQuery[2124];
 	g_dSQLite.Escape(sQuery, sEQuery, sizeof(sEQuery));
-	FormatEx(sQuerys, sizeof(sQuerys), "INSERT INTO `bekap` (query) VALUES ('%s')", sEQuery);
-	g_dSQLite.Query(SQL_Callback_AddQueryBekap, sQuerys);
+	FormatEx(sQuerys, sizeof(sQuerys), "INSERT INTO `bekap` (`query`) VALUES ('%s')", sEQuery);
+	g_dSQLite.Query(SQL_Callback_AddQueryBekap, sQuerys, _, DBPrio_Low);
 	
-#if DEBUG
+#if MADEBUG
 	LogToFile(g_sLogFile, "BekapStart:QUERY: %s", sQuery);
 #endif
 	
@@ -1451,7 +1488,7 @@ void SentBekapInBd()
 {
 	char sQuery[1024];
 	FormatEx(sQuery, sizeof(sQuery), "SELECT `id`, `query` FROM `bekap`");
-	g_dSQLite.Query(SQL_Callback_QueryBekap, sQuery);
+	g_dSQLite.Query(SQL_Callback_QueryBekap, sQuery, _, DBPrio_Low);
 }
 
 public void SQL_Callback_QueryBekap(Database db, DBResultSet dbRs, const char[] sError, any iData)
@@ -1463,15 +1500,18 @@ public void SQL_Callback_QueryBekap(Database db, DBResultSet dbRs, const char[] 
 	{
 		char sQuery[1024];
 		int iId;
-		while(dbRs.FetchRow())
+		while(dbRs.MoreRows)
 		{
+			if(!dbRs.FetchRow())
+				continue;
+
 			iId = dbRs.FetchInt(0);
 			dbRs.FetchString(1, sQuery, sizeof(sQuery));
-		#if DEBUG
+		#if MADEBUG
 			LogToFile(g_sLogFile, "QueryBekap:QUERY: %s", sQuery);
 		#endif
 			g_dDatabase.SetCharset("utf8");
-			g_dDatabase.Query(CheckCallbackBekap, sQuery, iId, DBPrio_High);
+			g_dDatabase.Query(CheckCallbackBekap, sQuery, iId, DBPrio_Low); // байда с зависанием скрипта
 		}
 	}
 }
@@ -1487,9 +1527,9 @@ public void CheckCallbackBekap(Database db, DBResultSet dbRs, const char[] sErro
 	else
 	{
 		char sQuery[256];
-		FormatEx(sQuery, sizeof(sQuery), "DELETE FROM `bekap` WHERE `id` = '%d'", iId);
-		g_dSQLite.Query(SQL_Callback_DeleteBekap, sQuery);
-	#if DEBUG
+		FormatEx(sQuery, sizeof(sQuery), "DELETE FROM `bekap` WHERE `id` = %d", iId);
+		g_dSQLite.Query(SQL_Callback_DeleteBekap, sQuery, _, DBPrio_Low);
+	#if MADEBUG
 		LogToFile(g_sLogFile, "DeleteBekap:QUERY: %s", sQuery);
 	#endif
 	}
@@ -1539,26 +1579,30 @@ void SetBdReport(int iClient, const char[] sReason)
 	g_dDatabase.Escape(sReportName, sEReportName, sizeof(sEReportName));
 	g_dDatabase.Escape(sName, sEName, sizeof(sEName));
 	
+	char sServer[256],
+		 sModId[256];
 	if(g_iServerID == -1)
 	{
-		FormatEx(sQuery, sizeof(sQuery), "INSERT INTO    %s_submissions (submitted, SteamId, name, email, ModID, reason, ip, subname, sip, archiv, server) \
-										VALUES         	(UNIX_TIMESTAMP(), '%s', '%s', '%s', (SELECT modid FROM %s_servers WHERE ip = '%s' AND port = '%s' LIMIT 1), \
-										'%s', '%s', '%s', '%s', 0, (SELECT sid FROM %s_servers WHERE ip = '%s' AND port = '%s' LIMIT 1))", 
-				g_sDatabasePrefix, sReport_SteamID, sEReportName, sSteamID, g_sDatabasePrefix, g_sServerIP, g_sServerPort, sEReason, sIp, sEName, sReportIp, g_sServerIP, g_sServerPort);
+		FormatEx(sServer, sizeof(sServer), "(SELECT `sid` FROM `%s_servers` WHERE `ip` = '%s' AND `port` = '%s' LIMIT 1)", g_sDatabasePrefix, g_sServerIP, g_sServerPort);
+		FormatEx(sModId, sizeof(sModId), "(SELECT `modid` FROM `%s_servers` WHERE `ip` = '%s' AND `port` = '%s' LIMIT 1)", g_sDatabasePrefix, g_sServerIP, g_sServerPort);
 	}
 	else
 	{
-		FormatEx(sQuery, sizeof(sQuery), "INSERT INTO   %s_submissions (submitted, SteamId, name, email, ModID, reason, ip, subname, sip, archiv, server) \
-										VALUES         (UNIX_TIMESTAMP(), '%s', '%s', '%s', (SELECT modid FROM %s_servers WHERE sid = %d LIMIT 1), '%s', '%s', '%s', '%s', 0, %d)", 
-				g_sDatabasePrefix, sReport_SteamID, sEReportName, sSteamID, g_sDatabasePrefix, g_iServerID, sEReason, sIp, sEName, sReportIp, g_iServerID);
+		IntToString(g_iServerID, sServer, sizeof(sServer));
+		FormatEx(sModId, sizeof(sModId), "(SELECT `modid` FROM `%s_servers` WHERE `sid` = %d LIMIT 1)", g_sDatabasePrefix, g_iServerID);
 	}
+	
+	FormatEx(sQuery, sizeof(sQuery), "\
+			INSERT INTO  `%s_submissions` (`submitted`, `SteamId`, `name`, `email`, `ModID`, `reason`, `ip`, `subname`, `sip`, `archiv`, `server`) \
+			VALUES (UNIX_TIMESTAMP(), '%s', '%s', '%s', %s, '%s', '%s', '%s', '%s', 0, %s)", 
+		g_sDatabasePrefix, sReport_SteamID, sEReportName, sSteamID, sModId, sEReason, sIp, sEName, sReportIp, sServer);
 	
 	DataPack dPack = new DataPack();
 	dPack.WriteCell(GetClientUserId(iClient));
 	dPack.WriteString(sReportName);
 	dPack.WriteString(sQuery);
 	
-#if DEBUG
+#if MADEBUG
 	LogToFile(g_sLogFile, "SetBdReport:QUERY: %s", sQuery);
 #endif
 	g_dDatabase.SetCharset("utf8");
@@ -1575,9 +1619,12 @@ public void CheckCallbackReport(Database db, DBResultSet dbRs, const char[] sErr
 	if (!dbRs || sError[0])
 	{
 		LogToFile(g_sLogFile, "SQL_CheckCallbackReport: %s", sError);
-		char sQuery[1024];
-		dPack.ReadString(sQuery, sizeof(sQuery));
-		BekapStart(sQuery);
+		if (sError[0] == 'C' || sError[0] == 'L')
+		{
+			char sQuery[1024];
+			dPack.ReadString(sQuery, sizeof(sQuery));
+			BekapStart(sQuery);
+		}
 	}
 
 	if (iClient)
@@ -1586,7 +1633,7 @@ public void CheckCallbackReport(Database db, DBResultSet dbRs, const char[] sErr
 	delete dPack;
 }
 //---------------------------------------------------------------------------------------------------------------------
-public Action OnBanClient(int iClient, int iTime, int flags, const char[] sReason, const char[] kick_message, const char[] command, any source)
+public Action OnBanClient(int iClient, int iTime, int iFlags, const char[] sReason, const char[] kick_message, const char[] command, any source)
 {
 	if (IsClientInGame(iClient))
 	{
@@ -1603,20 +1650,20 @@ public Action OnBanClient(int iClient, int iTime, int flags, const char[] sReaso
 		g_dDatabase.Escape(sReason, sEReason, sizeof(sEReason));
 		g_dDatabase.Escape(sName, sEName, sizeof(sEName));
 		
-		if(g_iServerID == -1) 
-		{
-			FormatEx(sQuery, sizeof(sQuery), "INSERT INTO %s_bans (ip, authid, name, created, ends, length, reason, aid, adminIp, sid, country) \
-											VALUES ('%s', '%s', '%s', UNIX_TIMESTAMP(), UNIX_TIMESTAMP() + %d, %d, '%s', 0, '%s', \
-											(SELECT sid FROM %s_servers WHERE ip = '%s' AND port = '%s' LIMIT 0,1), ' ')", 
-			g_sDatabasePrefix, sIp, sSteamID, sEName, iTime*60, iTime*60, sEReason ,g_sServerIP, g_sDatabasePrefix, g_sServerIP, g_sServerPort);
-		}
+		//if (iFlags)
+		
+		char sServer[256];
+		if(g_iServerID == -1)
+			FormatEx(sServer, sizeof(sServer), "(SELECT `sid` FROM `%s_servers` WHERE `ip` = '%s' AND `port` = '%s' LIMIT 1)", g_sDatabasePrefix, g_sServerIP, g_sServerPort);
 		else
-		{
-			FormatEx(sQuery, sizeof(sQuery), "INSERT INTO %s_bans (ip, authid, name, created, ends, length, reason, aid, adminIp, sid, country) \
-											VALUES ('%s', '%s', '%s', UNIX_TIMESTAMP(), UNIX_TIMESTAMP() + %d, %d, '%s', 0, '%s', %d, ' ')",
-			g_sDatabasePrefix, sIp, sSteamID, sEName, iTime*60, iTime*60, sEReason, g_sServerIP, g_iServerID);	
-		}
-	#if DEBUG
+			IntToString(g_iServerID, sServer, sizeof(sServer));
+		
+		FormatEx(sQuery, sizeof(sQuery), "\
+				INSERT INTO `%s_bans` (`ip`, `authid`, `name`, `created`, `ends`, `length`, `reason`, `aid`, `adminIp`, `sid`, `country`) \
+				VALUES ('%s', '%s', '%s', UNIX_TIMESTAMP(), UNIX_TIMESTAMP() + %d, %d, '%s', 0, '%s', %s, ' ')", 
+			g_sDatabasePrefix, sIp, sSteamID, sEName, iTime*60, iTime*60, sEReason, g_sServerIP, sServer);
+
+	#if MADEBUG
 		LogToFile(g_sLogFile, "OnBanClient:QUERY: %s", sQuery);
 	#endif
 		
@@ -1633,43 +1680,30 @@ public Action OnBanIdentity(const char[] sIdentity, int iTime, int flags, const 
 {
 	char sQuery[1012],
 		sEReason[516];
+	int iTyp;
 		
 	g_dDatabase.Escape(sReason, sEReason, sizeof(sEReason));
-	if (strncmp(sIdentity, "STEAM_", 6) == 0)
-	{
-		if(g_iServerID == -1) 
-		{
-			FormatEx(sQuery, sizeof(sQuery), "INSERT INTO %s_bans (type, authid, created, ends, length, reason, aid, adminIp, sid, country) \
-											VALUES (0, '%s', UNIX_TIMESTAMP(), UNIX_TIMESTAMP() + %d, %d, '%s', \
-											0, '%s', (SELECT sid FROM %s_servers WHERE ip = '%s' AND port = '%s' LIMIT 0,1), ' ')", 
-			g_sDatabasePrefix, sIdentity, iTime*60, iTime*60, sEReason, g_sServerIP, g_sDatabasePrefix, g_sServerIP, g_sServerPort);
-		}
-		else
-		{
-			FormatEx(sQuery, sizeof(sQuery), "INSERT INTO %s_bans (type, authid, name, created, ends, length, reason, aid, adminIp, sid, country) \
-											VALUES (0, '%s', UNIX_TIMESTAMP(), UNIX_TIMESTAMP() + %d, %d, '%s', 0, '%s', %d, ' ')",
-			g_sDatabasePrefix, sIdentity, iTime*60, iTime*60, sEReason, g_sServerIP, g_iServerID);	
-		}
-	}
-	else if (sIdentity[0] == '[')
+	
+	if (sIdentity[0] == '[')
 		return Plugin_Continue;
+	else if (sIdentity[0] == 'S')
+		iTyp = 0;
 	else
-	{
-		if(g_iServerID == -1) 
-		{
-			FormatEx(sQuery, sizeof(sQuery), "INSERT INTO %s_bans (type, ip, created, ends, length, reason, aid, adminIp, sid, country) \
-											VALUES (0, '%s', UNIX_TIMESTAMP(), UNIX_TIMESTAMP() + %d, %d, '%s', \
-											0, '%s', (SELECT sid FROM %s_servers WHERE ip = '%s' AND port = '%s' LIMIT 0,1), ' ')", 
-			g_sDatabasePrefix, sIdentity, iTime*60, iTime*60, sEReason, g_sServerIP, g_sDatabasePrefix, g_sServerIP, g_sServerPort);
-		}
-		else
-		{
-			FormatEx(sQuery, sizeof(sQuery), "INSERT INTO %s_bans (type, ip, name, created, ends, length, reason, aid, adminIp, sid, country) \
-											VALUES (0, '%s', UNIX_TIMESTAMP(), UNIX_TIMESTAMP() + %d, %d, '%s', 0, '%s', %d, ' ')",
-			g_sDatabasePrefix, sIdentity, iTime*60, iTime*60, sEReason, g_sServerIP, g_iServerID);	
-		}
-	}
-#if DEBUG
+		iTyp = 1;
+	
+	char sServer[256];
+	if(g_iServerID == -1)
+		FormatEx(sServer, sizeof(sServer), "(SELECT `sid` FROM `%s_servers` WHERE `ip` = '%s' AND `port` = '%s' LIMIT 1)", g_sDatabasePrefix, g_sServerIP, g_sServerPort);
+	else
+		IntToString(g_iServerID, sServer, sizeof(sServer));
+	
+	FormatEx(sQuery, sizeof(sQuery), "\
+			INSERT INTO `%s_bans` (`type`, `authid`, `ip`, `created`, `ends`, `length`, `reason`, `aid`, `adminIp`, `sid`, `country`) \
+			VALUES (%d, '%s', UNIX_TIMESTAMP(), UNIX_TIMESTAMP() + %d, %d, '%s', 0, '%s', %s, ' ')", 
+		g_sDatabasePrefix, iTyp, iTyp?sIdentity:"", iTyp?"":sIdentity, iTime*60, iTime*60, sEReason, g_sServerIP, sServer);
+	
+
+#if MADEBUG
 	LogToFile(g_sLogFile, "OnBanIdentity:QUERY: %s", sQuery);
 #endif
 	DataPack dPack = new DataPack();
@@ -1683,21 +1717,23 @@ public Action OnBanIdentity(const char[] sIdentity, int iTime, int flags, const 
 public Action OnRemoveBan(const char[] sIdentity, int flags, const char[] command, any source)
 {
 	char sQuery[1012];
-	if (strncmp(sIdentity, "STEAM_", 6) == 0)
-	{
-		FormatEx(sQuery, sizeof(sQuery), "UPDATE %s_bans SET RemovedBy = 0, RemoveType = 'U', RemovedOn = UNIX_TIMESTAMP() \
-										WHERE (type = 0 AND authid = '%s') AND (length = '0' OR ends > UNIX_TIMESTAMP()) AND RemoveType IS NULL", 
-		g_sDatabasePrefix, sIdentity);
-	}
-	else if (sIdentity[0] == '[')
+	if (sIdentity[0] == '[')
 		return Plugin_Continue;
+	else if (sIdentity[0] == 'S')
+	{
+		FormatEx(sQuery, sizeof(sQuery), "\
+				UPDATE `%s_bans` SET `RemovedBy` = 0, `RemoveType` = 'U', `RemovedOn` = UNIX_TIMESTAMP() \
+				WHERE (`type` = 0 AND `authid` REGEXP '^STEAM_[0-9]:%s$') AND (`length` = 0 OR `ends` > UNIX_TIMESTAMP()) AND `RemoveType` IS NULL", 
+			g_sDatabasePrefix, sIdentity[8]);
+	}
 	else 
 	{
-		FormatEx(sQuery, sizeof(sQuery), "UPDATE %s_bans SET RemovedBy = 0, RemoveType = 'U', RemovedOn = UNIX_TIMESTAMP()\
-									WHERE (type = 1 AND ip = '%s') AND (length = '0' OR ends > UNIX_TIMESTAMP()) AND RemoveType IS NULL", 
-		g_sDatabasePrefix, sIdentity);
+		FormatEx(sQuery, sizeof(sQuery), "\
+				UPDATE `%s_bans` SET `RemovedBy` = 0, `RemoveType` = 'U', `RemovedOn` = UNIX_TIMESTAMP()\
+				WHERE (`type` = 1 AND `ip` = '%s') AND (`length` = 0 OR `ends` > UNIX_TIMESTAMP()) AND `RemoveType` IS NULL", 
+			g_sDatabasePrefix, sIdentity);
 	}
-#if DEBUG
+#if MADEBUG
 	LogToFile(g_sLogFile, "OnRemoveBan:QUERY: %s", sQuery);
 #endif
 	DataPack dPack = new DataPack();
@@ -1719,6 +1755,250 @@ public void CallbackForwards(Database db, DBResultSet dbRs, const char[] sError,
 	if (!dbRs || sError[0])
 	{
 		LogToFile(g_sLogFile, "CallbackForwards: %s", sError);
-		BekapStart(sQuery);
+		if (sError[0] == 'C' || sError[0] == 'L')
+			BekapStart(sQuery);
 	}
 }
+//------------------------------------------------------------------------------------------
+// управление админами
+void BDAddAdmin(int iClient, bool bFlag = false)
+{
+	char sQuery[1056],
+		 sFlags[56];
+	
+	if (bFlag)
+		strcopy(sFlags, sizeof(sFlags), g_sAddAdminInfo[iClient][ADDFLAG]);
+	else
+	{
+		sFlags[0] = '\0';
+		for (int i = 0; i < 21; i++)
+		{
+			if (g_bAddAdminFlag[iClient][i])
+				Format(sFlags, sizeof(sFlags), "%s%s", g_sAddAdminFlag[i], sFlags);
+		}
+	}
+	
+	FormatEx(sQuery, sizeof(sQuery), "\
+			INSERT INTO `%s_admins` (`user`, `authid`, `immunity`, `srv_flags`, `password`, `gid`, `email`, `extraflags`, `expired`) \
+			VALUES ('%s', '%s', %d, '%s', SHA(CONCAT('SourceBans', SHA('%s'))), 0, '', 0, %d);", 
+		g_sDatabasePrefix, g_sAddAdminInfo[iClient][ADDNAME], g_sAddAdminInfo[iClient][ADDSTEAM], g_iAddAdmin[iClient][ADDIMUN], sFlags, 
+		g_sAddAdminInfo[iClient][ADDPASS], g_iAddAdmin[iClient][ADDTIME]);
+
+#if MADEBUG
+	LogToFile(g_sLogFile, "BDAddAdmin:QUERY: %s", sQuery);
+#endif
+	g_dDatabase.SetCharset("utf8");
+	g_dDatabase.Query(CallbackAddAdmin, sQuery, GetClientUserId(iClient), DBPrio_High);
+}
+
+public void CallbackAddAdmin(Database db, DBResultSet dbRs, const char[] sError, any data)
+{
+	int iClient = GetClientOfUserId(data);
+	if (!dbRs || sError[0])
+	{
+		LogToFile(g_sLogFile, "CallbackAddAdmin: %s", sError);
+		if (iClient)
+			PrintToChat2(iClient, "%T", "Failed add admin", iClient, g_sAddAdminInfo[iClient][ADDNAME]);
+		return;
+	}
+	
+	if (iClient && IsClientInGame(iClient))
+		PrintToChat2(iClient, "%T", "Ok add admin bd", iClient, g_sAddAdminInfo[iClient][ADDNAME], g_sAddAdminInfo[iClient][ADDPASS]);
+
+	BDCheckAdmins(iClient, 0);
+}
+
+void BDCheckAdmins(int iClient, int iTyp)
+{
+	char sQuery[256];
+	
+	DataPack dPack = new DataPack();
+	dPack.WriteCell(GetClientUserId(iClient));
+	dPack.WriteCell(iTyp);
+
+	FormatEx(sQuery, sizeof(sQuery), "\
+			SELECT `aid`, `srv_group` FROM `%s_admins` \
+			WHERE `authid` REGEXP '^STEAM_[0-9]:%s$'", 
+		g_sDatabasePrefix, g_sAddAdminInfo[iClient][ADDSTEAM][8]);
+
+#if MADEBUG
+	LogToFile(g_sLogFile, "BDCheckAdmins:QUERY: %s", sQuery);
+#endif
+	g_dDatabase.SetCharset("utf8");
+	g_dDatabase.Query(CallbackCheckAdmin, sQuery, dPack, DBPrio_High);
+}
+
+public void CallbackCheckAdmin(Database db, DBResultSet dbRs, const char[] sError, any data)
+{
+	DataPack dPack = view_as<DataPack>(data);
+	dPack.Reset();
+	int iClient = GetClientOfUserId(dPack.ReadCell());
+	int iTyp = dPack.ReadCell();
+	delete dPack;
+
+	if (!dbRs || sError[0])
+		LogToFile(g_sLogFile, "CallbackCheckAdmins: %s", sError);
+
+	if (!iClient && !IsClientInGame(iClient))
+		return;
+
+	if (iTyp < 3 && iTyp > 0) // удаление 1 тока с севрера, 2 полностью
+	{
+		if (dbRs.RowCount)
+		{
+			dbRs.FetchRow();
+			int iId = dbRs.FetchInt(0);
+			BDDelAdmin(iClient, iId, iTyp);
+		}
+		else
+			PrintToChat2(iClient, "%T", "No admin sb", iClient, g_sAddAdminInfo[iClient][ADDNAME]);
+	}
+	else // добавление
+	{
+		if (dbRs.RowCount)
+		{
+			dbRs.FetchRow();
+			int iId = dbRs.FetchInt(0);
+			char sGroup[124];
+		#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR == 7
+			if (!SQL_IsFieldNull(dbRs, 1))
+		#else
+			if (!dbRs.IsFieldNull(1))
+		#endif
+				dbRs.FetchString(1, sGroup, sizeof(sGroup));
+			else
+				sGroup[0] = '\0';
+
+			BDAddServerAdmin(iClient, iId, sGroup); // добавляется просто админ на сервер.
+		}
+		else
+		{
+			if (iTyp == 3)
+				BDAddAdmin(iClient, true);
+			else
+			{
+				ResetFlagAddAdmin(iClient);// сброс флагов
+				MenuAddAdninFlag(iClient);
+			}
+		}
+	}
+}
+
+void BDAddServerAdmin(int iClient, int iId, char[] sGroup)
+{
+	if(sGroup[0])
+		Format(sGroup, 124, "IFNULL ((SELECT `id` FROM `%s_srvgroups` WHERE `name` = '%s'), -1)", g_sDatabasePrefix, sGroup);
+	else
+		strcopy(sGroup, 124, "-1");
+	
+	char sServer[256],
+		 sQuery[556];
+	if(g_iServerID == -1)
+		FormatEx(sServer, sizeof(sServer), "(SELECT `sid` FROM `%s_servers` WHERE `ip` = '%s' AND `port` = '%s' LIMIT 1)", g_sDatabasePrefix, g_sServerIP, g_sServerPort);
+	else
+		IntToString(g_iServerID, sServer, sizeof(sServer));
+	
+	
+	FormatEx(sQuery, sizeof(sQuery), "\
+			INSERT INTO `%s_admins_servers_groups` (`admin_id`, `group_id`, `srv_group_id`, `server_id`) \
+			VALUES (%d, '%s', -1, %s)", 
+		g_sDatabasePrefix, iId, sGroup, sServer);
+
+#if MADEBUG
+	LogToFile(g_sLogFile, "BDAddServerAdmin:QUERY: %s", sQuery);
+#endif
+	g_dDatabase.SetCharset("utf8");
+	g_dDatabase.Query(CallbackAddServerAdmin, sQuery, GetClientUserId(iClient), DBPrio_High);
+}
+
+public void CallbackAddServerAdmin(Database db, DBResultSet dbRs, const char[] sError, any data)
+{
+	int iClient = GetClientOfUserId(data);
+	if (!dbRs || sError[0])
+	{
+		LogToFile(g_sLogFile, "CallbackAddServerAdmin: %s", sError);
+		if (iClient)
+			PrintToChat2(iClient, "%T", "Failed add admin", iClient, g_sAddAdminInfo[iClient][ADDNAME]);
+		return;
+	}
+	
+	if (iClient && IsClientInGame(iClient))
+		PrintToChat2(iClient, "%T", "Ok add admin server", iClient, g_sAddAdminInfo[iClient][ADDNAME]);
+
+	AdminHash();
+}
+
+void BDDelAdmin(int iClient, int iId, int iTyp)
+{
+	char sQuery[556];
+	if (iTyp == 1)
+	{
+		char sServer[256];
+		if(g_iServerID == -1)
+			FormatEx(sServer, sizeof(sServer), "(SELECT `sid` FROM `%s_servers` WHERE `ip` = '%s' AND `port` = '%s' LIMIT 1)", g_sDatabasePrefix, g_sServerIP, g_sServerPort);
+		else
+			IntToString(g_iServerID, sServer, sizeof(sServer));
+		
+		FormatEx(sQuery, sizeof(sQuery), "\
+				DELETE FROM `%s_admins_servers_groups` WHERE `admin_id` = %d AND `server_id` = %s", 
+			g_sDatabasePrefix, iId, sServer);
+	}
+	else
+	{
+		FormatEx(sQuery, sizeof(sQuery), "\
+			DELETE a1, a2 FROM `%s_admins` AS a1 LEFT JOIN `%s_admins_servers_groups` AS a2 \
+			ON (a1.`aid` = a2.`admin_id`) WHERE a1.`aid` = %d;", 
+		g_sDatabasePrefix, g_sDatabasePrefix, iId);
+	}
+
+#if MADEBUG
+	LogToFile(g_sLogFile, "BDDelAdmin:QUERY: %s", sQuery);
+#endif
+	g_dDatabase.SetCharset("utf8");
+	g_dDatabase.Query(CallbackDelAdmin, sQuery, GetClientUserId(iClient), DBPrio_High);
+}
+
+public void CallbackDelAdmin(Database db, DBResultSet dbRs, const char[] sError, any data)
+{
+	int iClient = GetClientOfUserId(data);
+	if (!dbRs || sError[0])
+	{
+		LogToFile(g_sLogFile, "CallbackDelAdmin: %s", sError);
+		if (iClient && IsClientInGame(iClient))
+			PrintToChat2(iClient, "%T", "Failed del admin", iClient, g_sAddAdminInfo[iClient][ADDNAME]);
+		return;
+	}
+	
+	if (iClient && IsClientInGame(iClient))
+		PrintToChat2(iClient, "%T", "Ok del admin", iClient, g_sAddAdminInfo[iClient][ADDNAME]);
+
+	AdminHash();
+}
+//--------------------------------------------------------------------------------------------------------
+/*void BDSetActivityAdmin(int iClient, char[] sSteamID)
+{
+	char sQuery[1056],
+		sServer[256];
+		
+	int iPlayed = RoundToCeil(GetClientTime(iClient));
+	int iTime = GetTime();
+	
+	if(g_iServerID == -1)
+		FormatEx(sServer, sizeof(sServer), "(SELECT `sid` FROM `%s_servers` WHERE `ip` = '%s' AND `port` = '%s' LIMIT 1)", g_sDatabasePrefix, g_sServerIP, g_sServerPort);
+	else
+		IntToString(g_iServerID, sServer, sizeof(sServer));
+	
+	FormatEx(sQuery, sizeof(sQuery), "\
+			INSERT INTO `%s_admins_activity` (`aid`, `sid`, `ctime`, `played`) \
+			VALUES (IFNULL((SELECT aid FROM %s_admins a INNER JOIN %s_admins_servers_groups asg ON (a.aid = asg.admin_id AND asg.server_id = %s) \
+			WHERE (a.authid REGEXP '^STEAM_[0-9]:%s$')), 0), %s, %d, %d)", 
+		g_sDatabasePrefix, g_sDatabasePrefix, g_sDatabasePrefix, sServer, sSteamID[8], sServer, iTime - iPlayed, iPlayed);
+		
+	g_dDatabase.Query(CallbackSetActivityAdmin, sQuery);
+}
+
+public void CallbackSetActivityAdmin(Database db, DBResultSet dbRs, const char[] sError, any data)
+{
+	if (!dbRs || sError[0])
+		LogToFile(g_sLogFile, "CallbackSetActivityAdmin: %s", sError);
+}*/
