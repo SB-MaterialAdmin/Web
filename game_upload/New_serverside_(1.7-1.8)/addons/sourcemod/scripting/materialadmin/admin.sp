@@ -62,7 +62,7 @@ public SMCResult ReadGroups_NewSection(SMCParser smc, const char[] sName, bool o
 {
 	if (g_iIgnoreLevel)
 	{
-		g_iIgnoreLevel++;
+		//g_iIgnoreLevel++;
 		return SMCParse_Continue;
 	}
 	
@@ -79,12 +79,12 @@ public SMCResult ReadGroups_NewSection(SMCParser smc, const char[] sName, bool o
 		if ((g_idGroup = CreateAdmGroup(sName)) == INVALID_GROUP_ID)
 		{
 			if ((g_idGroup = FindAdmGroup(sName)) == INVALID_GROUP_ID)
-				LogToFile(g_sLogFile, "Find & Create no group (%s)", sName);
+				LogToFile(g_sLogAdmin, "Find & Create no group (%s)", sName);
 			else
-				LogToFile(g_sLogFile, "Find yes group (grup %d, %s)", g_idGroup, sName);
+				LogToFile(g_sLogAdmin, "Find yes group (grup %d, %s)", g_idGroup, sName);
 		}
 		else
-			LogToFile(g_sLogFile, "Create yes group (grup %d, %s)", g_idGroup, sName);
+			LogToFile(g_sLogAdmin, "Create yes group (grup %d, %s)", g_idGroup, sName);
 	#else
 		if ((g_idGroup = CreateAdmGroup(sName)) == INVALID_GROUP_ID)
 			g_idGroup = FindAdmGroup(sName);
@@ -132,7 +132,7 @@ public SMCResult ReadGroups_KeyValue(SMCParser smc, const char[] sKey, const cha
 				#endif
 				}
 			#if MADEBUG
-				LogToFile(g_sLogFile, "Load group flag override (grup %d, %s %s)", g_idGroup, sKey, sValue);
+				LogToFile(g_sLogAdmin, "Load group flag override (grup %d, %s %s)", g_idGroup, sKey, sValue);
 			#endif
 			}
 			else if (StrEqual(sKey, "maxbantime"))
@@ -164,7 +164,7 @@ public SMCResult ReadGroups_KeyValue(SMCParser smc, const char[] sKey, const cha
 			#endif
 			
 		#if MADEBUG
-			LogToFile(g_sLogFile, "Load group command override (group %d, %s, %s)", g_idGroup, sKey, sValue);
+			LogToFile(g_sLogAdmin, "Load group command override (group %d, %s, %s)", g_idGroup, sKey, sValue);
 		#endif
 		}
 	}
@@ -210,11 +210,11 @@ public SMCResult ReadGroups_KeyValue(SMCParser smc, const char[] sKey, const cha
  						g_idGroup.AddGroupImmunity(idGroup);
 					#endif
 					else
-						LogToFile(g_sLogFile, "Unable to find group: \"%s\"", sValue);
+						LogToFile(g_sLogAdmin, "Unable to find group: \"%s\"", sValue);
 				}
 			}
 		#if MADEBUG
-			LogToFile(g_sLogFile, "Load group add immunity level (%d, %s, %s)", g_idGroup, sKey, sValue);
+			LogToFile(g_sLogAdmin, "Load group add immunity level (%d, %s, %s)", g_idGroup, sKey, sValue);
 		#endif
 		}
 	}
@@ -261,8 +261,8 @@ static void InternalReadGroups(const char[] sPath, GroupPass grPass)
 		{
 			char sError[256];
 			g_smcGroupParser.GetErrorString(err, sError, sizeof(sError));
-			LogToFile(g_sLogFile, "Could not parse file (line %d, file \"%s\"):", iLine, sPath);
-			LogToFile(g_sLogFile, "Parser encountered error: %s", sError);
+			LogToFile(g_sLogAdmin, "Could not parse file (line %d, file \"%s\"):", iLine, sPath);
+			LogToFile(g_sLogAdmin, "Parser encountered error: %s", sError);
 		}
 	}
 }
@@ -286,7 +286,7 @@ public SMCResult ReadUsers_NewSection(SMCParser smc, const char[] sName, bool op
 {
 	if (g_iIgnoreLevel)
 	{
-		g_iIgnoreLevel++;
+		//g_iIgnoreLevel++;
 		return SMCParse_Continue;
 	}
 	
@@ -331,11 +331,11 @@ public SMCResult ReadUsers_KeyValue(SMCParser smc, const char[] sKey, const char
 	{
 		GroupId idGroup = FindAdmGroup(sValue);
 		if (idGroup == INVALID_GROUP_ID)
-			LogToFile(g_sLogFile, "Unknown group \"%s\"", sValue);
+			LogToFile(g_sLogAdmin, "Unknown group \"%s\"", sValue);
 		else
 		{
 		#if MADEBUG
-			LogToFile(g_sLogFile, "Admin %s group %s %d", g_sCurName, sValue, idGroup);
+			LogToFile(g_sLogAdmin, "Admin %s group %s %d", g_sCurName, sValue, idGroup);
 		#endif
 			g_aGroupArray.Push(idGroup);
 		}
@@ -347,7 +347,7 @@ public SMCResult ReadUsers_KeyValue(SMCParser smc, const char[] sKey, const char
 		for (int i = 0; i < strlen(sValue); i++)
 		{
 			if (!FindFlagByChar(sValue[i], admFlag))
-				LogToFile(g_sLogFile, "Invalid admFlag detected: %c", sValue[i]);
+				LogToFile(g_sLogAdmin, "Invalid admFlag detected: %c", sValue[i]);
 			else
 				g_iCurFlags |= FlagToBit(admFlag);
 		}
@@ -398,27 +398,27 @@ public SMCResult ReadUsers_EndSection(SMCParser smc)
 				if (g_iCurExpire == 0 || g_iCurExpire > GetTime())
 				{
 				#if MADEBUG
-					LogToFile(g_sLogFile, "Add admin %s expire %d", g_sCurName, g_iCurExpire);
+					LogToFile(g_sLogAdmin, "Add admin %s expire %d", g_sCurName, g_iCurExpire);
 				#endif
 					AddAdminExpire(idAdmin, g_iCurExpire);
 				}
 				else
 				{
 				#if MADEBUG
-					LogToFile(g_sLogFile, "Admin %s expire end %d", g_sCurName, g_iCurExpire);
+					LogToFile(g_sLogAdmin, "Admin %s expire end %d", g_sCurName, g_iCurExpire);
 				#endif
 					RemoveAdmin(idAdmin);
 					return SMCParse_Continue;
 				}
 			#if MADEBUG
-				LogToFile(g_sLogFile, "Find admin %s yes (%d, auth %s, %s)", g_sCurName, idAdmin, g_sCurAuth, g_sCurIdent);
+				LogToFile(g_sLogAdmin, "Find admin %s yes (%d, auth %s, %s)", g_sCurName, idAdmin, g_sCurAuth, g_sCurIdent);
 			#endif
 			}
 			else
 			{
 				idAdmin = CreateAdmin(g_sCurName);
 			#if MADEBUG
-				LogToFile(g_sLogFile, "Create new admin %s (%d, auth %s, %s)", g_sCurName, idAdmin, g_sCurAuth, g_sCurIdent);
+				LogToFile(g_sLogAdmin, "Create new admin %s (%d, auth %s, %s)", g_sCurName, idAdmin, g_sCurAuth, g_sCurIdent);
 			#endif
 			#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR == 7
 				if (!BindAdminIdentity(idAdmin, g_sCurAuth, g_sCurIdent))
@@ -428,21 +428,21 @@ public SMCResult ReadUsers_EndSection(SMCParser smc)
 				{
 					RemoveAdmin(idAdmin);
 
-					LogToFile(g_sLogFile, "Failed to bind auth \"%s\" to identity \"%s\"", g_sCurAuth, g_sCurIdent);
+					LogToFile(g_sLogAdmin, "Failed to bind auth \"%s\" to identity \"%s\"", g_sCurAuth, g_sCurIdent);
 					return SMCParse_Continue;
 				}
 				
 				if (g_iCurExpire == 0 || g_iCurExpire > GetTime())
 				{
 				#if MADEBUG
-					LogToFile(g_sLogFile, "Add admin %s expire %d", g_sCurName, g_iCurExpire);
+					LogToFile(g_sLogAdmin, "Add admin %s expire %d", g_sCurName, g_iCurExpire);
 				#endif
 					AddAdminExpire(idAdmin, g_iCurExpire);
 				}
 				else
 				{
 				#if MADEBUG
-					LogToFile(g_sLogFile, "Admin %s expire end %d", g_sCurName, g_iCurExpire);
+					LogToFile(g_sLogAdmin, "Admin %s expire end %d", g_sCurName, g_iCurExpire);
 				#endif
 					RemoveAdmin(idAdmin);
 					return SMCParse_Continue;
@@ -497,9 +497,9 @@ public SMCResult ReadUsers_EndSection(SMCParser smc)
 					#else
 					if (idAdmin.InheritGroup(idGroup))
 					#endif
-						LogToFile(g_sLogFile, "Admin %s add group %d", g_sCurName, idGroup);
+						LogToFile(g_sLogAdmin, "Admin %s add group %d", g_sCurName, idGroup);
 					else
-						LogToFile(g_sLogFile, "Admin %s no add group %d", g_sCurName, idGroup);
+						LogToFile(g_sLogAdmin, "Admin %s no add group %d", g_sCurName, idGroup);
 				#else
 					#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR == 7
 					AdminInheritGroup(idAdmin, idGroup);
@@ -538,16 +538,16 @@ public SMCResult ReadUsers_EndSection(SMCParser smc)
 			#endif
 			
 		#if MADEBUG
-			LogToFile(g_sLogFile, "Load yes admin (name %s, auth %s, ident %s, flag %d, imuni %d, expire %d, max ban time %d, max mute time %d, web flag %d)", g_sCurName, g_sCurAuth, g_sCurIdent, 
+			LogToFile(g_sLogAdmin, "Load yes admin (name %s, auth %s, ident %s, flag %d, imuni %d, expire %d, max ban time %d, max mute time %d, web flag %d)", g_sCurName, g_sCurAuth, g_sCurIdent, 
 						g_iCurFlags, g_iCurImmunity, g_iCurExpire, iMaxBanTime, iMaxMuteTime, g_iWebFlag);
 		#endif
 		}
 		else
 		{
 		#if MADEBUG
-			LogToFile(g_sLogFile, "Load no admin (name %s, auth %s, ident %s, flag %d, imuni %d, expire %d, web flag %d)", g_sCurName, g_sCurAuth, g_sCurIdent, g_iCurFlags, g_iCurImmunity, g_iCurExpire, g_iWebFlag);
+			LogToFile(g_sLogAdmin, "Load no admin (name %s, auth %s, ident %s, flag %d, imuni %d, expire %d, web flag %d)", g_sCurName, g_sCurAuth, g_sCurIdent, g_iCurFlags, g_iCurImmunity, g_iCurExpire, g_iWebFlag);
 		#endif
-			LogToFile(g_sLogFile, "Failed to create admin: did you forget either the auth or identity properties?");
+			LogToFile(g_sLogAdmin, "Failed to create admin: did you forget either the auth or identity properties?");
 		}
 		
 		g_iUserState = UserState_Admins;
@@ -583,8 +583,8 @@ void ReadUsers()
 		{
 			char sError[256];
 			g_smcUserParser.GetErrorString(err, sError, sizeof(sError));
-			LogToFile(g_sLogFile, "Could not parse file (line %d, file \"%s\"):", iLine, g_sAdminsLoc);
-			LogToFile(g_sLogFile, "Parser encountered error: %s", sError);
+			LogToFile(g_sLogAdmin, "Could not parse file (line %d, file \"%s\"):", iLine, g_sAdminsLoc);
+			LogToFile(g_sLogAdmin, "Parser encountered error: %s", sError);
 		}
 		
 		g_tGroupBanTimeMax.Clear();
@@ -624,7 +624,7 @@ public SMCResult ReadOverrides_KeyValue(SMCParser smc, const char[] sKey, const 
 		AddCommandOverride(sKey, Override_Command, iFlags);
 	
 #if MADEBUG
-	LogToFile(g_sLogFile, "Load overrid (%s, %s)", sKey, sValue);
+	LogToFile(g_sLogAdmin, "Load overrid (%s, %s)", sKey, sValue);
 #endif
 	
 	return SMCParse_Continue;
@@ -653,8 +653,8 @@ void ReadOverrides()
 		{
 			char sError[256];
 			g_smcOverrideParser.GetErrorString(err, sError, sizeof(sError));
-			LogToFile(g_sLogFile, "Could not parse file (line %d, file \"%s\"):", iLine, g_sOverridesLoc);
-			LogToFile(g_sLogFile, "Parser encountered error: %s", sError);
+			LogToFile(g_sLogAdmin, "Could not parse file (line %d, file \"%s\"):", iLine, g_sOverridesLoc);
+			LogToFile(g_sLogAdmin, "Parser encountered error: %s", sError);
 		}
 	}
 }

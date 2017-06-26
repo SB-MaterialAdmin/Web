@@ -23,7 +23,7 @@ bool ConnectBd(Database &db)
 		delete db;
 		db = null;
 	#if MADEBUG
-		LogToFile(g_sLogFile, "ConnectBd: lost");
+		LogToFile(g_sLogDateBase, "ConnectBd: lost");
 	#endif
 	}
 
@@ -32,7 +32,7 @@ bool ConnectBd(Database &db)
 		db = SQL_Connect("materialadmin", false, sError, sizeof(sError));
 	else
 	{
-		LogToFile(g_sLogFile, "Database failure: Could not find Database conf \"materialadmin\"");
+		LogToFile(g_sLogDateBase, "Database failure: Could not find Database conf \"materialadmin\"");
 		db = null;
 		FireOnConnectDatabase(db);
 		SetFailState("Database failure: Could not find Database conf \"materialadmin\"");
@@ -45,16 +45,16 @@ bool ConnectBd(Database &db)
 	{
 		db.SetCharset("utf8");
 	#if MADEBUG
-		LogToFile(g_sLogFile, "ConnectBd: yes");
+		LogToFile(g_sLogDateBase, "ConnectBd: yes");
 	#endif
 		return true;
 	}
 	else
 	{
 	#if MADEBUG
-		LogToFile(g_sLogFile, "ConnectBd: no");
+		LogToFile(g_sLogDateBase, "ConnectBd: no");
 	#endif
-		LogToFile(g_sLogFile, "ConnectBd: %s", sError);
+		LogToFile(g_sLogDateBase, "ConnectBd: %s", sError);
 	}
 
 	return false;
@@ -101,7 +101,7 @@ void ClearHistories()
 public void SQL_Callback_DeleteClients(Database db, DBResultSet dbRs, const char[] sError, any iData)
 {
 	if (sError[0])
-		LogToFile(g_sLogFile, "SQL_Callback_DeleteClients: %s", sError);
+		LogToFile(g_sLogDateBase, "SQL_Callback_DeleteClients: %s", sError);
 	else
 		CreateTables();
 }
@@ -120,14 +120,14 @@ void SetOflineInfo(char[] sSteamID, char[] sName, char[] sIP)
 
 	g_dSQLite.Query(SQL_Callback_AddClient, sQuery, _, DBPrio_High);
 #if MADEBUG
-	LogToFile(g_sLogFile, "SetOflineInfo:QUERY: %s", sQuery);
+	LogToFile(g_sLogDateBase, "SetOflineInfo:QUERY: %s", sQuery);
 #endif
 }
 
 public void SQL_Callback_AddClient(Database db, DBResultSet dbRs, const char[] sError, any iData)
 {
 	if (!dbRs || sError[0])
-		LogToFile(g_sLogFile, "SQL_Callback_AddClient: %s", sError);
+		LogToFile(g_sLogDateBase, "SQL_Callback_AddClient: %s", sError);
 }
 
 void DelOflineInfo(char[] sSteamID)
@@ -140,14 +140,14 @@ void DelOflineInfo(char[] sSteamID)
 
 	g_dSQLite.Query(SQL_Callback_DeleteClient, sQuery, _, DBPrio_High);
 #if MADEBUG
-	LogToFile(g_sLogFile, "DelOflineInfo:QUERY: %s", sQuery);
+	LogToFile(g_sLogDateBase, "DelOflineInfo:QUERY: %s", sQuery);
 #endif
 }
 
 public void SQL_Callback_DeleteClient(Database db, DBResultSet dbRs, const char[] sError, any iData)
 {
 	if (!dbRs || sError[0])
-		LogToFile(g_sLogFile, "SQL_Callback_DeleteClient: %s", sError);
+		LogToFile(g_sLogDateBase, "SQL_Callback_DeleteClient: %s", sError);
 }
 
 //меню выбора игрока офлайн
@@ -174,7 +174,7 @@ void BdGetInfoOffline(int iClient, int iId)
 
 	g_dSQLite.Query(SQL_Callback_GetInfoOffline, sQuery, iClient, DBPrio_High);
 #if MADEBUG
-	LogToFile(g_sLogFile, "GetInfoOffline:QUERY: %s", sQuery);
+	LogToFile(g_sLogDateBase, "GetInfoOffline:QUERY: %s", sQuery);
 #endif
 }
 
@@ -182,7 +182,7 @@ public void SQL_Callback_GetInfoOffline(Database db, DBResultSet dbRs, const cha
 {
 	if (!dbRs || sError[0])
 	{
-		LogToFile(g_sLogFile, "SQL_Callback_GetInfoOffline: %s", sError);
+		LogToFile(g_sLogDateBase, "SQL_Callback_GetInfoOffline: %s", sError);
 		PrintToChat2(iClient, "%T", "Failed to player", iClient);
 	}
 
@@ -219,7 +219,7 @@ void BdGetMuteType(int iClient, int iTarget, int iType)
 
 	g_dDatabase.Query(SQL_Callback_GetMuteType, sQuery, dPack, DBPrio_High);
 #if MADEBUG
-	LogToFile(g_sLogFile, "GetMuteType:QUERY: %s", sQuery);
+	LogToFile(g_sLogDateBase, "GetMuteType:QUERY: %s", sQuery);
 #endif
 }
 
@@ -233,7 +233,7 @@ public void SQL_Callback_GetMuteType(Database db, DBResultSet dbRs, const char[]
 
 	if (!dbRs || sError[0])
 	{
-		LogToFile(g_sLogFile, "SQL_Callback_GetMuteType: %s", sError);
+		LogToFile(g_sLogDateBase, "SQL_Callback_GetMuteType: %s", sError);
 		//g_iTargetMuteType[iTarget] = 0;
 		if (iType)
 			CreateDB(iClient, iTarget);
@@ -256,7 +256,7 @@ public void SQL_Callback_GetMuteType(Database db, DBResultSet dbRs, const char[]
 		g_iTargetMuteType[iTarget] = 0;
 
 #if MADEBUG
-	LogToFile(g_sLogFile, "GetMuteType:%N: %d", iTarget, g_iTargetMuteType[iTarget]);
+	LogToFile(g_sLogDateBase, "GetMuteType:%N: %d", iTarget, g_iTargetMuteType[iTarget]);
 #endif
 
 	if (iType)
@@ -282,19 +282,19 @@ void BdDelMute(int iClient, int iTarget)
 
 	g_dDatabase.Query(SQL_Callback_DelMute , sQuery, dPack, DBPrio_High);
 #if MADEBUG
-	LogToFile(g_sLogFile, "BdDelMute:QUERY: %s", sQuery);
+	LogToFile(g_sLogDateBase, "BdDelMute:QUERY: %s", sQuery);
 #endif
 }
 
 public void SQL_Callback_DelMute(Database db, DBResultSet dbRs, const char[] sError, any data)
 {
 	if (!dbRs || sError[0])
-		LogToFile(g_sLogFile, "SQL_Callback_DelMute: %s", sError);
+		LogToFile(g_sLogDateBase, "SQL_Callback_DelMute: %s", sError);
 #if MADEBUG
 	if (dbRs && dbRs.RowCount)
-		LogToFile(g_sLogFile, "BdDelMute:yes");
+		LogToFile(g_sLogDateBase, "BdDelMute:yes");
 	else
-		LogToFile(g_sLogFile, "BdDelMute:no");
+		LogToFile(g_sLogDateBase, "BdDelMute:no");
 #endif
 	
 	DataPack dPack = view_as<DataPack>(data);
@@ -338,7 +338,7 @@ void CheckBanInBd(int iClient, int iTarget, int iType, char[] sSteamIp)
 	dPack.WriteCell(iType);
 	dPack.WriteString(sSteamIp);
 #if MADEBUG
-	LogToFile(g_sLogFile, "Checking ban in bd: %s. QUERY: %s", sSteamIp, sQuery);
+	LogToFile(g_sLogDateBase, "Checking ban in bd: %s. QUERY: %s", sSteamIp, sQuery);
 #endif
 	g_dDatabase.Query(SQL_Callback_CheckBanInBd , sQuery, dPack, DBPrio_High);
 }
@@ -356,7 +356,7 @@ public void SQL_Callback_CheckBanInBd(Database db, DBResultSet dbRs, const char[
 	
 	if (!dbRs || sError[0])
 	{
-		LogToFile(g_sLogFile, "SQL_Callback_CheckBanInBd: %s", sError);
+		LogToFile(g_sLogDateBase, "SQL_Callback_CheckBanInBd: %s", sError);
 		CreateDB(iClient, iTarget, sSteamIp);
 		return;
 	}
@@ -405,7 +405,7 @@ public void SQL_Callback_CheckBanInBd(Database db, DBResultSet dbRs, const char[
 					else
 						iTargetImun = dbRs.FetchInt(1);
 				#if MADEBUG
-					LogToFile(g_sLogFile, "SQL_Callback_CheckBanInBd imune: (admin %N - %d)  (target %s - %d)", iClient, iAdminImun, sSteamIp, iTargetImun);
+					LogToFile(g_sLogDateBase, "SQL_Callback_CheckBanInBd imune: (admin %N - %d)  (target %s - %d)", iClient, iAdminImun, sSteamIp, iTargetImun);
 				#endif
 					if (IsImune(iAdminImun, iTargetImun))
 						CreateDB(iClient, iTarget, sSteamIp);
@@ -447,7 +447,7 @@ void DoCreateDB(int iClient, int iTarget)
 void CreateDB(int iClient, int iTarget, char[] sSteamIp = "")
 {
 #if MADEBUG
-	LogToFile(g_sLogFile,"Create bd: client %N, target %N, Type %d, MuteType %d", iClient, iTarget, g_iTargetType[iClient], g_iTargetMuteType[iTarget]);
+	LogToFile(g_sLogDateBase,"Create bd: client %N, target %N, Type %d, MuteType %d", iClient, iTarget, g_iTargetType[iClient], g_iTargetMuteType[iTarget]);
 #endif
 	if (iTarget && g_iTargetType[iClient] > TYPE_UNGAG && g_iTargetMuteType[iTarget] == 0 && GetClientListeningFlags(iTarget) == VOICE_MUTED)
 	{
@@ -536,7 +536,7 @@ void CreateDB(int iClient, int iTarget, char[] sSteamIp = "")
 	g_dDatabase.Escape(g_sTarget[iClient][TREASON], sReason, sizeof(sReason));
 	g_dDatabase.Escape(g_sTarget[iClient][TNAME], sBanName, sizeof(sBanName));
 #if MADEBUG
-	LogToFile(g_sLogFile,"name do %s : posle %s", g_sTarget[iClient][TNAME], sBanName);
+	LogToFile(g_sLogDateBase,"name do %s : posle %s", g_sTarget[iClient][TNAME], sBanName);
 #endif
 
 	switch(g_iTargetType[iClient])
@@ -827,7 +827,7 @@ void CreateDB(int iClient, int iTarget, char[] sSteamIp = "")
 	g_dDatabase.SetCharset("utf8");
 	g_dDatabase.Query(VerifyInsert, sQuery, dPack, DBPrio_High);
 #if MADEBUG
-	LogToFile(g_sLogFile,"create bd: %s", sQuery);
+	LogToFile(g_sLogDateBase,"create bd: %s", sQuery);
 #endif
 	LogAction(iClient, -1, sLog);
 }
@@ -843,7 +843,7 @@ public void VerifyInsert(Database db, DBResultSet dbRs, const char[] sError, any
 	
 	if (!dbRs || sError[0])
 	{
-		LogToFile(g_sLogFile, "Verify Insert Query Failed: %s", sError);
+		LogToFile(g_sLogDateBase, "Verify Insert Query Failed: %s", sError);
 		if (sError[0] == 'C' || sError[0] == 'L')
 		{
 			char sQuery[1024];
@@ -903,7 +903,7 @@ void CheckClientBan(int iClient)
 			g_sDatabasePrefix, g_sDatabasePrefix, sSteamID[8], sIp, sServer);
 	}
 #if MADEBUG
-	LogToFile(g_sLogFile, "Checking ban for: %s. QUERY: %s", sSteamID, sQuery);
+	LogToFile(g_sLogDateBase, "Checking ban for: %s. QUERY: %s", sSteamID, sQuery);
 #endif
 	
 	g_dDatabase.SetCharset("utf8");
@@ -914,7 +914,7 @@ public void VerifyBan(Database db, DBResultSet dbRs, const char[] sError, any iU
 {
 	if (!dbRs || sError[0])
 	{
-		LogToFile(g_sLogFile, "Verify Ban Query Failed: %s", sError);
+		LogToFile(g_sLogDateBase, "Verify Ban Query Failed: %s", sError);
 		return;
 	}
 
@@ -971,7 +971,7 @@ public void VerifyBan(Database db, DBResultSet dbRs, const char[] sError, any iU
 			g_sDatabasePrefix, sServer, sEName, g_sDatabasePrefix, sSteamID[8], sIP);
 
 	#if MADEBUG
-		LogToFile(g_sLogFile, "Ban log: QUERY: %s", sQuery);
+		LogToFile(g_sLogDateBase, "Ban log: QUERY: %s", sQuery);
 	#endif
 		g_dDatabase.SetCharset("utf8");
 		g_dDatabase.Query(SQL_Callback_BanLog, sQuery, _, DBPrio_High);
@@ -1016,7 +1016,7 @@ public void VerifyBan(Database db, DBResultSet dbRs, const char[] sError, any iU
 public void SQL_Callback_BanLog(Database db, DBResultSet dbRs, const char[] sError, any data)
 {
 	if(sError[0])
-		LogToFile(g_sLogFile, "SQL_Callback_BanLog Query Failed: %s", sError);
+		LogToFile(g_sLogDateBase, "SQL_Callback_BanLog Query Failed: %s", sError);
 }
 
 //проверка игрока на мут
@@ -1055,7 +1055,7 @@ void CheckClientMute(int iClient, char[] sSteamID)
 			g_sDatabasePrefix, g_sDatabasePrefix, g_sDatabasePrefix, sSteamID[8], sServer);
 	}
 #if MADEBUG
-	LogToFile(g_sLogFile, "Check Mute: %s. QUERY: %s", sSteamID, sQuery);
+	LogToFile(g_sLogDateBase, "Check Mute: %s. QUERY: %s", sSteamID, sQuery);
 #endif
 	g_dDatabase.Query(VerifyMute, sQuery, GetClientUserId(iClient), DBPrio_High);
 }
@@ -1064,7 +1064,7 @@ public void VerifyMute(Database db, DBResultSet dbRs, const char[] sError, any i
 {
 	if (!dbRs || sError[0])
 	{
-		LogToFile(g_sLogFile, "Verify Mute failed: %s", sError);
+		LogToFile(g_sLogDateBase, "Verify Mute failed: %s", sError);
 		return;
 	}
 
@@ -1090,7 +1090,7 @@ public void VerifyMute(Database db, DBResultSet dbRs, const char[] sError, any i
 		}
 			
 	#if MADEBUG
-		LogToFile(g_sLogFile, "CheckClientMute: set %N, time %d, type %d", iClient, iTime, iType);
+		LogToFile(g_sLogDateBase, "CheckClientMute: set %N, time %d, type %d", iClient, iTime, iType);
 	#endif
 			
 		g_iTargetMuteType[iClient] = iType;
@@ -1108,7 +1108,7 @@ public void VerifyMute(Database db, DBResultSet dbRs, const char[] sError, any i
 	else
 	{
 	#if MADEBUG
-		LogToFile(g_sLogFile, "CheckClientMute: set %N type 0", iClient);
+		LogToFile(g_sLogDateBase, "CheckClientMute: set %N type 0", iClient);
 	#endif
 		g_iTargetMuteType[iClient] = 0;
 	}
@@ -1149,7 +1149,7 @@ void AdminHash()
 public void OverridesDone(Database db, DBResultSet dbRs, const char[] sError, any iData)
 {
 	if (!dbRs || sError[0])
-		LogToFile(g_sLogFile, "Failed to retrieve overrides from the database, %s", sError);
+		LogToFile(g_sLogDateBase, "Failed to retrieve overrides from the database, %s", sError);
 	else
 	{
 		KeyValues kvOverrides = new KeyValues("overrides");
@@ -1178,7 +1178,7 @@ public void OverridesDone(Database db, DBResultSet dbRs, const char[] sError, an
 			}
 			
 		#if MADEBUG
-			LogToFile(g_sLogFile, "Adding override (%s, %s, %s)", sType, sName, sFlags);
+			LogToFile(g_sLogDateBase, "Adding override (%s, %s, %s)", sType, sName, sFlags);
 		#endif
 		}
 		
@@ -1196,7 +1196,7 @@ public void OverridesDone(Database db, DBResultSet dbRs, const char[] sError, an
 			FROM `%s_srvgroups` ORDER BY `id`", 
 		g_sDatabasePrefix);
 #if MADEBUG
-	LogToFile(g_sLogFile, "GroupsDone:QUERY: %s", sQuery);
+	LogToFile(g_sLogDateBase, "GroupsDone:QUERY: %s", sQuery);
 #endif
 	g_dDatabase.SetCharset("utf8");
 	g_dDatabase.Query(GroupsDone, sQuery, _, DBPrio_High);
@@ -1205,7 +1205,7 @@ public void OverridesDone(Database db, DBResultSet dbRs, const char[] sError, an
 public void GroupsDone(Database db, DBResultSet dbRs, const char[] sError, any iData)
 {
 	if (!dbRs || sError[0])
-		LogToFile(g_sLogFile, "Failed to retrieve groups from the database, %s", sError);
+		LogToFile(g_sLogDateBase, "Failed to retrieve groups from the database, %s", sError);
 	else
 	{
 		char sGrpName[128], 
@@ -1263,7 +1263,7 @@ public void GroupsDone(Database db, DBResultSet dbRs, const char[] sError, any i
 			kvGroups.Rewind();
 			
 		#if MADEBUG
-			LogToFile(g_sLogFile, "Add %s Group", sGrpName);
+			LogToFile(g_sLogDateBase, "Add %s Group", sGrpName);
 			iGrpCount++;
 		#endif
 		}
@@ -1272,7 +1272,7 @@ public void GroupsDone(Database db, DBResultSet dbRs, const char[] sError, any i
 		delete kvGroups;
 		
 	#if MADEBUG
-		LogToFile(g_sLogFile, "Finished loading %i groups.", iGrpCount);
+		LogToFile(g_sLogDateBase, "Finished loading %i groups.", iGrpCount);
 	#endif
 	}
 	
@@ -1284,7 +1284,7 @@ public void GroupsDone(Database db, DBResultSet dbRs, const char[] sError, any i
 			FROM `%s_srvgroups_overrides` so LEFT JOIN `%s_srvgroups` sg ON sg.`id` = so.`group_id` ORDER BY sg.`id`", 
 		g_sDatabasePrefix, g_sDatabasePrefix);
 #if MADEBUG
-	LogToFile(g_sLogFile, "LoadGroupsOverrides:QUERY: %s", sQuery);
+	LogToFile(g_sLogDateBase, "LoadGroupsOverrides:QUERY: %s", sQuery);
 #endif
 	g_dDatabase.Query(LoadGroupsOverrides, sQuery, _, DBPrio_High);
 }
@@ -1292,7 +1292,7 @@ public void GroupsDone(Database db, DBResultSet dbRs, const char[] sError, any i
 public void LoadGroupsOverrides(Database db, DBResultSet dbRs, const char[] sError, any iData)
 {
 	if (!dbRs || sError[0])
-		LogToFile(g_sLogFile, "Failed to retrieve group overrides from the database, %s", sError);
+		LogToFile(g_sLogDateBase, "Failed to retrieve group overrides from the database, %s", sError);
 	else
 	{
 		char sGroupName[128],
@@ -1335,7 +1335,7 @@ public void LoadGroupsOverrides(Database db, DBResultSet dbRs, const char[] sErr
 			}
 			
 		#if MADEBUG
-			LogToFile(g_sLogFile, "Adding group %s override (%s, %s)", sGroupName, sType, sCommand);
+			LogToFile(g_sLogDateBase, "Adding group %s override (%s, %s)", sGroupName, sType, sCommand);
 		#endif
 		}
 		
@@ -1362,7 +1362,7 @@ public void LoadGroupsOverrides(Database db, DBResultSet dbRs, const char[] sErr
 			WHERE `server_id` = %s))) GROUP BY `aid`, `authid`, `srv_password`, `srv_group`, `srv_flags`, `user`", 
 		g_sDatabasePrefix, g_sDatabasePrefix, g_sDatabasePrefix, sServer, g_sDatabasePrefix, sServer);
 #if MADEBUG
-	LogToFile(g_sLogFile, "AdminsDone:QUERY: %s", sQuery);
+	LogToFile(g_sLogDateBase, "AdminsDone:QUERY: %s", sQuery);
 #endif
 	g_dDatabase.SetCharset("utf8");
 	g_dDatabase.Query(AdminsDone, sQuery, _, DBPrio_High);
@@ -1372,7 +1372,7 @@ public void AdminsDone(Database db, DBResultSet dbRs, const char[] sError, any i
 {
 	//SELECT authid, srv_password , srv_group, srv_flags, user
 	if (!dbRs || sError[0])
-		LogToFile(g_sLogFile, "Failed to retrieve admins from the database, %s", sError);
+		LogToFile(g_sLogDateBase, "Failed to retrieve admins from the database, %s", sError);
 	else
 	{
 		char sAuthType[] = "steam",
@@ -1444,7 +1444,7 @@ public void AdminsDone(Database db, DBResultSet dbRs, const char[] sError, any i
 			kvAdmins.Rewind();
 			
 		#if MADEBUG
-			LogToFile(g_sLogFile, "Add %s (%s) admin", sName, sIdentity);
+			LogToFile(g_sLogDateBase, "Add %s (%s) admin", sName, sIdentity);
 			++iAdmCount;
 		#endif
 		}
@@ -1452,7 +1452,7 @@ public void AdminsDone(Database db, DBResultSet dbRs, const char[] sError, any i
 		kvAdmins.ExportToFile(g_sAdminsLoc);
 		delete kvAdmins;
 	#if MADEBUG
-		LogToFile(g_sLogFile, "Finished loading %i admins.", iAdmCount);
+		LogToFile(g_sLogDateBase, "Finished loading %i admins.", iAdmCount);
 	#endif
 	}
 	
@@ -1471,7 +1471,7 @@ void BekapStart(char[] sQuery)
 	g_dSQLite.Query(SQL_Callback_AddQueryBekap, sQuerys, _, DBPrio_Low);
 	
 #if MADEBUG
-	LogToFile(g_sLogFile, "BekapStart:QUERY: %s", sQuery);
+	LogToFile(g_sLogDateBase, "BekapStart:QUERY: %s", sQuery);
 #endif
 	
 	if (g_hTimerBekap == null)
@@ -1481,7 +1481,7 @@ void BekapStart(char[] sQuery)
 public void SQL_Callback_AddQueryBekap(Database db, DBResultSet dbRs, const char[] sError, any iData)
 {
 	if (!dbRs || sError[0])
-		LogToFile(g_sLogFile, "SQL_Callback_AddQueryBekap: %s", sError);
+		LogToFile(g_sLogDateBase, "SQL_Callback_AddQueryBekap: %s", sError);
 }
 
 void SentBekapInBd()
@@ -1494,7 +1494,7 @@ void SentBekapInBd()
 public void SQL_Callback_QueryBekap(Database db, DBResultSet dbRs, const char[] sError, any iData)
 {
 	if (!dbRs || sError[0])
-		LogToFile(g_sLogFile, "SQL_Callback_QueryBekap: %s", sError);
+		LogToFile(g_sLogDateBase, "SQL_Callback_QueryBekap: %s", sError);
 
 	if (dbRs.RowCount)
 	{
@@ -1508,7 +1508,7 @@ public void SQL_Callback_QueryBekap(Database db, DBResultSet dbRs, const char[] 
 			iId = dbRs.FetchInt(0);
 			dbRs.FetchString(1, sQuery, sizeof(sQuery));
 		#if MADEBUG
-			LogToFile(g_sLogFile, "QueryBekap:QUERY: %s", sQuery);
+			LogToFile(g_sLogDateBase, "QueryBekap:QUERY: %s", sQuery);
 		#endif
 			g_dDatabase.SetCharset("utf8");
 			g_dDatabase.Query(CheckCallbackBekap, sQuery, iId, DBPrio_Low); // байда с зависанием скрипта
@@ -1522,7 +1522,7 @@ public void CheckCallbackBekap(Database db, DBResultSet dbRs, const char[] sErro
 	{
 		if (g_hTimerBekap == null)
 			g_hTimerBekap = CreateTimer(g_fRetryTime, TimerBekap, _, TIMER_REPEAT);
-		LogToFile(g_sLogFile, "CheckCallbackBekap: %s", sError);
+		LogToFile(g_sLogDateBase, "CheckCallbackBekap: %s", sError);
 	}
 	else
 	{
@@ -1530,7 +1530,7 @@ public void CheckCallbackBekap(Database db, DBResultSet dbRs, const char[] sErro
 		FormatEx(sQuery, sizeof(sQuery), "DELETE FROM `bekap` WHERE `id` = %d", iId);
 		g_dSQLite.Query(SQL_Callback_DeleteBekap, sQuery, _, DBPrio_Low);
 	#if MADEBUG
-		LogToFile(g_sLogFile, "DeleteBekap:QUERY: %s", sQuery);
+		LogToFile(g_sLogDateBase, "DeleteBekap:QUERY: %s", sQuery);
 	#endif
 	}
 }
@@ -1538,7 +1538,7 @@ public void CheckCallbackBekap(Database db, DBResultSet dbRs, const char[] sErro
 public void SQL_Callback_DeleteBekap(Database db, DBResultSet dbRs, const char[] sError, any iData)
 {
 	if (!dbRs || sError[0])
-		LogToFile(g_sLogFile, "SQL_Callback_DeleteBekap: %s", sError);
+		LogToFile(g_sLogDateBase, "SQL_Callback_DeleteBekap: %s", sError);
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------
@@ -1603,7 +1603,7 @@ void SetBdReport(int iClient, const char[] sReason)
 	dPack.WriteString(sQuery);
 	
 #if MADEBUG
-	LogToFile(g_sLogFile, "SetBdReport:QUERY: %s", sQuery);
+	LogToFile(g_sLogDateBase, "SetBdReport:QUERY: %s", sQuery);
 #endif
 	g_dDatabase.SetCharset("utf8");
 	g_dDatabase.Query(CheckCallbackReport, sQuery, dPack, DBPrio_High);
@@ -1618,7 +1618,7 @@ public void CheckCallbackReport(Database db, DBResultSet dbRs, const char[] sErr
 	dPack.ReadString(sReportName, sizeof(sReportName));
 	if (!dbRs || sError[0])
 	{
-		LogToFile(g_sLogFile, "SQL_CheckCallbackReport: %s", sError);
+		LogToFile(g_sLogDateBase, "SQL_CheckCallbackReport: %s", sError);
 		if (sError[0] == 'C' || sError[0] == 'L')
 		{
 			char sQuery[1024];
@@ -1664,7 +1664,7 @@ public Action OnBanClient(int iClient, int iTime, int iFlags, const char[] sReas
 			g_sDatabasePrefix, sIp, sSteamID, sEName, iTime*60, iTime*60, sEReason, g_sServerIP, sServer);
 
 	#if MADEBUG
-		LogToFile(g_sLogFile, "OnBanClient:QUERY: %s", sQuery);
+		LogToFile(g_sLogDateBase, "OnBanClient:QUERY: %s", sQuery);
 	#endif
 		
 		DataPack dPack = new DataPack();
@@ -1699,12 +1699,12 @@ public Action OnBanIdentity(const char[] sIdentity, int iTime, int flags, const 
 	
 	FormatEx(sQuery, sizeof(sQuery), "\
 			INSERT INTO `%s_bans` (`type`, `authid`, `ip`, `created`, `ends`, `length`, `reason`, `aid`, `adminIp`, `sid`, `country`) \
-			VALUES (%d, '%s', UNIX_TIMESTAMP(), UNIX_TIMESTAMP() + %d, %d, '%s', 0, '%s', %s, ' ')", 
-		g_sDatabasePrefix, iTyp, iTyp?sIdentity:"", iTyp?"":sIdentity, iTime*60, iTime*60, sEReason, g_sServerIP, sServer);
+			VALUES (%d, '%s', '%s', UNIX_TIMESTAMP(), UNIX_TIMESTAMP() + %d, %d, '%s', 0, '%s', %s, ' ')", 
+		g_sDatabasePrefix, iTyp, iTyp?"":sIdentity, iTyp?sIdentity:"", iTime*60, iTime*60, sEReason, g_sServerIP, sServer);
 	
 
 #if MADEBUG
-	LogToFile(g_sLogFile, "OnBanIdentity:QUERY: %s", sQuery);
+	LogToFile(g_sLogDateBase, "OnBanIdentity:QUERY: %s", sQuery);
 #endif
 	DataPack dPack = new DataPack();
 	dPack.WriteString(sQuery);
@@ -1734,7 +1734,7 @@ public Action OnRemoveBan(const char[] sIdentity, int flags, const char[] comman
 			g_sDatabasePrefix, sIdentity);
 	}
 #if MADEBUG
-	LogToFile(g_sLogFile, "OnRemoveBan:QUERY: %s", sQuery);
+	LogToFile(g_sLogDateBase, "OnRemoveBan:QUERY: %s", sQuery);
 #endif
 	DataPack dPack = new DataPack();
 	dPack.WriteString(sQuery);
@@ -1754,7 +1754,7 @@ public void CallbackForwards(Database db, DBResultSet dbRs, const char[] sError,
 
 	if (!dbRs || sError[0])
 	{
-		LogToFile(g_sLogFile, "CallbackForwards: %s", sError);
+		LogToFile(g_sLogDateBase, "CallbackForwards: %s", sError);
 		if (sError[0] == 'C' || sError[0] == 'L')
 			BekapStart(sQuery);
 	}
@@ -1785,7 +1785,7 @@ void BDAddAdmin(int iClient, bool bFlag = false)
 		g_sAddAdminInfo[iClient][ADDPASS], g_iAddAdmin[iClient][ADDTIME]);
 
 #if MADEBUG
-	LogToFile(g_sLogFile, "BDAddAdmin:QUERY: %s", sQuery);
+	LogToFile(g_sLogDateBase, "BDAddAdmin:QUERY: %s", sQuery);
 #endif
 	g_dDatabase.SetCharset("utf8");
 	g_dDatabase.Query(CallbackAddAdmin, sQuery, GetClientUserId(iClient), DBPrio_High);
@@ -1796,7 +1796,7 @@ public void CallbackAddAdmin(Database db, DBResultSet dbRs, const char[] sError,
 	int iClient = GetClientOfUserId(data);
 	if (!dbRs || sError[0])
 	{
-		LogToFile(g_sLogFile, "CallbackAddAdmin: %s", sError);
+		LogToFile(g_sLogDateBase, "CallbackAddAdmin: %s", sError);
 		if (iClient)
 			PrintToChat2(iClient, "%T", "Failed add admin", iClient, g_sAddAdminInfo[iClient][ADDNAME]);
 		return;
@@ -1822,7 +1822,7 @@ void BDCheckAdmins(int iClient, int iTyp)
 		g_sDatabasePrefix, g_sAddAdminInfo[iClient][ADDSTEAM][8]);
 
 #if MADEBUG
-	LogToFile(g_sLogFile, "BDCheckAdmins:QUERY: %s", sQuery);
+	LogToFile(g_sLogDateBase, "BDCheckAdmins:QUERY: %s", sQuery);
 #endif
 	g_dDatabase.SetCharset("utf8");
 	g_dDatabase.Query(CallbackCheckAdmin, sQuery, dPack, DBPrio_High);
@@ -1837,7 +1837,7 @@ public void CallbackCheckAdmin(Database db, DBResultSet dbRs, const char[] sErro
 	delete dPack;
 
 	if (!dbRs || sError[0])
-		LogToFile(g_sLogFile, "CallbackCheckAdmins: %s", sError);
+		LogToFile(g_sLogDateBase, "CallbackCheckAdmins: %s", sError);
 
 	if (!iClient && !IsClientInGame(iClient))
 		return;
@@ -1905,7 +1905,7 @@ void BDAddServerAdmin(int iClient, int iId, char[] sGroup)
 		g_sDatabasePrefix, iId, sGroup, sServer);
 
 #if MADEBUG
-	LogToFile(g_sLogFile, "BDAddServerAdmin:QUERY: %s", sQuery);
+	LogToFile(g_sLogDateBase, "BDAddServerAdmin:QUERY: %s", sQuery);
 #endif
 	g_dDatabase.SetCharset("utf8");
 	g_dDatabase.Query(CallbackAddServerAdmin, sQuery, GetClientUserId(iClient), DBPrio_High);
@@ -1916,7 +1916,7 @@ public void CallbackAddServerAdmin(Database db, DBResultSet dbRs, const char[] s
 	int iClient = GetClientOfUserId(data);
 	if (!dbRs || sError[0])
 	{
-		LogToFile(g_sLogFile, "CallbackAddServerAdmin: %s", sError);
+		LogToFile(g_sLogDateBase, "CallbackAddServerAdmin: %s", sError);
 		if (iClient)
 			PrintToChat2(iClient, "%T", "Failed add admin", iClient, g_sAddAdminInfo[iClient][ADDNAME]);
 		return;
@@ -1952,7 +1952,7 @@ void BDDelAdmin(int iClient, int iId, int iTyp)
 	}
 
 #if MADEBUG
-	LogToFile(g_sLogFile, "BDDelAdmin:QUERY: %s", sQuery);
+	LogToFile(g_sLogDateBase, "BDDelAdmin:QUERY: %s", sQuery);
 #endif
 	g_dDatabase.SetCharset("utf8");
 	g_dDatabase.Query(CallbackDelAdmin, sQuery, GetClientUserId(iClient), DBPrio_High);
@@ -1963,7 +1963,7 @@ public void CallbackDelAdmin(Database db, DBResultSet dbRs, const char[] sError,
 	int iClient = GetClientOfUserId(data);
 	if (!dbRs || sError[0])
 	{
-		LogToFile(g_sLogFile, "CallbackDelAdmin: %s", sError);
+		LogToFile(g_sLogDateBase, "CallbackDelAdmin: %s", sError);
 		if (iClient && IsClientInGame(iClient))
 			PrintToChat2(iClient, "%T", "Failed del admin", iClient, g_sAddAdminInfo[iClient][ADDNAME]);
 		return;
@@ -2000,5 +2000,5 @@ public void CallbackDelAdmin(Database db, DBResultSet dbRs, const char[] sError,
 public void CallbackSetActivityAdmin(Database db, DBResultSet dbRs, const char[] sError, any data)
 {
 	if (!dbRs || sError[0])
-		LogToFile(g_sLogFile, "CallbackSetActivityAdmin: %s", sError);
+		LogToFile(g_sLogDateBase, "CallbackSetActivityAdmin: %s", sError);
 }*/

@@ -177,7 +177,7 @@ bool CheckAdminImune(int iAdminClient, int iAdminTarget)
 		int iTargetImun = GetImmuneAdmin(iAdminTarget);
 		int iAdminImun = GetImmuneAdmin(iAdminClient);
 	#if MADEBUG
-		LogToFile(g_sLogFile, "CheckAdminImune: (admin %N - %d)  (target %N - %d)", iAdminClient, iAdminImun, iAdminTarget, iTargetImun);
+		LogToFile(g_sLogAction, "CheckAdminImune: (admin %N - %d)  (target %N - %d)", iAdminClient, iAdminImun, iAdminTarget, iTargetImun);
 	#endif
 	
 		if (!IsImune(iAdminImun, iTargetImun))
@@ -199,7 +199,7 @@ bool CheckUnMuteImun(int iAdmin, int iTarget)
 
 	int iImun = GetImmuneAdmin(iAdmin);
 #if MADEBUG
-	LogToFile(g_sLogFile, "CheckUnMuteImun: (admin %N - %d)  (target %N - %d)", iAdmin, iImun, iTarget, g_iTargenMuteImun[iTarget]);
+	LogToFile(g_sLogAction, "CheckUnMuteImun: (admin %N - %d)  (target %N - %d)", iAdmin, iImun, iTarget, g_iTargenMuteImun[iTarget]);
 #endif
 	if (IsImune(iImun, g_iTargenMuteImun[iTarget]))
 		return true;
@@ -324,7 +324,7 @@ bool ValidTime(int iClient)
 	{
 		int iMaxTime = GetAdminMaxTime(iClient);
 	#if MADEBUG
-		LogToFile(g_sLogFile,"valid time: time %d, max %d.", g_iTarget[iClient][TTIME], iMaxTime);
+		LogToFile(g_sLogAction,"valid time: time %d, max %d.", g_iTarget[iClient][TTIME], iMaxTime);
 	#endif
 		
 		/*
@@ -463,7 +463,7 @@ void GetClientToBd(int iClient, int iTyp, const char[] sArg = "")
 			
 			int iUserId = StringToInt(sArg[1]);
 		#if MADEBUG
-			LogToFile(g_sLogFile,"Command get target: UserId %d.", iUserId);
+			LogToFile(g_sLogAction,"Command get target: UserId %d.", iUserId);
 		#endif
 			int iTarget = GetClientOfUserId(iUserId);
 			if (iTarget)
@@ -496,7 +496,7 @@ void GetClientToBd(int iClient, int iTyp, const char[] sArg = "")
 						iClient, 
 						iTargetList, 
 						MAXPLAYERS, 
-						COMMAND_FILTER_NO_BOTS|COMMAND_TARGET_IMMUNE, 
+						COMMAND_FILTER_NO_BOTS, 
 						sTargetName, 
 						MAX_TARGET_LENGTH, 
 						bTnIsMl)) <= 0)
@@ -508,10 +508,30 @@ void GetClientToBd(int iClient, int iTyp, const char[] sArg = "")
 			if (bTnIsMl)
 			{
 				for (int i = 0; i < iTargetCount; i++)
-					DoCreateDB(iClient, iTargetList[i]);
+				{
+					if (CheckAdminImune(iClient, iTargetList[i]))
+						DoCreateDB(iClient, iTargetList[i]);
+					else
+					{
+						if (iClient)
+							ReplyToCommand(iClient, "%s%T", MAPREFIX, "No admin", iClient);
+						else
+							ReplyToCommand(iClient, "%sThis Admin immunity.", MAPREFIX);
+					}
+				}
 			}
 			else
-				DoCreateDB(iClient, iTargetList[0]);
+			{
+				if (CheckAdminImune(iClient, iTargetList[0]))
+					DoCreateDB(iClient, iTargetList[0]);
+				else
+				{
+					if (iClient)
+						ReplyToCommand(iClient, "%s%T", MAPREFIX, "No admin", iClient);
+					else
+						ReplyToCommand(iClient, "%sThis Admin immunity.", MAPREFIX);
+				}
+			}
 		}
 	}
 }
@@ -721,7 +741,7 @@ void CheckClientAdmin(int iClient, char[] sSteamID)
 			else
 			{
 			#if MADEBUG
-				LogToFile(g_sLogFile, "RemoveAdmin expire: admin id %d, steam %s", idAdmin, sSteamID);
+				LogToFile(g_sLogAdmin, "RemoveAdmin expire: admin id %d, steam %s", idAdmin, sSteamID);
 			#endif
 				RemoveAdmin(idAdmin);
 			}
@@ -757,7 +777,7 @@ void AddAdminExpire(AdminId idAdmin, int iExpire)
 	char sAdminID[12];
 	FormatEx(sAdminID, sizeof(sAdminID), "%d", idAdmin);
 #if MADEBUG
-	LogToFile(g_sLogFile, "Add Admin Expire: admin id %d, expire %d", idAdmin, iExpire);
+	LogToFile(g_sLogAdmin, "Add Admin Expire: admin id %d, expire %d", idAdmin, iExpire);
 #endif
 	g_tAdminsExpired.SetValue(sAdminID, iExpire, false);
 }
@@ -770,13 +790,13 @@ int GetAdminExpire(AdminId idAdmin)
 	if (g_tAdminsExpired.GetValue(sAdminID, iExpire))
 	{
 	#if MADEBUG
-		LogToFile(g_sLogFile, "Get Admin Expire: admin id %d, expire %d", idAdmin, iExpire);
+		LogToFile(g_sLogAdmin, "Get Admin Expire: admin id %d, expire %d", idAdmin, iExpire);
 	#endif
 		return iExpire;
 	}
 
 #if MADEBUG
-	LogToFile(g_sLogFile, "Get Admin Expire: admin id %d, expire 0", idAdmin);
+	LogToFile(g_sLogAdmin, "Get Admin Expire: admin id %d, expire 0", idAdmin);
 #endif
 	return 0;
 }
@@ -795,7 +815,7 @@ void FormatVrema(int iClient, int iLength, char[] sLength, int iLens)
 		int iSec = (iLength - (iDays * (60 * 60 * 24)) - (iHours * (60 * 60)) - (iMinutes * 60));
 		int iLen = 0;
 	#if MADEBUG
-		LogToFile(g_sLogFile, "format vrema %d: days %d, hours %d, minutes %d, sec %d", iLength, iDays, iHours, iMinutes, iSec);
+		LogToFile(g_sLogAction, "format vrema %d: days %d, hours %d, minutes %d, sec %d", iLength, iDays, iHours, iMinutes, iSec);
 	#endif
 		if(iDays) iLen += Format(sLength[iLen], iLens - iLen, "%d %T", iDays, "Days", iClient);
 		if(iHours) iLen += Format(sLength[iLen], iLens - iLen, "%s%d %T", iDays ? " " : "", iHours, "Hours", iClient);
@@ -816,7 +836,7 @@ void UnMute(int iClient)
 	KillTimerMute(iClient);
 
 #if MADEBUG
-	LogToFile(g_sLogFile, "un mute: %N type %d", iClient, g_iTargetMuteType[iClient]);
+	LogToFile(g_sLogAction, "un mute: %N type %d", iClient, g_iTargetMuteType[iClient]);
 #endif
 }
 
@@ -832,7 +852,7 @@ void KillTimerMute(int iClient)
 public Action TimerMute(Handle timer, any iClient)
 {
 #if MADEBUG
-	LogToFile(g_sLogFile, "timer mute end: %N", iClient);
+	LogToFile(g_sLogAction, "timer mute end: %N", iClient);
 #endif
 	g_hTimerMute[iClient] = null;
 	if (IsClientInGame(iClient))
@@ -849,7 +869,7 @@ void UnGag(int iClient)
 	KillTimerGag(iClient);
 
 #if MADEBUG
-	LogToFile(g_sLogFile, "un gag: %N type %d", iClient, g_iTargetMuteType[iClient]);
+	LogToFile(g_sLogAction, "un gag: %N type %d", iClient, g_iTargetMuteType[iClient]);
 #endif
 }
 
@@ -865,7 +885,7 @@ void KillTimerGag(int iClient)
 public Action TimerGag(Handle timer, any iClient)
 {
 #if MADEBUG
-	LogToFile(g_sLogFile, "timer gag end: %N", iClient);
+	LogToFile(g_sLogAction, "timer gag end: %N", iClient);
 #endif
 	g_hTimerGag[iClient] = null;
 	if (IsClientInGame(iClient))
@@ -879,7 +899,7 @@ void UnSilence(int iClient)
 	KillTimerMute(iClient);
 	FunMute(iClient);
 #if MADEBUG
-	LogToFile(g_sLogFile, "un silence: %N type %d", iClient, g_iTargetMuteType[iClient]);
+	LogToFile(g_sLogAction, "un silence: %N type %d", iClient, g_iTargetMuteType[iClient]);
 #endif
 }
 
@@ -901,7 +921,7 @@ void AddGag(int iClient, int iTime)
 	}
 	
 #if MADEBUG
-	LogToFile(g_sLogFile, "add gag: %N type %d, time %d", iClient, g_iTargetMuteType[iClient], iTime);
+	LogToFile(g_sLogAction, "add gag: %N type %d, time %d", iClient, g_iTargetMuteType[iClient], iTime);
 #endif
 }
 
@@ -924,7 +944,7 @@ void AddMute(int iClient, int iTime)
 	}
 
 #if MADEBUG
-	LogToFile(g_sLogFile, "add mute: %N type %d, time %d", iClient, g_iTargetMuteType[iClient], iTime);
+	LogToFile(g_sLogAction, "add mute: %N type %d, time %d", iClient, g_iTargetMuteType[iClient], iTime);
 #endif
 }
 
@@ -958,7 +978,7 @@ void AddSilence(int iClient, int iTime)
 	}
 
 #if MADEBUG
-	LogToFile(g_sLogFile, "add silence: %N type %d, time %d", iClient, g_iTargetMuteType[iClient], iTime);
+	LogToFile(g_sLogAction, "add silence: %N type %d, time %d", iClient, g_iTargetMuteType[iClient], iTime);
 #endif
 }
 //----------------------------------------------------------------------------------------------
@@ -975,12 +995,12 @@ void KillTimerBekap()
 public Action TimerBekap(Handle timer, any data)
 {
 #if MADEBUG
-	LogToFile(g_sLogFile, "TimerBekap");
+	LogToFile(g_sLogDateBase, "TimerBekap");
 #endif
 	if (ConnectBd(g_dDatabase))
 	{
 	#if MADEBUG
-		LogToFile(g_sLogFile, "TimerBekap yes connect bd");
+		LogToFile(g_sLogDateBase, "TimerBekap yes connect bd");
 	#endif
 		g_hTimerBekap = null;
 		SentBekapInBd();
@@ -1024,7 +1044,7 @@ void CreateTeaxtDialog(int iClient, const char[] sMesag, any ...)
 	if(IsClientInGame(iClient))
 	{
 	#if MADEBUG
-		LogToFile(g_sLogFile, "CreateTeaxtDialog %N", iClient);
+		LogToFile(g_sLogAction, "CreateTeaxtDialog %N", iClient);
 	#endif
 		CreateDialog(iClient, kvKey, DialogType_Text);
 		CreateTimer(0.1, TimerKick, GetClientUserId(iClient));
@@ -1054,19 +1074,37 @@ public Action TimerBan(Handle timer, any data)
 	
 #if MADEBUG
 	if (g_bServerBanTyp)
-		LogToFile(g_sLogFile, "banid %d %s", g_iServerBanTime, sBuffer);
+		LogToFile(g_sLogAction, "banid %d %s", g_iServerBanTime, sBuffer);
 	else
-		LogToFile(g_sLogFile, "addip %d %s", g_iServerBanTime, sBuffer);
+		LogToFile(g_sLogAction, "addip %d %s", g_iServerBanTime, sBuffer);
 #endif
 }
 //-------------------------------------------------------------------------------------------------------------
 void LogOn()
 {
-	char sTime[64];
-	FormatTime(sTime, sizeof(sTime), "logs/materialadmin/materialadmin_%Y%m%d.log");
-	BuildPath(Path_SM, g_sLogFile, sizeof(g_sLogFile), sTime);
+	char sTime[64],
+		sBuffer[64];
+	FormatTime(sTime, sizeof(sTime), "%Y%m%d");
+	
+	FormatEx(sBuffer, sizeof(sBuffer), "logs/materialadmin/LogAdmin_%s.log", sTime);
+	BuildPath(Path_SM, g_sLogAdmin, sizeof(g_sLogAdmin), sBuffer);
+	
+	FormatEx(sBuffer, sizeof(sBuffer), "logs/materialadmin/LogConfig_%s.log", sTime);
+	BuildPath(Path_SM, g_sLogConfig, sizeof(g_sLogConfig), sBuffer);
+	
+	FormatEx(sBuffer, sizeof(sBuffer), "logs/materialadmin/LogDateBase_%s.log", sTime);
+	BuildPath(Path_SM, g_sLogDateBase, sizeof(g_sLogDateBase), sBuffer);
+	
+	FormatEx(sBuffer, sizeof(sBuffer), "logs/materialadmin/LogNative_%s.log", sTime);
+	BuildPath(Path_SM, g_sLogNative, sizeof(g_sLogNative), sBuffer);
+	
+	FormatEx(sBuffer, sizeof(sBuffer), "logs/materialadmin/LogAction_%s.log", sTime);
+	BuildPath(Path_SM, g_sLogAction, sizeof(g_sLogAction), sBuffer);
 	
 #if MADEBUG
-	LogToFile(g_sLogFile, "plugin version %s", MAVERSION);
+	LogToFile(g_sLogAdmin, "plugin version %s", MAVERSION);
+	LogToFile(g_sLogConfig, "plugin version %s", MAVERSION);
+	LogToFile(g_sLogDateBase, "plugin version %s", MAVERSION);
+	LogToFile(g_sLogAction, "plugin version %s", MAVERSION);
 #endif
 }

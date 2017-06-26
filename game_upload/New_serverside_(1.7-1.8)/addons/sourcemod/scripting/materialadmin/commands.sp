@@ -71,7 +71,7 @@ public Action OnClientSayCommand(int iClient, const char[] sCommand, const char[
 	if (g_bSayReasonReport[iClient])
 	{
 	#if MADEBUG
-		LogToFile(g_sLogFile, "Chat report reason: %s", sArgs);
+		LogToFile(g_sLogAction, "Chat report reason: %s", sArgs);
 	#endif
 		PrintToChat2(iClient, "%T", "Own reason", iClient, sArgs);
 		g_bSayReasonReport[iClient] = false;
@@ -82,7 +82,7 @@ public Action OnClientSayCommand(int iClient, const char[] sCommand, const char[
 	{
 		strcopy(g_sTarget[iClient][TREASON], sizeof(g_sTarget[][]), sArgs);
 	#if MADEBUG
-		LogToFile(g_sLogFile, "Chat reason: %s", sArgs);
+		LogToFile(g_sLogAction, "Chat reason: %s", sArgs);
 	#endif
 		PrintToChat2(iClient, "%T", "Own reason", iClient, sArgs);
 		g_bSayReason[iClient] = false;
@@ -192,12 +192,12 @@ public Action CommandAddAdmin(int iClient, int iArgc)
 	GetCmdArg(5, sExpire, sizeof(sExpire));
 
 #if MADEBUG
-	LogToFile(g_sLogFile,"Command ma_addadmin: arg - %s, imun - %s, flag - %s, pass - %s, expire - %s.", sArg, sImun, sFlags, sPass, sExpire);
+	LogToFile(g_sLogAction,"Command ma_addadmin: arg - %s, imun - %s, flag - %s, pass - %s, expire - %s.", sArg, sImun, sFlags, sPass, sExpire);
 #endif
 	
 	int iUserId = StringToInt(sArg[1]);
 	#if MADEBUG
-		LogToFile(g_sLogFile,"Command get target: UserId %d.", iUserId);
+		LogToFile(g_sLogAction,"Command get target: UserId %d.", iUserId);
 	#endif
 	int iTarget = GetClientOfUserId(iUserId);
 	
@@ -283,7 +283,7 @@ public Action CommandAddAdminOff(int iClient, int iArgc)
 	GetCmdArg(6, sExpire, sizeof(sExpire));
 	
 #if MADEBUG
-	LogToFile(g_sLogFile,"Command ma_addadminoff: name - %s, steam %s, imun - %s, flag - %s, pass - %s, expire - %s.", sName, sSteamID, sImun, sFlags, sPass, sExpire);
+	LogToFile(g_sLogAction,"Command ma_addadminoff: name - %s, steam %s, imun - %s, flag - %s, pass - %s, expire - %s.", sName, sSteamID, sImun, sFlags, sPass, sExpire);
 #endif
 	
 	if (!ValidSteam(sSteamID))
@@ -370,14 +370,14 @@ public Action CommandDelAdmin(int iClient, int iArgc)
 	GetCmdArg(2, sType, sizeof(sType));
 	
 #if MADEBUG
-	LogToFile(g_sLogFile,"Command ma_deladmin: arg - %s, type %s.", sArg, sType);
+	LogToFile(g_sLogAction,"Command ma_deladmin: arg - %s, type %s.", sArg, sType);
 #endif
 	
 	if (sArg[0] == '#')
 	{
 		int iUserId = StringToInt(sArg[1]);
 		#if MADEBUG
-			LogToFile(g_sLogFile,"Command get target: UserId %d.", iUserId);
+			LogToFile(g_sLogAction,"Command get target: UserId %d.", iUserId);
 		#endif
 		iTarget = GetClientOfUserId(iUserId);
 		
@@ -441,7 +441,7 @@ public Action CommandGag(int iClient, int iArgc)
 	
 	int iTyp = GetTypeClient(sArg);
 #if MADEBUG
-	LogToFile(g_sLogFile,"Command: sm_gag, arg %s, type %d, time %d, reason %s.", sArg, iTyp, g_iTarget[iClient][TTIME], g_sTarget[iClient][TREASON]);
+	LogToFile(g_sLogAction,"Command: sm_gag, arg %s, type %d, time %d, reason %s.", sArg, iTyp, g_iTarget[iClient][TTIME], g_sTarget[iClient][TREASON]);
 #endif
 	GetClientToBd(iClient, iTyp, sArg);
 	
@@ -471,7 +471,7 @@ public Action CommandMute(int iClient, int iArgc)
 	
 	int iTyp = GetTypeClient(sArg);
 #if MADEBUG
-	LogToFile(g_sLogFile,"Command: sm_mute, arg %s, type %d, time %d, reason %s.", sArg, iTyp, g_iTarget[iClient][TTIME], g_sTarget[iClient][TREASON]);
+	LogToFile(g_sLogAction,"Command: sm_mute, arg %s, type %d, time %d, reason %s.", sArg, iTyp, g_iTarget[iClient][TTIME], g_sTarget[iClient][TREASON]);
 #endif
 	GetClientToBd(iClient, iTyp, sArg);
 	
@@ -502,7 +502,7 @@ public Action CommandSil(int iClient, int iArgc)
 	
 	int iTyp = GetTypeClient(sArg);
 #if MADEBUG
-	LogToFile(g_sLogFile,"Command: sm_silence, arg %s, type %d, time %d, reason %s.", sArg, iTyp, g_iTarget[iClient][TTIME], g_sTarget[iClient][TREASON]);
+	LogToFile(g_sLogAction,"Command: sm_silence, arg %s, type %d, time %d, reason %s.", sArg, iTyp, g_iTarget[iClient][TTIME], g_sTarget[iClient][TREASON]);
 #endif
 	GetClientToBd(iClient, iTyp, sArg);
 	
@@ -525,7 +525,7 @@ public Action CommandUnGag(int iClient, int iArgc)
 	g_iTargetType[iClient] = TYPE_UNGAG;
 	int iTyp = GetTypeClient(sArg);
 #if MADEBUG
-	LogToFile(g_sLogFile,"Command: sm_ungag, arg %s, type %d, reason %s.", sArg, iTyp, g_sTarget[iClient][TREASON]);
+	LogToFile(g_sLogAction,"Command: sm_ungag, arg %s, type %d, reason %s.", sArg, iTyp, g_sTarget[iClient][TREASON]);
 #endif
 	GetClientToBd(iClient, iTyp, sArg);
 
@@ -548,7 +548,7 @@ public Action CommandUnMute(int iClient, int iArgc)
 	g_iTargetType[iClient] = TYPE_UNMUTE;
 	int iTyp = GetTypeClient(sArg);
 #if MADEBUG
-	LogToFile(g_sLogFile,"Command: sm_unmute, arg %s, type %d, reason %s.", sArg, iTyp, g_sTarget[iClient][TREASON]);
+	LogToFile(g_sLogAction,"Command: sm_unmute, arg %s, type %d, reason %s.", sArg, iTyp, g_sTarget[iClient][TREASON]);
 #endif
 	GetClientToBd(iClient, iTyp, sArg);
 
@@ -571,7 +571,7 @@ public Action CommandUnSil(int iClient, int iArgc)
 	g_iTargetType[iClient] = TYPE_UNSILENCE;
 	int iTyp = GetTypeClient(sArg);
 #if MADEBUG
-	LogToFile(g_sLogFile,"Command: sm_unsilence, arg %s, type %d, reason %s.", sArg, iTyp, g_sTarget[iClient][TREASON]);
+	LogToFile(g_sLogAction,"Command: sm_unsilence, arg %s, type %d, reason %s.", sArg, iTyp, g_sTarget[iClient][TREASON]);
 #endif
 	GetClientToBd(iClient, iTyp, sArg);
 
@@ -603,7 +603,7 @@ public Action CommandBan(int iClient, int iArgc)
 	
 	int iTyp = GetTypeClient(sArg);
 #if MADEBUG
-	LogToFile(g_sLogFile,"Command: sm_ban, arg %s, type %d, time %d, reason %s.", sArg, iTyp, g_iTarget[iClient][TTIME], g_sTarget[iClient][TREASON]);
+	LogToFile(g_sLogAction,"Command: sm_ban, arg %s, type %d, time %d, reason %s.", sArg, iTyp, g_iTarget[iClient][TTIME], g_sTarget[iClient][TREASON]);
 #endif
 	GetClientToBd(iClient, iTyp, sArg);
 	
@@ -634,7 +634,7 @@ public Action CommandBanIp(int iClient, int iArgc)
 	
 	int iTyp = GetTypeClient(sArg);
 #if MADEBUG
-	LogToFile(g_sLogFile,"Command: sm_banip, arg %s, type %d, time %d, reason %s.", sArg, iTyp, g_iTarget[iClient][TTIME], g_sTarget[iClient][TREASON]);
+	LogToFile(g_sLogAction,"Command: sm_banip, arg %s, type %d, time %d, reason %s.", sArg, iTyp, g_iTarget[iClient][TTIME], g_sTarget[iClient][TREASON]);
 #endif
 	GetClientToBd(iClient, iTyp, sArg);
 	
@@ -693,7 +693,7 @@ public Action CommandAddBan(int iClient, int iArgc)
 	}
 
 #if MADEBUG
-	LogToFile(g_sLogFile,"Command: sm_addban, arg %s, target %d, time %d, reason %s.", sArg, iTarget, g_iTarget[iClient][TTIME], g_sTarget[iClient][TREASON]);
+	LogToFile(g_sLogAction,"Command: sm_addban, arg %s, target %d, time %d, reason %s.", sArg, iTarget, g_iTarget[iClient][TTIME], g_sTarget[iClient][TREASON]);
 #endif
 
 	if(iTarget)
@@ -755,7 +755,7 @@ public Action CommandUnBan(int iClient, int iArgc)
 	g_iTargetType[iClient] = TYPE_UNBAN;
 
 #if MADEBUG
-	LogToFile(g_sLogFile,"Command: sm_unban, arg %s, reason %s.", sArg, g_sTarget[iClient][TREASON]);
+	LogToFile(g_sLogAction,"Command: sm_unban, arg %s, reason %s.", sArg, g_sTarget[iClient][TREASON]);
 #endif
 	CheckBanInBd(iClient, 0, 0, sArg);
 
@@ -766,7 +766,7 @@ public Action CommandWRehashAdm(int iArgc)
 {
 	g_bReshashAdmin = true;
 #if MADEBUG
-	LogToFile(g_sLogFile, "Rehash Admin web com.");
+	LogToFile(g_sLogAction, "Rehash Admin web com.");
 #endif
 	AdminHash();
 	ReplyToCommand(0, "Rehash Admin");
@@ -782,7 +782,7 @@ public Action CommandWMute(int iArgc)
 	int iType, iTime;
 	if (ExplodeString(sArgs, " ", sArg, 4, 264) != 4 || !StringToIntEx(sArg[0], iType) || iType < 1 || iType > 4 || !StringToIntEx(sArg[1], iTime))
 	{
-		LogToFile(g_sLogFile, "Wrong usage of ma_wb_mute");
+		LogToFile(g_sLogAction, "Wrong usage of ma_wb_mute");
 		return Plugin_Stop;
 	}
 	
@@ -807,7 +807,7 @@ public Action CommandWMute(int iArgc)
 		ReplyToCommand(0, "nope");
 	
 #if MADEBUG
-	LogToFile(g_sLogFile,"CommandWMute: %s", sArgs);
+	LogToFile(g_sLogAction,"CommandWMute: %s", sArgs);
 #endif
 	
 	return Plugin_Handled;
@@ -822,7 +822,7 @@ public Action CommandWUnMute(int iArgc)
 	int iType;
 	if (ExplodeString(sArgs, " ", sArg, 2, 64) != 2 || !StringToIntEx(sArg[0], iType) || iType < 1 || iType > 4)
 	{
-		LogToFile(g_sLogFile, "Wrong usage of ma_wb_unmute");
+		LogToFile(g_sLogAction, "Wrong usage of ma_wb_unmute");
 		return Plugin_Stop;
 	}
 	
@@ -842,7 +842,7 @@ public Action CommandWUnMute(int iArgc)
 		ReplyToCommand(0, "nope");
 	
 #if MADEBUG
-	LogToFile(g_sLogFile,"CommandWUnMute: %s", sArgs);
+	LogToFile(g_sLogAction,"CommandWUnMute: %s", sArgs);
 #endif
 	
 	return Plugin_Handled;
@@ -856,7 +856,7 @@ public Action CommandWBan(int iArgc)
 
 	if (!ExplodeString(sArgs, " ", sArg, 1, 64))
 	{
-		LogToFile(g_sLogFile, "Wrong usage of ma_wb_ban");
+		LogToFile(g_sLogAction, "Wrong usage of ma_wb_ban");
 		return Plugin_Stop;
 	}
 	
@@ -875,7 +875,7 @@ public Action CommandWBan(int iArgc)
 		ReplyToCommand(0, "nope");
 	
 #if MADEBUG
-	LogToFile(g_sLogFile,"CommandWBan: %s", sArgs);
+	LogToFile(g_sLogAction,"CommandWBan: %s", sArgs);
 #endif
 	
 	return Plugin_Handled;

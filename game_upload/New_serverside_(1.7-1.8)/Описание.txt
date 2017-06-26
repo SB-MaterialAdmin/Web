@@ -158,3 +158,10 @@ char sValue[512];
 MAGetConfigSetting("DatabasePrefix", sValue);
 sValue - ваше значение в конфиге этого парамметра
 sKey - неверное или пустое значение вернёт ошибку натива
+
+
+Работа над ошибками:
+если такая ошибка в логах
+Failed to retrieve groups from the database, Unknown column 'maxbantime' in 'field list'
+то у вас нет пару столбцов в таблице, выполните ниже запрос (sb_srvgroups должен быть с вашим прификсом)
+ALTER TABLE `sb_srvgroups` ADD `maxbantime` INT NOT NULL default -1, ADD `maxmutetime` INT NOT NULL default -1

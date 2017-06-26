@@ -132,10 +132,15 @@ Menu g_mReasonBMenu,
 
 char g_sServerIP[32], 
 	g_sServerPort[8],
-	g_sLogFile[256],
 	g_sOffFormatTime[56],
 	g_sWebsite[256],
 	g_sDatabasePrefix[10] = "sb";
+	
+char g_sLogAdmin[256],
+	g_sLogConfig[256],
+	g_sLogDateBase[256],
+	g_sLogNative[256],
+	g_sLogAction[256];
 	
 bool g_bSayReason[MAXPLAYERS+1],
 	g_bSayReasonReport[MAXPLAYERS+1],
@@ -269,7 +274,7 @@ public void OnConfigsExecuted()
 		if(FileExists(sNewFileName))
 			DeleteFile(sNewFileName);
 		RenameFile(sNewFileName, sFileName);
-		LogToFile(g_sLogFile, "plugins/basebans.smx was unloaded and moved to plugins/disabled/basebans.smx");
+		LogToFile(g_sLogAction, "plugins/basebans.smx was unloaded and moved to plugins/disabled/basebans.smx");
 	}
 	
 	BuildPath(Path_SM, sFileName, sizeof(sFileName), "plugins/basecomm.smx");
@@ -280,7 +285,7 @@ public void OnConfigsExecuted()
 		if(FileExists(sNewFileName))
 			DeleteFile(sNewFileName);
 		RenameFile(sNewFileName, sFileName);
-		LogToFile(g_sLogFile, "plugins/basecomm.smx was unloaded and moved to plugins/disabled/basecomm.smx");
+		LogToFile(g_sLogAction, "plugins/basecomm.smx was unloaded and moved to plugins/disabled/basecomm.smx");
 	}
 	
 	BuildPath(Path_SM, sFileName, sizeof(sFileName), "plugins/ma_adminmenu.smx");
@@ -294,7 +299,7 @@ public void OnConfigsExecuted()
 			if(FileExists(sNewFileName))
 				DeleteFile(sNewFileName);
 			RenameFile(sNewFileName, sFileName);
-			LogToFile(g_sLogFile, "plugins/adminmenu.smx was unloaded and moved to plugins/disabled/adminmenu.smx");
+			LogToFile(g_sLogAction, "plugins/adminmenu.smx was unloaded and moved to plugins/disabled/adminmenu.smx");
 		}
 	}
 	
@@ -306,7 +311,7 @@ public void OnConfigsExecuted()
 		if(FileExists(sNewFileName))
 			DeleteFile(sNewFileName);
 		RenameFile(sNewFileName, sFileName);
-		LogToFile(g_sLogFile, "plugins/sourcecomms.smx was unloaded and moved to plugins/disabled/sourcecomms.smx");
+		LogToFile(g_sLogAction, "plugins/sourcecomms.smx was unloaded and moved to plugins/disabled/sourcecomms.smx");
 	}
 	
 	BuildPath(Path_SM, sFileName, sizeof(sFileName), "plugins/sourcebans.smx");
@@ -317,7 +322,7 @@ public void OnConfigsExecuted()
 		if(FileExists(sNewFileName))
 			DeleteFile(sNewFileName);
 		RenameFile(sNewFileName, sFileName);
-		LogToFile(g_sLogFile, "plugins/sourcebans.smx was unloaded and moved to plugins/disabled/sourcebans.smx");
+		LogToFile(g_sLogAction, "plugins/sourcebans.smx was unloaded and moved to plugins/disabled/sourcebans.smx");
 	}
 	
 	if (g_bLalod)
@@ -409,7 +414,7 @@ public void Event_PlayerDisconnect(Event eEvent, const char[] sEName, bool bDont
 	#if MADEBUG
 		char sTime[64];
 		FormatTime(sTime, sizeof(sTime), g_sOffFormatTime, GetTime());
-		LogToFile(g_sLogFile,"New: %s %s - %s ; %s.", sName, sSteamID, sIP, sTime);
+		LogToFile(g_sLogAction,"New: %s %s - %s ; %s.", sName, sSteamID, sIP, sTime);
 	#endif
 	}
 	/*else
@@ -450,13 +455,13 @@ void ReadConfig()
 		{
 			char sError[256];
 			g_smcConfigParser.GetErrorString(err, sError, sizeof(sError));
-			LogToFile(g_sLogFile, "Could not parse file (line %d, file \"%s\"):", iLine, sConfigFile);
-			LogToFile(g_sLogFile, "Parser encountered error: %s", sError);
+			LogToFile(g_sLogConfig, "Could not parse file (line %d, file \"%s\"):", iLine, sConfigFile);
+			LogToFile(g_sLogConfig, "Parser encountered error: %s", sError);
 		}
 	}
 	else 
 	{
-		LogToFile(g_sLogFile, "FATAL *** ERROR *** can not find %s", sConfigFile);
+		LogToFile(g_sLogConfig, "FATAL *** ERROR *** can not find %s", sConfigFile);
 		SetFailState("%sFATAL *** ERROR *** can not find %s", MAPREFIX, sConfigFile);
 	}
 
@@ -480,7 +485,7 @@ public SMCResult NewSection(SMCParser Smc, const char[] sName, bool bOpt_quotes)
 		else
 			g_iConfigState = ConfigState_Non;
 	#if MADEBUG
-		LogToFile(g_sLogFile,"Loaded config. name %s", sName);
+		LogToFile(g_sLogConfig,"Loaded config. name %s", sName);
 	#endif
 	}
 	
@@ -586,35 +591,35 @@ public SMCResult KeyValue(SMCParser Smc, const char[] sKey, const char[] sValue,
 			else if(strcmp("BanTypMenu", sKey, false) == 0)
 				g_iBanTypMenu = StringToInt(sValue);
 		#if MADEBUG
-			LogToFile(g_sLogFile,"Loaded config. key \"%s\", value \"%s\"", sKey, sValue);
+			LogToFile(g_sLogConfig,"Loaded config. key \"%s\", value \"%s\"", sKey, sValue);
 		#endif
 		}
 		case ConfigState_Reason_Mute:
 		{
 			g_mReasonMMenu.AddItem(sKey, sValue);
 		#if MADEBUG
-			LogToFile(g_sLogFile,"Loaded mute reason. key \"%s\", display_text \"%s\"", sKey, sValue);
+			LogToFile(g_sLogConfig,"Loaded mute reason. key \"%s\", display_text \"%s\"", sKey, sValue);
 		#endif
 		}
 		case ConfigState_Reason_Ban:
 		{
 			g_mReasonBMenu.AddItem(sKey, sValue);
 		#if MADEBUG
-			LogToFile(g_sLogFile,"Loaded ban reason. key \"%s\", display_text \"%s\"", sKey, sValue);
+			LogToFile(g_sLogConfig,"Loaded ban reason. key \"%s\", display_text \"%s\"", sKey, sValue);
 		#endif
 		}
 		case ConfigState_Reason_Hacking:
 		{
 			g_mHackingMenu.AddItem(sKey, sValue);
 		#if MADEBUG
-			LogToFile(g_sLogFile,"Loaded hacking reason. key \"%s\", display_text \"%s\"", sKey, sValue);
+			LogToFile(g_sLogConfig,"Loaded hacking reason. key \"%s\", display_text \"%s\"", sKey, sValue);
 		#endif
 		}
 		case ConfigState_Time:
 		{
 			g_tMenuTime.SetString(sKey, sValue, false);
 		#if MADEBUG
-			LogToFile(g_sLogFile,"Loaded time. key \"%s\", display_text \"%s\"", sKey, sValue);
+			LogToFile(g_sLogConfig,"Loaded time. key \"%s\", display_text \"%s\"", sKey, sValue);
 		#endif
 		}
 	}

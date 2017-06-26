@@ -22,7 +22,7 @@ public int Native_Log(Handle plugin, int numParams)
 {
 	char sBufer[256];
 	FormatNativeString(0, 1, 2, sizeof(sBufer), _, sBufer);
-	LogToFile(g_sLogFile, sBufer);
+	LogToFile(g_sLogNative, sBufer);
 }
 
 public int Native_GetConfigSetting(Handle plugin, int numParams)

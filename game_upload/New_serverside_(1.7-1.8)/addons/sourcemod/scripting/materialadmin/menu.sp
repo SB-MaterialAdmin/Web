@@ -130,7 +130,7 @@ public int MenuHandler_Setting(Menu Mmenu, MenuAction mAction, int iClient, int 
 				{
 					g_bReshashAdmin = true;
 				#if MADEBUG
-					LogToFile(g_sLogFile, "Rehash Admin menu.");
+					LogToFile(g_sLogAction, "Rehash Admin menu.");
 				#endif
 					AdminHash();
 					PrintToChat2(iClient, "%T",  "ReheshAdminOk", iClient);
@@ -198,7 +198,7 @@ public void ShowTargetOffline(Database db, DBResultSet dbRs, const char[] sError
 			}
 			Mmenu.AddItem(sID, sTitle);
 		#if MADEBUG
-			LogToFile(g_sLogFile,"Menu: %s, %s - %s", sID, sSteamID, sTitle);
+			LogToFile(g_sLogAction,"Menu: %s, %s - %s", sID, sSteamID, sTitle);
 		#endif
 		}
 	}
@@ -229,7 +229,7 @@ public int MenuHandler_OfflineList(Menu Mmenu, MenuAction mAction, int iClient, 
 			
 			g_bOnileTarget[iClient] = false;
 		#if MADEBUG
-			LogToFile(g_sLogFile, "Menu select BanList: %s", sID);
+			LogToFile(g_sLogAction, "Menu select BanList: %s", sID);
 		#endif
 			
 			BdGetInfoOffline(iClient, StringToInt(sID));
@@ -343,7 +343,7 @@ void AdminMenuAddClients(Menu Mmenu, int iClient, int iTarget)
 	}
 	
 #if MADEBUG
-	LogToFile(g_sLogFile,"add client menu: admin %N -  %s %s", iClient, (GetUserAdmin(iTarget) == INVALID_ADMIN_ID)?"target":"admin target", sTitle);
+	LogToFile(g_sLogAction,"add client menu: admin %N -  %s %s", iClient, (GetUserAdmin(iTarget) == INVALID_ADMIN_ID)?"target":"admin target", sTitle);
 #endif
 
 	Mmenu.AddItem(sOption, sTitle);
@@ -600,7 +600,7 @@ public int MenuHandler_MenuTypeMute(Menu Mmenu, MenuAction mAction, int iClient,
 				ShowTimeMenu(iClient);
 
 		#if MADEBUG
-			LogToFile(g_sLogFile,"Menu select TypeMute: slot %i , type %d", iSlot, g_iTargetType[iClient]);
+			LogToFile(g_sLogAction,"Menu select TypeMute: slot %i , type %d", iSlot, g_iTargetType[iClient]);
 		#endif
 		}
 	}
@@ -619,7 +619,7 @@ void ShowTimeMenu(int iClient)
 	int iMaxTime = GetAdminMaxTime(iClient);
 	
 	#if MADEBUG
-		LogToFile(g_sLogFile,"Menu Time: max time %d", iMaxTime);
+		LogToFile(g_sLogAction,"Menu Time: max time %d", iMaxTime);
 	#endif
 
 	StringMapSnapshot tTrieSnapshot = g_tMenuTime.Snapshot();
@@ -635,12 +635,12 @@ void ShowTimeMenu(int iClient)
 		if (iTime <= iMaxTime || iMaxTime == -1)
 		{
 		#if MADEBUG
-			LogToFile(g_sLogFile,"Menu Time: yes time %d", iTime);
+			LogToFile(g_sLogAction,"Menu Time: yes time %d", iTime);
 		#endif
 			if(g_tMenuTime.GetString(sValue, sTitle, sizeof(sTitle)))
 			{
 			#if MADEBUG
-				LogToFile(g_sLogFile,"Menu Time: add time %s - %s", sValue, sTitle);
+				LogToFile(g_sLogAction,"Menu Time: add time %s - %s", sValue, sTitle);
 			#endif
 				Mmenu.AddItem(sValue, sTitle);
 			}
@@ -683,7 +683,7 @@ public int MenuHandler_MenuTime(Menu Mmenu, MenuAction mAction, int iClient, int
 			Mmenu.GetItem(iSlot, sInfo, sizeof(sInfo));
 			g_iTarget[iClient][TTIME] = StringToInt(sInfo);
 		#if MADEBUG
-			LogToFile(g_sLogFile,"Menu select time: %s", sInfo);
+			LogToFile(g_sLogAction,"Menu select time: %s", sInfo);
 		#endif
 
 			if(g_iTargetType[iClient] <= TYPE_BANIP)
@@ -744,7 +744,7 @@ public int MenuHandler_MenuBReason(Menu Mmenu, MenuAction mAction, int iClient, 
 			}
 			
 		#if MADEBUG
-			LogToFile(g_sLogFile,"Menu select reason: %s", sInfo);
+			LogToFile(g_sLogAction,"Menu select reason: %s", sInfo);
 		#endif
 		
 			if (g_bReportReason[iClient])
@@ -779,7 +779,7 @@ public int MenuHandler_MenuMReason(Menu Mmenu, MenuAction mAction, int iClient, 
 			}
 			strcopy(g_sTarget[iClient][TREASON], sizeof(sInfo), sInfo);
 		#if MADEBUG
-			LogToFile(g_sLogFile,"Menu select reason: %s", sInfo);
+			LogToFile(g_sLogAction,"Menu select reason: %s", sInfo);
 		#endif
 			OnlineClientSet(iClient);
 		}
@@ -807,7 +807,7 @@ public int MenuHandler_MenuHacking(Menu Mmenu, MenuAction mAction, int iClient, 
 			Mmenu.GetItem(iSlot, sInfo, sizeof(sInfo));
 			
 		#if MADEBUG
-			LogToFile(g_sLogFile,"Menu select hacking: %s", sInfo);
+			LogToFile(g_sLogAction,"Menu select hacking: %s", sInfo);
 		#endif
 		
 			if (g_bReportReason[iClient])
@@ -826,14 +826,14 @@ void OnlineClientSet(int iClient)
 	if (g_bOnileTarget[iClient])
 	{
 	#if MADEBUG
-		LogToFile(g_sLogFile,"Online client set: client %d, tip %d", iClient, g_iTarget[iClient][TTYPE]);
+		LogToFile(g_sLogAction,"Online client set: client %d, tip %d", iClient, g_iTarget[iClient][TTYPE]);
 	#endif
 		GetClientToBd(iClient, g_iTarget[iClient][TTYPE]);
 	}
 	else
 	{
 	#if MADEBUG
-		LogToFile(g_sLogFile,"Offline client set: client %d", iClient);
+		LogToFile(g_sLogAction,"Offline client set: client %d", iClient);
 	#endif
 		CheckBanInBd(iClient, 0, 1, g_sTarget[iClient][TSTEAMID]);
 	}
