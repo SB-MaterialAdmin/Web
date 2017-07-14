@@ -16,6 +16,11 @@
 		"en"    		"The left players"
 		"ru"    		"Вышедшие игроки"
 	}
+	"ListTitle"
+	{
+		"en"    		"The punished players on the server"
+		"ru"    		"Наказанные игроки на сервере"
+	}
 	"SettingTitle"
 	{
 		"en"    		"Settings"
@@ -70,6 +75,16 @@
 	{
 		"en"    		"Ban"
 		"ru"    		"Бан"
+	}
+	"Steam"
+	{
+		"en"    		"Steam"
+		"ru"    		"По стиму"
+	}
+	"Ip"
+	{
+		"en"    		"Ip"
+		"ru"    		"По айпи"
 	}
 	"Mute"
 	{
@@ -138,8 +153,163 @@
 	}
 	"no target"
 	{
-		"en"			"no target"
+		"en"			"No target"
 		"ru"			"Нет игроков"
+	}
+	"No time"
+	{
+		"en"			"No time"
+		"ru"			"Для вас ничего не доступно"
+	}
+	"SettingAdminTitle"
+	{
+		"en"			"Аdmins management"
+		"ru"			"Управление админами"
+	}
+	"add admin"
+	{
+		"en"			"Add admin"
+		"ru"			"Добавить админа"
+	}
+	"del admin"
+	{
+		"en"			"Delete admin"
+		"ru"			"Удалить админа"
+	}
+	"No Access setting admin"
+	{
+		"en"			"You do not have permission for this functional"
+		"ru"			"У вас нет прав для этого функционала"
+	}
+	"AddFlagAdminTitle"
+	{
+		"en"			"Select the flag"
+		"ru"			"Выберите флаг"
+	}
+	"z flag"
+	{
+		"en"			"root (All access by default)"
+		"ru"			"root (обладает всеми флагами)"
+	}
+	"b flag"
+	{
+		"en"			"Generic admin abilities"
+		"ru"			"администратор, флаг требуется для админов"
+	}
+	"a flag"
+	{
+		"en"			"Reserved slot"
+		"ru"			"резервный слот"
+	}
+	"c flag"
+	{
+		"en"			"Kick another user"
+		"ru"			"использование команды kick"
+	}
+	"d flag"
+	{
+		"en"			"Ban another user"
+		"ru"			"использование команды ban (бан)"
+	}
+	"e flag"
+	{
+		"en"			"Unban another user"
+		"ru"			"использование команды unban (разбан)"
+	}
+	"f flag"
+	{
+		"en"			"Slay/kill/damage another user"
+		"ru"			"использование команды slay (шлёпнуть, убить)"
+	}
+	"g flag"
+	{
+		"en"			"Change the map"
+		"ru"			"разрешение менять карты"
+	}
+	"h flag"
+	{
+		"en"			"Change basic convars"
+		"ru"			"разрешение менять настройки сервера (cvar's)"
+	}
+	"i flag"
+	{
+		"en"			"Change configuration"
+		"ru"			"смена используемого конфига"
+	}
+	"j flag"
+	{
+		"en"			"Special chat privileges"
+		"ru"			"специальные привилегии в чате"
+	}
+	"k flag"
+	{
+		"en"			"Special vote privileges"
+		"ru"			"доступ к запуску голосования"
+	}
+	"l flag"
+	{
+		"en"			"Set a server password"
+		"ru"			"разрешение устанавливать пароль на сервере"
+	}
+	"m flag"
+	{
+		"en"			"Use RCON"
+		"ru"			"разрешение использовать удаленную консоль для управления сервером"
+	}
+	"n flag"
+	{
+		"en"			"Change sv_cheats and use its commands"
+		"ru"			"разрешение менять параметр sv_cheats и связанные с ним параметры"
+	}
+	"o flag"
+	{
+		"en"			"First custom flag type"
+		"ru"			"специальный флаг"
+	}
+	"p flag"
+	{
+		"en"			"Second custom flag type"
+		"ru"			"специальный флаг"
+	}
+	"q flag"
+	{
+		"en"			"Third custom flag type"
+		"ru"			"специальный флаг"
+	}
+	"r flag"
+	{
+		"en"			"Fourth custom flag type"
+		"ru"			"специальный флаг"
+	}
+	"s flag"
+	{
+		"en"			"Fifth custom flag type"
+		"ru"			"специальный флаг"
+	}
+	"t flag"
+	{
+		"en"			"Sixth custom flag type"
+		"ru"			"специальный флаг"
+	}
+	"set flags"
+	{
+		"en"			"I chose the flags, onward"
+		"ru"			"я выбрал флаги, далее"
+	}
+	"DelAdminTitle"
+	{
+		"en"			"View to remove"
+		"ru"			"Вид для удаления"
+	}
+	"del all"
+	{
+		"en"			"Fully"
+		"ru"			"Полностью"
+	}
+	"del server"
+	{
+		"en"			"Only in this server"
+		"ru"			"Только с этого с сервера"
 	}
 	//------------------------------------------------
 	// сообщение при бане
@@ -198,7 +368,7 @@
 		"ru"			"Нет причины"
 	}
 	//----------------------------------------------------------------
-	// чат
+	// сообщения (не всё идёт в чат, так что не везде будут работать цвета)
 	"temporarily"
 	{
 		"en"			"temporarily"
@@ -300,10 +470,21 @@
 		"ru"    		"Команда запрещена на испольнение над админом"
 	
 	}
-	"No Access time 0"
+	"No Access unban time 0"
 	{
 		"en"    		"Permanent time allowed Admins with flag UNBAN"
 		"ru"    		"Время навсегда разрешено админам с флагом UNBAN"
+	}
+	"No Access time 0"
+	{
+		"en" 			"You have no access permanent ban/mute"
+		"ru" 			"У вас нет доступа к бану/муту навсегда"
+	}
+	"No Access max time"
+	{
+		"#format"		"{1:d}"
+		"en" 			"Maximum ban/mute time {1}" 
+		"ru" 			"Вам не разрешено время веше {1}"
 	}
 	"No Access all"
 	{
@@ -327,6 +508,12 @@
 		"#format"		"{1:s}"
 		"en"    		"{1} is already banned"
 		"ru"    		"{1} уже находится в бане"
+	}
+	"No access un ban"
+	{
+		"#format"		"{1:s}"
+		"en"    		"You don't have permissions to unban {1}"
+		"ru"    		"У вас не достаточно прав для разбана {1}"
 	}
 	"No matching client"
 	{
@@ -376,6 +563,105 @@
 	{
 		"en"			"[MA]"
 		"ru"			"[MA]"
+	}
+	"say imune"
+	{
+		"en"			"Write numbers from 0 to 100 immunity for admin"
+		"ru"			"Напиши цифрами от 0 до 100 иммунитет для админа"
+	}
+	"say set imune next pass"
+	{
+		"#format"		"{1:s}"
+		"en"			"Immunity {1} is accepted, now write the password for the administrator"
+		"ru"			"Иммунитет {1} принят, теперь напишите пароль для админа"
+	}
+	"Failed imune"
+	{
+		"en"			"Immunity has to consist only of figures from 0 to 100"
+		"ru"			"Иммунитет должен состоять только из цифр от 0 до 100"
+	}
+	"say set pass next expire"
+	{
+		"#format"		"{1:s}"
+		"en"			"The password {1} is accepted, now write admin time"
+		"ru"			"Пароль {1} принят, теперь напишите на сколько админка"
+	}
+	"Failed expire"
+	{
+		"en"			"Time should not be less than 0" 
+		"ru"			"Время должно быть не меньше 0"
+	}
+	"say set expire"
+	{
+		"#format"		"{1:s}"
+		"en"			"Admin time {1} accepted" 
+		"ru"			"Время админки {1} принято"
+	}
+	"Failed add admin"
+	{
+		"#format"		"{1:s}"
+		"en"			"Failed to add admin to {1}"
+		"ru"			"Не получилось добавить админа {1}"
+	}
+	"Ok add admin bd"
+	{
+		"#format"		"{1:s},{2:s}"
+		"en"			"Admin added (login - '{1}', a password - '{2}')"
+		"ru"			"Админ добавлен (логин - '{1}', пароль - '{2}')"
+	}
+	"No admin sb"
+	{
+		"#format"		"{1:s}"
+		"en"			"{1} is not the administrator of the system"
+		"ru"			"{1} не является админом данной системы"
+	}
+	"Ok add admin server"
+	{
+		"#format"		"{1:s}"
+		"en"			"Admin {1} has been added to the server"
+		"ru"			"Админ {1} добавлен на сервер"
+	}
+	"Failed del admin"
+	{
+		"#format"		"{1:s}"
+		"en"			"Failed to delete admin {1}"
+		"ru"			"Не получилось удалить админа {1}"
+	}
+	"Ok del admin"
+	{
+		"#format"		"{1:s}"
+		"en"			"Admin {1} successfully removed"
+		"ru"			"Админ {1} успешно удалён"
+	}
+	"Failed to player admin"
+	{
+		"en"			"The player is already Admin"
+		"ru"			"Игрок уже админ"
+	}
+	"Failed flag pust"
+	{
+		"en"			"Flags must be specified"
+		"ru"			"Флаги должны быть указаны"
+	}
+	"Failed flag"
+	{
+		"en"			"Incorrectly specified flags (list of flags [zbacdefghijklmnopqrst])"
+		"ru"			"Неверно указаны флаги(список флагов [zbacdefghijklmnopqrst])"
+	}
+	"Failed steam"
+	{
+		"en"			"Invalid Steam"
+		"ru"			"Неверно указан стим"
+	}
+	"Failed ip"
+	{
+		"en"			"Invalid ip"
+		"ru"			"Неверно указан айпи"
+	}
+	"Failed to player no admin"
+	{
+		"en"			"The player is not an admin"
+		"ru"			"Игрок не админ"
 	}
 	//------------------------------------------------
 	// действия админа
