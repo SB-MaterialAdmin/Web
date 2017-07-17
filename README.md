@@ -6,12 +6,14 @@
     Based on <a href="https://sbpp.github.io/">SourceBans++ 1.5.4.7</a>
 </h1>
 
-### [![GitHub release](https://img.shields.io/github/release/CrazyHackGUT/SB_Material_Design.svg?style=flat-square)](https://github.com/CrazyHackGUT/SB_Material_Design/releases/tag/release_1154) [![GitHub license](https://img.shields.io/badge/license-GPLv3-blue.svg?style=flat-square)](https://raw.githubusercontent.com/CrazyHackGUT/SB_Material_Design/v1.x/SOURCEMOD-LICENSE.txt) [![GitHub license](https://img.shields.io/badge/license-CC_BY--NC--SA_3.0-blue.svg?style=flat-square)](https://creativecommons.org/licenses/by-nc-sa/3.0/) [![GitHub forks](https://img.shields.io/github/forks/CrazyHackGUT/SB_Material_Design.svg?style=flat-square)](https://github.com/CrazyHackGUT/SB_Material_Design/network) [![GitHub stars](https://img.shields.io/github/stars/CrazyHackGUT/SB_Material_Design.svg?style=flat-square)](https://github.com/CrazyHackGUT/SB_Material_Design/stargazers) [![GitHub issues](https://img.shields.io/github/issues/CrazyHackGUT/SB_Material_Design.svg?style=flat-square)](https://github.com/CrazyHackGUT/SB_Material_Design/issues) [![Travis](https://img.shields.io/travis/CrazyHackGUT/SB_Material_Design.svg?style=flat-square)](https://travis-ci.org/CrazyHackGUT/SB_Material_Design) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/6b7e0466d68a422ab334939dabb4b06c)](https://www.codacy.com/app/CrazyHackGUT/SB_Material_Design)
-### Ссылки на загрузку:
-- **Dev-ветка (1.1.6)** (временно недоступно)
-- **[Stable-релиз (1.1.5.4)](https://github.com/CrazyHackGUT/SB_Material_Design/archive/release_1154.zip)**
+### [![GitHub release](https://img.shields.io/github/release/SB-MaterialAdmin/Web.svg?style=flat-square)](https://github.com/SB-MaterialAdmin/Web/releases/tag/release_1154) [![GitHub license](https://img.shields.io/badge/license-GPLv3-blue.svg?style=flat-square)](https://raw.githubusercontent.com/SB-MaterialAdmin/Web/v1.x/SOURCEMOD-LICENSE.txt) [![GitHub license](https://img.shields.io/badge/license-CC_BY--NC--SA_3.0-blue.svg?style=flat-square)](https://creativecommons.org/licenses/by-nc-sa/3.0/) [![GitHub forks](https://img.shields.io/github/forks/SB-MaterialAdmin/Web.svg?style=flat-square)](https://github.com/SB-MaterialAdmin/Web/network) [![GitHub stars](https://img.shields.io/github/stars/SB-MaterialAdmin/Web.svg?style=flat-square)](https://github.com/SB-MaterialAdmin/Web/stargazers) [![GitHub issues](https://img.shields.io/github/issues/SB-MaterialAdmin/Web.svg?style=flat-square)](https://travis-ci.org/SB-MaterialAdmin/Web) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/6b7e0466d68a422ab334939dabb4b06c)](https://www.codacy.com/app/SB-MaterialAdmin/Web)
 
-[Список всех планируемых изменений (TODO)](https://github.com/CrazyHackGUT/SB_Material_Design/blob/master/TODO.md)
+### Ссылки на загрузку:
+- **[Веб-панель (1.1.5.4)](https://github.com/SB-MaterialAdmin/Web/archive/release_1154.zip)**
+- **[Плагин (новый)](https://github.com/SB-MaterialAdmin/NewServer/archive/master.zip)**
+- **[Плагин (старый)](https://github.com/SB-MaterialAdmin/OldServer/archive/master.zip)**
+
+[Список всех планируемых изменений (TODO)](https://github.com/SB-MaterialAdmin/Web/wiki/TODO)
 
 Авторы: [AS.^TRO](http://hlmod.ru/members/79776/), [SAZONISCHE](http://hlmod.ru/members/57554/), [XaH JoB](http://hlmod.ru/members/81268/), [Vampir](http://hlmod.ru/members/17369/), [gibs](http://hlmod.ru/members/46233/), [CrazyHackGUT](http://hlmod.ru/members/72654/)
 
@@ -23,31 +25,3 @@
 * [gmode.ru - SourceBans](https://gmode.ru/sourcebans/)
 * [Игровой проект :: L4D-Zone.RU - Комплекс игровых серверов](https://l4d-zone.ru/)
 * [SourceBans Final Night](http://final-night.ru/bans/)
-
-*Установка:*
-+ Скачать архив последней версии [отсюда](https://github.com/CrazyHackGUT/SB_Material_Design/releases).
-+ Загрузить все файлы из папки web_upload на веб-сервер по любому удобному протоколу (например, **FTP**).
-+ Переименовать файл на веб-сервере *config.php.temple* в *config.php*
-+ Установить права **777** на папки */demos/*, */images/maps/*, */images/games/*, */themes_c/* и на файл */config.php*
-+ Перейти на установщик SourceBans на веб-сервере (*http://ваш_домен/install/* или *http://ваш_домен/путь_до_sb/install/*)
-+ Установить систему, следуя инструкциям на экране
-+ После установки, удалить папку **/install/** с веб-сервера и **незамедлительно** перейти на обновлятор SourceBans (*http://ваш_домен/updater/* или *http://ваш_домен/путь_до_sb/updater/*).
-+ После успешного обновления, удалить папку **/updater/** с веб-сервера.
-+ Если вы используете в качестве веб-сервера XAMPP, то вам необходимо подключить модуль GMP. Как это сделать - описано [здесь](http://hlmod.ru/posts/287736/).
-
-*Обновление:*
-- Скачать архив последней версии [отсюда](https://github.com/CrazyHackGUT/SB_Material_Design/releases).
-- Удалить все файлы с веб-сервера, кроме *config.php* и папок *images*, *demos*
-- Закинуть **ВСЕ ПАПКИ и ФАЙЛЫ** в корень СБ с заменой, кроме папки *install*.
-- Открыть SourceBans, вас перекинет на страницу с обновлением.
-- Прочитать, что ваша СБ обновляется. Подождать, если потребуется.
-- После обновления, следовать тексту на странице обновлятора, внизу.
-- Если потребуется, выдать права **777** на файлы и папки (те же самые, которые обычно нужно изменить при установке) в корне сб.
-- Если обновляетесь с версии меньше 1.1.1, то запишите в файл config.php перед ?> вот это:
-`define('AVATAR_LIFETIME', 86400); // Avatar lifetime in cache (seconds). (Default: 86400)`
-
-*Установка поверх SourceBans версии не ниже 1.4.10:*
-- Скачиваем последную, релизную версию.
-- Заливаем файлы поверх уже установленного SourceBans с заменой, кроме файла: /config.php. Папку *install* заливать вообще не нужно.
-- Заходим на страницу обновлений: *http://ваш_домен/путь_до_sb/updater/*.
-- После успешных обновлений, удаляем папку updater.
