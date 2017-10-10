@@ -3218,6 +3218,7 @@ function RehashAdmins_pay($server, $do=0, $card)
 
 		if ($GLOBALS['config']['feature.old_serverside'] == "1") {
 			$r->SendCommand("sm_rehash");
+			sleep(1);
 			$r->SendCommand("sm_reloadadmins");
 		} else
 			$r->SendCommand("ma_wb_rehashadm");
