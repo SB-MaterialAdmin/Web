@@ -142,7 +142,7 @@ else if(isset($_GET['a']) && $_GET['a'] == "unmute" && isset($_GET['id']))
 
 	if($res){
 		echo "<script>setTimeout('ShowBox(\"Включение микрофона\", \"Игроку <b>".StripQuotes($row['name'])."</b> <b>(" . $row['authid'] . ")</b> был включен микрофон.<br><br><font color=\'green\' class=\'f-15\'><b>Переадресация...</b></font>\", \"green\", \"index.php?p=commslist$pagelink\", false);', 1350);</script>";
-		$log = new CSystemLog("m", "Игроку влючен микро", "'".StripQuotes($row['name'])."' (" . $row['authid'] . ") has been unmuted");
+		$log = new CSystemLog("m", "Игроку включен микро", "'".StripQuotes($row['name'])."' (" . $row['authid'] . ") has been unmuted");
 	}else{
 		echo "<script>setTimeout('ShowBox(\"Микрофон не включен\", \"Возникла ошибка включения микрофона <b>".StripQuotes($row['name'])."</b><br><br><font color=\'green\' class=\'f-15\'><b>Переадресация...</b></font>\", \"red\", \"index.php?p=commsist$pagelink\", false);', 1350);</script>";
 	}
