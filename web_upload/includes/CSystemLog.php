@@ -136,7 +136,7 @@ class CSystemLog {
 	
 	function LogCount($searchstring="")
 	{
-		$sm_logs = $GLOBALS['db']->GetRow("SELECT count(l.lid) AS count FROM ".DB_PREFIX."_log AS l".$searchstring);
+		$sm_logs = $GLOBALS['db']->GetRow("SELECT count(l.lid) AS count FROM ".DB_PREFIX."_log AS l ".$searchstring);
 		return $sm_logs[0];
 	}
 	

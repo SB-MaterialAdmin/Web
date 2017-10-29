@@ -1134,7 +1134,7 @@ function search_log()
 	if($('date_').checked)
 	{
 		type = "date";
-		input = $('day').value + "," + $('month').value + "," + $('year').value + "," + $('fhour').value + "," + $('fminute').value + "," + $('thour').value + "," + $('tminute').value;
+		input = $('day').value + "," + $('month').value + "," + $('year').value;
 	}
 	if($('type_').checked)
 	{

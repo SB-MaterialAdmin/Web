@@ -63,8 +63,10 @@ if(!defined("IN_SB")){echo "Ошибка доступа!";die();}
 			break;
 			case "date":
 				$date = explode(",", $value);
-				$time = mktime($date[3],$date[4],0,$date[1],$date[0],$date[2]);
-				$time2 = mktime($date[5],$date[6],59,$date[1],$date[0],$date[2]);
+                $time = mktime(0, 0, 0, $date[1], $date[0], $date[2]);
+                $time2 = mktime(23, 59, 59, $date[1], $date[0], $date[2]);
+				// $time = mktime(0,0,0,$date[1],$date[0],$date[2]);
+				// $time2 = mktime(23,59,59,$date[1],$date[0],$date[2]);
 				$where = "WHERE l.created > '$time' AND l.created < '$time2'";
 			break;
 			case "type":
