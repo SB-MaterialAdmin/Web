@@ -10,9 +10,23 @@
 			<div class="table-responsive" id="banlist">
 				<table cellspacing="0" cellpadding="0" class="table">
 					<tr>
-						<td width="33%" valign="top">-{$web_permissions}-</td>
-						<td width="33%" valign="top">-{$server_permissions}-</td>
-						<td width="34%" valign="top"><p class="c-blue">Срок окончания</p><ul class="clist clist-star"><li>-{$expired_time}-</li></ul></td>
+						<td width="-{if $warnings_enabled}-30-{else}-33-{/if}-%" valign="top">-{$web_permissions}-</td>
+						<td width="-{if $warnings_enabled}-25-{else}-33-{/if}-%" valign="top">-{$server_permissions}-</td>
+						<td width="-{if $warnings_enabled}-15-{else}-34-{/if}-%" valign="top"><p class="c-blue">Срок окончания</p><ul class="clist clist-star"><li>-{$expired_time}-</li></ul></td>
+						-{if $warnings_enabled}-
+						<td width="25%" valign="top">
+							<p class="c-blue">Предупреждения: -{$warnings|@count}- из -{$max_warnings}-</p>
+							<ul class="clist clist-star">
+							-{if $warnings|@count == 0}-
+								<li>Предупреждений <b>нет</b>.</li>
+							-{else}-
+								-{foreach from=$warnings item=warning}-
+								<li>-{$warning.reason}- (активно -{if $warning.expires != 0}-до <i>-{$warning.expires|date_format:"%d.%m.%Y"}-</i>-{else}-<i>навсегда</i>-{/if}-)</li>
+								-{/foreach}-
+							-{/if}-
+							</ul>
+						</td>
+						-{/if}-
 					</tr>
 				</table>
 			</div>
@@ -20,48 +34,88 @@
 	</div>
 </div>
 
--{if $allow_change_inf}-
-<div id="4" style="display:none;"> <!-- div ID 0 is the first 'panel' to be shown -->
+<div id="1" style="display:none;">
 	<div class="card">
+-{*
 		<div class="form-horizontal" role="form">
 			<div class="card-header">
-				<h2>Связь <small>Ваша контактная информация, для связи с Вами.</small></h2>
+				<h2>Смена аватара <small>Вы можете вручную изменить аватар в системе здесь.</small></h2>
 			</div>
-			<div class="card-body card-padding" id="group.details">
-					<div class="form-group">
-						<label for="current_vk" class="col-sm-3 control-label">ВКонтакте</label>
-						<div class="col-sm-9">
-							<div class="fg-line">
-								<input type="text" class="form-control input-sm" id="current_vk" name="current_vk" -{if NOT $vk}- placeholder="Введите данные(только ID, без 'https://vk.com/')" -{else}- value="-{$vk}-"-{/if}->
-							</div>
+
+			 потом как-нибудь доделаю :D
+			<div class="card-body card-padding">
+				<div class="form-group">
+					<label class="col-sm-3 control-label">-{help_ic
+				</div>
+
+				<div class="form-group">
+					<label class="col-sm-3 control-label"></label>
+					<div class="col-sm-9">
+						<div class="fg-line">
+							<button type="submit" onclick="xajax_UpdateCacheSteam();" name="button" class="btn btn-primary btn-sm waves-effect" id="button">Обновить из Steam</button>
 						</div>
 					</div>
-					
-					<div class="form-group">
-						<label for="current_skype" class="col-sm-3 control-label">Skype</label>
-						<div class="col-sm-9">
-							<div class="fg-line">
-								<input type="text" class="form-control input-sm" id="current_skype" name="current_skype" -{if NOT $skype}- placeholder="Введите данные(логин)"-{else}-value="-{$skype}-"-{/if}->
-							</div>
-						</div>
-					</div>
-					
-					<div class="form-group">
-						<label class="col-sm-3 control-label"></label>
-						<div class="col-sm-9">
-							<div class="fg-line">
-								<button type="submit" onclick="xajax_ChangeAdminsInfos(-{$user_aid}-, $('current_vk').value, $('current_skype').value);" name="button" class="btn btn btn-primary btn-sm waves-effect" id="button">Сохранить</button>
-							</div>
-						</div>
-					</div>
+				</div>
 			</div>
 		</div>
-	</div>
-</div>
--{/if}-
+*}-
 
-<div id="1" style="display:none;"> <!-- div ID 1 is the second 'panel' to be shown -->
-	<div class="card">
+		<div class="form-horizontal" role="form">
+			<div class="card-header">
+				<h2>Сменить E-Mail <small>E-Mail позволяет Вам восстановить доступ к аккаунту, при утере данных.</small></h2>
+			</div>
+			<div class="card-body card-padding">
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">-{help_icon title="Текущий E-Mail" message="Это Ваш текущий E-mail адрес."}- Текущий E-Mail</label>
+					<div class="col-sm-9 control-label" style="text-align: left;">
+						-{$email}-
+					</div>
+				</div>
+				
+				<div class="form-group">
+					<label for="pass1" class="col-sm-3 control-label">-{help_icon title="Текущий пароль" message="Введите пароль."}- Пароль</label>
+					<div class="col-sm-9">
+						<div class="fg-line">
+							<input type="password" onkeyup="checkYourSrvPass();" id="emailpw" value="" class="form-control input-sm" name="emailpw" placeholder="Введите данные" />
+						</div>
+						<div id="emailpw.msg"></div>
+					</div>
+				</div>
+				
+				<div class="form-group">
+					<label for="pass1" class="col-sm-3 control-label">-{help_icon title="Новый E-mail" message="Введите Ваш новый адрес e-mail."}- Новый E-mail</label>
+					<div class="col-sm-9">
+						<div class="fg-line">
+							<input type="text" onkeyup="checkYourSrvPass();" id="email1" value="" class="form-control input-sm" name="email1" placeholder="Введите данные" />
+						</div>
+						<div id="email1.msg"></div>
+					</div>
+				</div>
+				
+				<div class="form-group">
+					<label for="pass1" class="col-sm-3 control-label">-{help_icon title="Подтвердить E-mail" message="Введите адрес e-mail для исключения ошибки."}- Подтвердить E-mail</label>
+					<div class="col-sm-9">
+						<div class="fg-line">
+							<input type="text" onkeyup="checkYourSrvPass();" id="email2" value="" class="form-control input-sm" name="email2" placeholder="Введите данные" />
+						</div>
+						<div id="email2.msg"></div>
+					</div>
+				</div>
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label"></label>
+					<div class="col-sm-9">
+						<div class="fg-line">
+							<button type="submit" onclick="checkmail();" name="button" class="btn btn-primary btn-sm waves-effect" id="button">Сохранить</button>
+						</div>
+					</div>
+				</div>
+					
+				
+			</div>
+		</div>
+
 		<div class="form-horizontal" role="form">
 			<div class="card-header">
 				<h2>Безопасность <small>Если ваш аккаунт под угрозой, срочно смените пароль от своего аккаунта!</small></h2>
@@ -107,12 +161,7 @@
 					</div>
 			</div>
 		</div>
-	</div>
-</div>
 
-
-<div id="2" style="display:none;"> <!-- div ID 2 is the third 'panel' to be shown -->
-	<div class="card">
 		<div class="form-horizontal" role="form">
 			<div class="card-header">
 				<h2>Смена серверного пароля <small>Вам нужно будет указать пароль на игровом сервере, прежде чем вы сможете использовать ваши права администратора.<br />Кликните <a href="http://wiki.alliedmods.net/Adding_Admins_%28SourceMod%29#Passwords" title="Информация о паролях в SourceMod" target="_blank"><b>здесь</b></a> для дополнительной информации.</small></h2>
@@ -174,70 +223,44 @@
 					
 			</div>
 		</div>
-	</div>
-</div>
 
-
-<div id="3" style="display:none;"> <!-- div ID 3 is the fourth 'panel' to be shown -->
-	<div class="card">
+		-{if $allow_change_inf}-
 		<div class="form-horizontal" role="form">
 			<div class="card-header">
-				<h2>Сменить E-Mail <small>E-Mail Позволяет Вам восстановить доступ к аккаунту, при утере данных.</small></h2>
+				<h2>Связь <small>Ваша контактная информация, для связи с Вами.</small></h2>
 			</div>
-			<div class="card-body card-padding">
-				
-				<div class="form-group">
-					<label class="col-sm-3 control-label">-{help_icon title="Текущий E-Mail" message="Это Ваш текущий E-mail адрес."}- Текущий E-Mail</label>
-					<div class="col-sm-9 control-label" style="text-align: left;">
-						-{$email}-
-					</div>
-				</div>
-				
-				<div class="form-group">
-					<label for="pass1" class="col-sm-3 control-label">-{help_icon title="Текущий пароль" message="Введите пароль."}- Пароль</label>
-					<div class="col-sm-9">
-						<div class="fg-line">
-							<input type="password" onkeyup="checkYourSrvPass();" id="emailpw" value="" class="form-control input-sm" name="emailpw" placeholder="Введите данные" />
-						</div>
-						<div id="emailpw.msg"></div>
-					</div>
-				</div>
-				
-				<div class="form-group">
-					<label for="pass1" class="col-sm-3 control-label">-{help_icon title="Новый E-mail" message="Введите Ваш новый адрес e-mail."}- Новый E-mail</label>
-					<div class="col-sm-9">
-						<div class="fg-line">
-							<input type="text" onkeyup="checkYourSrvPass();" id="email1" value="" class="form-control input-sm" name="email1" placeholder="Введите данные" />
-						</div>
-						<div id="email1.msg"></div>
-					</div>
-				</div>
-				
-				<div class="form-group">
-					<label for="pass1" class="col-sm-3 control-label">-{help_icon title="Подтвердить E-mail" message="Введите адрес e-mail для исключения ошибки."}- Подтвердить E-mail</label>
-					<div class="col-sm-9">
-						<div class="fg-line">
-							<input type="text" onkeyup="checkYourSrvPass();" id="email2" value="" class="form-control input-sm" name="email2" placeholder="Введите данные" />
-						</div>
-						<div id="email2.msg"></div>
-					</div>
-				</div>
-				
-				<div class="form-group">
-					<label class="col-sm-3 control-label"></label>
-					<div class="col-sm-9">
-						<div class="fg-line">
-							<button type="submit" onclick="checkmail();" name="button" class="btn btn btn-primary btn-sm waves-effect" id="button">Сохранить</button>
+			<div class="card-body card-padding" id="group.details">
+					<div class="form-group">
+						<label for="current_vk" class="col-sm-3 control-label">ВКонтакте</label>
+						<div class="col-sm-9">
+							<div class="fg-line">
+								<input type="text" class="form-control input-sm" id="current_vk" name="current_vk" -{if NOT $vk}- placeholder="Ваш ID Вконтакте (без https://vk.com/)" -{else}- value="-{$vk}-"-{/if}->
+							</div>
 						</div>
 					</div>
-				</div>
 					
-				
+					<div class="form-group">
+						<label for="current_skype" class="col-sm-3 control-label">Skype</label>
+						<div class="col-sm-9">
+							<div class="fg-line">
+								<input type="text" class="form-control input-sm" id="current_skype" name="current_skype" -{if NOT $skype}- placeholder="Ваш логин Skype"-{else}-value="-{$skype}-"-{/if}->
+							</div>
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-3 control-label"></label>
+						<div class="col-sm-9">
+							<div class="fg-line">
+								<button type="submit" onclick="xajax_ChangeAdminsInfos(-{$user_aid}-, $('current_vk').value, $('current_skype').value);" name="button" class="btn btn btn-primary btn-sm waves-effect" id="button">Сохранить</button>
+							</div>
+						</div>
+					</div>
 			</div>
 		</div>
+		-{/if}-
 	</div>
 </div>
-
 
 <script>
 var error = 0;
