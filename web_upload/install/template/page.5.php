@@ -191,7 +191,7 @@ define('SB_WP_URL','{sbwpurl}');       				//URL of SourceBans Site
 										<div class="form-group col-sm-12">
 											<label class="col-sm-3 control-label"><?php echo HelpIcon("Данные", "Этот код должен быть вставлен в секцию 'Databases' { [вот сюда] }");?>databases.cfg</label>
 											<div class="col-sm-9">
-												<textarea class="form-control" cols="105" rows="15" readonly><?php echo $srv_cfg;?></textarea>
+												<textarea class="form-control" cols="105" rows="15" readonly><?= $srv_cfg; ?></textarea>
 											</div>
 										</div>
 										
@@ -212,13 +212,13 @@ define('SB_WP_URL','{sbwpurl}');       				//URL of SourceBans Site
 											</div>
 										</div>
 										<div class="lv-body p-15">
-											Так как файл config.cfg не перезаписываемый, вставьте в него следующие значения самостоятельно.
+											Так как файл config.php не перезаписываемый, вставьте в него следующие значения самостоятельно.
 										</div>
 										
 										<div class="lv-body p-15">
 											<div class="col-sm-12">
 												<div class="form-group col-sm-12">
-													<label class="col-sm-3 control-label"><?php echo HelpIcon("Данные", "Этот код должен быть вставлен в файл config.cfg, который находится в корне SourceBans.");?>config.cfg</label>
+													<label class="col-sm-3 control-label"><?php echo HelpIcon("Данные", "Этот код должен быть вставлен в файл config.php, который находится в корне SourceBans.");?>config.cfg</label>
 													<div class="col-sm-9">
 														<textarea class="form-control" cols="105" rows="15" readonly><?php echo $web_cfg;?></textarea><br />
 													</div>
@@ -237,7 +237,6 @@ define('SB_WP_URL','{sbwpurl}');       				//URL of SourceBans Site
                                         Установка SourceBans закончена. Удалите папку install в корне SourceBans, после перейдите на <a href="../updater">страницу обновлений</a>. SourceBans пытается автоматически произвести обновление, но в случае неполадок, стоит посмотреть именно вручную на страницу обновлений.<br /><br /><b>Не забудьте после процесса обновления, удалить и папку updater!</b>
                                     </div>
 								</div>
-								<iframe src="./../updater/index.php?updater_ajax_call=true" style="display: hidden;"></iframe>
 							</div>
 						</div>
 					</div>
