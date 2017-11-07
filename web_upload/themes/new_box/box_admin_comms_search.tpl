@@ -193,7 +193,7 @@
 								</div>
 							</td>
 							<td class="p-b-5">
-								<div class="p-t-5"><label for="ban_type" onclick="$('ban_type_').checked = true">Тип бана</label></div>
+								<div class="p-t-5"><label for="ban_type" onclick="$('ban_type_').checked = true">Тип мута</label></div>
 							</td>
 							<td class="p-b-5">
 								<div class="col-sm-12 p-r-0 p-l-0">
