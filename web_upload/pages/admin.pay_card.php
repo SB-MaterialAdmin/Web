@@ -111,7 +111,7 @@ global $userbank, $theme;
 							echo "<script>setTimeout(\"ShowBox('Ваучер', 'Ошибка, ключ должен содержать 16 символов!', 'red', 'index.php?p=admin&c=pay_card#^1');\", 1200);</script>";
 						}elseif($ifvay4_shon == "0" || $ifvay4_shon == "" || $ifvay4_shon < 1){
 							
-							$edit = $GLOBALS['db']->Execute("INSERT INTO `sb_vay4er` (`activ`, `value`, `days`, `group_web`, `group_srv`, `servers`)
+							$edit = $GLOBALS['db']->Execute("INSERT INTO `" . DB_PREFIX . "_vay4er` (`activ`, `value`, `days`, `group_web`, `group_srv`, `servers`)
 								VALUES (1, ?, ?, ?, ?, ?)", array($key_vr, $exp_vr, $gr_web_vr, $gr_srv_vr, $srv_check));
 							
 							if($edit){
