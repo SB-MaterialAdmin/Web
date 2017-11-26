@@ -53,7 +53,7 @@ if($user_time == '' || $user_time == '0') {
 	$user_time = "Истекла";
 }
 
-$theme->assign('allow_change_inf',		$allow_change_infos);
+$theme->assign('allow_change_inf',		$GLOBALS['config']['config.changeadmininfos']);
 $theme->assign('srvpwset',				$srvpwset);
 $theme->assign('email',					$res->fields['email']);
 $theme->assign('vk',					$userbank->GetProperty("vk", $userbank->GetAid()));
