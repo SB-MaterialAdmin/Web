@@ -2,29 +2,34 @@
 if(!defined("IN_SB")){echo "You should not be here. Only follow links!";die();}
 
 class CErrorHandler {
-    private $fatalcodes = array(E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR);
+    private static $fatalcodes = array(E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR);
+    private static $m_bIsAlreadyInit = false;
 
-    public function __construct() {
-        set_error_handler([$this, 'BasicErrorCatcher']);
-        register_shutdown_function([$this, 'FatalErrorCatcher']);
-        
-        $this->StartOutputBuffer();
+    public static function Init() {
+        if (self::$m_bIsAlreadyInit) {
+            return;
+        }
+
+        set_error_handler([self, 'BasicErrorCatcher']);
+        register_shutdown_function([self, 'FatalErrorCatcher']);
+        self::StartOutputBuffer();
+        self::$m_bIsAlreadyInit = true;
     }
     
-    private function CloseOutputBuffer($bRender) {
+    private static function CloseOutputBuffer($bRender) {
         if ($bRender)
             ob_end_flush();
         else
             ob_end_clean();
     }
     
-    private function StartOutputBuffer() {
+    private static function StartOutputBuffer() {
         ob_start();
     }
     
-    private function DrawErrorMessage($message, $function = null, $title = "Ошибка системы") {
+    private static function DrawErrorMessage($message, $function = null, $title = "Ошибка системы") {
         global $theme;
-        $this->CloseOutputBuffer(false);
+        self::CloseOutputBuffer(false);
         
         $theme->assign('title', $title);
         $theme->assign('message', $message);
@@ -36,8 +41,7 @@ class CErrorHandler {
         $theme->display('page_error.tpl');
     }
     
-    public function BasicErrorCatcher($errno, $errstr, $errfile, $errline) {
-        /* Moved from /var/www/g-44/data/www/bans.g-44.ru/init.php */
+    public static function BasicErrorCatcher($errno, $errstr, $errfile, $errline) {
         if(!is_object($GLOBALS['log']))
             return false;
         
@@ -52,8 +56,7 @@ class CErrorHandler {
                 $log = new CSystemLog("e", "PHP Error", $msg);
         
                 // SourceBans Fatal Error Handler //
-                // include(INCLUDES_PATH.'/FatalErrorHandler.php');
-                $this->DrawErrorMessage($msg, $log->parent_function, $title);
+                self::DrawErrorMessage($msg, $log->parent_function, $title);
                 // SourceBans Fatal Error Handler //
 
                 $retValue = false;
@@ -81,16 +84,16 @@ class CErrorHandler {
         return $retValue;
     }
     
-    public function FatalErrorCatcher() {
+    public static function FatalErrorCatcher() {
         $error = error_get_last();
         if ($error === NULL || $error['type'] !== E_ERROR) {
-            $this->CloseOutputBuffer(true);
+            self::CloseOutputBuffer(true);
             return;
         }
         
-        if (in_array($error['type'], $this->fatalcodes)) {
-            $this->CloseOutputBuffer(false);
-            $this->DrawErrorMessage("Произошла фатальная ошибка PHP\n" . $error['message'] . "\n\n" . $error['file'] . "::" . $error['line'], null, "Критическая ошибка PHP");
+        if (in_array($error['type'], self::$fatalcodes)) {
+            self::CloseOutputBuffer(false);
+            self::DrawErrorMessage("Произошла фатальная ошибка PHP\n" . $error['message'] . "\n\n" . $error['file'] . "::" . $error['line'], null, "Критическая ошибка PHP");
         }
     }
 }

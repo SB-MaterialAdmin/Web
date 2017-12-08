@@ -142,7 +142,7 @@ if($debug->fields['value']=="1") {
 //  Setup our custom error handler
 // ---------------------------------------------------
 require_once(INCLUDES_PATH . '/CErrorHandler.php');
-$GLOBALS['error_manager'] = new CErrorHandler();
+CErrorHandler::Init();
 
 // ---------------------------------------------------
 //  Some defs
@@ -152,7 +152,6 @@ define('URL_FORMAT', "/^(http|https):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2
 define('STEAM_FORMAT', "/^STEAM_[0-9]:[0-9]:[0-9]+$/");
 define('STATUS_PARSE', '/# +([0-9 ]+) +"(.+)" +(STEAM_[0-9]:[0-9]:[0-9]+|\[U:[0-9]:[0-9]+\]) +([0-9:]+) +([0-9]+) +([0-9]+) +([a-zA-Z]+) +([0-9.:]+)/');
 define('IP_FORMAT', '/\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b/');
-define('SERVER_QUERY', 'http://www.sourcebans.net/public/query/');
 
 // Web admin-flags
 define('ADMIN_LIST_ADMINS', 	(1<<0));
@@ -243,37 +242,11 @@ define('SB_BANS_PER_PAGE', $GLOBALS['config']['banlist.bansperpage']);
 define('MIN_PASS_LENGTH', $GLOBALS['config']['config.password.minlength']);
 $dateformat = !empty($GLOBALS['config']['config.dateformat'])?$GLOBALS['config']['config.dateformat']:"m-d-y H:i";
 
-if(version_compare(PHP_VERSION, "5") != -1)
-{
-    $offset = (empty($GLOBALS['config']['config.timezone'])?0:$GLOBALS['config']['config.timezone'])*3600;
-    date_default_timezone_set("GMT");
-    $abbrarray = timezone_abbreviations_list();
-    foreach ($abbrarray as $abbr) {
-        foreach ($abbr as $city) {
-            if ($city['offset'] == $offset && $city['dst'] == $GLOBALS['config']['config.summertime']) {
-                date_default_timezone_set($city['timezone_id']);
-                break 2;
-            }
-        }
-    }
+if(empty($GLOBALS['config']['config.timezone'])) {
+    define('SB_TIMEZONE', 0);
+} else {
+    define('SB_TIMEZONE', $GLOBALS['config']['config.timezone']);
 }
-else 
-{
-    if(empty($GLOBALS['config']['config.timezone']))
-    {
-        define('SB_TIMEZONE', 0);
-    } else {
-        define('SB_TIMEZONE', $GLOBALS['config']['config.timezone']);
-    }
-}
-
-// if(empty($GLOBALS['config']['config.timezone']))
-// {
-	// date_default_timezone_set("Europe/London");
-// }else{
-	// date_default_timezone_set($GLOBALS['config']['config.timezone']);
-// }
-
 
 // ---------------------------------------------------
 // Setup our templater
