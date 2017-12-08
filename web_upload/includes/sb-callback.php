@@ -34,7 +34,28 @@ $xajax = new xajax();
 $xajax->setRequestURI(XAJAX_REQUEST_URI);
 global $userbank;
 
-$methods = array('admin' => array('AddMod', 'RemoveMod', 'AddGroup', 'RemoveGroup', 'RemoveAdmin', 'RemoveSubmission', 'RemoveServer', 'UpdageGroupPermissions', 'UpdateAdminPermissions', 'AddAdmin', 'SetupEditServer', 'AddServerGroupName', 'AddServer', 'AddBan', 'RehashAdmins', 'EditGroup', 'RemoveProtest', 'SendRcon', 'EditAdminPerms', 'AddComment', 'EditComment', 'RemoveComment', 'PrepareReban', 'Maintenance', 'KickPlayer', 'GroupBan', 'BanMemberOfGroup', 'GetGroups', 'BanFriends', 'SendMessage', 'ViewCommunityProfile', 'SetupBan', 'CheckPassword', 'ChangePassword', 'CheckSrvPassword', 'ChangeSrvPassword', 'ChangeEmail', 'CheckVersion', 'SendMail', 'AddBlock', 'PrepareReblock', 'PrepareBlockFromBan', 'removeExpiredAdmins', 'AddSupport', 'ChangeAdminsInfos', 'InstallMOD', 'UpdateGroupPermissions', 'PastePlayerData', 'AddWarning', 'RemoveWarning'), 'default' => array('Plogin', 'ServerHostPlayers', 'ServerHostProperty', 'ServerHostPlayers_list', 'ServerPlayers', 'LostPassword', 'RefreshServer', 'AddAdmin_pay', 'RehashAdmins_pay'));
+$methods = array(
+	'admin' => array(
+		'AddMod', 'RemoveMod', 'AddGroup', 'RemoveGroup', 'RemoveAdmin',
+		'RemoveSubmission', 'RemoveServer', 'UpdateGroupPermissions',
+		'UpdateAdminPermissions', 'AddAdmin', 'SetupEditServer',
+		'AddServerGroupName', 'AddServer', 'AddBan', 'RehashAdmins',
+		'EditGroup', 'RemoveProtest', 'SendRcon', 'EditAdminPerms',
+		'AddComment', 'EditComment', 'RemoveComment', 'PrepareReban',
+		'Maintenance', 'KickPlayer', 'GroupBan', 'BanMemberOfGroup',
+		'GetGroups', 'BanFriends', 'SendMessage', 'ViewCommunityProfile',
+		'SetupBan', 'CheckPassword', 'ChangePassword', 'CheckSrvPassword',
+		'ChangeSrvPassword', 'ChangeEmail', 'CheckVersion', 'SendMail',
+		'AddBlock', 'PrepareReblock', 'PrepareBlockFromBan', 'removeExpiredAdmins',
+		'AddSupport', 'ChangeAdminsInfos', 'InstallMOD', 'UpdateGroupPermissions',
+		'PastePlayerData', 'AddWarning', 'RemoveWarning'
+	),
+	'default' => array(
+		'Plogin', 'ServerHostPlayers', 'ServerHostProperty',
+		'ServerHostPlayers_list', 'ServerPlayers', 'LostPassword',
+		'RefreshServer', 'AddAdmin_pay', 'RehashAdmins_pay'
+	)
+);
 
 if(isset($_COOKIE['aid'], $_COOKIE['password']) && $userbank->CheckLogin($_COOKIE['password'], $_COOKIE['aid']))
     foreach ($methods['admin'] as $method)
@@ -3045,7 +3066,17 @@ function Maintenance($type) {
             ShowBox_ajx("Успех", "Кеш аватарок очищен успешно.", "green", "", true, $objResponse);
             break;
         }
-        
+		
+		case 'adminsexpired': {
+			$admins = $GLOBALS['db']->GetAll(sprintf("SELECT `aid` FROM `%s_admins` WHERE `expired` != 0 AND `expired` < %d;", DB_PREFIX, time()));
+			foreach ($admins as $admin) {
+				$GLOBALS['db']->Execute(sprintf("DELETE FROM `%s_admins` WHERE `aid` < %d;", intval($admins['aid'])));
+				$GLOBALS['db']->Execute(sprintf("DELETE FROM `%s_admins_servers_groups` WHERE `admin_id` < %d;", intval($admins['aid'])));
+			}
+			ShowBox_ajx("Успех", sprintf("Успешно удалено %d администраторов.", count($admins)), "green", "", true, $objResponse);
+			break;
+		}
+
         case "bansexpired": {
             $GLOBALS['db']->Execute(sprintf("DELETE FROM `%s_bans` WHERE `RemoveType` IS NOT NULL", DB_PREFIX));
             ShowBox_ajx("Успех", "Истёкшие баны удалены успешно.", "green", "", true, $objResponse);
