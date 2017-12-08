@@ -3166,7 +3166,13 @@ function Maintenance($type) {
             $GLOBALS['db']->Execute(sprintf("TRUNCATE `%s_submissions`;", DB_PREFIX));
             ShowBox_ajx("Успех", "Предложения бана (репорты) успешно удалены.", "green", "", true, $objResponse);
             break;
-        }
+		}
+
+		case "vouchers": {
+			$GLOBALS['db']->Execute(sprintf("DELETE FROM `%s_vay4er` WHERE `activ` != 1"));
+			ShowBox_ajx("Успех", "Все использованные ваучеры успешно удалены.", "green", "", true, $objResponse);
+			break;
+		}
         
         default: {
             ShowBox_ajx("Ошибка", "Неизвестная операция", "red", "", true, $objResponse);
