@@ -49,6 +49,9 @@
 						<a href="http://www.php.net/date" target="_blank">См.: PHP date</a>
 					</div>
 				</div>
+
+				{display_material_input name="nulladmin_name" help_title="Имя неизвестного админа" help_text="Здесь указывается имя администратора, которого нет в SourceBans, или консоли." placeholder="CONSOLE" value=$nulladmin_name}
+
 				<div class="form-group m-b-5 form-inline">
 					<label for="sel_timezoneoffset" class="col-sm-3 control-label">{help_icon title="Часовой пояс" message="Задайте часовой пояс."} Часовой пояс</label>
 					<div class="col-sm-5 p-t-5">

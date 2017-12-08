@@ -91,7 +91,11 @@
 					{if !$hideadminname}
 						<td class="text-center">
 							{if !empty($ban.admin)}
-								{$ban.admin|escape:'html'}
+								{if $ban.admin != "CONSOLE"}
+									{$ban.admin|escape:'html'}
+								{else}
+									{$ConsoleName|escape:'html'}
+								{/if}
 							{else}
 								<i>Администратор снят</i>
 							{/if}

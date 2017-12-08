@@ -272,6 +272,9 @@ else
 				// PASSWORD SMTP
 				if ($_POST['smtp_password'] != "*Скрыт*")
 					$GLOBALS['db']->Execute(sprintf("REPLACE INTO `%s_settings` (`value`, `setting`) VALUES (%s, 'smtp.password');", DB_PREFIX, $GLOBALS['db']->qstr($_POST['smtp_password'])));
+
+				// Null Admin
+				$GLOBALS['db']->Execute(sprintf("REPLACE INTO `%s_settings` (`value`, `setting` VALUES (%s, 'nulladmin.name');", DB_PREFIX, $GLOBALS['db']->qstr($_POST['nulladmin_name'])));
 				
 				?><script>setTimeout("ShowBox('Главные настройки изменены', 'Изменения были успешно применены!', 'green', 'index.php?p=admin&c=settings', false, 2500);", 1200);</script><?php 
 			}else{
@@ -342,6 +345,9 @@ else
 		$theme->assign('smtp_host',     $GLOBALS['config']['smtp.host']);
 		$theme->assign('smtp_charset',  $GLOBALS['config']['smtp.charset']);
 		$theme->assign('smtp_from',     $GLOBALS['config']['smtp.from']);
+
+		// Null Admin Name
+		$theme->assign('nulladmin_name', $GLOBALS['config']['nulladmin.name']);
 		
 		$theme->display('page_admin_settings_settings.tpl');	
 	echo '</div>';

@@ -43,6 +43,8 @@ if (!isset($_SESSION['banlist_postkey']) || strlen($_SESSION['banlist_postkey'])
 $page = 1;
 $pagelink = "";
 
+$theme->assign('ConsoleName', $GLOBALS['config']['nulladmin.name']);
+
 PruneBans();
 
 if (isset($_GET['page']) && $_GET['page'] > 0)

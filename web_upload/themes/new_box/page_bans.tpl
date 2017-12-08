@@ -350,7 +350,11 @@
 														<li class="p-b-5">
 															<i class="zmdi zmdi-star c-red f-20"></i> 
 																{if !empty($ban.admin)}
-																	<b>{$ban.admin|escape:'html'}</b>
+																	{if $ban.admin != "CONSOLE"}
+																		<b>{$ban.admin|escape:'html'}</b>
+																	{else}
+																		<b>{$ConsoleName|escape:'html'}</b>
+																	{/if}
 																{else}
 																	<b>Администратор был удален</b>
 																{/if}
