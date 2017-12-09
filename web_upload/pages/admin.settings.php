@@ -274,7 +274,7 @@ else
 					$GLOBALS['db']->Execute(sprintf("REPLACE INTO `%s_settings` (`value`, `setting`) VALUES (%s, 'smtp.password');", DB_PREFIX, $GLOBALS['db']->qstr($_POST['smtp_password'])));
 
 				// Null Admin
-				$GLOBALS['db']->Execute(sprintf("REPLACE INTO `%s_settings` (`value`, `setting` VALUES (%s, 'nulladmin.name');", DB_PREFIX, $GLOBALS['db']->qstr($_POST['nulladmin_name'])));
+				$GLOBALS['db']->Execute(sprintf("REPLACE INTO `%s_settings` (`value`, `setting`) VALUES (%s, 'nulladmin.name');", DB_PREFIX, $GLOBALS['db']->qstr($_POST['nulladmin_name'])));
 				
 				?><script>setTimeout("ShowBox('Главные настройки изменены', 'Изменения были успешно применены!', 'green', 'index.php?p=admin&c=settings', false, 2500);", 1200);</script><?php 
 			}else{
