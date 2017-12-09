@@ -10,8 +10,15 @@ class CErrorHandler {
             return;
         }
 
-        set_error_handler([self, 'BasicErrorCatcher']);
-        register_shutdown_function([self, 'FatalErrorCatcher']);
+        // set_error_handler([self, 'BasicErrorCatcher']);
+        // register_shutdown_function([self, 'FatalErrorCatcher']);
+        set_error_handler(function($errno, $errstr, $errfile, $errline) {
+            return CErrorHandler::BasicErrorCatcher($errno, $errstr, $errfile, $errline);
+        });
+        register_shutdown_function(function() {
+            CErrorHandler::FatalErrorCatcher();
+        });
+
         self::StartOutputBuffer();
         self::$m_bIsAlreadyInit = true;
     }

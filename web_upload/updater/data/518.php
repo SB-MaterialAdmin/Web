@@ -2,7 +2,7 @@
 $GLOBALS['db']->Execute(sprintf(
     "INSERT INTO
         `%s_settings`
-    (`option`, `value`)
+    (`setting`, `value`)
     VALUES (
         'nulladmin.name',
         'CONSOLE'
