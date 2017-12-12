@@ -10,7 +10,7 @@
             <ul class="f-menu">
                 <li>Версия <b>{$THEME_VERSION}</b> ({$UPDATE_NUM})</li>
                 <li><a href="https://sbpp.github.io/" target="_blank" class="footer_link">Команда <b>SourceBans++</b></a></li>
-                <li><a href="https://github.com/SB-MaterialAdmin/Web/wiki/%D0%90%D0%B2%D1%82%D0%BE%D1%80%D1%8B" target="_blank" class="footer_link"><b>MATERIAL Admin</b></a></li>
+                <li><a href="https://github.com/SB-MaterialAdmin/Web/wiki/Авторы" target="_blank" class="footer_link"><b>MATERIAL Admin</b></a></li>
             </ul>
             {if $show_gendata}
             <ul class="f-menu">
