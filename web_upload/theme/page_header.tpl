@@ -6,9 +6,9 @@
 <link rel="Shortcut Icon" href="./images/favicon.ico" />
 
 <!--SB -->
-<script type="text/javascript" src="./scripts/sourcebans.js"></script>
-<script type="text/javascript" src="./scripts/mootools.js"></script>
-<script type="text/javascript" src="./scripts/contextMenoo.js"></script>
+<script type="text/javascript" src="./theme/js/sourcebans.js"></script>
+<script type="text/javascript" src="./theme/js/mootools.js"></script>
+<script type="text/javascript" src="./theme/js/contextMenoo.js"></script>
 
 <!-- Vendor CSS -->
 <link href="themes/{$theme_name}/vendors/bower_components/fullcalendar/dist/fullcalendar.min.css" rel="stylesheet" />

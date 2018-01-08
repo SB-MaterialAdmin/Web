@@ -30,7 +30,6 @@
 // ---------------------------------------------------
 define('ROOT', dirname(__FILE__) . "/");
 define('USER_DATA', ROOT . "data/");
-define('SCRIPT_PATH', ROOT . 'scripts');
 define('TEMPLATES_PATH', ROOT . 'pages');
 define('INCLUDES_PATH', ROOT . 'includes');
 define('SB_DEMO_LOCATION','demos');
@@ -39,8 +38,10 @@ define('SB_MAP_LOCATION', ROOT . 'images/maps');
 define('SB_ICONS', ROOT . SB_ICON_LOCATION);
 define('SB_DEMOS', USER_DATA . SB_DEMO_LOCATION);
 
-define('SB_THEME', ROOT . 'theme/');
+define('SB_THEME', ROOT . 'theme');
 define('SB_THEME_COMPILE', USER_DATA . 'theme_c/');
+
+define('SCRIPT_PATH', SB_THEME . '/js');
 
 define('IN_SB', true);
 define('SB_AID', isset($_COOKIE['aid'])?$_COOKIE['aid']:null);

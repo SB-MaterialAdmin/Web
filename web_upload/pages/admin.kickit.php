@@ -130,7 +130,7 @@ while(!$servers->EOF) {
     $servers->MoveNext();
 }
 $theme->assign('servers', $serverlinks);
-$theme->assign('xajax_functions',  $xajax->printJavascript("../scripts", "xajax.js"));
+$theme->assign('xajax_functions',  $xajax->printJavascript("../theme/js", "xajax.js"));
 $theme->assign('check', $_GET["check"]);// steamid or ip address
 
 $theme->left_delimiter = "-{";

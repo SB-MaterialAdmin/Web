@@ -138,7 +138,7 @@ $theme->assign('theme_bg',  $bg_value);
 $theme->assign('theme_color',  $th_style);
 $theme->assign('def_ch_chenger',  $def_ch);
 $theme->assign('def_body_chenger',  $def_body);
-$theme->assign('xajax_functions',  $xajax->printJavascript("scripts", "xajax.js"));
+$theme->assign('xajax_functions',  $xajax->printJavascript("theme/js", "xajax.js"));
 $theme->assign('header_title', $GLOBALS['config']['template.title']);
 $theme->assign('vay4er_act', $GLOBALS['config']['page.vay4er']);
 $theme->assign('header_logo', $GLOBALS['config']['template.logo']);
