@@ -52,6 +52,19 @@ include_once(INCLUDES_PATH . "/CUserManager.php");
 include_once(INCLUDES_PATH . "/CUI.php");
 include_once(INCLUDES_PATH . "/DataStorage.php");
 include_once("theme/theme.conf.php");
+
+// ---------------------------------------------------
+//  Init translator
+// ---------------------------------------------------
+require_once(INCLUDES_PATH . "/KruzyaExceptions.php");
+require_once(INCLUDES_PATH . "/Language.php");
+try {
+    \MaterialAdmin\DataStorage::register("Translator", new Kruzya\Generic\Language(ROOT . "langs/"));
+} catch (Exception $e) {
+    // nope.
+    die("Can't initialize multilanguage system. Try request again later.");
+}
+
 // ---------------------------------------------------
 //  Fix some $_SERVER vars
 // ---------------------------------------------------
@@ -72,7 +85,7 @@ if(!file_exists(USER_DATA.'/config.php') || !include_once(USER_DATA . '/config.p
 	// No were not
 	if($_SERVER['HTTP_HOST'] != "localhost")
 	{
-		echo "SourceBans не установлен.";
+		echo(\MaterialAdmin\DataStorage::Translator()->getPhrase("init::not_installed"));
 		die();
 	}
 }
@@ -80,7 +93,7 @@ if(!defined("DEVELOPER_MODE") && !defined("IS_UPDATE") && file_exists(ROOT."/ins
 {
 	if($_SERVER['HTTP_HOST'] != "localhost")
 	{
-		echo "Из соображений безопасности, удалите, Пожалуйста, директорию /install/ с сервера перед тем, как работать с системой.";
+		echo(\MaterialAdmin\DataStorage::Translator()->getPhrase("init::security_direxists"));
 		die();
 	}
 }
@@ -89,8 +102,8 @@ if(!defined("DEVELOPER_MODE") && !defined("IS_UPDATE") && file_exists(ROOT."/upd
 {
 	if($_SERVER['HTTP_HOST'] != "localhost")
 	{
-		echo "Выполняется редирект на обновление SourceBans...";
-		echo "<script>setTimeout(function() { window.location.replace('./updater'); }, 2000);</script>";
+		echo(\MaterialAdmin\DataStorage::Translator()->getPhrase("init::redirect_updater"));
+		echo("<script>setTimeout(function() { window.location.replace('./updater'); }, 2000);</script>");
 		die();
 	}
 }
@@ -259,10 +272,10 @@ require(INCLUDES_PATH . '/smarty/Smarty.class.php');
 global $theme, $userbank;
 
 if(!@file_exists(SB_THEME . "/theme.conf.php"))
-	die("<b>Ошибка шаблона</b>: Шаблон повреждён. Отсутствует файл <b>theme.conf.php</b>.");
+	die(\MaterialAdmin\DataStorage::Translator()->getPhrase("init::incorrect_theme"));
 
 if(!@is_writable(SB_THEMES_COMPILE))
-	die("<b>Ошибка шаблона</b>: Папка <b>".SB_THEME_COMPILE."</b> не перезаписываемая! Установите права 777 на папку через FTP-клиент.");
+    die(\MaterialAdmin\DataStorage::Translator()->getPhrase("init::themec_not_writable", ["cache_path" => SB_THEME_COMPILE]));
 
 $theme = new Smarty();
 $theme->error_reporting 	= 	E_ALL ^ E_NOTICE;

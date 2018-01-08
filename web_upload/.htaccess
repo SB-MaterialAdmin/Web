@@ -9,3 +9,9 @@
    Order allow,deny
    Deny from all
 </FilesMatch>
+
+# Block download lang packs for Apache and HTTPD servers
+<FilesMatch "\.([Ll][Aa][Nn][Gg])\.?">
+   Order allow,deny
+   Deny from all
+</FilesMatch>
