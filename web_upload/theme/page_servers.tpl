@@ -1,5 +1,5 @@
 {if $IN_SERVERS_PAGE}
-{if $IN_SERVERS_PAGE && $access_bans}<div class="alert alert-info servers_pg" role="alert"><h4>Подсказка:</h4><span class="p-l-10">Нажмите на <mark><!--<img src="themes/new_box/img/inn.png" style="width: 20px;height: 20px;" />-->&nbsp;<i class="zmdi zmdi-label c-white" style="font-size: 17px;"></i>&nbsp;</mark> возле ника игрока, чтобы вызвать меню управления игроком.</span></div>{/if}
+{if $IN_SERVERS_PAGE && $access_bans}<div class="alert alert-info servers_pg" role="alert"><h4>Подсказка:</h4><span class="p-l-10">Нажмите на <mark><!--<img src="theme/img/inn.png" style="width: 20px;height: 20px;" />-->&nbsp;<i class="zmdi zmdi-label c-white" style="font-size: 17px;"></i>&nbsp;</mark> возле ника игрока, чтобы вызвать меню управления игроком.</span></div>{/if}
 	<div class="card">
 		<!--<div class="card-header">
 			<h2>Список серверов</h2>

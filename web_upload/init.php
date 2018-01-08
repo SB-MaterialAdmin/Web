@@ -29,6 +29,7 @@
 //  Directories
 // ---------------------------------------------------
 define('ROOT', dirname(__FILE__) . "/");
+define('USER_DATA', ROOT . "data/");
 define('SCRIPT_PATH', ROOT . 'scripts');
 define('TEMPLATES_PATH', ROOT . 'pages');
 define('INCLUDES_PATH', ROOT . 'includes');
@@ -38,8 +39,8 @@ define('SB_MAP_LOCATION', ROOT . 'images/maps');
 define('SB_ICONS', ROOT . SB_ICON_LOCATION);
 define('SB_DEMOS', ROOT . SB_DEMO_LOCATION);
 
-define('SB_THEMES', ROOT . 'themes/');
-define('SB_THEMES_COMPILE', ROOT . 'themes_c/');
+define('SB_THEME', ROOT . 'theme/');
+define('SB_THEME_COMPILE', USER_DATA . 'theme_c/');
 
 define('IN_SB', true);
 define('SB_AID', isset($_COOKIE['aid'])?$_COOKIE['aid']:null);
@@ -48,7 +49,7 @@ define('XAJAX_REQUEST_URI', './index.php');
 include_once(INCLUDES_PATH . "/CSystemLog.php");
 include_once(INCLUDES_PATH . "/CUserManager.php");
 include_once(INCLUDES_PATH . "/CUI.php");
-include_once("themes/new_box/theme.conf.php");
+include_once("theme/theme.conf.php");
 // ---------------------------------------------------
 //  Fix some $_SERVER vars
 // ---------------------------------------------------
@@ -65,7 +66,7 @@ if(trim($_SERVER['PHP_SELF']) == '') $_SERVER['PHP_SELF'] = preg_replace("/(\?.*
 // ---------------------------------------------------
 //  Are we installed?
 // ---------------------------------------------------
-if(!file_exists(ROOT.'/config.php') || !include_once(ROOT . '/config.php')) {
+if(!file_exists(USER_DATA.'/config.php') || !include_once(USER_DATA . '/config.php')) {
 	// No were not
 	if($_SERVER['HTTP_HOST'] != "localhost")
 	{
@@ -255,21 +256,19 @@ require(INCLUDES_PATH . '/smarty/Smarty.class.php');
 
 global $theme, $userbank;
 
-define('SB_THEME', 'new_box');
-
-if(!@file_exists(SB_THEMES . SB_THEME . "/theme.conf.php"))
+if(!@file_exists(SB_THEME . "/theme.conf.php"))
 	die("<b>Ошибка шаблона</b>: Шаблон повреждён. Отсутствует файл <b>theme.conf.php</b>.");
 
 if(!@is_writable(SB_THEMES_COMPILE))
-	die("<b>Ошибка шаблона</b>: Папка <b>".SB_THEMES_COMPILE."</b> не перезаписываемая! Установите права 777 на папку через FTP-клиент.");
+	die("<b>Ошибка шаблона</b>: Папка <b>".SB_THEME_COMPILE."</b> не перезаписываемая! Установите права 777 на папку через FTP-клиент.");
 
 $theme = new Smarty();
 $theme->error_reporting 	= 	E_ALL ^ E_NOTICE;
 $theme->use_sub_dirs 		= 	false;
-$theme->compile_id			= 	SB_THEME;
+$theme->compile_id			= 	"TCache";
 $theme->caching 			= 	false;
-$theme->template_dir 		= 	SB_THEMES . SB_THEME;
-$theme->compile_dir 		= 	SB_THEMES_COMPILE;
+$theme->template_dir 		= 	SB_THEME;
+$theme->compile_dir 		= 	SB_THEME_COMPILE;
 
 if ((isset($_GET['debug']) && $_GET['debug'] == 1) || defined("DEVELOPER_MODE") )
 {
@@ -287,4 +286,3 @@ if (!defined('IS_UPDATE') && isset($_COOKIE['password']))
     $p = $_COOKIE['password'];
 
 $userbank = new CUserManager($l, $p);
-?>

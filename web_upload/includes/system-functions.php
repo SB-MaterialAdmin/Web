@@ -1198,7 +1198,7 @@ function GetUserAvatar($sid = -1) {
     
     $communityid = false;
     $res = false;
-    $AvatarFile = sprintf("themes/new_box/img/profile-pics/%d.jpg", rand(1,9));
+    $AvatarFile = sprintf("theme/img/profile-pics/%d.jpg", rand(1,9));
     $sid = ($sid==-1)?($userbank->is_logged_in()?$userbank->getProperty("authid"):0):$sid;
     
     if ($sid) $communityid = GetCommunityIDFromSteamID2($sid);

@@ -20,22 +20,22 @@
 				<div class="col-sm-12">
 					{if $dashboard_info_steam !=""}
 						<a class="col-xs-3" href="{$dashboard_info_steam}">
-							<img src="themes/new_box/img/social/steam-128.png" class="img-responsive" alt="">
+							<img src="theme/img/social/steam-128.png" class="img-responsive" alt="">
 						</a>
 					{/if}
 					{if $dashboard_info_vk !=""}
 						<a class="col-xs-3" href="{$dashboard_info_vk}">
-						<img src="themes/new_box/img/social/vk-128.png" class="img-responsive" alt="">
+						<img src="theme/img/social/vk-128.png" class="img-responsive" alt="">
 					</a>
 					{/if}
 					{if $dashboard_info_yout !=""}
 						<a class="col-xs-3" href="{$dashboard_info_yout}">
-						<img src="themes/new_box/img/social/youtube-128.png" class="img-responsive" alt="">
+						<img src="theme/img/social/youtube-128.png" class="img-responsive" alt="">
 					</a>
 					{/if}
 					{if $dashboard_info_face !=""}
 						<a class="col-xs-3" href="{$dashboard_info_face}">
-						<img src="themes/new_box/img/social/facebook-128.png" class="img-responsive" alt="">
+						<img src="theme/img/social/facebook-128.png" class="img-responsive" alt="">
 					</a>
 					{/if}
 				</div>
@@ -82,22 +82,22 @@
 						<div class="col-sm-12">
 							{if $dashboard_info_steam !=""}
 								<a class="col-xs-3" href="{$dashboard_info_steam}">
-									<img src="themes/new_box/img/social/steam-128.png" class="img-responsive" alt="">
+									<img src="theme/img/social/steam-128.png" class="img-responsive" alt="">
 								</a>
 							{/if}
 							{if $dashboard_info_vk !=""}
 								<a class="col-xs-3" href="{$dashboard_info_vk}">
-								<img src="themes/new_box/img/social/vk-128.png" class="img-responsive" alt="">
+								<img src="theme/img/social/vk-128.png" class="img-responsive" alt="">
 							</a>
 							{/if}
 							{if $dashboard_info_yout !=""}
 								<a class="col-xs-3" href="{$dashboard_info_yout}">
-								<img src="themes/new_box/img/social/youtube-128.png" class="img-responsive" alt="">
+								<img src="theme/img/social/youtube-128.png" class="img-responsive" alt="">
 							</a>
 							{/if}
 							{if $dashboard_info_face !=""}
 								<a class="col-xs-3" href="{$dashboard_info_face}">
-								<img src="themes/new_box/img/social/facebook-128.png" class="img-responsive" alt="">
+								<img src="theme/img/social/facebook-128.png" class="img-responsive" alt="">
 							</a>
 							{/if}
 						</div>

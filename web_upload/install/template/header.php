@@ -11,19 +11,19 @@
 
 
 <!-- Vendor CSS -->
-<link href="../themes/new_box/vendors/bower_components/fullcalendar/dist/fullcalendar.min.css" rel="stylesheet">
-<link href="../themes/new_box/vendors/bower_components/animate.css/animate.min.css" rel="stylesheet">
-<link href="../themes/new_box/vendors/bower_components/bootstrap-sweetalert/lib/sweet-alert.css" rel="stylesheet">
-<link href="../themes/new_box/vendors/bower_components/material-design-iconic-font/dist/css/material-design-iconic-font.min.css" rel="stylesheet">
-<link href="../themes/new_box/vendors/bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.min.css" rel="stylesheet">
+<link href="../theme/vendors/bower_components/fullcalendar/dist/fullcalendar.min.css" rel="stylesheet">
+<link href="../theme/vendors/bower_components/animate.css/animate.min.css" rel="stylesheet">
+<link href="../theme/vendors/bower_components/bootstrap-sweetalert/lib/sweet-alert.css" rel="stylesheet">
+<link href="../theme/vendors/bower_components/material-design-iconic-font/dist/css/material-design-iconic-font.min.css" rel="stylesheet">
+<link href="../theme/vendors/bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.min.css" rel="stylesheet">
 <link href='https://fonts.googleapis.com/css?family=Roboto:900italic,900,700italic,700,500italic,500,400italic,400,300italic,300' rel='stylesheet' type='text/css'>
-<link href="../themes/new_box/vendors/bower_components/bootstrap-select/dist/css/bootstrap-select.css" rel="stylesheet">
-<link href="../themes/new_box/vendors/bower_components/chosen/chosen.min.css" rel="stylesheet">
-<link href="../themes/new_box/vendors/summernote/dist/summernote.css" rel="stylesheet">   
+<link href="../theme/vendors/bower_components/bootstrap-select/dist/css/bootstrap-select.css" rel="stylesheet">
+<link href="../theme/vendors/bower_components/chosen/chosen.min.css" rel="stylesheet">
+<link href="../theme/vendors/summernote/dist/summernote.css" rel="stylesheet">   
 <!-- CSS -->
-<link href="../themes/new_box/css/app.min.1.css" rel="stylesheet">
-<link href="../themes/new_box/css/app.min.2.css" rel="stylesheet">
-<link href="../themes/new_box/css/css_sup.css" rel="stylesheet">
+<link href="../theme/css/app.min.1.css" rel="stylesheet">
+<link href="../theme/css/app.min.2.css" rel="stylesheet">
+<link href="../theme/css/css_sup.css" rel="stylesheet">
 
 </head>
 
@@ -51,7 +51,7 @@
                 <div class="profile-menu">
                     <a href="#">
                         <div class="profile-pic">
-                            <img src="../themes/new_box/img/profile-pics/1.jpg" />
+                            <img src="../theme/img/profile-pics/1.jpg" />
                         </div>
 
                         <div class="profile-info">

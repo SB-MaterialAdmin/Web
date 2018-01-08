@@ -73,7 +73,7 @@ var accordion;
 function theme_num(num){
 	if(num == "1")
 	{
-		$('bg_scr').value = "themes/new_box/img/bg/570388.jpg";
+		$('bg_scr').value = "theme/img/bg/570388.jpg";
 		$('bg_scr_rep').value = "no-repeat";
 		$('bg_scr_att').value = "fixed";
 		$('bg_pos').value = "center";
@@ -83,7 +83,7 @@ function theme_num(num){
 		$('bg_size').value = "100% 100%";
 	}else if(num == "2")
 	{
-		$('bg_scr').value = "themes/new_box/img/bg/570390.jpg";
+		$('bg_scr').value = "theme/img/bg/570390.jpg";
 		$('bg_scr_rep').value = "no-repeat";
 		$('bg_scr_att').value = "fixed";
 		$('bg_pos').value = "center";
@@ -93,7 +93,7 @@ function theme_num(num){
 		$('bg_size').value = "100% 100%";
 	}else if(num == "3")
 	{
-		$('bg_scr').value = "themes/new_box/img/bg/576752.jpg";
+		$('bg_scr').value = "theme/img/bg/576752.jpg";
 		$('bg_scr_rep').value = "no-repeat";
 		$('bg_scr_att').value = "fixed";
 		$('bg_pos').value = "center";
@@ -103,7 +103,7 @@ function theme_num(num){
 		$('bg_size').value = "100% 100%";
 	}else if(num == "4")
 	{
-		$('bg_scr').value = "themes/new_box/img/bg/620953.jpg";
+		$('bg_scr').value = "theme/img/bg/620953.jpg";
 		$('bg_scr_rep').value = "no-repeat";
 		$('bg_scr_att').value = "fixed";
 		$('bg_pos').value = "center";
@@ -113,7 +113,7 @@ function theme_num(num){
 		$('bg_size').value = "100% 100%";
 	}else if(num == "5")
 	{
-		$('bg_scr').value = "themes/new_box/img/bg/653559.png";
+		$('bg_scr').value = "theme/img/bg/653559.png";
 		$('bg_scr_rep').value = "no-repeat";
 		$('bg_scr_att').value = "fixed";
 		$('bg_pos').value = "center";
@@ -123,7 +123,7 @@ function theme_num(num){
 		$('bg_size').value = "100% 100%";
 	}else if(num == "6")
 	{
-		$('bg_scr').value = "themes/new_box/img/bg/653563.jpg";
+		$('bg_scr').value = "theme/img/bg/653563.jpg";
 		$('bg_scr_rep').value = "no-repeat";
 		$('bg_scr_att').value = "fixed";
 		$('bg_pos').value = "center";
@@ -133,7 +133,7 @@ function theme_num(num){
 		$('bg_size').value = "100% 100%";
 	}else if(num == "7")
 	{
-		$('bg_scr').value = "themes/new_box/img/bg/665419.png";
+		$('bg_scr').value = "theme/img/bg/665419.png";
 		$('bg_scr_rep').value = "no-repeat";
 		$('bg_scr_att').value = "fixed";
 		$('bg_pos').value = "center";
@@ -143,7 +143,7 @@ function theme_num(num){
 		$('bg_size').value = "100% 100%";
 	}else if(num == "8")
 	{
-		$('bg_scr').value = "themes/new_box/img/bg/715035.png";
+		$('bg_scr').value = "theme/img/bg/715035.png";
 		$('bg_scr_rep').value = "no-repeat";
 		$('bg_scr_att').value = "fixed";
 		$('bg_pos').value = "center";
@@ -153,7 +153,7 @@ function theme_num(num){
 		$('bg_size').value = "100% 100%";
 	}else if(num == "9")
 	{
-		$('bg_scr').value = "themes/new_box/img/bg/725340.png";
+		$('bg_scr').value = "theme/img/bg/725340.png";
 		$('bg_scr_rep').value = "no-repeat";
 		$('bg_scr_att').value = "fixed";
 		$('bg_pos').value = "center";
@@ -163,7 +163,7 @@ function theme_num(num){
 		$('bg_size').value = "100% 100%";
 	}else if(num == "10")
 	{
-		$('bg_scr').value = "themes/new_box/img/bg/128-192.jpg";
+		$('bg_scr').value = "theme/img/bg/128-192.jpg";
 		$('bg_scr_rep').value = "repeat";
 		$('bg_scr_att').value = "";
 		$('bg_pos').value = "";
@@ -172,7 +172,7 @@ function theme_num(num){
 		$('bg_size').value = "";
 	}else if(num == "11")
 	{
-		$('bg_scr').value = "themes/new_box/img/bg/128-129.jpg";
+		$('bg_scr').value = "theme/img/bg/128-129.jpg";
 		$('bg_scr_rep').value = "repeat";
 		$('bg_scr_att').value = "";
 		$('bg_pos').value = "";

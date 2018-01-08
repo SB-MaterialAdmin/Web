@@ -10,7 +10,7 @@
 				{foreach from="$othercomments" item="com"}
 					<li class="media">
 						<a href="#" class="tvh-user pull-left">
-							<img class="img-responsive" style="width: 46px;height: 46px;border-radius: 50%;" src="themes/new_box/img/profile-pics/1.jpg" alt="">
+							<img class="img-responsive" style="width: 46px;height: 46px;border-radius: 50%;" src="theme/img/profile-pics/1.jpg" alt="">
 						</a>
 						<div class="media-body">
 						<strong class="d-block">{$com.comname}</strong>
@@ -84,7 +84,7 @@
 						</div>
 						{if $view_comments && $ban.commentdata != "Нет" && $ban.commentdata|@count > 0}
 							<div style="float:right;">
-								{$ban.commentdata|@count} <img src="themes/new_box/img/comm.png" alt="Comments" title="Comments" style="height:14px;width:14px;" />
+								{$ban.commentdata|@count} <img src="theme/img/comm.png" alt="Comments" title="Comments" style="height:14px;width:14px;" />
 							</div>
 						{/if}
 					</td>
@@ -269,7 +269,7 @@
 													{foreach from=$ban.commentdata item=commenta}
 													<div class="media">
 														<a href="#" class="pull-left">
-															<img src="themes/new_box/img/profile-pics/4.jpg" alt="" class="lv-img-sm">
+															<img src="theme/img/profile-pics/4.jpg" alt="" class="lv-img-sm">
 														</a>
 								 
 														<div class="media-body">

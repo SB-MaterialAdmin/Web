@@ -8,19 +8,19 @@
         <link rel="Shortcut Icon" href="images/favicon.ico">
         
         <!-- Vendor CSS -->
-        <link href="themes/new_box/vendors/bower_components/fullcalendar/dist/fullcalendar.min.css" rel="stylesheet">
-        <link href="themes/new_box/vendors/bower_components/animate.css/animate.min.css" rel="stylesheet">
-        <link href="themes/new_box/vendors/bower_components/bootstrap-sweetalert/lib/sweet-alert.css" rel="stylesheet">
-        <link href="themes/new_box/vendors/bower_components/material-design-iconic-font/dist/css/material-design-iconic-font.min.css" rel="stylesheet">
-        <link href="themes/new_box/vendors/bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.min.css" rel="stylesheet">
+        <link href="theme/vendors/bower_components/fullcalendar/dist/fullcalendar.min.css" rel="stylesheet">
+        <link href="theme/vendors/bower_components/animate.css/animate.min.css" rel="stylesheet">
+        <link href="theme/vendors/bower_components/bootstrap-sweetalert/lib/sweet-alert.css" rel="stylesheet">
+        <link href="theme/vendors/bower_components/material-design-iconic-font/dist/css/material-design-iconic-font.min.css" rel="stylesheet">
+        <link href="theme/vendors/bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.min.css" rel="stylesheet">
         <link href='https://fonts.googleapis.com/css?family=Roboto:900italic,900,700italic,700,500italic,500,400italic,400,300italic,300' rel='stylesheet' type='text/css'>
-        <link href="themes/new_box/vendors/bower_components/bootstrap-select/dist/css/bootstrap-select.css" rel="stylesheet">
-        <link href="themes/new_box/vendors/bower_components/chosen/chosen.min.css" rel="stylesheet">
-        <link href="themes/new_box/vendors/summernote/dist/summernote.css" rel="stylesheet">   
+        <link href="theme/vendors/bower_components/bootstrap-select/dist/css/bootstrap-select.css" rel="stylesheet">
+        <link href="theme/vendors/bower_components/chosen/chosen.min.css" rel="stylesheet">
+        <link href="theme/vendors/summernote/dist/summernote.css" rel="stylesheet">   
         <!-- CSS -->
-        <link href="themes/new_box/css/app.min.1.css" rel="stylesheet">
-        <link href="themes/new_box/css/app.min.2.css" rel="stylesheet">
-        <link href="themes/new_box/css/css_sup.css" rel="stylesheet">
+        <link href="theme/css/app.min.1.css" rel="stylesheet">
+        <link href="theme/css/app.min.2.css" rel="stylesheet">
+        <link href="theme/css/css_sup.css" rel="stylesheet">
     </head>
     <body class="toggled sw-toggled">
         <header id="header" class="clearfix" data-current-skin="blue">
@@ -45,7 +45,7 @@
                 <div class="profile-menu">
                     <a href="#">
                         <div class="profile-pic">
-                            <img src="themes/new_box/img/profile-pics/1.jpg" />
+                            <img src="theme/img/profile-pics/1.jpg" />
                         </div>
 
                         <div class="profile-info">
@@ -96,32 +96,32 @@
         <![endif]-->
 
 		<!-- Javascript Libraries -->
-        <script src="themes/new_box/vendors/bower_components/jquery/dist/jquery.min.js"></script>
-        <script src="themes/new_box/vendors/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script src="theme/vendors/bower_components/jquery/dist/jquery.min.js"></script>
+        <script src="theme/vendors/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
         
-        <script src="themes/new_box/vendors/bower_components/flot/jquery.flot.js"></script>
-        <script src="themes/new_box/vendors/bower_components/flot/jquery.flot.resize.js"></script>
-        <script src="themes/new_box/vendors/bower_components/flot.curvedlines/curvedLines.js"></script>
-        <script src="themes/new_box/vendors/sparklines/jquery.sparkline.min.js"></script>
-        <script src="themes/new_box/vendors/bower_components/jquery.easy-pie-chart/dist/jquery.easypiechart.min.js"></script>
+        <script src="theme/vendors/bower_components/flot/jquery.flot.js"></script>
+        <script src="theme/vendors/bower_components/flot/jquery.flot.resize.js"></script>
+        <script src="theme/vendors/bower_components/flot.curvedlines/curvedLines.js"></script>
+        <script src="theme/vendors/sparklines/jquery.sparkline.min.js"></script>
+        <script src="theme/vendors/bower_components/jquery.easy-pie-chart/dist/jquery.easypiechart.min.js"></script>
         
-        <script src="themes/new_box/vendors/bower_components/moment/min/moment.min.js"></script>
-        <script src="themes/new_box/vendors/bower_components/fullcalendar/dist/fullcalendar.min.js"></script>
-        <script src="themes/new_box/vendors/bower_components/simpleWeather/jquery.simpleWeather.min.js"></script>
-        <script src="themes/new_box/vendors/bower_components/Waves/dist/waves.min.js"></script>
-        <script src="themes/new_box/vendors/bootstrap-growl/bootstrap-growl.min.js"></script>
-        <script src="themes/new_box/vendors/bower_components/bootstrap-sweetalert/lib/sweet-alert.min.js"></script>
-        <script src="themes/new_box/vendors/bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>
-        <script src="themes/new_box/js/flot-charts/curved-line-chart.js"></script>
-        <script src="themes/new_box/js/flot-charts/line-chart.js"></script>
-        <script src="themes/new_box/js/charts.js"></script>
+        <script src="theme/vendors/bower_components/moment/min/moment.min.js"></script>
+        <script src="theme/vendors/bower_components/fullcalendar/dist/fullcalendar.min.js"></script>
+        <script src="theme/vendors/bower_components/simpleWeather/jquery.simpleWeather.min.js"></script>
+        <script src="theme/vendors/bower_components/Waves/dist/waves.min.js"></script>
+        <script src="theme/vendors/bootstrap-growl/bootstrap-growl.min.js"></script>
+        <script src="theme/vendors/bower_components/bootstrap-sweetalert/lib/sweet-alert.min.js"></script>
+        <script src="theme/vendors/bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>
+        <script src="theme/js/flot-charts/curved-line-chart.js"></script>
+        <script src="theme/js/flot-charts/line-chart.js"></script>
+        <script src="theme/js/charts.js"></script>
         
-        <script src="themes/new_box/js/charts.js"></script>
-        <script src="themes/new_box/js/functions.js"></script>
-        <script src="themes/new_box/js/demo.js"></script>
-        <script src="themes/new_box/vendors/summernote/dist/summernote-updated.min.js"></script>
-        <script src="themes/new_box/vendors/bower_components/bootstrap-select/dist/js/bootstrap-select.js"></script>
-        <script src="themes/new_box/vendors/bower_components/chosen/chosen.jquery.min.js"></script>
+        <script src="theme/js/charts.js"></script>
+        <script src="theme/js/functions.js"></script>
+        <script src="theme/js/demo.js"></script>
+        <script src="theme/vendors/summernote/dist/summernote-updated.min.js"></script>
+        <script src="theme/vendors/bower_components/bootstrap-select/dist/js/bootstrap-select.js"></script>
+        <script src="theme/vendors/bower_components/chosen/chosen.jquery.min.js"></script>
         <script>
             $.noConflict();
         </script>

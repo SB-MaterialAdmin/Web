@@ -2,7 +2,7 @@
 	<head>
 		<title>Загрузить файл : SourceBans</title>
 		<link rel="Shortcut Icon" href="../images/favicon.ico" />
-		<link href="../themes/new_box/css/uploadfile.css" rel="Stylesheet" />
+		<link href="../theme/css/uploadfile.css" rel="Stylesheet" />
 	</head>
 	<body bgcolor="e9e9e9">
 		<h3>{$title}</h3>
