@@ -37,7 +37,7 @@
 function is_taken($table, $field, $value)
 {
     // This one is nasty and should be removed. Avoid throwing any user input into $table and $field here...
-    $query = $GLOBALS['db']->GetRow("SELECT * FROM `" . DB_PREFIX . "_$table` WHERE `$field` = ?", array($value));
+    $query = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT * FROM `" . DB_PREFIX . "_$table` WHERE `$field` = ?", array($value));
     return (count($query) > 0);
 }
 
@@ -81,7 +81,7 @@ function logout() {
  */
 function edit_admin($aid, $username, $name, $email, $authid)
 {
-    $query = $GLOBALS['db']->Execute("UPDATE `" . DB_PREFIX . "_admins` SET `user` = ?,  `authid` = ?, `email` = ? WHERE `aid` = ?", array($username, $authid, $email, $aid));
+    $query = \MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE `" . DB_PREFIX . "_admins` SET `user` = ?,  `authid` = ?, `email` = ? WHERE `aid` = ?", array($username, $authid, $email, $aid));
     if($query)
     {
         return true;
@@ -101,7 +101,7 @@ function edit_admin($aid, $username, $name, $email, $authid)
 function delete_admin($aid)
 {
     $aid = (int)$aid;
-    $query = $GLOBALS['db']->Execute("DELETE FROM `" . DB_PREFIX . "_admins` WHERE `aid` = '$aid'");
+    $query = \MaterialAdmin\DataStorage::ADOdb()->Execute("DELETE FROM `" . DB_PREFIX . "_admins` WHERE `aid` = '$aid'");
     if($query)
     {
         return true;
@@ -136,7 +136,7 @@ function userdata($aid, $pass)
     }
     else
     {
-        $query = $GLOBALS['db']->GetRow("SELECT * FROM `" . DB_PREFIX . "_admins` WHERE `aid` = '$aid'");
+        $query = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT * FROM `" . DB_PREFIX . "_admins` WHERE `aid` = '$aid'");
         $_SESSION['user'] = array('aid' => $aid,
         			'user' => $query['user'],
         			'password' => $query['password'],
@@ -162,14 +162,14 @@ function get_user_flags($aid)
 	if(empty($aid))
 		return 0;
 
-	$admin = $query = $GLOBALS['db']->GetRow("SELECT `gid`, `extraflags` FROM `" . DB_PREFIX . "_admins` WHERE aid = '$aid'");
+	$admin = $query = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT `gid`, `extraflags` FROM `" . DB_PREFIX . "_admins` WHERE aid = '$aid'");
 	if(intval($admin['gid']) == -1)
 	{
 		return intval($admin['extraflags']);
 	}
 	else
 	{
-		$query = $GLOBALS['db']->GetRow("SELECT `flags` FROM `" . DB_PREFIX . "_groups` WHERE gid = (SELECT gid FROM " . DB_PREFIX . "_admins WHERE aid = '$aid')");
+		$query = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT `flags` FROM `" . DB_PREFIX . "_groups` WHERE gid = (SELECT gid FROM " . DB_PREFIX . "_admins WHERE aid = '$aid')");
 		return (intval($query['flags']) | intval($admin['extraflags']));
 	}
 
@@ -185,10 +185,10 @@ function get_user_admin($steam)
 {
 	if(empty($steam))
 		return 0;
-	$admin = $GLOBALS['db']->GetRow("SELECT * FROM " . DB_PREFIX . "_admins WHERE authid = '" . $steam . "'");
+	$admin = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT * FROM " . DB_PREFIX . "_admins WHERE authid = '" . $steam . "'");
 	if(strlen($admin['srv_group']) > 1)
 	{
-		$query = $GLOBALS['db']->GetRow("SELECT flags FROM " . DB_PREFIX . "_srvgroups WHERE name = (SELECT srv_group FROM " . DB_PREFIX . "_admins WHERE authid = '" . $steam . "')");
+		$query = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT flags FROM " . DB_PREFIX . "_srvgroups WHERE name = (SELECT srv_group FROM " . DB_PREFIX . "_admins WHERE authid = '" . $steam . "')");
 		return $query['flags'] . $admin['srv_flags'];
 	}
 	else
@@ -207,7 +207,7 @@ function get_non_inherited_admin($steam)
 {
 	if(empty($steam))
 		return 0;
-	$admin = $GLOBALS['db']->GetRow("SELECT * FROM `" . DB_PREFIX . "_admins` WHERE authid = '$steam'");
+	$admin = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT * FROM `" . DB_PREFIX . "_admins` WHERE authid = '$steam'");
 	return $admin['srv_flags'];
 }
 
@@ -272,7 +272,7 @@ function check_group($mask)
 function set_flag($aid, $flag)
 {
 	$aid = (int)$aid;
-	$query = $GLOBALS['db']->Execute("UPDATE `" . DB_PREFIX . "_groups` SET `flags` = '$flag' WHERE gid = (SELECT gid FROM " . DB_PREFIX . "_admins WHERE aid = '$aid')");
+	$query = \MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE `" . DB_PREFIX . "_groups` SET `flags` = '$flag' WHERE gid = (SELECT gid FROM " . DB_PREFIX . "_admins WHERE aid = '$aid')");
 	userdata($aid, $_SESSION['user']['password']);
 }
 
@@ -288,7 +288,7 @@ function add_flag($aid, $flag)
 	$aid = (int)$aid;
 	$flagd = get_user_flags($aid);
 	$flagd |= $flag;
-	$query = $GLOBALS['db']->Execute("UPDATE `" . DB_PREFIX . "_groups` SET `flags` = '$flagd' WHERE gid = (SELECT gid FROM " . DB_PREFIX . "_admins WHERE aid = '$aid')");
+	$query = \MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE `" . DB_PREFIX . "_groups` SET `flags` = '$flagd' WHERE gid = (SELECT gid FROM " . DB_PREFIX . "_admins WHERE aid = '$aid')");
 	userdata($aid, $_SESSION['user']['password']);
 }
 
@@ -304,7 +304,7 @@ function remove_flag($aid, $flag)
 	$aid = (int)$aid;
 	$flagd = get_user_flags($aid);
 	$flagd &= ~($flag);
-	$query = $GLOBALS['db']->Execute("UPDATE `" . DB_PREFIX . "_groups` SET `flags` = '$flagd' WHERE gid = (SELECT gid FROM " . DB_PREFIX . "_admins WHERE aid = '$aid')");
+	$query = \MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE `" . DB_PREFIX . "_groups` SET `flags` = '$flagd' WHERE gid = (SELECT gid FROM " . DB_PREFIX . "_admins WHERE aid = '$aid')");
 	userdata($aid, $_SESSION['user']['password']);
 }
 

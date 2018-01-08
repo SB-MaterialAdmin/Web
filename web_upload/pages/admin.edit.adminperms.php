@@ -38,7 +38,7 @@ if(!isset($_GET['id']))
 </div>';
 	PageDie();
 }
-$admin = $GLOBALS['db']->GetRow("SELECT * FROM ".DB_PREFIX."_admins WHERE aid = \"". $_GET['id'] . "\"");
+$admin = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT * FROM ".DB_PREFIX."_admins WHERE aid = \"". $_GET['id'] . "\"");
 
 
 if(!$userbank->GetProperty("user", $_GET['id']))

@@ -30,12 +30,12 @@ if(!defined("IN_SB")){echo "Ошибка доступа!";die();}
 global $userbank, $theme; 
 
 if($GLOBALS['config']['config.modgroup'] != "0"){
-	$gid_groups = $GLOBALS['db']->GetOne("SELECT `gid` FROM `" . DB_PREFIX . "_admins` WHERE `aid` = '".$userbank->GetAid()."'");
+	$gid_groups = \MaterialAdmin\DataStorage::ADOdb()->GetOne("SELECT `gid` FROM `" . DB_PREFIX . "_admins` WHERE `aid` = '".$userbank->GetAid()."'");
 
 	if($gid_groups == $GLOBALS['config']['config.modgroup']){
 		$_GET['id'] = preg_replace("/[^0-9]/", '', $_GET['id']);
-		$srv_ban = $GLOBALS['db']->GetOne("SELECT `sid` FROM `" . DB_PREFIX . "_bans` WHERE `bid` = '".$_GET['id']."'");
-		$amd_access = $GLOBALS['db']->GetOne("SELECT `server_id` FROM `" . DB_PREFIX . "_admins_servers_groups` WHERE `admin_id` = '".$userbank->GetAid()."' AND `server_id` = '".$srv_ban."'");
+		$srv_ban = \MaterialAdmin\DataStorage::ADOdb()->GetOne("SELECT `sid` FROM `" . DB_PREFIX . "_bans` WHERE `bid` = '".$_GET['id']."'");
+		$amd_access = \MaterialAdmin\DataStorage::ADOdb()->GetOne("SELECT `server_id` FROM `" . DB_PREFIX . "_admins_servers_groups` WHERE `admin_id` = '".$userbank->GetAid()."' AND `server_id` = '".$srv_ban."'");
 		if($srv_ban != $amd_access){
 			echo '<script>setTimeout(\'<script>ShowBox("Ошибка", "Вы имеете доступ только к редактированию банов на тех серверах, где у вас есть права управляющего!", "red", "");setTimeout(\'history.go(-1);\', 4000);\', 1200);</script>';
 			PageDie();
@@ -55,7 +55,7 @@ if(!isset($_GET['id']) || !is_numeric($_GET['id']))
 	PageDie();
 }
 
-$res = $GLOBALS['db']->GetRow("
+$res = \MaterialAdmin\DataStorage::ADOdb()->GetRow("
     				SELECT bid, ba.ip, ba.type, ba.authid, ba.name, created, ends, length, reason, ba.aid, ba.sid, ad.user, ad.gid, CONCAT(se.ip,':',se.port), se.sid, mo.icon, dm.origname 
     				FROM ".DB_PREFIX."_bans AS ba
     				LEFT JOIN ".DB_PREFIX."_admins AS ad ON ba.aid = ad.aid
@@ -142,7 +142,7 @@ if(isset($_POST['name']))
 		// Check if the new steamid is already banned
 		if($_POST['type'] == 0)
 		{
-			$chk = $GLOBALS['db']->GetRow("SELECT count(bid) AS count FROM ".DB_PREFIX."_bans WHERE authid = ? AND (length = 0 OR ends > UNIX_TIMESTAMP()) AND RemovedBy IS NULL AND type = '0' AND bid != ?", array($_POST['steam'], (int)$_GET['id']));
+			$chk = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT count(bid) AS count FROM ".DB_PREFIX."_bans WHERE authid = ? AND (length = 0 OR ends > UNIX_TIMESTAMP()) AND RemovedBy IS NULL AND type = '0' AND bid != ?", array($_POST['steam'], (int)$_GET['id']));
 
 			if((int)$chk[0] > 0)
 			{
@@ -169,7 +169,7 @@ if(isset($_POST['name']))
 		// Check if the ip is already banned
 		else if($_POST['type'] == 1)
 		{
-			$chk = $GLOBALS['db']->GetRow("SELECT count(bid) AS count FROM ".DB_PREFIX."_bans WHERE ip = ? AND (length = 0 OR ends > UNIX_TIMESTAMP()) AND RemovedBy IS NULL AND type = '1' AND bid != ?", array($_POST['ip'], (int)$_GET['id']));
+			$chk = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT count(bid) AS count FROM ".DB_PREFIX."_bans WHERE ip = ? AND (length = 0 OR ends > UNIX_TIMESTAMP()) AND RemovedBy IS NULL AND type = '1' AND bid != ?", array($_POST['ip'], (int)$_GET['id']));
 
 			if((int)$chk[0] > 0)
 			{
@@ -201,10 +201,10 @@ if(isset($_POST['name']))
 	// Only process if there are still no errors
 	if($error == 0)
 	{
-		$lengthrev = $GLOBALS['db']->Execute("SELECT length, authid FROM ".DB_PREFIX."_bans WHERE bid = '".(int)$_GET['id']."'");
+		$lengthrev = \MaterialAdmin\DataStorage::ADOdb()->Execute("SELECT length, authid FROM ".DB_PREFIX."_bans WHERE bid = '".(int)$_GET['id']."'");
 		
 		
-		$edit = $GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_bans SET
+		$edit = \MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE ".DB_PREFIX."_bans SET
 										`name` = ?, `type` = ?, `reason` = ?, `authid` = ?,
 										`length` = ?,
 										`ip` = ?,
@@ -213,13 +213,13 @@ if(isset($_POST['name']))
 										WHERE bid = ?", array($_POST['name'], $_POST['type'], $reason, $_POST['steam'], $_POST['banlength'], $_POST['ip'], $_POST['banlength'], (int)$_GET['id']));
 		
 		// Set all submissions to archived for that steamid
-		$GLOBALS['db']->Execute("UPDATE `".DB_PREFIX."_submissions` SET archiv = '3', archivedby = '".$userbank->GetAid()."' WHERE SteamId = ?;", array($_POST['steam']));
+		\MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE `".DB_PREFIX."_submissions` SET archiv = '3', archivedby = '".$userbank->GetAid()."' WHERE SteamId = ?;", array($_POST['steam']));
 				
 		if(!empty($_POST['dname']) and !$demo_linker)
 		{
-			$demoid = $GLOBALS['db']->GetRow("SELECT filename FROM `" . DB_PREFIX . "_demos` WHERE demid = '" . $_GET['id'] . "';");
+			$demoid = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT filename FROM `" . DB_PREFIX . "_demos` WHERE demid = '" . $_GET['id'] . "';");
 			@unlink(SB_DEMOS."/".$demoid['filename']);
-			$edit = $GLOBALS['db']->Execute("REPLACE INTO ".DB_PREFIX."_demos
+			$edit = \MaterialAdmin\DataStorage::ADOdb()->Execute("REPLACE INTO ".DB_PREFIX."_demos
 											(`demid`, `demtype`, `filename`, `origname`)
 											VALUES
 											(?,
@@ -231,7 +231,7 @@ if(isset($_POST['name']))
 		
 		if($demo_linker != "" && empty($_POST['dname'])){
 				
-			$edit = $GLOBALS['db']->Execute("REPLACE INTO ".DB_PREFIX."_demos
+			$edit = \MaterialAdmin\DataStorage::ADOdb()->Execute("REPLACE INTO ".DB_PREFIX."_demos
 												(`demid`, `demtype`, `filename`, `origname`)
 												VALUES
 												(?,
@@ -240,7 +240,7 @@ if(isset($_POST['name']))
 												?)", array((int)$_GET['id'], '', $demo_linker));
 		}else{
 			if($res['origname'])
-				$edit = $GLOBALS['db']->Execute("DELETE FROM `".DB_PREFIX."_demos` WHERE `demid` = '?';", array((int)$_GET['id']));
+				$edit = \MaterialAdmin\DataStorage::ADOdb()->Execute("DELETE FROM `".DB_PREFIX."_demos` WHERE `demid` = '?';", array((int)$_GET['id']));
 		}
 		
 		if($_POST['banlength'] != $lengthrev->fields['length'])

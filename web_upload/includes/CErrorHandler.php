@@ -49,7 +49,7 @@ class CErrorHandler {
     }
     
     public static function BasicErrorCatcher($errno, $errstr, $errfile, $errline) {
-        if(!is_object($GLOBALS['log']))
+        if(!is_object(\MaterialAdmin\DataStorage::Logger()))
             return false;
         
         $retValue = true;
@@ -73,13 +73,13 @@ class CErrorHandler {
             case E_USER_WARNING:
                 $msg = "[$errno] $errstr<br />\n";
                 $msg .= "Ошибка на строке $errline в файле $errfile";
-                $GLOBALS['log']->AddLogItem("w", "PHP Warning", $msg);
+                \MaterialAdmin\DataStorage::Logger()->AddLogItem("w", "PHP Warning", $msg);
                 break;
 
             case E_USER_NOTICE:
                 $msg = "[$errno] $errstr<br />\n";
                 $msg .= "Уведомление на строке $errline в файле $errfile";
-                $GLOBALS['log']->AddLogItem("m", "PHP Notice", $msg);
+                \MaterialAdmin\DataStorage::Logger()->AddLogItem("m", "PHP Notice", $msg);
                 break;
 
             default:

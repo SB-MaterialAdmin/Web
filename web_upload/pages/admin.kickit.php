@@ -51,7 +51,7 @@ function LoadServers($check) {
         return $objResponse;
     }
     $id = 0;
-    $servers = $GLOBALS['db']->Execute("SELECT sid, rcon FROM ".DB_PREFIX."_servers WHERE enabled = 1 ORDER BY modid, sid;");
+    $servers = \MaterialAdmin\DataStorage::ADOdb()->Execute("SELECT sid, rcon FROM ".DB_PREFIX."_servers WHERE enabled = 1 ORDER BY modid, sid;");
     while(!$servers->EOF) {
         //search for player
         if(!empty($servers->fields["rcon"])) {
@@ -82,7 +82,7 @@ function KickPlayer($check, $sid, $num) {
     }
     
     //get the server data
-    $sdata = $GLOBALS['db']->GetRow("SELECT ip, port, rcon FROM ".DB_PREFIX."_servers WHERE sid = '".$sid."';");
+    $sdata = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT ip, port, rcon FROM ".DB_PREFIX."_servers WHERE sid = '".$sid."';");
     
     //test if server is online
     if($test = @fsockopen($sdata['ip'], $sdata['port'], $errno, $errstr, 2)) {
@@ -93,7 +93,7 @@ function KickPlayer($check, $sid, $num) {
         $r->Connect($sdata['ip'], $sdata['port']);
 
         if(!$r->AuthRcon($sdata['rcon'])) {
-            $GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_servers SET rcon = '' WHERE sid = '".$sid."' LIMIT 1;");        
+            \MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE ".DB_PREFIX."_servers SET rcon = '' WHERE sid = '".$sid."' LIMIT 1;");        
             $objResponse->addAssign("srv_$num", "innerHTML", "<font color='red' size='1'>Ошибка Rcon пароля!</font>");
             $objResponse->addScript('set_counter(1);');
             return $objResponse;
@@ -106,7 +106,7 @@ function KickPlayer($check, $sid, $num) {
         require_once(INCLUDES_PATH . '/system-functions.php');
         if (kickClient($r, $check)) {
             $objResponse->addAssign("srv_$num", "innerHTML", "<font color='green' size='1'><b>Найден и кикнут с сервера.</b></font>");
-            $GLOBALS['db']->Execute("UPDATE `".DB_PREFIX."_bans` SET sid = '".(int) $sid."' WHERE authid = '".$check."' AND RemovedBy IS NULL;");
+            \MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE `".DB_PREFIX."_bans` SET sid = '".(int) $sid."' WHERE authid = '".$check."' AND RemovedBy IS NULL;");
             $objResponse->addScript("set_counter('-1');");
         } else
             $objResponse->addAssign("srv_$num", "innerHTML", "<font size='1'>Не найден.</font>");
@@ -116,7 +116,7 @@ function KickPlayer($check, $sid, $num) {
     $objResponse->addScript('set_counter(1);');
     return $objResponse;
 }
-$servers = $GLOBALS['db']->Execute("SELECT ip, port, rcon FROM ".DB_PREFIX."_servers WHERE enabled = 1 ORDER BY modid, sid;");
+$servers = \MaterialAdmin\DataStorage::ADOdb()->Execute("SELECT ip, port, rcon FROM ".DB_PREFIX."_servers WHERE enabled = 1 ORDER BY modid, sid;");
 $theme->assign('total', $servers->RecordCount());
 $serverlinks = array();
 $num = 0;

@@ -27,7 +27,7 @@
 
 if(!defined("IN_SB")){echo "You should not be here. Only follow links!";die();} 
 global $userbank, $theme;
-$counts = $GLOBALS['db']->GetRow("SELECT 
+$counts = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT 
 								 (SELECT COUNT(bid) FROM `" . DB_PREFIX . "_banlog`) AS blocks, 
 								 (SELECT COUNT(bid) FROM `" . DB_PREFIX . "_bans`) AS bans,
 								 (SELECT COUNT(aid) FROM `" . DB_PREFIX . "_admins` WHERE aid > 0) AS admins,

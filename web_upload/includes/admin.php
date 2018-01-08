@@ -91,7 +91,7 @@ else
 			if(isset($_GET['advSearch']))
 			{
 				// Escape the value, but strip the leading and trailing quote
-				$value = substr($GLOBALS['db']->qstr($_GET['advSearch'], get_magic_quotes_gpc()), 1, -1);
+				$value = substr(\MaterialAdmin\DataStorage::ADOdb()->qstr($_GET['advSearch'], get_magic_quotes_gpc()), 1, -1);
 				$type = $_GET['advType'];
 				switch($type)
 				{
@@ -122,7 +122,7 @@ else
 						foreach($findflags AS $flag)
 							$flags[] = constant($flag);
 						$flagstring = implode('|',$flags);
-						$alladmins = $GLOBALS['db']->Execute("SELECT aid FROM `" . DB_PREFIX . "_admins` WHERE aid > 0");
+						$alladmins = \MaterialAdmin\DataStorage::ADOdb()->Execute("SELECT aid FROM `" . DB_PREFIX . "_admins` WHERE aid > 0");
 						while(!$alladmins->EOF)
 						{
 							if($userbank->HasAccess($flagstring, $alladmins->fields["aid"])) {
@@ -138,7 +138,7 @@ else
 						$findflags = explode(",",$value);
 						foreach($findflags AS $flag)
 							$flags[] = constant($flag);
-						$alladmins = $GLOBALS['db']->Execute("SELECT aid, authid FROM `" . DB_PREFIX . "_admins` WHERE aid > 0");
+						$alladmins = \MaterialAdmin\DataStorage::ADOdb()->Execute("SELECT aid, authid FROM `" . DB_PREFIX . "_admins` WHERE aid > 0");
 						while(!$alladmins->EOF)
 						{
 							foreach($flags AS $fla) {
@@ -175,7 +175,7 @@ else
 			else {
 				$where2 = " AND (ADM.expired > ".time()." OR ADM.expired = 0)";
 			}
-			$admins = $GLOBALS['db']->GetAll("SELECT * FROM `" . DB_PREFIX . "_admins` AS ADM".$join." WHERE ADM.aid > 0".$where2."".$where." ORDER BY user LIMIT " . intval(($page-1) * $AdminsPerPage) . "," . intval($AdminsPerPage));
+			$admins = \MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT * FROM `" . DB_PREFIX . "_admins` AS ADM".$join." WHERE ADM.aid > 0".$where2."".$where." ORDER BY user LIMIT " . intval(($page-1) * $AdminsPerPage) . "," . intval($AdminsPerPage));
 			// quick fix for the server search showing admins mulitple times.
 			if(isset($_GET['advSearch']) && isset($_GET['advType']) && $_GET['advType'] == 'server') {
 
@@ -190,7 +190,7 @@ else
 				}
 			}
 			
-			$query = $GLOBALS['db']->GetRow("SELECT COUNT(ADM.aid) AS cnt FROM `" . DB_PREFIX . "_admins` AS ADM".$join." WHERE ADM.aid > 0".$where2."".$where);
+			$query = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT COUNT(ADM.aid) AS cnt FROM `" . DB_PREFIX . "_admins` AS ADM".$join." WHERE ADM.aid > 0".$where2."".$where);
 			$admin_count = $query['cnt'];
 			include TEMPLATES_PATH . "/admin.admins.php";
 			RewritePageTitle("Управление админами");
@@ -389,8 +389,8 @@ else
 			$modTabMenu->outputMenu();
 			// ====================[ ADMIN SIDE MENU END ] ===================	
 			
-			$mod_list = $GLOBALS['db']->GetAll("SELECT * FROM `" . DB_PREFIX . "_mods` WHERE mid > 0 ORDER BY name ASC") ;
-			$query = $GLOBALS['db']->GetRow("SELECT COUNT(mid) AS cnt FROM `" . DB_PREFIX . "_mods`") ;
+			$mod_list = \MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT * FROM `" . DB_PREFIX . "_mods` WHERE mid > 0 ORDER BY name ASC") ;
+			$query = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT COUNT(mid) AS cnt FROM `" . DB_PREFIX . "_mods`") ;
 			$mod_count = $query['cnt'];
 			include TEMPLATES_PATH . "/admin.mods.php";
 			RewritePageTitle("Управление МОДами");	

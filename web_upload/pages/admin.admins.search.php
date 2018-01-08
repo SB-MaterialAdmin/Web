@@ -28,7 +28,7 @@
 global $userbank, $theme;
 
 //serverlist
-$server_list = $GLOBALS['db']->Execute("SELECT sid, ip, port FROM `" . DB_PREFIX . "_servers` WHERE enabled = 1");
+$server_list = \MaterialAdmin\DataStorage::ADOdb()->Execute("SELECT sid, ip, port FROM `" . DB_PREFIX . "_servers` WHERE enabled = 1");
 $servers = array();
 $serverscript = "<script type=\"text/javascript\">";
 while (!$server_list->EOF)
@@ -44,7 +44,7 @@ while (!$server_list->EOF)
 $serverscript .= "</script>";
 
 //webgrouplist
-$webgroup_list = $GLOBALS['db']->Execute("SELECT gid, name FROM ". DB_PREFIX ."_groups WHERE type = '1'");
+$webgroup_list = \MaterialAdmin\DataStorage::ADOdb()->Execute("SELECT gid, name FROM ". DB_PREFIX ."_groups WHERE type = '1'");
 $webgroups = array();
 while (!$webgroup_list->EOF)
 {
@@ -57,7 +57,7 @@ while (!$webgroup_list->EOF)
 }
 
 //serveradmingrouplist
-$srvadmgroup_list = $GLOBALS['db']->Execute("SELECT name FROM ". DB_PREFIX ."_srvgroups ORDER BY name ASC");
+$srvadmgroup_list = \MaterialAdmin\DataStorage::ADOdb()->Execute("SELECT name FROM ". DB_PREFIX ."_srvgroups ORDER BY name ASC");
 $srvadmgroups = array();
 while (!$srvadmgroup_list->EOF)
 {
@@ -69,7 +69,7 @@ while (!$srvadmgroup_list->EOF)
 }
 
 //servergroup
-$srvgroup_list = $GLOBALS['db']->Execute("SELECT gid, name FROM " . DB_PREFIX . "_groups WHERE type = '3'");
+$srvgroup_list = \MaterialAdmin\DataStorage::ADOdb()->Execute("SELECT gid, name FROM " . DB_PREFIX . "_groups WHERE type = '3'");
 $srvgroups = array();
 while (!$srvgroup_list->EOF)
 {

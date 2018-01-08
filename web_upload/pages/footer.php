@@ -42,7 +42,7 @@ $theme->assign('THEME_LINK', theme_link);
 $theme->assign('SB_VERSION', SB_VERSION);
 
 $theme->assign('show_gendata',      ($GLOBALS['config']['page.footer.allow_show_data'] == "1"));
-$theme->assign('gendata_queries',   $GLOBALS['db']->Queries);
+$theme->assign('gendata_queries',   \MaterialAdmin\DataStorage::ADOdb()->Queries);
 $theme->assign('gendata_time',      round($totaltime, 2));
 
 $theme->assign('splash_screen',     ($GLOBALS['config']['theme.splashscreen'] == "1"));
@@ -187,7 +187,7 @@ window.addEvent('domready', function(){
 	}?>
 	</script>
 
-<?php if(is_object($GLOBALS['log'])) $GLOBALS['log']->WriteLogEntries(); ?>
+<?php if(is_object(\MaterialAdmin\DataStorage::Logger())) \MaterialAdmin\DataStorage::Logger()->WriteLogEntries(); ?>
 	
 <!--[if lt IE 7]>
 <script defer type="text/javascript" src="./scripts/pngfix.js"></script>

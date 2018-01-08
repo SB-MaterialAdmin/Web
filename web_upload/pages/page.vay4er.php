@@ -34,19 +34,19 @@ if(isset($_POST['pay_v4']) && !empty($_POST['pay_v4']))
 	$validation = str_replace("-", "", $validation);
 	$validation = RemoveCode($validation);
 	$validation = preg_replace("/[^0-9]/", '', $validation);
-	$qwr = $GLOBALS['db']->GetOne("SELECT `activ` FROM `" . DB_PREFIX . "_vay4er` WHERE `value` = '".$validation."'");
+	$qwr = \MaterialAdmin\DataStorage::ADOdb()->GetOne("SELECT `activ` FROM `" . DB_PREFIX . "_vay4er` WHERE `value` = '".$validation."'");
 	if($qwr != "0" && $qwr == "1"){
 		$vaxye_vso = "1";
 		//echo "VSO OK";
-		$user_group_web = $GLOBALS['db']->GetOne("SELECT `group_web` FROM `" . DB_PREFIX . "_vay4er` WHERE `value` = '".$validation."'");
+		$user_group_web = \MaterialAdmin\DataStorage::ADOdb()->GetOne("SELECT `group_web` FROM `" . DB_PREFIX . "_vay4er` WHERE `value` = '".$validation."'");
 		if($user_group_web == "" || $user_group_web == "0"){
 			$user_group_web = "Не указана/Нет группы";
 		}
-		$user_group_srv = $GLOBALS['db']->GetOne("SELECT `group_srv` FROM `" . DB_PREFIX . "_vay4er` WHERE `value` = '".$validation."'");
+		$user_group_srv = \MaterialAdmin\DataStorage::ADOdb()->GetOne("SELECT `group_srv` FROM `" . DB_PREFIX . "_vay4er` WHERE `value` = '".$validation."'");
 		if($user_group_srv == "" || $user_group_srv == "0"){
 			$user_group_srv = "Не указана/Нет группы";
 		}
-		$pay_days = $GLOBALS['db']->GetOne("SELECT `days` FROM `" . DB_PREFIX . "_vay4er` WHERE `value` = '".$validation."'");
+		$pay_days = \MaterialAdmin\DataStorage::ADOdb()->GetOne("SELECT `days` FROM `" . DB_PREFIX . "_vay4er` WHERE `value` = '".$validation."'");
 		if($pay_days == "0"){
 			$pay_days_t = "Навсегда";
 		}else{
@@ -57,7 +57,7 @@ if(isset($_POST['pay_v4']) && !empty($_POST['pay_v4']))
 		$theme->assign('gr_srv', $user_group_srv);
 		$theme->assign('klu4ik', $validation);
 		
-		$servers_num = $GLOBALS['db']->GetOne("SELECT `servers` FROM `" . DB_PREFIX . "_vay4er` WHERE `value` = '".$validation."'");
+		$servers_num = \MaterialAdmin\DataStorage::ADOdb()->GetOne("SELECT `servers` FROM `" . DB_PREFIX . "_vay4er` WHERE `value` = '".$validation."'");
 		$add_srv = "";
 		$add_srv_sql = "''";
 		
@@ -105,7 +105,7 @@ else
 }
 
 
-$servers = $GLOBALS['db']->GetAll("SELECT * FROM `" . DB_PREFIX . "_servers`");
+$servers = \MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT * FROM `" . DB_PREFIX . "_servers`");
 $server_list = array();
 $serverscript = "<script type=\"text/javascript\">";
 foreach($servers AS $server)

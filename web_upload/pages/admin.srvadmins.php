@@ -26,7 +26,7 @@
 // *************************************************************************
 
 global $theme;
-$srv_admins = $GLOBALS['db']->GetAll("SELECT authid, user
+$srv_admins = \MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT authid, user
 										FROM " . DB_PREFIX . "_admins_servers_groups AS asg						
 										LEFT JOIN " . DB_PREFIX . "_admins AS a ON a.aid = asg.admin_id			
 										WHERE (server_id = " . (int)$_GET['id'] . " OR srv_group_id = ANY					

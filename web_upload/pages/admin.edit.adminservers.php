@@ -63,8 +63,8 @@ if(!$userbank->HasAccess(ADMIN_OWNER|ADMIN_EDIT_ADMINS))
 	PageDie();
 }
 
-$servers = $GLOBALS['db']->GetAll("SELECT `server_id`, `srv_group_id` FROM ".DB_PREFIX."_admins_servers_groups WHERE admin_id = ". (int)$aid);
-$adminGroup = $GLOBALS['db']->GetAll('SELECT id FROM '.DB_PREFIX.'_srvgroups sg, '.DB_PREFIX.'_admins a WHERE sg.name = a.srv_group and a.aid = ? limit 1', array($aid));
+$servers = \MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT `server_id`, `srv_group_id` FROM ".DB_PREFIX."_admins_servers_groups WHERE admin_id = ". (int)$aid);
+$adminGroup = \MaterialAdmin\DataStorage::ADOdb()->GetAll('SELECT id FROM '.DB_PREFIX.'_srvgroups sg, '.DB_PREFIX.'_admins a WHERE sg.name = a.srv_group and a.aid = ? limit 1', array($aid));
 
 $server_grp = isset($adminGroup[0]['id'])?$adminGroup[0]['id']:0;
 
@@ -73,12 +73,12 @@ if(isset($_POST['editadminserver']))
 {
 	
 	// clear old stuffs
-	$GLOBALS['db']->Execute("DELETE FROM ".DB_PREFIX."_admins_servers_groups WHERE admin_id = {$aid}");
+	\MaterialAdmin\DataStorage::ADOdb()->Execute("DELETE FROM ".DB_PREFIX."_admins_servers_groups WHERE admin_id = {$aid}");
 	if(isset($_POST['servers']) && is_array($_POST['servers']) && count($_POST['servers']) > 0) {
 		foreach($_POST['servers'] AS $s)
 		{
-			$pre = $GLOBALS['db']->Prepare("INSERT INTO ".DB_PREFIX."_admins_servers_groups(admin_id,group_id,srv_group_id,server_id) VALUES (?,?,?,?)");
-			$GLOBALS['db']->Execute($pre,array($aid,
+			$pre = \MaterialAdmin\DataStorage::ADOdb()->Prepare("INSERT INTO ".DB_PREFIX."_admins_servers_groups(admin_id,group_id,srv_group_id,server_id) VALUES (?,?,?,?)");
+			\MaterialAdmin\DataStorage::ADOdb()->Execute($pre,array($aid,
 											   $server_grp,
 											   -1,
 											   (int)substr($s,1)));
@@ -87,8 +87,8 @@ if(isset($_POST['editadminserver']))
 	if(isset($_POST['group']) && is_array($_POST['group']) && count($_POST['group']) > 0) {
 		foreach($_POST['group'] AS $g)
 		{
-			$pre = $GLOBALS['db']->Prepare("INSERT INTO ".DB_PREFIX."_admins_servers_groups(admin_id,group_id,srv_group_id,server_id) VALUES (?,?,?,?)");
-			$GLOBALS['db']->Execute($pre,array($aid,
+			$pre = \MaterialAdmin\DataStorage::ADOdb()->Prepare("INSERT INTO ".DB_PREFIX."_admins_servers_groups(admin_id,group_id,srv_group_id,server_id) VALUES (?,?,?,?)");
+			\MaterialAdmin\DataStorage::ADOdb()->Execute($pre,array($aid,
 											   $server_grp,
 											   (int)substr($g,1),
 											   -1));
@@ -97,7 +97,7 @@ if(isset($_POST['editadminserver']))
 	if(isset($GLOBALS['config']['config.enableadminrehashing']) && $GLOBALS['config']['config.enableadminrehashing'] == 1)
 	{
 		// rehash the admins on the servers
-		$serveraccessq = $GLOBALS['db']->GetAll("SELECT s.sid FROM `".DB_PREFIX."_servers` s
+		$serveraccessq = \MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT s.sid FROM `".DB_PREFIX."_servers` s
 												LEFT JOIN `".DB_PREFIX."_admins_servers_groups` asg ON asg.admin_id = '".(int)$aid."'
 												LEFT JOIN `".DB_PREFIX."_servers_groups` sg ON sg.group_id = asg.srv_group_id
 												WHERE ((asg.server_id != '-1' AND asg.srv_group_id = '-1')
@@ -119,7 +119,7 @@ if(isset($_POST['editadminserver']))
 			}
 			
 			// old server groups
-			$serv_in_grp = $GLOBALS['db']->GetAll('SELECT server_id FROM `'.DB_PREFIX.'_servers_groups` WHERE group_id = ?;', array((int)$server['srv_group_id']));
+			$serv_in_grp = \MaterialAdmin\DataStorage::ADOdb()->GetAll('SELECT server_id FROM `'.DB_PREFIX.'_servers_groups` WHERE group_id = ?;', array((int)$server['srv_group_id']));
 			foreach($serv_in_grp as $srg)
 			{
 				if($srg['server_id'] != "-1" && !in_array((int)$srg['server_id'], $allservers)) {
@@ -132,13 +132,13 @@ if(isset($_POST['editadminserver']))
 	} else
 		echo '<script>setTimeout(\'ShowBox("Серверный доступ администратора обновлен", "Серверный доступ администратора был успешно обновлен", "green", "index.php?p=admin&c=admins");TabToReload();\', 1200);</script>';
 	
-	$admname = $GLOBALS['db']->GetRow("SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = ?", array((int)$aid));
+	$admname = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = ?", array((int)$aid));
 	$log = new CSystemLog("m", "Администратор сервера обновлен", "Серверный доступ администратора (" . $admname['user'] . ") был изменен");
 }
 
 
-$server_list = 	$GLOBALS['db']->GetAll("SELECT * FROM `" . DB_PREFIX . "_servers`");
-$group_list = 	$GLOBALS['db']->GetAll("SELECT * FROM `" . DB_PREFIX . "_groups` WHERE type = '3'");
+$server_list = 	\MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT * FROM `" . DB_PREFIX . "_servers`");
+$group_list = 	\MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT * FROM `" . DB_PREFIX . "_groups` WHERE type = '3'");
 $rowcount = 	(count($server_list)+count($group_list));
 
 $theme->assign('row_count', $rowcount);

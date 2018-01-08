@@ -13,9 +13,9 @@ global $userbank, $theme;
 				echo '<script>setTimeout(\'ShowBox("Ошибка", "ID бана не указан!", "red", "index.php");\', 1200);</script>';
 				PageDie();
 			}else{
-				$qwer = $GLOBALS['db']->GetRow("SELECT * FROM `" . DB_PREFIX . "_vay4er` WHERE aid = '".(int)$_GET['id']."'");
+				$qwer = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT * FROM `" . DB_PREFIX . "_vay4er` WHERE aid = '".(int)$_GET['id']."'");
 				if($qwer){
-					$qww = $GLOBALS['db']->Execute("DELETE FROM `" . DB_PREFIX . "_vay4er` WHERE aid = '".(int)$_GET['id']."'");
+					$qww = \MaterialAdmin\DataStorage::ADOdb()->Execute("DELETE FROM `" . DB_PREFIX . "_vay4er` WHERE aid = '".(int)$_GET['id']."'");
 					if($qww){
 						echo '<script>setTimeout(\'ShowBox("Успешно", "Ваучер был успешно удален!", "green", "index.php?p=admin&c=pay_card");\', 1200);</script>';
 					}
@@ -29,7 +29,7 @@ global $userbank, $theme;
 			
 			
 			
-			$cards = $GLOBALS['db']->GetAll("SELECT * FROM `" . DB_PREFIX . "_vay4er` ORDER BY `activ` DESC");
+			$cards = \MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT * FROM `" . DB_PREFIX . "_vay4er` ORDER BY `activ` DESC");
 			$card_list = array();
 			foreach($cards AS $card)
 			{
@@ -53,7 +53,7 @@ global $userbank, $theme;
 		echo '<div id="1" style="display:none;">';
 			
 			//
-			$servers = $GLOBALS['db']->GetAll("SELECT * FROM `" . DB_PREFIX . "_servers`");
+			$servers = \MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT * FROM `" . DB_PREFIX . "_servers`");
 			$server_list = array();
 			$serverscript = "<script type=\"text/javascript\">";
 			foreach($servers AS $server)
@@ -73,8 +73,8 @@ global $userbank, $theme;
 			//
 			
 			// Add Page
-			$server_admin_group_list = 	$GLOBALS['db']->GetAll("SELECT * FROM `" . DB_PREFIX . "_srvgroups`");
-			$server_group_list = 		$GLOBALS['db']->GetAll("SELECT * FROM `" . DB_PREFIX . "_groups` WHERE type != 3");
+			$server_admin_group_list = 	\MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT * FROM `" . DB_PREFIX . "_srvgroups`");
+			$server_group_list = 		\MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT * FROM `" . DB_PREFIX . "_groups` WHERE type != 3");
 
 			echo '<div id="1" style="display:none;">';
 				$theme->assign('server_admin_group_list', $server_admin_group_list);
@@ -105,13 +105,13 @@ global $userbank, $theme;
 							}
 						}
 						
-						$ifvay4_shon = $GLOBALS['db']->GetOne("SELECT COUNT(`value`) FROM `".DB_PREFIX."_vay4er` WHERE value = '".$key_vr."'");
+						$ifvay4_shon = \MaterialAdmin\DataStorage::ADOdb()->GetOne("SELECT COUNT(`value`) FROM `".DB_PREFIX."_vay4er` WHERE value = '".$key_vr."'");
 						// err
 						if(strlen($key_vr) <= 15){
 							echo "<script>setTimeout(\"ShowBox('Ваучер', 'Ошибка, ключ должен содержать 16 символов!', 'red', 'index.php?p=admin&c=pay_card#^1');\", 1200);</script>";
 						}elseif($ifvay4_shon == "0" || $ifvay4_shon == "" || $ifvay4_shon < 1){
 							
-							$edit = $GLOBALS['db']->Execute("INSERT INTO `" . DB_PREFIX . "_vay4er` (`activ`, `value`, `days`, `group_web`, `group_srv`, `servers`)
+							$edit = \MaterialAdmin\DataStorage::ADOdb()->Execute("INSERT INTO `" . DB_PREFIX . "_vay4er` (`activ`, `value`, `days`, `group_web`, `group_srv`, `servers`)
 								VALUES (1, ?, ?, ?, ?, ?)", array($key_vr, $exp_vr, $gr_web_vr, $gr_srv_vr, $srv_check));
 							
 							if($edit){

@@ -44,9 +44,9 @@ class CDonate {
      * @return int
      */
     public function AddTariff($name, $price, $expired, $desc, $webflags, $serverflags, $immunity, $servers) {
-        $query = sprintf("INSERT INTO `%s_billing_admintariffs` (`name`, `price`, `expired`, `desc`, `webflags`, `serverflags`, `immunity`, `servers`) VALUES (%s, %d, %d, %s, %s, %s, %d, %s)", DB_PREFIX, $GLOBALS['db']->qstr($name), $price, $expired, $GLOBALS['db']->qstr($desc), $GLOBALS['db']->qstr($webflags), $GLOBALS['db']->qstr($serverflags), $immunity, $GLOBALS['db']->qstr($servers));
-        $GLOBALS['db']->Execute($query);
-        return $GLOBALS['db']->Insert_ID();
+        $query = sprintf("INSERT INTO `%s_billing_admintariffs` (`name`, `price`, `expired`, `desc`, `webflags`, `serverflags`, `immunity`, `servers`) VALUES (%s, %d, %d, %s, %s, %s, %d, %s)", DB_PREFIX, \MaterialAdmin\DataStorage::ADOdb()->qstr($name), $price, $expired, \MaterialAdmin\DataStorage::ADOdb()->qstr($desc), \MaterialAdmin\DataStorage::ADOdb()->qstr($webflags), \MaterialAdmin\DataStorage::ADOdb()->qstr($serverflags), $immunity, \MaterialAdmin\DataStorage::ADOdb()->qstr($servers));
+        \MaterialAdmin\DataStorage::ADOdb()->Execute($query);
+        return \MaterialAdmin\DataStorage::ADOdb()->Insert_ID();
     }
     
     /**
@@ -58,9 +58,9 @@ class CDonate {
         if (!$this->IsTariffExists($tariff))
             return -1;
         
-        $query = sprintf("INSERT INTO `%s_billing_adminpayments` (`name`, `authid`, `tariff`, `vk`, `skype`) VALUES (%s, %s, %d, %s, %s);", DB_PREFIX, $GLOBALS['db']->qstr($name), $GLOBALS['db']->qstr($authid), (int) $tariff, $GLOBALS['db']->qstr($vk), $GLOBALS['db']->qstr($skype));
-        $GLOBALS['db']->Execute($query);
-        return $GLOBALS['db']->Insert_ID();
+        $query = sprintf("INSERT INTO `%s_billing_adminpayments` (`name`, `authid`, `tariff`, `vk`, `skype`) VALUES (%s, %s, %d, %s, %s);", DB_PREFIX, \MaterialAdmin\DataStorage::ADOdb()->qstr($name), \MaterialAdmin\DataStorage::ADOdb()->qstr($authid), (int) $tariff, \MaterialAdmin\DataStorage::ADOdb()->qstr($vk), \MaterialAdmin\DataStorage::ADOdb()->qstr($skype));
+        \MaterialAdmin\DataStorage::ADOdb()->Execute($query);
+        return \MaterialAdmin\DataStorage::ADOdb()->Insert_ID();
     }
     
     /**
@@ -88,7 +88,7 @@ class CDonate {
      * @return bool
      */
     public static function IsTariffExists($id) {
-        return $GLOBALS['db']->GetOne(sprintf("SELECT COUNT(*) FROM `%s_billing_admintariffs` WHERE `id` = %d;", DB_PREFIX, (int) $id)) == 1;
+        return \MaterialAdmin\DataStorage::ADOdb()->GetOne(sprintf("SELECT COUNT(*) FROM `%s_billing_admintariffs` WHERE `id` = %d;", DB_PREFIX, (int) $id)) == 1;
     }
     
     /**

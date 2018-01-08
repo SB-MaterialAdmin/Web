@@ -54,7 +54,7 @@ if (isset($_GET['page']) && $_GET['page'] > 0)
 }
 if (version_compare($GLOBALS['db_version'], "5.6.0") >= 0 && version_compare($GLOBALS['db_version'], "10.0.0")<0)
 {
-  $GLOBALS['db']->Execute("set session optimizer_switch='block_nested_loop=off';");
+  \MaterialAdmin\DataStorage::ADOdb()->Execute("set session optimizer_switch='block_nested_loop=off';");
 }
 if (isset($_GET['a']) && $_GET['a'] == "unban" && isset($_GET['id']))
 {
@@ -69,7 +69,7 @@ if (isset($_GET['a']) && $_GET['a'] == "unban" && isset($_GET['id']))
 	$fail = 0;
 	foreach($bids AS $bid) {
 		$bid = intval($bid);
-		$res = $GLOBALS['db']->Execute("SELECT a.aid, a.gid FROM `".DB_PREFIX."_bans` b INNER JOIN ".DB_PREFIX."_admins a ON a.aid = b.aid WHERE bid = '".$bid."';");
+		$res = \MaterialAdmin\DataStorage::ADOdb()->Execute("SELECT a.aid, a.gid FROM `".DB_PREFIX."_bans` b INNER JOIN ".DB_PREFIX."_admins a ON a.aid = b.aid WHERE bid = '".$bid."';");
 		if (!$userbank->HasAccess(ADMIN_OWNER|ADMIN_UNBAN) &&
 		    !($userbank->HasAccess(ADMIN_UNBAN_OWN_BANS) && $res->fields['aid'] == $userbank->GetAid()) &&
 		    !($userbank->HasAccess(ADMIN_UNBAN_GROUP_BANS) && $res->fields['gid'] == $userbank->GetProperty('gid')))
@@ -80,7 +80,7 @@ if (isset($_GET['a']) && $_GET['a'] == "unban" && isset($_GET['id']))
 			continue;
 		}
 
-		$row = $GLOBALS['db']->GetRow("SELECT b.ip, b.authid, 
+		$row = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT b.ip, b.authid, 
 										b.name, b.created, b.sid, b.type, m.steam_universe, UNIX_TIMESTAMP() as now
 										FROM ".DB_PREFIX."_bans b
 										LEFT JOIN ".DB_PREFIX."_servers s ON s.sid = b.sid
@@ -95,7 +95,7 @@ if (isset($_GET['a']) && $_GET['a'] == "unban" && isset($_GET['id']))
 			continue;
 		}
 		$unbanReason = htmlspecialchars(trim($_GET['ureason']));
-		$ins = $GLOBALS['db']->Execute("UPDATE `".DB_PREFIX."_bans` SET
+		$ins = \MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE `".DB_PREFIX."_bans` SET
 										`RemovedBy` = ?,
 										`RemoveType` = 'U',
 										`RemovedOn` = UNIX_TIMESTAMP(),
@@ -103,9 +103,9 @@ if (isset($_GET['a']) && $_GET['a'] == "unban" && isset($_GET['id']))
 										WHERE `bid` = ?;",
 										array( $userbank->GetAid(), $unbanReason, $bid));
 
-		$protestsunban = $GLOBALS['db']->Execute("UPDATE `".DB_PREFIX."_protests` SET archiv = '4' WHERE bid = '".$bid."';");
+		$protestsunban = \MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE `".DB_PREFIX."_protests` SET archiv = '4' WHERE bid = '".$bid."';");
 
-		$blocked = $GLOBALS['db']->GetAll("SELECT s.sid, m.steam_universe FROM `".DB_PREFIX."_banlog` bl INNER JOIN ".DB_PREFIX."_servers s ON s.sid = bl.sid INNER JOIN ".DB_PREFIX."_mods m ON m.mid = s.modid WHERE bl.bid=? AND (UNIX_TIMESTAMP() - bl.time <= 300)",array($bid));
+		$blocked = \MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT s.sid, m.steam_universe FROM `".DB_PREFIX."_banlog` bl INNER JOIN ".DB_PREFIX."_servers s ON s.sid = bl.sid INNER JOIN ".DB_PREFIX."_mods m ON m.mid = s.modid WHERE bl.bid=? AND (UNIX_TIMESTAMP() - bl.time <= 300)",array($bid));
 		foreach($blocked as $tempban)
 		{
 			SendRconSilent(($row['type']==0?"removeid STEAM_" . $tempban['steam_universe'] . substr($row['authid'], 7):"removeip ".$row['ip']), $tempban['sid']);
@@ -146,17 +146,17 @@ else if(isset($_GET['a']) && $_GET['a'] == "delete")
 	$fail = 0;
 	foreach($bids AS $bid) {
 		$bid = intval($bid);
-		$demres = $GLOBALS['db']->Execute("SELECT filename FROM `".DB_PREFIX."_demos` WHERE `demid` = ?",
+		$demres = \MaterialAdmin\DataStorage::ADOdb()->Execute("SELECT filename FROM `".DB_PREFIX."_demos` WHERE `demid` = ?",
 									array( $bid ));
 		@unlink(SB_DEMOS."/".$demres->fields["filename"]);
-		$blocked = $GLOBALS['db']->GetAll("SELECT s.sid, m.steam_universe FROM `".DB_PREFIX."_banlog` bl INNER JOIN ".DB_PREFIX."_servers s ON s.sid = bl.sid INNER JOIN ".DB_PREFIX."_mods m ON m.mid = s.modid WHERE bl.bid=? AND (UNIX_TIMESTAMP() - bl.time <= 300)",array($bid));
-		$steam = $GLOBALS['db']->GetRow("SELECT b.name, b.authid, b.created, b.sid, b.RemoveType, b.ip, b.type, m.steam_universe, UNIX_TIMESTAMP() AS now
+		$blocked = \MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT s.sid, m.steam_universe FROM `".DB_PREFIX."_banlog` bl INNER JOIN ".DB_PREFIX."_servers s ON s.sid = bl.sid INNER JOIN ".DB_PREFIX."_mods m ON m.mid = s.modid WHERE bl.bid=? AND (UNIX_TIMESTAMP() - bl.time <= 300)",array($bid));
+		$steam = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT b.name, b.authid, b.created, b.sid, b.RemoveType, b.ip, b.type, m.steam_universe, UNIX_TIMESTAMP() AS now
 										FROM ".DB_PREFIX."_bans b 
 										LEFT JOIN ".DB_PREFIX."_servers s ON s.sid = b.sid
 										LEFT JOIN ".DB_PREFIX."_mods m ON m.mid = s.modid 
 										WHERE b.bid=?",array($bid));
-		$block = $GLOBALS['db']->Execute("DELETE FROM `".DB_PREFIX."_banlog` WHERE bid = ?",array($bid));
-		$res = $GLOBALS['db']->Execute("DELETE FROM `".DB_PREFIX."_bans` WHERE `bid` = ?",
+		$block = \MaterialAdmin\DataStorage::ADOdb()->Execute("DELETE FROM `".DB_PREFIX."_banlog` WHERE bid = ?",array($bid));
+		$res = \MaterialAdmin\DataStorage::ADOdb()->Execute("DELETE FROM `".DB_PREFIX."_bans` WHERE `bid` = ?",
 									array( $bid ));
 		if(empty($steam['RemoveType']))
 		{
@@ -222,7 +222,7 @@ if (isset($_GET['searchText']))
 		$search_array[] = $search;
 	}
 	
-	$res = $GLOBALS['db']->Execute(
+	$res = \MaterialAdmin\DataStorage::ADOdb()->Execute(
 	"SELECT BA.bid ban_id, BA.type, BA.ip ban_ip, BA.authid, BA.name player_name, created ban_created, ends ban_ends, length ban_length, reason ban_reason, BA.ureason unban_reason, BA.aid, AD.gid AS gid, adminIp, BA.sid ban_server, country ban_country, RemovedOn, RemovedBy, RemoveType row_type,
 			SE.ip server_ip, AD.user admin_name, AD.comment admin_comm, AD.skype admin_skype, AD.vk admin_vk, AD.authid admin_authid, AD.gid, MO.icon as mod_icon,
 			CAST(MID(BA.authid, 9, 1) AS UNSIGNED) + CAST('76561197960265728' AS UNSIGNED) + CAST(MID(BA.authid, 11, 10) * 2 AS UNSIGNED) AS community_id,
@@ -237,13 +237,13 @@ if (isset($_GET['searchText']))
    LIMIT ?,?",array_merge($search_array, array($search,$search,$search,intval($BansStart),intval($BansPerPage))));
 
 
-	$res_count = $GLOBALS['db']->Execute("SELECT count(BA.bid) FROM ".DB_PREFIX."_bans AS BA WHERE ".$search_ips."BA.authid LIKE ? OR BA.name LIKE ? OR BA.reason LIKE ?" . $hideinactive
+	$res_count = \MaterialAdmin\DataStorage::ADOdb()->Execute("SELECT count(BA.bid) FROM ".DB_PREFIX."_bans AS BA WHERE ".$search_ips."BA.authid LIKE ? OR BA.name LIKE ? OR BA.reason LIKE ?" . $hideinactive
 										,array_merge($search_array, array($search,$search,$search)));
 $searchlink = "&searchText=".$_GET["searchText"];
 }
 elseif(!isset($_GET['advSearch']))
 {
-	$res = $GLOBALS['db']->Execute(
+	$res = \MaterialAdmin\DataStorage::ADOdb()->Execute(
 	"SELECT bid ban_id, BA.type, BA.ip ban_ip, BA.authid, BA.name player_name, created ban_created, ends ban_ends, length ban_length, reason ban_reason, BA.ureason unban_reason, BA.aid, AD.gid AS gid, adminIp, BA.sid ban_server, country ban_country, RemovedOn, RemovedBy, RemoveType row_type,
 			SE.ip server_ip, AD.user admin_name, AD.comment admin_comm, AD.skype admin_skype, AD.vk admin_vk, AD.authid admin_authid, AD.gid, MO.icon as mod_icon,
 			CAST(MID(BA.authid, 9, 1) AS UNSIGNED) + CAST('76561197960265728' AS UNSIGNED) + CAST(MID(BA.authid, 11, 10) * 2 AS UNSIGNED) AS community_id,
@@ -258,7 +258,7 @@ elseif(!isset($_GET['advSearch']))
    LIMIT ?,?",
 	array(intval($BansStart),intval($BansPerPage)));
 
-	$res_count = $GLOBALS['db']->Execute("SELECT count(bid) FROM ".DB_PREFIX."_bans".$hideinactiven);
+	$res_count = \MaterialAdmin\DataStorage::ADOdb()->Execute("SELECT count(bid) FROM ".DB_PREFIX."_bans".$hideinactiven);
 	$searchlink = "";
 }
 
@@ -387,7 +387,7 @@ if(isset($_GET['advSearch']))
 		$hideinactive = $hideinactiven;
 	}
 	
-		$res = $GLOBALS['db']->Execute(
+		$res = \MaterialAdmin\DataStorage::ADOdb()->Execute(
 				    	"SELECT BA.bid ban_id, BA.type, BA.ip ban_ip, BA.authid, BA.name player_name, created ban_created, ends ban_ends, length ban_length, reason ban_reason, BA.ureason unban_reason, BA.aid, AD.gid AS gid, adminIp, BA.sid ban_server, country ban_country, RemovedOn, RemovedBy, RemoveType row_type,
 			SE.ip server_ip, AD.user admin_name, AD.comment admin_comm, AD.skype admin_skype, AD.vk admin_vk, AD.authid admin_authid, AD.gid, MO.icon as mod_icon,
 			CAST(MID(BA.authid, 9, 1) AS UNSIGNED) + CAST('76561197960265728' AS UNSIGNED) + CAST(MID(BA.authid, 11, 10) * 2 AS UNSIGNED) AS community_id,
@@ -402,7 +402,7 @@ if(isset($_GET['advSearch']))
    ORDER BY BA.created DESC
    LIMIT ?,?", array_merge($advcrit, array(intval($BansStart),intval($BansPerPage))));
 
-	$res_count = $GLOBALS['db']->Execute("SELECT count(BA.bid) FROM ".DB_PREFIX."_bans AS BA
+	$res_count = \MaterialAdmin\DataStorage::ADOdb()->Execute("SELECT count(BA.bid) FROM ".DB_PREFIX."_bans AS BA
 										  ".($type=="comment"&&$userbank->is_admin()?"LEFT JOIN ".DB_PREFIX."_comments AS CO ON BA.bid = CO.bid":"")." ".$where.$hideinactive, $advcrit);
 	$searchlink = "&advSearch=".$_GET['advSearch']."&advType=".$_GET['advType'];
 }
@@ -436,7 +436,7 @@ while (!$res->EOF)
 	    elseif(isset($GLOBALS['config']['banlist.nocountryfetch']) && $GLOBALS['config']['banlist.nocountryfetch'] == "0")
 		{
 			$country = FetchIp($res->fields['ban_ip']);
-			$edit = $GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_bans SET country = ?
+			$edit = \MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE ".DB_PREFIX."_bans SET country = ?
 				                            WHERE bid = ?",array($country,$res->fields['ban_id']));
 
 			$data['country'] = '<img src="images/country/' . strtolower($country) . '.gif" alt="' . $country . '" border="0" align="absmiddle" />';
@@ -510,7 +510,7 @@ while (!$res->EOF)
 
 		$data['ureason'] = stripslashes($res->fields['unban_reason']);
 
-		$removedby = $GLOBALS['db']->GetRow("SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = '".$res->fields['RemovedBy']."'");
+		$removedby = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = '".$res->fields['RemovedBy']."'");
         $data['removedby'] = "";
         if(isset($removedby[0]))
             $data['removedby'] = $removedby[0];
@@ -526,9 +526,9 @@ while (!$res->EOF)
 
 	$data['layer_id'] = 'layer_'.$res->fields['ban_id'];
 	if($data['type'] == "0")
-		$alrdybnd = $GLOBALS['db']->Execute("SELECT count(bid) as count FROM `".DB_PREFIX."_bans` WHERE authid = '".$data['steamid']."' AND (length = 0 OR ends > UNIX_TIMESTAMP()) AND RemovedBy IS NULL AND type = '0';");
+		$alrdybnd = \MaterialAdmin\DataStorage::ADOdb()->Execute("SELECT count(bid) as count FROM `".DB_PREFIX."_bans` WHERE authid = '".$data['steamid']."' AND (length = 0 OR ends > UNIX_TIMESTAMP()) AND RemovedBy IS NULL AND type = '0';");
 	else
-		$alrdybnd = $GLOBALS['db']->Execute("SELECT count(bid) as count FROM `".DB_PREFIX."_bans` WHERE ip = '".$res->fields['ban_ip']."' AND (length = 0 OR ends > UNIX_TIMESTAMP()) AND RemovedBy IS NULL AND type = '1';");
+		$alrdybnd = \MaterialAdmin\DataStorage::ADOdb()->Execute("SELECT count(bid) as count FROM `".DB_PREFIX."_bans` WHERE ip = '".$res->fields['ban_ip']."' AND (length = 0 OR ends > UNIX_TIMESTAMP()) AND RemovedBy IS NULL AND type = '1';");
 	if($alrdybnd->fields['count']==0)
 		$data['reban_link'] = CreateLinkR('Перебанить',"index.php?p=admin&c=bans".$pagelink."&rebanid=".$res->fields['ban_id']."&key=".$_SESSION['banlist_postkey']."#^0");
 	else
@@ -583,7 +583,7 @@ while (!$res->EOF)
 	}
 	else
 	{
-		$demtype = $GLOBALS['db']->GetRow("SELECT demtype FROM `".DB_PREFIX."_demos` WHERE demid = '".$data['ban_id']."'");
+		$demtype = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT demtype FROM `".DB_PREFIX."_demos` WHERE demid = '".$data['ban_id']."'");
 		$data['demo_available'] = true;
 		$data['demo_quick'] = CreateLinkR('Демо',"getdemo.php?type=".$demtype['demtype']."&id=".$data['ban_id']);
 		$data['demo_link'] = CreateLinkR('Демка',"getdemo.php?type=".$demtype['demtype']."&id=".$data['ban_id']);
@@ -591,7 +591,7 @@ while (!$res->EOF)
 
 	$data['server_id'] = $res->fields['ban_server'];
 
-	$banlog = $GLOBALS['db']->GetAll("SELECT bl.time, bl.name, s.ip, s.port FROM `".DB_PREFIX."_banlog` AS bl LEFT JOIN `".DB_PREFIX."_servers` AS s ON s.sid = bl.sid WHERE bid = '".$data['ban_id']."'");
+	$banlog = \MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT bl.time, bl.name, s.ip, s.port FROM `".DB_PREFIX."_banlog` AS bl LEFT JOIN `".DB_PREFIX."_servers` AS s ON s.sid = bl.sid WHERE bid = '".$data['ban_id']."'");
 	$data['blockcount'] = sizeof($banlog);
 	$logstring = "";
 	foreach($banlog AS $logged) {
@@ -605,7 +605,7 @@ while (!$res->EOF)
 	//-----------------------------------
 	if($userbank->is_admin()) {
 		$view_comments = true;
-		$commentres = $GLOBALS['db']->Execute("SELECT cid, aid, commenttxt, added, edittime,
+		$commentres = \MaterialAdmin\DataStorage::ADOdb()->Execute("SELECT cid, aid, commenttxt, added, edittime,
 											(SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = C.aid) AS comname,
 											(SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = C.editaid) AS editname
 											FROM `".DB_PREFIX."_comments` AS C
@@ -735,7 +735,7 @@ if(isset($_GET["comment"])) {
 	$theme->assign('commenttype', (isset($_GET["cid"])?"Редактировать":"Добавить"));
 	if(isset($_GET["cid"])) {
 		$_GET["cid"] = (int)$_GET["cid"];
-		$ceditdata = $GLOBALS['db']->GetRow("SELECT * FROM ".DB_PREFIX."_comments WHERE cid = '".$_GET["cid"]."'");
+		$ceditdata = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT * FROM ".DB_PREFIX."_comments WHERE cid = '".$_GET["cid"]."'");
 		$ctext = htmlspecialchars($ceditdata['commenttxt']);
 		$cotherdataedit = " AND cid != '".$_GET["cid"]."'";
 	}
@@ -747,7 +747,7 @@ if(isset($_GET["comment"])) {
 	
 	$_GET["ctype"] = substr($_GET["ctype"], 0, 1);
 	
-	$cotherdata = $GLOBALS['db']->Execute("SELECT cid, aid, commenttxt, added, edittime,
+	$cotherdata = \MaterialAdmin\DataStorage::ADOdb()->Execute("SELECT cid, aid, commenttxt, added, edittime,
 											(SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = C.aid) AS comname,
 											(SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = C.editaid) AS editname
 											FROM `".DB_PREFIX."_comments` AS C

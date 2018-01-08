@@ -108,7 +108,7 @@ function toCommunityID($id) {
     }
 }
 
-$res = $GLOBALS['db']->Execute("SELECT authid, vk, comment, skype, user FROM `".DB_PREFIX."_admins` WHERE `support` = '1'");
+$res = \MaterialAdmin\DataStorage::ADOdb()->Execute("SELECT authid, vk, comment, skype, user FROM `".DB_PREFIX."_admins` WHERE `support` = '1'");
 $supports = array();
 while (!$res->EOF)
 {

@@ -63,7 +63,7 @@ if (isset($_GET['a']) && $_GET['a'] == "ungag" && isset($_GET['id']))
 		die("Возможная попытка взлома (Несоответствие URL-ключа)");
 	//we have a multiple unban asking
 	$bid = intval($_GET['id']);
-	$res = $GLOBALS['db']->Execute("SELECT a.aid, a.gid FROM `".DB_PREFIX."_comms` c INNER JOIN ".DB_PREFIX."_admins a ON a.aid = c.aid WHERE bid = '".$bid."' AND c.type = 2;");
+	$res = \MaterialAdmin\DataStorage::ADOdb()->Execute("SELECT a.aid, a.gid FROM `".DB_PREFIX."_comms` c INNER JOIN ".DB_PREFIX."_admins a ON a.aid = c.aid WHERE bid = '".$bid."' AND c.type = 2;");
 	if (!$userbank->HasAccess(ADMIN_OWNER|ADMIN_UNBAN) &&
 			!($userbank->HasAccess(ADMIN_UNBAN_OWN_BANS) && $res->fields['aid'] == $userbank->GetAid()) &&
 			!($userbank->HasAccess(ADMIN_UNBAN_GROUP_BANS) && $res->fields['gid'] == $userbank->GetProperty('gid')))
@@ -71,7 +71,7 @@ if (isset($_GET['a']) && $_GET['a'] == "ungag" && isset($_GET['id']))
 			die("У вас нет доступа к этому");
 		}
 
-	$row = $GLOBALS['db']->GetRow("SELECT b.authid, b.name, b.created, b.sid, UNIX_TIMESTAMP() as now
+	$row = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT b.authid, b.name, b.created, b.sid, UNIX_TIMESTAMP() as now
 										FROM ".DB_PREFIX."_comms b
 										LEFT JOIN ".DB_PREFIX."_servers s ON s.sid = b.sid
 										WHERE b.bid = ? AND b.RemoveType IS NULL AND b.type = 2 AND (b.length = '0' OR b.ends > UNIX_TIMESTAMP())",array($bid));
@@ -82,7 +82,7 @@ if (isset($_GET['a']) && $_GET['a'] == "ungag" && isset($_GET['id']))
 	}
 
 	$unbanReason = htmlspecialchars(trim($_GET['ureason']));
-	$ins = $GLOBALS['db']->Execute("UPDATE `".DB_PREFIX."_comms` SET
+	$ins = \MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE `".DB_PREFIX."_comms` SET
 										`RemovedBy` = ?,
 										`RemoveType` = 'U',
 										`RemovedOn` = UNIX_TIMESTAMP(),
@@ -90,7 +90,7 @@ if (isset($_GET['a']) && $_GET['a'] == "ungag" && isset($_GET['id']))
 										WHERE `bid` = ?;",
 										array( $userbank->GetAid(), $unbanReason, $bid));
 
-	$blocked = $GLOBALS['db']->GetAll("SELECT sid FROM `".DB_PREFIX."_servers` WHERE `enabled`=1");
+	$blocked = \MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT sid FROM `".DB_PREFIX."_servers` WHERE `enabled`=1");
 	foreach($blocked as $tempban)
 	{
 		SendRconSilent(("sc_fw_ungag " . $row['authid']), $tempban['sid']);
@@ -109,7 +109,7 @@ else if(isset($_GET['a']) && $_GET['a'] == "unmute" && isset($_GET['id']))
 		die("Possible Попытка взлома (URL Key mismatch)");
 	//we have a multiple unban asking
 	$bid = intval($_GET['id']);
-	$res = $GLOBALS['db']->Execute("SELECT a.aid, a.gid FROM `".DB_PREFIX."_comms` c INNER JOIN ".DB_PREFIX."_admins a ON a.aid = c.aid WHERE bid = '".$bid."' AND c.type = 1;");
+	$res = \MaterialAdmin\DataStorage::ADOdb()->Execute("SELECT a.aid, a.gid FROM `".DB_PREFIX."_comms` c INNER JOIN ".DB_PREFIX."_admins a ON a.aid = c.aid WHERE bid = '".$bid."' AND c.type = 1;");
 	if (!$userbank->HasAccess(ADMIN_OWNER|ADMIN_UNBAN) &&
 			!($userbank->HasAccess(ADMIN_UNBAN_OWN_BANS) && $res->fields['aid'] == $userbank->GetAid()) &&
 			!($userbank->HasAccess(ADMIN_UNBAN_GROUP_BANS) && $res->fields['gid'] == $userbank->GetProperty('gid')))
@@ -117,7 +117,7 @@ else if(isset($_GET['a']) && $_GET['a'] == "unmute" && isset($_GET['id']))
 			die("У вас нет доступа для этой операции");
 		}
 
-	$row = $GLOBALS['db']->GetRow("SELECT b.authid, b.name, b.created, b.sid, UNIX_TIMESTAMP() as now
+	$row = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT b.authid, b.name, b.created, b.sid, UNIX_TIMESTAMP() as now
 										FROM ".DB_PREFIX."_comms b
 										LEFT JOIN ".DB_PREFIX."_servers s ON s.sid = b.sid
 										WHERE b.bid = ? AND b.RemoveType IS NULL AND b.type = 1 AND (b.length = '0' OR b.ends > UNIX_TIMESTAMP())",array($bid));
@@ -128,7 +128,7 @@ else if(isset($_GET['a']) && $_GET['a'] == "unmute" && isset($_GET['id']))
 	}
 
 	$unbanReason = htmlspecialchars(trim($_GET['ureason']));
-	$ins = $GLOBALS['db']->Execute("UPDATE `".DB_PREFIX."_comms` SET
+	$ins = \MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE `".DB_PREFIX."_comms` SET
 										`RemovedBy` = ?,
 										`RemoveType` = 'U',
 										`RemovedOn` = UNIX_TIMESTAMP(),
@@ -136,7 +136,7 @@ else if(isset($_GET['a']) && $_GET['a'] == "unmute" && isset($_GET['id']))
 										WHERE `bid` = ?;",
 										array( $userbank->GetAid(), $unbanReason, $bid));
 
-	$blocked = $GLOBALS['db']->GetAll("SELECT sid FROM `".DB_PREFIX."_servers` WHERE `enabled`=1");
+	$blocked = \MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT sid FROM `".DB_PREFIX."_servers` WHERE `enabled`=1");
 	foreach($blocked as $tempban)
 	{
 		SendRconSilent(("sc_fw_unmute " . $row['authid']), $tempban['sid']);
@@ -162,7 +162,7 @@ else if(isset($_GET['a']) && $_GET['a'] == "delete")
 
 	$bid = intval($_GET['id']);
 
-	$steam = $GLOBALS['db']->GetRow("SELECT name, authid, ends, length, RemoveType, type, UNIX_TIMESTAMP() AS now
+	$steam = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT name, authid, ends, length, RemoveType, type, UNIX_TIMESTAMP() AS now
 									FROM ".DB_PREFIX."_comms WHERE bid=?",array($bid));
 	$end = (int)$steam['ends'];
 	$length = (int)$steam['length'];
@@ -182,11 +182,11 @@ else if(isset($_GET['a']) && $_GET['a'] == "delete")
 			break;
 	}
 
-	$res = $GLOBALS['db']->Execute("DELETE FROM `".DB_PREFIX."_comms` WHERE `bid` = ?",	array( $bid ));
+	$res = \MaterialAdmin\DataStorage::ADOdb()->Execute("DELETE FROM `".DB_PREFIX."_comms` WHERE `bid` = ?",	array( $bid ));
 
 	if(empty($steam['RemoveType']) && ($length == 0 || $end > $now))
 	{
-		$blocked = $GLOBALS['db']->GetAll("SELECT sid FROM `".DB_PREFIX."_servers` WHERE `enabled`=1");
+		$blocked = \MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT sid FROM `".DB_PREFIX."_servers` WHERE `enabled`=1");
 		foreach($blocked as $tempban)
 			{
 				SendRconSilent(($cmd . " " . $steam['authid']), $tempban['sid']);
@@ -229,7 +229,7 @@ if (isset($_GET['searchText']))
 {
 	$search = '%'.trim($_GET['searchText']).'%';
 
-	$res = $GLOBALS['db']->Execute(
+	$res = \MaterialAdmin\DataStorage::ADOdb()->Execute(
 		"SELECT bid ban_id, CO.type, CO.authid, CO.name player_name, created ban_created, ends ban_ends, length ban_length, reason ban_reason, CO.ureason unban_reason, CO.aid, AD.gid AS gid, adminIp, CO.sid ban_server, RemovedOn, RemovedBy, RemoveType row_type,
 		SE.ip server_ip, AD.user admin_name, MO.icon as mod_icon,
 		CAST(MID(CO.authid, 9, 1) AS UNSIGNED) + CAST('76561197960265728' AS UNSIGNED) + CAST(MID(CO.authid, 11, 10) * 2 AS UNSIGNED) AS community_id,
@@ -245,13 +245,13 @@ if (isset($_GET['searchText']))
    		array($search,$search,$search,intval($BansStart),intval($BansPerPage)));
 
 
-	$res_count = $GLOBALS['db']->Execute("SELECT count(CO.bid) FROM ".DB_PREFIX."_comms AS CO WHERE CO.authid LIKE ? OR CO.name LIKE ? OR CO.reason LIKE ?" . $hideinactive
+	$res_count = \MaterialAdmin\DataStorage::ADOdb()->Execute("SELECT count(CO.bid) FROM ".DB_PREFIX."_comms AS CO WHERE CO.authid LIKE ? OR CO.name LIKE ? OR CO.reason LIKE ?" . $hideinactive
 										,array($search,$search,$search));
 $searchlink = "&searchText=".$_GET["searchText"];
 }
 elseif(!isset($_GET['advSearch']))
 {
-	$res = $GLOBALS['db']->Execute(
+	$res = \MaterialAdmin\DataStorage::ADOdb()->Execute(
 	"SELECT bid ban_id, CO.type, CO.authid, CO.name player_name, created ban_created, ends ban_ends, length ban_length, reason ban_reason, CO.ureason unban_reason, CO.aid, AD.gid AS gid, adminIp, CO.sid ban_server, RemovedOn, RemovedBy, RemoveType row_type,
 		SE.ip server_ip, AD.user admin_name, MO.icon as mod_icon,
 		CAST(MID(CO.authid, 9, 1) AS UNSIGNED) + CAST('76561197960265728' AS UNSIGNED) + CAST(MID(CO.authid, 11, 10) * 2 AS UNSIGNED) AS community_id,
@@ -267,7 +267,7 @@ elseif(!isset($_GET['advSearch']))
 		LIMIT ?,?",
 	array(intval($BansStart),intval($BansPerPage)));
 
-	$res_count = $GLOBALS['db']->Execute("SELECT count(bid) FROM ".DB_PREFIX."_comms".$hideinactiven);
+	$res_count = \MaterialAdmin\DataStorage::ADOdb()->Execute("SELECT count(bid) FROM ".DB_PREFIX."_comms".$hideinactiven);
 	$searchlink = "";
 }
 
@@ -373,7 +373,7 @@ if(isset($_GET['advSearch']))
 		break;
 	}
 
-		$res = $GLOBALS['db']->Execute(
+		$res = \MaterialAdmin\DataStorage::ADOdb()->Execute(
 			"SELECT CO.bid ban_id, CO.type, CO.authid, CO.name player_name, created ban_created, ends ban_ends, length ban_length, reason ban_reason, CO.ureason unban_reason, CO.aid, AD.gid AS gid, adminIp, CO.sid ban_server, RemovedOn, RemovedBy, RemoveType row_type,
 			SE.ip server_ip, AD.user admin_name, MO.icon as mod_icon,
 			CAST(MID(CO.authid, 9, 1) AS UNSIGNED) + CAST('76561197960265728' AS UNSIGNED) + CAST(MID(CO.authid, 11, 10) * 2 AS UNSIGNED) AS community_id,
@@ -389,7 +389,7 @@ if(isset($_GET['advSearch']))
    ORDER BY CO.created DESC
    LIMIT ?,?", array_merge($advcrit, array(intval($BansStart),intval($BansPerPage))));
 
-	$res_count = $GLOBALS['db']->Execute("SELECT count(CO.bid) FROM ".DB_PREFIX."_comms AS CO
+	$res_count = \MaterialAdmin\DataStorage::ADOdb()->Execute("SELECT count(CO.bid) FROM ".DB_PREFIX."_comms AS CO
 										  ".($type=="comment"&&$userbank->is_admin()?"LEFT JOIN ".DB_PREFIX."_comments AS CM ON CO.bid = CM.bid":"")." ".$where.$hideinactive, $advcrit);
 	$searchlink = "&advSearch=".$_GET['advSearch']."&advType=".$_GET['advType'];
 }
@@ -488,7 +488,7 @@ while (!$res->EOF)
 		
 		$data['ureason'] = stripslashes($res->fields['unban_reason']);
 
-		$removedby = $GLOBALS['db']->GetRow("SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = '".$res->fields['RemovedBy']."'");
+		$removedby = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = '".$res->fields['RemovedBy']."'");
         $data['removedby'] = "";
         if(isset($removedby[0]))
             $data['removedby'] = $removedby[0];
@@ -506,7 +506,7 @@ while (!$res->EOF)
 
 	$data['layer_id'] = 'layer_'.$res->fields['ban_id'];
 	// Запрос текущего статуса игрока для рисования ссылки на мьют или гаг
-	$alrdybnd = $GLOBALS['db']->Execute("SELECT count(bid) as count FROM `".DB_PREFIX."_comms` WHERE authid = '".$data['steamid']."' AND RemovedBy IS NULL AND type = '".$data['type']."' AND (length = 0 OR ends > UNIX_TIMESTAMP());");
+	$alrdybnd = \MaterialAdmin\DataStorage::ADOdb()->Execute("SELECT count(bid) as count FROM `".DB_PREFIX."_comms` WHERE authid = '".$data['steamid']."' AND RemovedBy IS NULL AND type = '".$data['type']."' AND (length = 0 OR ends > UNIX_TIMESTAMP());");
 	if($alrdybnd->fields['count']==0)
 	{
 		switch($data['type'])
@@ -579,7 +579,7 @@ while (!$res->EOF)
 	//-----------------------------------
 	if($userbank->is_admin()) {
 		$view_comments = true;
-		$commentres = $GLOBALS['db']->Execute("SELECT cid, aid, commenttxt, added, edittime,
+		$commentres = \MaterialAdmin\DataStorage::ADOdb()->Execute("SELECT cid, aid, commenttxt, added, edittime,
 											(SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = C.aid) AS comname,
 											(SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = C.editaid) AS editname
 											FROM `".DB_PREFIX."_comments` AS C
@@ -711,7 +711,7 @@ if($pages > 1) {
 if(isset($_GET["comment"])) {
 	$theme->assign('commenttype', (isset($_GET["cid"])?"Редактировать":"Добавить"));
 	if(isset($_GET["cid"])) {
-		$ceditdata = $GLOBALS['db']->GetRow("SELECT * FROM ".DB_PREFIX."_comments WHERE cid = '".(int)$_GET["cid"]."'");
+		$ceditdata = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT * FROM ".DB_PREFIX."_comments WHERE cid = '".(int)$_GET["cid"]."'");
         $ctext = $ceditdata['commenttxt'];
 		$cotherdataedit = " AND cid != '".(int)$_GET["cid"]."'";
 	}
@@ -720,7 +720,7 @@ if(isset($_GET["comment"])) {
         $cotherdataedit = "";
         $ctext = "";
     }
-	$cotherdata = $GLOBALS['db']->Execute("SELECT cid, aid, commenttxt, added, edittime,
+	$cotherdata = \MaterialAdmin\DataStorage::ADOdb()->Execute("SELECT cid, aid, commenttxt, added, edittime,
 											(SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = C.aid) AS comname,
 											(SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = C.editaid) AS editname
 											FROM `".DB_PREFIX."_comments` AS C

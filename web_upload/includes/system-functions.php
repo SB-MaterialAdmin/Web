@@ -184,7 +184,7 @@ function BuildPageTabs()
 	global $userbank;
 
 	// NEW MENU, V2.0
-	$items = $GLOBALS['db']->GetAll(sprintf("SELECT * FROM `%s_menu` WHERE `enabled` = 1 ORDER BY `priority` DESC", DB_PREFIX));
+	$items = \MaterialAdmin\DataStorage::ADOdb()->GetAll(sprintf("SELECT * FROM `%s_menu` WHERE `enabled` = 1 ORDER BY `priority` DESC", DB_PREFIX));
 	foreach ($items as &$item)
 		AddTab($item['text'], $item['url'], $item['description'], ($item['newtab']=="1"));
 
@@ -542,22 +542,22 @@ function PrintArray($array)
 
 function NextGid()
 {
-	$gid = $GLOBALS['db']->GetRow("SELECT MAX(gid) AS next_gid FROM `" . DB_PREFIX . "_groups`");
+	$gid = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT MAX(gid) AS next_gid FROM `" . DB_PREFIX . "_groups`");
 	return ($gid['next_gid']+1);
 }
 function NextSGid()
 {
-	$gid = $GLOBALS['db']->GetRow("SELECT MAX(id) AS next_id FROM `" . DB_PREFIX . "_srvgroups`");
+	$gid = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT MAX(id) AS next_id FROM `" . DB_PREFIX . "_srvgroups`");
 	return ($gid['next_id']+1);
 }
 function NextSid()
 {
-	$sid = $GLOBALS['db']->GetRow("SELECT MAX(sid) AS next_sid FROM `" . DB_PREFIX . "_servers`");
+	$sid = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT MAX(sid) AS next_sid FROM `" . DB_PREFIX . "_servers`");
 	return ($sid['next_sid']+1);
 }
 function NextAid()
 {
-	$aid = $GLOBALS['db']->GetRow("SELECT MAX(aid) AS next_aid FROM `" . DB_PREFIX . "_admins`");
+	$aid = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT MAX(aid) AS next_aid FROM `" . DB_PREFIX . "_admins`");
 	return ($aid['next_aid']+1);
 }
 
@@ -666,7 +666,7 @@ function SecondsToString($sec, $textual=true)
 function CreateHostnameCache()
 {
 	require_once INCLUDES_PATH.'/CServerControl.php';
-	$res = $GLOBALS['db']->Execute("SELECT sid, ip, port FROM ".DB_PREFIX."_servers ORDER BY sid");
+	$res = \MaterialAdmin\DataStorage::ADOdb()->Execute("SELECT sid, ip, port FROM ".DB_PREFIX."_servers ORDER BY sid");
 	$servers = array();
 	while (!$res->EOF)
 	{
@@ -774,9 +774,9 @@ function PruneBans()
 {
 	global $userbank;
 
-	$res = $GLOBALS['db']->Execute('UPDATE `'.DB_PREFIX.'_bans` SET `RemovedBy` = 0, `RemoveType` = \'E\', `RemovedOn` = UNIX_TIMESTAMP() WHERE `length` != 0 and `ends` < UNIX_TIMESTAMP() and `RemoveType` IS NULL');
-	$prot = $GLOBALS['db']->Execute("UPDATE `".DB_PREFIX."_protests` SET archiv = '3', archivedby = ".($userbank->GetAid()<0?0:$userbank->GetAid())." WHERE archiv = '0' AND bid IN((SELECT bid FROM `".DB_PREFIX."_bans` WHERE `RemoveType` = 'E'))");
-	$submission = $GLOBALS['db']->Execute('UPDATE `'.DB_PREFIX.'_submissions` SET archiv = \'3\', archivedby = '.($userbank->GetAid()<0?0:$userbank->GetAid()).' WHERE archiv = \'0\' AND (SteamId IN((SELECT authid FROM `'.DB_PREFIX.'_bans` WHERE `type` = 0 AND `RemoveType` IS NULL)) OR sip IN((SELECT ip FROM `'.DB_PREFIX.'_bans` WHERE `type` = 1 AND `RemoveType` IS NULL)))');
+	$res = \MaterialAdmin\DataStorage::ADOdb()->Execute('UPDATE `'.DB_PREFIX.'_bans` SET `RemovedBy` = 0, `RemoveType` = \'E\', `RemovedOn` = UNIX_TIMESTAMP() WHERE `length` != 0 and `ends` < UNIX_TIMESTAMP() and `RemoveType` IS NULL');
+	$prot = \MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE `".DB_PREFIX."_protests` SET archiv = '3', archivedby = ".($userbank->GetAid()<0?0:$userbank->GetAid())." WHERE archiv = '0' AND bid IN((SELECT bid FROM `".DB_PREFIX."_bans` WHERE `RemoveType` = 'E'))");
+	$submission = \MaterialAdmin\DataStorage::ADOdb()->Execute('UPDATE `'.DB_PREFIX.'_submissions` SET archiv = \'3\', archivedby = '.($userbank->GetAid()<0?0:$userbank->GetAid()).' WHERE archiv = \'0\' AND (SteamId IN((SELECT authid FROM `'.DB_PREFIX.'_bans` WHERE `type` = 0 AND `RemoveType` IS NULL)) OR sip IN((SELECT ip FROM `'.DB_PREFIX.'_bans` WHERE `type` = 1 AND `RemoveType` IS NULL)))');
     return $res?true:false;
 }
 
@@ -784,7 +784,7 @@ function PruneComms()
 {
 	global $userbank;
 
-	$res = $GLOBALS['db']->Execute('UPDATE `'.DB_PREFIX.'_comms` SET `RemovedBy` = 0, `RemoveType` = \'E\', `RemovedOn` = UNIX_TIMESTAMP() WHERE `length` != 0 and `ends` < UNIX_TIMESTAMP() and `RemoveType` IS NULL');
+	$res = \MaterialAdmin\DataStorage::ADOdb()->Execute('UPDATE `'.DB_PREFIX.'_comms` SET `RemovedBy` = 0, `RemoveType` = \'E\', `RemovedOn` = UNIX_TIMESTAMP() WHERE `length` != 0 and `ends` < UNIX_TIMESTAMP() and `RemoveType` IS NULL');
     return $res?true:false;
 }
 
@@ -929,7 +929,7 @@ function check_email($email) {
 function checkSinglePlayer($sid, $steamid)
 {
 	require_once(INCLUDES_PATH.'/CServerControl.php');
-	$serv = $GLOBALS['db']->GetRow("SELECT ip, port, rcon FROM ".DB_PREFIX."_servers WHERE sid = '".$sid."';");
+	$serv = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT ip, port, rcon FROM ".DB_PREFIX."_servers WHERE sid = '".$sid."';");
 	if(empty($serv['rcon'])) {
 		return false;
 	}
@@ -942,7 +942,7 @@ function checkSinglePlayer($sid, $steamid)
 	$r->Connect($serv['ip'], $serv['port']);
 	
 	if(!$r->AuthRcon($serv['rcon'])) {
-		$GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_servers SET rcon = '' WHERE sid = '".(int)$sid."';");
+		\MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE ".DB_PREFIX."_servers SET rcon = '' WHERE sid = '".(int)$sid."';");
 		return false;
 	}
 
@@ -970,7 +970,7 @@ function checkSinglePlayer($sid, $steamid)
 function checkMultiplePlayers($sid, $steamids)
 {
 	require_once(INCLUDES_PATH.'/CServerControl.php');
-	$serv = $GLOBALS['db']->GetRow("SELECT ip, port, rcon FROM ".DB_PREFIX."_servers WHERE sid = '".$sid."';");
+	$serv = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT ip, port, rcon FROM ".DB_PREFIX."_servers WHERE sid = '".$sid."';");
 	if(empty($serv['rcon'])) {
 		return false;
 	}
@@ -983,7 +983,7 @@ function checkMultiplePlayers($sid, $steamids)
 	$r->Connect($serv['ip'], $serv['port']);
 	
 	if(!$r->AuthRcon($serv['rcon'])) {
-		$GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_servers SET rcon = '' WHERE sid = '".(int)$sid."';");
+		\MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE ".DB_PREFIX."_servers SET rcon = '' WHERE sid = '".(int)$sid."';");
 		return false;
 	}
 
@@ -1069,7 +1069,7 @@ function SBDate($format, $timestamp="")
 */
 function SteamIDToFriendID($authid)
 {
-	$friendid = $GLOBALS['db']->GetRow("SELECT CAST(MID('".$authid."', 9, 1) AS UNSIGNED) + CAST('76561197960265728' AS UNSIGNED) + CAST(MID('".$authid."', 11, 10) * 2 AS UNSIGNED) AS friend_id");
+	$friendid = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT CAST(MID('".$authid."', 9, 1) AS UNSIGNED) + CAST('76561197960265728' AS UNSIGNED) + CAST(MID('".$authid."', 11, 10) * 2 AS UNSIGNED) AS friend_id");
 	return $friendid["friend_id"];
 }
 
@@ -1082,7 +1082,7 @@ function SteamIDToFriendID($authid)
 function FriendIDToSteamID($friendid)
 {
 
-	$steamid = $GLOBALS['db']->GetRow("SELECT CONCAT(\"STEAM_0:\", (CAST('".$friendid."' AS UNSIGNED) - CAST('76561197960265728' AS UNSIGNED)) % 2, \":\", CAST(((CAST('".$friendid."' AS UNSIGNED) - CAST('76561197960265728' AS UNSIGNED)) - ((CAST('".$friendid."' AS UNSIGNED) - CAST('76561197960265728' AS UNSIGNED)) % 2)) / 2 AS UNSIGNED)) AS steam_id;");
+	$steamid = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT CONCAT(\"STEAM_0:\", (CAST('".$friendid."' AS UNSIGNED) - CAST('76561197960265728' AS UNSIGNED)) % 2, \":\", CAST(((CAST('".$friendid."' AS UNSIGNED) - CAST('76561197960265728' AS UNSIGNED)) - ((CAST('".$friendid."' AS UNSIGNED) - CAST('76561197960265728' AS UNSIGNED)) % 2)) / 2 AS UNSIGNED)) AS steam_id;");
 	return $steamid['steam_id'];
 }
 
@@ -1127,7 +1127,7 @@ function GetCommunityName($steamid)
 function SendRconSilent($rcon, $sid)
 {
 	require_once(INCLUDES_PATH.'/CServerControl.php');
-	$serv = $GLOBALS['db']->GetRow("SELECT ip, port, rcon FROM ".DB_PREFIX."_servers WHERE sid = '".$sid."';");
+	$serv = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT ip, port, rcon FROM ".DB_PREFIX."_servers WHERE sid = '".$sid."';");
 	if(empty($serv['rcon'])) {
 		return false;
 	}
@@ -1140,7 +1140,7 @@ function SendRconSilent($rcon, $sid)
 	$r->Connect($serv['ip'], $serv['port']);
 	
 	if(!$r->AuthRcon($serv['rcon'])) {
-		$GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_servers SET rcon = '' WHERE sid = '".(int)$sid."';");
+		\MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE ".DB_PREFIX."_servers SET rcon = '' WHERE sid = '".(int)$sid."';");
 		return false;
 	}
 
@@ -1187,7 +1187,7 @@ function GetUserAvatar($sid = -1) {
     
     static $avatarCache = null;
     if (!$avatarCache) {
-        $query = $GLOBALS['db']->Execute(sprintf("SELECT * FROM `%s_avatars`", DB_PREFIX));
+        $query = \MaterialAdmin\DataStorage::ADOdb()->Execute(sprintf("SELECT * FROM `%s_avatars`", DB_PREFIX));
         $avatarCache = [];
 
         while (!$query->EOF) {
@@ -1217,10 +1217,10 @@ function GetUserAvatar($sid = -1) {
         
         // And insert to DB
         $query = null;
-        $AF = $GLOBALS['db']->qstr($AvatarFile);
+        $AF = \MaterialAdmin\DataStorage::ADOdb()->qstr($AvatarFile);
         if ($res) $query = sprintf("UPDATE `%s_avatars` SET `url` = %s", DB_PREFIX, $AF);
         else $query = sprintf("INSERT INTO `%s_avatars` (`authid`, `url`) VALUES ('%s', %s)", DB_PREFIX, $communityid, $AF);
-        $GLOBALS['db']->Execute($query);
+        \MaterialAdmin\DataStorage::ADOdb()->Execute($query);
     }
     return $AvatarFile;
 }

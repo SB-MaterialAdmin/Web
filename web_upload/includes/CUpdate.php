@@ -37,7 +37,7 @@
 		}
 		else if($this->getCurrentRevision() == -1) // They have some fubar version fix it for them :|
 		{
-			$GLOBALS['db']->Execute("INSERT INTO `".DB_PREFIX."_settings` (`setting`, `value`) VALUES ('config.version', '0')");
+			\MaterialAdmin\DataStorage::ADOdb()->Execute("INSERT INTO `".DB_PREFIX."_settings` (`setting`, `value`) VALUES ('config.version', '0')");
 		}
 	}
 	
@@ -110,7 +110,7 @@
 	
 	function _updateVersionNumber($rev)
 	{
-		$ret = $GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_settings SET value = ? WHERE setting = 'config.version';", array((int)$rev));
+		$ret = \MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE ".DB_PREFIX."_settings SET value = ? WHERE setting = 'config.version';", array((int)$rev));
 		return !(empty($ret));
 	}
 	

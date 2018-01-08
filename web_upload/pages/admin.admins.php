@@ -89,10 +89,10 @@ foreach($admins AS $admin)
 	{
 		$admin['server_group'] = "Группа\индивид. права отсутствуют";
 	}
-	$num = $GLOBALS['db']->GetRow("SELECT count(authid) AS num FROM `" . DB_PREFIX . "_bans` WHERE aid = '".$admin['aid']."'");
+	$num = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT count(authid) AS num FROM `" . DB_PREFIX . "_bans` WHERE aid = '".$admin['aid']."'");
 	$admin['bancount'] = $num['num'];
 
-	$nodem = $GLOBALS['db']->GetRow("SELECT count(B.bid) AS num FROM `" . DB_PREFIX . "_bans` AS B WHERE aid = '".$admin['aid']."' AND NOT EXISTS (SELECT D.demid FROM `" . DB_PREFIX . "_demos` AS D WHERE D.demid = B.bid)");
+	$nodem = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT count(B.bid) AS num FROM `" . DB_PREFIX . "_bans` AS B WHERE aid = '".$admin['aid']."' AND NOT EXISTS (SELECT D.demid FROM `" . DB_PREFIX . "_demos` AS D WHERE D.demid = B.bid)");
 	$admin['aid'] = $admin['aid'];
 	$admin['nodemocount'] = $nodem['num'];
 
@@ -129,7 +129,7 @@ foreach($admins AS $admin)
 		$admin['lastvisit'] = SBDate($dateformat,$userbank->GetProperty("lastvisit", $admin['aid']));
 	$admin['avatar'] = GetUserAvatar($userbank->GetProperty('authid', $admin['aid']));
 
-	$admin['warnings'] = $GLOBALS['db']->GetOne("SELECT COUNT(*) FROM `" . DB_PREFIX . "_warns` WHERE `expires` > " . time() . " AND `arecipient` = " . (int) $admin['aid'] . ";");
+	$admin['warnings'] = \MaterialAdmin\DataStorage::ADOdb()->GetOne("SELECT COUNT(*) FROM `" . DB_PREFIX . "_warns` WHERE `expires` > " . time() . " AND `arecipient` = " . (int) $admin['aid'] . ";");
 	array_push($admin_list, $admin);
 }
 
@@ -193,7 +193,7 @@ if(isset($_GET["showexpiredadmins"]) && $_GET["showexpiredadmins"] == "true") {
 	$btn_rem = '';
 }
 
-$res = $GLOBALS['db']->Execute("SELECT aid FROM `".DB_PREFIX."_admins` WHERE `support` = '1'");
+$res = \MaterialAdmin\DataStorage::ADOdb()->Execute("SELECT aid FROM `".DB_PREFIX."_admins` WHERE `support` = '1'");
 $checked = array();
 while (!$res->EOF)
 {
@@ -226,10 +226,10 @@ echo '</div>';
 
 
 // Add Page
-$group_list = 				$GLOBALS['db']->GetAll("SELECT * FROM `" . DB_PREFIX . "_groups` WHERE type = '3'");
-$servers = 					$GLOBALS['db']->GetAll("SELECT * FROM `" . DB_PREFIX . "_servers`");
-$server_admin_group_list = 	$GLOBALS['db']->GetAll("SELECT * FROM `" . DB_PREFIX . "_srvgroups`");
-$server_group_list = 		$GLOBALS['db']->GetAll("SELECT * FROM `" . DB_PREFIX . "_groups` WHERE type != 3");
+$group_list = 				\MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT * FROM `" . DB_PREFIX . "_groups` WHERE type = '3'");
+$servers = 					\MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT * FROM `" . DB_PREFIX . "_servers`");
+$server_admin_group_list = 	\MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT * FROM `" . DB_PREFIX . "_srvgroups`");
+$server_group_list = 		\MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT * FROM `" . DB_PREFIX . "_groups` WHERE type != 3");
 $server_list = array();
 $serverscript = "<script type=\"text/javascript\">";
 foreach($servers AS $server)
@@ -279,12 +279,12 @@ try
 				// Wants to delete this override?
 				if(empty($_POST['override_name'][$index]))
 				{
-					$GLOBALS['db']->Execute("DELETE FROM `" . DB_PREFIX . "_overrides` WHERE id = ?;", array($id));
+					\MaterialAdmin\DataStorage::ADOdb()->Execute("DELETE FROM `" . DB_PREFIX . "_overrides` WHERE id = ?;", array($id));
 					continue;
 				}
 				
 				// Check for duplicates
-				$chk = $GLOBALS['db']->GetAll("SELECT * FROM `" . DB_PREFIX . "_overrides` WHERE name = ? AND type = ? AND id != ?", array($_POST['override_name'][$index], $_POST['override_type'][$index], $id));
+				$chk = \MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT * FROM `" . DB_PREFIX . "_overrides` WHERE name = ? AND type = ? AND id != ?", array($_POST['override_name'][$index], $_POST['override_type'][$index], $id));
 				if(!empty($chk))
 				{
 					$edit_errors .= "&bull; Такое название уже существует \\\"" . htmlspecialchars(addslashes($_POST['override_name'][$index])) . "\\\".<br />";
@@ -292,7 +292,7 @@ try
 				}
 				
 				// Edit the override
-				$GLOBALS['db']->Execute("UPDATE `" . DB_PREFIX . "_overrides` SET name = ?, type = ?, flags = ? WHERE id = ?;", array($_POST['override_name'][$index], $_POST['override_type'][$index], trim($_POST['override_flags'][$index]), $id));
+				\MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE `" . DB_PREFIX . "_overrides` SET name = ?, type = ?, flags = ? WHERE id = ?;", array($_POST['override_name'][$index], $_POST['override_type'][$index], trim($_POST['override_flags'][$index]), $id));
 			}
 			
 			if(!empty($edit_errors))
@@ -306,12 +306,12 @@ try
 				throw new Exception("Неверный оверрайд.");
 			
 			// Check for duplicates
-			$chk = $GLOBALS['db']->GetAll("SELECT * FROM `" . DB_PREFIX . "_overrides` WHERE name = ? AND type = ?", array($_POST['new_override_name'], $_POST['new_override_type']));
+			$chk = \MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT * FROM `" . DB_PREFIX . "_overrides` WHERE name = ? AND type = ?", array($_POST['new_override_name'], $_POST['new_override_type']));
 			if(!empty($chk))
 				throw new Exception("Оверрайд с таким именем уже существует.");
 			
 			// Insert the new override
-			$GLOBALS['db']->Execute("INSERT INTO `" . DB_PREFIX . "_overrides` (type, name, flags) VALUES (?, ?, ?);", array($_POST['new_override_type'], $_POST['new_override_name'], trim($_POST['new_override_flags'])));
+			\MaterialAdmin\DataStorage::ADOdb()->Execute("INSERT INTO `" . DB_PREFIX . "_overrides` (type, name, flags) VALUES (?, ?, ?);", array($_POST['new_override_type'], $_POST['new_override_name'], trim($_POST['new_override_flags'])));
 		}
 		
 		$overrides_save_success = true;
@@ -320,7 +320,7 @@ try
 	$overrides_error = $e->getMessage();
 }
 
-$overrides_list = $GLOBALS['db']->GetAll("SELECT * FROM `" . DB_PREFIX . "_overrides`;");
+$overrides_list = \MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT * FROM `" . DB_PREFIX . "_overrides`;");
 
 echo '<div id="2" style="display:none;">';
 	$theme->assign('overrides_list', $overrides_list);

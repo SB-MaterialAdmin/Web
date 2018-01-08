@@ -40,7 +40,7 @@ if(!isset($_GET['id']))
 }
 $_GET['id'] = (int)$_GET['id'];
 
-$server = $GLOBALS['db']->GetRow("SELECT * FROM ".DB_PREFIX."_servers WHERE sid = {$_GET['id']}");
+$server = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT * FROM ".DB_PREFIX."_servers WHERE sid = {$_GET['id']}");
 if(!$server)
 {
 	$log = new CSystemLog("e", "Получение данных сервера не удалось", "Не удается найти данные для сервера с идентификатором '".$_GET['id']."'");
@@ -107,7 +107,7 @@ if(isset($_POST['address']))
 	// Check for dublicates afterwards
 	if($error == 0)
 	{
-		$chk = $GLOBALS['db']->GetRow('SELECT sid FROM `'.DB_PREFIX.'_servers` WHERE ip = ? AND port = ? AND sid != ?;', array($ip, (int)$_POST['port'], $_GET['id']));
+		$chk = \MaterialAdmin\DataStorage::ADOdb()->GetRow('SELECT sid FROM `'.DB_PREFIX.'_servers` WHERE ip = ? AND port = ? AND sid != ?;', array($ip, (int)$_POST['port'], $_GET['id']));
 		if($chk)
 		{
 			$error++;
@@ -125,22 +125,22 @@ if(isset($_POST['address']))
 	if($error == 0)
 	{
 		$grps = "";
-		$sg = $GLOBALS['db']->GetAll("SELECT * FROM ".DB_PREFIX."_servers_groups WHERE server_id = {$_GET['id']}");
+		$sg = \MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT * FROM ".DB_PREFIX."_servers_groups WHERE server_id = {$_GET['id']}");
 		foreach($sg AS $s)
 		{
-			$GLOBALS['db']->Execute("DELETE FROM ".DB_PREFIX."_servers_groups WHERE server_id = " . (int)$s['server_id'] . " AND group_id = " . (int)$s['group_id']);
+			\MaterialAdmin\DataStorage::ADOdb()->Execute("DELETE FROM ".DB_PREFIX."_servers_groups WHERE server_id = " . (int)$s['server_id'] . " AND group_id = " . (int)$s['group_id']);
 		}
 		if(!empty($_POST['groups'])) {
 			foreach($_POST['groups'] as $t)
 			{
-				$addtogrp = $GLOBALS['db']->Prepare("INSERT INTO ".DB_PREFIX."_servers_groups (`server_id`, `group_id`) VALUES (?,?)");
-				$GLOBALS['db']->Execute($addtogrp,array($_GET['id'], (int)$t));
+				$addtogrp = \MaterialAdmin\DataStorage::ADOdb()->Prepare("INSERT INTO ".DB_PREFIX."_servers_groups (`server_id`, `group_id`) VALUES (?,?)");
+				\MaterialAdmin\DataStorage::ADOdb()->Execute($addtogrp,array($_GET['id'], (int)$t));
 			}
 		}
 		
 		$enabled = (isset($_POST['enabled']) && $_POST['enabled'] == "on" ? 1 : 0);
 		
-		$edit = $GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_servers SET
+		$edit = \MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE ".DB_PREFIX."_servers SET
 										`ip` = ?,
 										`port` = ?,
 										`modid` = ?,
@@ -150,7 +150,7 @@ if(isset($_POST['address']))
 	// don't change rcon password if not changed
 	if($_POST['rcon'] != '*Скрыт*')
 	{
-		$edit = $GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_servers SET
+		$edit = \MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE ".DB_PREFIX."_servers SET
 										`rcon` = ?
 										WHERE `sid` = ?", array($_POST['rcon'], (int)$_GET['id']));
 	}
@@ -159,8 +159,8 @@ if(isset($_POST['address']))
 	}
 }
 
-$modlist = $GLOBALS['db']->GetAll("SELECT mid, name FROM `" . DB_PREFIX . "_mods` WHERE `mid` > 0 AND `enabled` = 1 ORDER BY name ASC");
-$grouplist = $GLOBALS['db']->GetAll("SELECT gid, name FROM `" . DB_PREFIX . "_groups` WHERE type = 3 ORDER BY name ASC");
+$modlist = \MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT mid, name FROM `" . DB_PREFIX . "_mods` WHERE `mid` > 0 AND `enabled` = 1 ORDER BY name ASC");
+$grouplist = \MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT gid, name FROM `" . DB_PREFIX . "_groups` WHERE type = 3 ORDER BY name ASC");
 
 $theme->assign('ip', 	$server['ip']);
 $theme->assign('port', 	 $server['port']);
@@ -182,7 +182,7 @@ echo '</form>';
 echo "<script>";
 if(!isset($_POST['address']))
 {
-	$groups = $GLOBALS['db']->GetAll("SELECT group_id FROM `" . DB_PREFIX . "_servers_groups` WHERE server_id = {$_GET['id']}");
+	$groups = \MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT group_id FROM `" . DB_PREFIX . "_servers_groups` WHERE server_id = {$_GET['id']}");
 }
 else
 {

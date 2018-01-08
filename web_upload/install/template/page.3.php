@@ -243,26 +243,26 @@ if(isset($_POST['username'], $_POST['password'], $_POST['server'], $_POST['port'
 							</thead>
 							<tbody>
 								<tr>
-									<td>Папка для демок (/demos)</td>
+									<td>Папка для демок (/data/demos)</td>
 									<td>Н/A</td>
 									<td>Перезаписываемая</td>
 									<?php 
-										if(is_writable("../demos")){
+										if(is_writable("../data/demos")){
 											$class = "success c-white";
 										} else { $class = "danger c-white"; $errors++; }
 									?>
-									<td class="<?= $class ?>"><?= is_writable("../demos") ? "Да" : "Нет" ?></td>
+									<td class="<?= $class ?>"><?= is_writable("../data/demos") ? "Да" : "Нет" ?></td>
 								</tr>
 								<tr>
-									<td>Папка кэша (/themes_c)</td>
+									<td>Папка кэша (/data/theme_c)</td>
 									<td>Н/A</td>
 									<td>Перезаписываемая</td>
 									<?php 
-										if(is_writable("../themes_c")){
+										if(is_writable("../data/theme_c")){
 											$class = "success c-white";
 										} else {  $class = "danger c-white"; $errors++; }
 									?>
-									<td class="<?= $class ?>"><?= is_writable("../themes_c") ? "Да" : "Нет" ?></td>
+									<td class="<?= $class ?>"><?= is_writable("../data/theme_c") ? "Да" : "Нет" ?></td>
 								</tr>
 								<tr>
 									<td>Папка иконок МОДов (/images/games)</td>
@@ -287,15 +287,15 @@ if(isset($_POST['username'], $_POST['password'], $_POST['server'], $_POST['port'
 									<td class="<?= $class ?>"><?= is_writable("../images/maps") ? "Да" : "Нет" ?></td>
 								</tr>
 								<tr>
-									<td>Конфигурационный файл (/config.php)</td>
+									<td>Конфигурационный файл (/data/config.php)</td>
 									<td>Н/A</td>
 									<td>Перезаписываемая</td>
 									<?php 
-										if(is_writable("../config.php")){
+										if(is_writable("../data/config.php")){
 											$class = "success c-white";
 										} else {  $class = "danger c-white"; $errors++; }
 									?>
-									<td class="<?= $class ?>"><?= is_writable("../config.php") ? "Да" : "Нет" ?></td>
+									<td class="<?= $class ?>"><?= is_writable("../data/config.php") ? "Да" : "Нет" ?></td>
 								</tr>
 							</tbody>
 						</table>

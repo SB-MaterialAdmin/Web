@@ -45,7 +45,7 @@ else {
     $aid = 0;
     $password = '';
     
-    $result = $GLOBALS['db']->Execute(sprintf("SELECT aid,password,expired FROM %s_admins WHERE authid LIKE '%%%s'", DB_PREFIX, str_replace('STEAM_0:', '', $SteamID)));
+    $result = \MaterialAdmin\DataStorage::ADOdb()->Execute(sprintf("SELECT aid,password,expired FROM %s_admins WHERE authid LIKE '%%%s'", DB_PREFIX, str_replace('STEAM_0:', '', $SteamID)));
 	while(!$result->EOF) {
         $exp = $result->fields['expired'];
         if (($exp > 0 && $exp > time()) || $exp == '0' || $exp == '') {

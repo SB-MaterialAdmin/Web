@@ -38,7 +38,7 @@ if(!defined("IN_SB")){echo "Ошибка доступа!";die();}
 	{
 		if($userbank->HasAccess(ADMIN_OWNER))
 		{
-			$result = $GLOBALS['db']->Execute("TRUNCATE TABLE `".DB_PREFIX."_log`");
+			$result = \MaterialAdmin\DataStorage::ADOdb()->Execute("TRUNCATE TABLE `".DB_PREFIX."_log`");
 		}
         else
         {
@@ -51,7 +51,7 @@ if(!defined("IN_SB")){echo "Ошибка доступа!";die();}
 	if(isset($_GET['advSearch']))
 	{
 		// Escape the value, but strip the leading and trailing quote
-		$value = substr($GLOBALS['db']->qstr($_GET['advSearch'], get_magic_quotes_gpc()), 1, -1);
+		$value = substr(\MaterialAdmin\DataStorage::ADOdb()->qstr($_GET['advSearch'], get_magic_quotes_gpc()), 1, -1);
 		$type = $_GET['advType'];
 		switch($type)
 		{
@@ -159,7 +159,7 @@ else
 			$splashscreen    = (isset($_POST['splashscreen']) && $_POST['splashscreen'] == "on" ? 1 : 0);
 			$stats           = (isset($_POST['home_stats']) && $_POST['home_stats'] == "on" ? 1 : 0);
 			
-			$edit = $GLOBALS['db']->Execute("REPLACE INTO ".DB_PREFIX."_settings (`value`, `setting`) VALUES
+			$edit = \MaterialAdmin\DataStorage::ADOdb()->Execute("REPLACE INTO ".DB_PREFIX."_settings (`value`, `setting`) VALUES
 												(".(int)$global_themes_check.", 'template.global'),
 												(".(int)$p_obrat_cvaz.", 'dash.info_block'),
 												(?, 'config.text_home'),
@@ -236,7 +236,7 @@ else
 
 				$tz_string = $_POST['timezoneoffset'];
 
-				$edit = $GLOBALS['db']->Execute("REPLACE INTO ".DB_PREFIX."_settings (`value`, `setting`) VALUES
+				$edit = \MaterialAdmin\DataStorage::ADOdb()->Execute("REPLACE INTO ".DB_PREFIX."_settings (`value`, `setting`) VALUES
 												(?, 'template.title'),
 												(?,'template.logo'),
 												(" . (int)$_POST['config_password_minlength'] . ", 'config.password.minlength'),
@@ -262,19 +262,19 @@ else
 												(".(int)$vay4_en.", 'page.vay4er')", array($_POST['template_title'], $_POST['template_logo'], $_POST['config_dateformat'], $_POST['config_dateformat2'], $_POST['dash_intro_text'], $tz_string, $summertime, $cureason));
 				
 				/* SMTP */
-				$GLOBALS['db']->Execute(sprintf("REPLACE INTO `%s_settings` (`value`, `setting`) VALUES
+				\MaterialAdmin\DataStorage::ADOdb()->Execute(sprintf("REPLACE INTO `%s_settings` (`value`, `setting`) VALUES
 				('%s', 'smtp.enabled'),
 				(%s, 'smtp.username'),
 				(%s, 'smtp.port'),
 				(%s, 'smtp.host'),
 				(%s, 'smtp.charset'),
-				(%s, 'smtp.from');", DB_PREFIX, (($_POST['smtp_enabled']=="on")?"1":"0"), $GLOBALS['db']->qstr($_POST['smtp_username']), $GLOBALS['db']->qstr($_POST['smtp_port']), $GLOBALS['db']->qstr($_POST['smtp_host']), $GLOBALS['db']->qstr($_POST['smtp_charset']), $GLOBALS['db']->qstr($_POST['smtp_from'])));
+				(%s, 'smtp.from');", DB_PREFIX, (($_POST['smtp_enabled']=="on")?"1":"0"), \MaterialAdmin\DataStorage::ADOdb()->qstr($_POST['smtp_username']), \MaterialAdmin\DataStorage::ADOdb()->qstr($_POST['smtp_port']), \MaterialAdmin\DataStorage::ADOdb()->qstr($_POST['smtp_host']), \MaterialAdmin\DataStorage::ADOdb()->qstr($_POST['smtp_charset']), \MaterialAdmin\DataStorage::ADOdb()->qstr($_POST['smtp_from'])));
 				// PASSWORD SMTP
 				if ($_POST['smtp_password'] != "*Скрыт*")
-					$GLOBALS['db']->Execute(sprintf("REPLACE INTO `%s_settings` (`value`, `setting`) VALUES (%s, 'smtp.password');", DB_PREFIX, $GLOBALS['db']->qstr($_POST['smtp_password'])));
+					\MaterialAdmin\DataStorage::ADOdb()->Execute(sprintf("REPLACE INTO `%s_settings` (`value`, `setting`) VALUES (%s, 'smtp.password');", DB_PREFIX, \MaterialAdmin\DataStorage::ADOdb()->qstr($_POST['smtp_password'])));
 
 				// Null Admin
-				$GLOBALS['db']->Execute(sprintf("REPLACE INTO `%s_settings` (`value`, `setting`) VALUES (%s, 'nulladmin.name');", DB_PREFIX, $GLOBALS['db']->qstr($_POST['nulladmin_name'])));
+				\MaterialAdmin\DataStorage::ADOdb()->Execute(sprintf("REPLACE INTO `%s_settings` (`value`, `setting`) VALUES (%s, 'nulladmin.name');", DB_PREFIX, \MaterialAdmin\DataStorage::ADOdb()->qstr($_POST['nulladmin_name'])));
 				
 				?><script>setTimeout("ShowBox('Главные настройки изменены', 'Изменения были успешно применены!', 'green', 'index.php?p=admin&c=settings', false, 2500);", 1200);</script><?php 
 			}else{
@@ -301,7 +301,7 @@ else
 			
 			$admin_warns = (isset($_POST['admin_warns']) && $_POST['admin_warns'] == "on" ? 1 : 0);
 			
-			$edit = $GLOBALS['db']->Execute("REPLACE INTO ".DB_PREFIX."_settings (`value`, `setting`) VALUES
+			$edit = \MaterialAdmin\DataStorage::ADOdb()->Execute("REPLACE INTO ".DB_PREFIX."_settings (`value`, `setting`) VALUES
 											(" . (int)$exportpub . ", 'config.exportpublic'),
 											(" . (int)$kickit . ", 'config.enablekickit'),
 											(" . (int)$groupban . ", 'config.enablegroupbanning'),
@@ -323,7 +323,7 @@ else
 	#########[Settings Page]###############
 	echo '<div id="0" style="display:none;">';
 		
-		$wgroups = $GLOBALS['db']->GetAll("SELECT gid, name FROM ".DB_PREFIX."_groups WHERE type != 3");
+		$wgroups = \MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT gid, name FROM ".DB_PREFIX."_groups WHERE type != 3");
 		$theme->assign('wgroups', 				$wgroups);
 		$theme->assign('config_modergroup', 		$GLOBALS['config']['config.modgroup']);
 	

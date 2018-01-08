@@ -103,7 +103,7 @@ function InstallMOD($modfolder, $status = 0) {
         $objResponse->addScript('xajax_InstallMOD("'.$modfolder.'", 3);');
     } else if ($status == 3) {
         /* Insert to DB */
-        $GLOBALS['db']->Execute(sprintf("INSERT INTO `%s_mods` (`name`, `icon`, `modfolder`, `steam_universe`, `enabled`) VALUES (%s, %s, %s, %d, 1);", DB_PREFIX, $GLOBALS['db']->qstr($GameData['name']), $GLOBALS['db']->qstr($GameData['icon']), $GLOBALS['db']->qstr($GameData['folder']), (int) $GameData['steamcode']));
+        \MaterialAdmin\DataStorage::ADOdb()->Execute(sprintf("INSERT INTO `%s_mods` (`name`, `icon`, `modfolder`, `steam_universe`, `enabled`) VALUES (%s, %s, %s, %d, 1);", DB_PREFIX, \MaterialAdmin\DataStorage::ADOdb()->qstr($GameData['name']), \MaterialAdmin\DataStorage::ADOdb()->qstr($GameData['icon']), \MaterialAdmin\DataStorage::ADOdb()->qstr($GameData['folder']), (int) $GameData['steamcode']));
     
         $objResponse->addAppend("install_log", "innerHTML", "<br />[".SBDate($GLOBALS['config']['config.dateformat'], time())."] Завершено.");
         $objResponse->addAssign("install_current", "innerHTML", "Установка завершена.");
@@ -129,7 +129,7 @@ function AddSupport($aid)
 	}
 	
 
-	$res = $GLOBALS['db']->GetOne("SELECT `support` FROM `".DB_PREFIX."_admins` WHERE `aid` = '".$aid."'");
+	$res = \MaterialAdmin\DataStorage::ADOdb()->GetOne("SELECT `support` FROM `".DB_PREFIX."_admins` WHERE `aid` = '".$aid."'");
 	if($res == "1"){
 		$chek = "0";
 		$chek1 = "убран";
@@ -137,7 +137,7 @@ function AddSupport($aid)
 		$chek = "1";
 		$chek1 = "добавлен";
 	}	
-	$query = $GLOBALS['db']->Execute("UPDATE `" . DB_PREFIX . "_admins` SET `support` = ? WHERE `aid` = '".$aid."'", array((int)$chek));
+	$query = \MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE `" . DB_PREFIX . "_admins` SET `support` = ? WHERE `aid` = '".$aid."'", array((int)$chek));
 	if($query)
 		$objResponse->addScript('ShowBox("Support-List", "Администратор был '.$chek1.', обновите страницу, чтобы увидеть результат, либо продолжайте дальнейшую работу.", "blue", "", true);');
 	
@@ -154,7 +154,7 @@ function removeExpiredAdmins()
 		$log = new CSystemLog("w", "Ошибка доступа", $username . " пытался удалить истёкших админов, не имея на это прав.");
 		return $objResponse;
 	}
-	if($GLOBALS['db']->Execute("DELETE FROM `".DB_PREFIX."_admins` WHERE `expired` < ".time()." AND `expired` <> 0")) {
+	if(\MaterialAdmin\DataStorage::ADOdb()->Execute("DELETE FROM `".DB_PREFIX."_admins` WHERE `expired` < ".time()." AND `expired` <> 0")) {
 		$objResponse->addScript('ShowBox("Успешно!", "Все истёкшие админки удалены.", "green", "index.php?p=admin&c=admins");');
 		$log = new CSystemLog("m", "Удаление админов", $username . " удалил всех истёкших админов.");
 	}
@@ -174,7 +174,7 @@ function Plogin($username, $password, $remember, $redirect, $nopass)
 		ShowBox_ajx("Информация", "Не введён пароль. Введите пароль, и повторите попытку ещё раз.", "blue", "", true, $objResponse);
 		return $objResponse;
 	}
-	$q = $GLOBALS['db']->GetRow("SELECT `aid`, `password`, `expired` FROM `" . DB_PREFIX . "_admins` WHERE `user` = ?", array($username));
+	$q = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT `aid`, `password`, `expired` FROM `" . DB_PREFIX . "_admins` WHERE `user` = ?", array($username));
 	if($q)
 		$aid = $q[0];
 	if($q && strlen($q[1]) == 0 && count($q) != 0)
@@ -208,7 +208,7 @@ function Plogin($username, $password, $remember, $redirect, $nopass)
 function LostPassword($email)
 {
 	$objResponse = new xajaxResponse();
-	$q = $GLOBALS['db']->GetRow("SELECT * FROM `" . DB_PREFIX . "_admins` WHERE `email` = ?", array($email));
+	$q = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT * FROM `" . DB_PREFIX . "_admins` WHERE `email` = ?", array($email));
 
 	if(!$q[0])
 	{
@@ -220,7 +220,7 @@ function LostPassword($email)
 	}
 
 	$validation = md5(generate_salt(20).generate_salt(20)).md5(generate_salt(20).generate_salt(20));
-	$query = $GLOBALS['db']->Execute("UPDATE `" . DB_PREFIX . "_admins` SET `validate` = ? WHERE `email` = ?", array($validation, $email));
+	$query = \MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE `" . DB_PREFIX . "_admins` SET `validate` = ? WHERE `email` = ?", array($validation, $email));
 	$message = "";
 	$message .= "Привет " . $q['user'] . "\n";
 	$message .= "Вы запросили смену пароля в системе Sourcebans.\n";
@@ -249,7 +249,7 @@ function CheckSrvPassword($aid, $srv_pass)
 		$log = new CSystemLog("w", "Ошибка доступа", $username . " пытается проверить пароль сервера ".$userbank->GetProperty('user', $aid).", не имея на это прав.");
 		return $objResponse;
 	}
-	$res = $GLOBALS['db']->Execute("SELECT `srv_password` FROM `".DB_PREFIX."_admins` WHERE `aid` = '".$aid."'");
+	$res = \MaterialAdmin\DataStorage::ADOdb()->Execute("SELECT `srv_password` FROM `".DB_PREFIX."_admins` WHERE `aid` = '".$aid."'");
 	if($res->fields['srv_password'] != NULL && $res->fields['srv_password'] != $srv_pass)
 	{
 		$objResponse->addScript("$('scurrent.msg').setStyle('display', 'block');");
@@ -278,9 +278,9 @@ function ChangeSrvPassword($aid, $srv_pass)
 	}
     
 	if($srv_pass == "NULL")
-		$GLOBALS['db']->Execute("UPDATE `".DB_PREFIX."_admins` SET `srv_password` = NULL WHERE `aid` = '".$aid."'");
+		\MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE `".DB_PREFIX."_admins` SET `srv_password` = NULL WHERE `aid` = '".$aid."'");
 	else
-		$GLOBALS['db']->Execute("UPDATE `".DB_PREFIX."_admins` SET `srv_password` = ? WHERE `aid` = ?", array($srv_pass, $aid));
+		\MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE `".DB_PREFIX."_admins` SET `srv_password` = ? WHERE `aid` = ?", array($srv_pass, $aid));
 	$objResponse->addScript("ShowBox('Пароль сервера изменён', 'Пароль сервера был успешно изменён.', 'green', 'index.php?p=account', true);");
 	$log = new CSystemLog("m", "Изменён пароль сервера", "Пароль сменил администратор (".$aid.")");
 	return $objResponse;
@@ -320,7 +320,7 @@ function ChangeEmail($aid, $email, $password)
 		$objResponse->addScript("set_error(0);");
 	}
 
-	$GLOBALS['db']->Execute("UPDATE `".DB_PREFIX."_admins` SET `email` = ? WHERE `aid` = ?", array($email, $aid));
+	\MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE `".DB_PREFIX."_admins` SET `email` = ? WHERE `aid` = ?", array($email, $aid));
 	$objResponse->addScript("ShowBox('E-mail изменён', 'Ваш e-mail адрес успешно изменён.', 'green', 'index.php?p=account', true);");
 	$log = new CSystemLog("m", "E-mail изменён", "E-mail изменил админ (".$aid.")");
 	return $objResponse;
@@ -338,8 +338,8 @@ function AddGroup($name, $type, $bitmask, $srvflags)
 	}
 
 	$error = 0;
-	$query = $GLOBALS['db']->GetRow("SELECT `gid` FROM `" . DB_PREFIX . "_groups` WHERE `name` = ?", array($name));
-	$query2 = $GLOBALS['db']->GetRow("SELECT `id` FROM `" . DB_PREFIX . "_srvgroups` WHERE `name` = ?", array($name));
+	$query = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT `gid` FROM `" . DB_PREFIX . "_groups` WHERE `name` = ?", array($name));
+	$query2 = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT `id` FROM `" . DB_PREFIX . "_srvgroups` WHERE `name` = ?", array($name));
 	if(strlen($name) == 0 || count($query) > 0 || count($query2) > 0)
 	{
 		if(strlen($name) == 0)
@@ -376,11 +376,11 @@ function AddGroup($name, $type, $bitmask, $srvflags)
 	if($error > 0)
 		return $objResponse;
 
-	$query = $GLOBALS['db']->GetRow("SELECT MAX(gid) AS next_gid FROM `" . DB_PREFIX . "_groups`");
+	$query = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT MAX(gid) AS next_gid FROM `" . DB_PREFIX . "_groups`");
 	if($type == "1")
 	{
 		// add the web group
-		$query1 = $GLOBALS['db']->Execute("INSERT INTO `" . DB_PREFIX . "_groups` (`gid`, `type`, `name`, `flags`) VALUES (". (int)($query['next_gid']+1) .", '" . (int)$type . "', ?, '" . (int)$bitmask . "')", array($name));
+		$query1 = \MaterialAdmin\DataStorage::ADOdb()->Execute("INSERT INTO `" . DB_PREFIX . "_groups` (`gid`, `type`, `name`, `flags`) VALUES (". (int)($query['next_gid']+1) .", '" . (int)$type . "', ?, '" . (int)$bitmask . "')", array($name));
 	}
 	elseif($type == "2")
 	{
@@ -391,14 +391,14 @@ function AddGroup($name, $type, $bitmask, $srvflags)
 			$srvflags = substr($srvflags, 0, strlen($srvflags) - strlen($immunity)-1);
 		}
 		$immunity = (isset($immunity) && $immunity>0) ? $immunity : 0;
-		$add_group = $GLOBALS['db']->Prepare("INSERT INTO ".DB_PREFIX."_srvgroups(immunity,flags,name,groups_immune)
+		$add_group = \MaterialAdmin\DataStorage::ADOdb()->Prepare("INSERT INTO ".DB_PREFIX."_srvgroups(immunity,flags,name,groups_immune)
 					VALUES (?,?,?,?)");
-		$GLOBALS['db']->Execute($add_group,array($immunity, $srvflags, $name, " "));
+		\MaterialAdmin\DataStorage::ADOdb()->Execute($add_group,array($immunity, $srvflags, $name, " "));
 	}
 	elseif($type == "3")
 	{
 		// We need to add the server into the table
-		$query1 = $GLOBALS['db']->Execute("INSERT INTO `" . DB_PREFIX . "_groups` (`gid`, `type`, `name`, `flags`) VALUES (". ($query['next_gid']+1) .", '3', ?, '0')", array($name));
+		$query1 = \MaterialAdmin\DataStorage::ADOdb()->Execute("INSERT INTO `" . DB_PREFIX . "_groups` (`gid`, `type`, `name`, `flags`) VALUES (". ($query['next_gid']+1) .", '3', ?, '0')", array($name));
 	}
 
 	$log = new CSystemLog("m", "Группа создана", "Новая группа ($name) успешно создана");
@@ -422,23 +422,23 @@ function RemoveGroup($gid, $type)
 
 
 	if($type == "web") {
-		$query2 = $GLOBALS['db']->Execute("UPDATE `" . DB_PREFIX . "_admins` SET gid = -1 WHERE gid = $gid");
-		$query1 = $GLOBALS['db']->Execute("DELETE FROM `" . DB_PREFIX . "_groups` WHERE gid = $gid");
+		$query2 = \MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE `" . DB_PREFIX . "_admins` SET gid = -1 WHERE gid = $gid");
+		$query1 = \MaterialAdmin\DataStorage::ADOdb()->Execute("DELETE FROM `" . DB_PREFIX . "_groups` WHERE gid = $gid");
 	}
 	else if($type == "server") {
-		$query2 = $GLOBALS['db']->Execute("DELETE FROM `" . DB_PREFIX . "_servers_groups` WHERE group_id = $gid");
-		$query1 = $GLOBALS['db']->Execute("DELETE FROM `" . DB_PREFIX . "_groups` WHERE gid = $gid");
+		$query2 = \MaterialAdmin\DataStorage::ADOdb()->Execute("DELETE FROM `" . DB_PREFIX . "_servers_groups` WHERE group_id = $gid");
+		$query1 = \MaterialAdmin\DataStorage::ADOdb()->Execute("DELETE FROM `" . DB_PREFIX . "_groups` WHERE gid = $gid");
 	}
 	else {
-		$query2 = $GLOBALS['db']->Execute("UPDATE `" . DB_PREFIX . "_admins` SET srv_group = NULL WHERE srv_group = (SELECT name FROM `" . DB_PREFIX . "_srvgroups` WHERE id = $gid)");
-		$query1 = $GLOBALS['db']->Execute("DELETE FROM `" . DB_PREFIX . "_srvgroups` WHERE id = $gid");
-		$query0 = $GLOBALS['db']->Execute("DELETE FROM `" . DB_PREFIX . "_srvgroups_overrides` WHERE group_id = $gid");
+		$query2 = \MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE `" . DB_PREFIX . "_admins` SET srv_group = NULL WHERE srv_group = (SELECT name FROM `" . DB_PREFIX . "_srvgroups` WHERE id = $gid)");
+		$query1 = \MaterialAdmin\DataStorage::ADOdb()->Execute("DELETE FROM `" . DB_PREFIX . "_srvgroups` WHERE id = $gid");
+		$query0 = \MaterialAdmin\DataStorage::ADOdb()->Execute("DELETE FROM `" . DB_PREFIX . "_srvgroups_overrides` WHERE group_id = $gid");
 	}
 	
 	if(isset($GLOBALS['config']['config.enableadminrehashing']) && $GLOBALS['config']['config.enableadminrehashing'] == 1)
 	{
 		// rehash the settings out of the database on all servers
-		$serveraccessq = $GLOBALS['db']->GetAll("SELECT sid FROM ".DB_PREFIX."_servers WHERE enabled = 1;");
+		$serveraccessq = \MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT sid FROM ".DB_PREFIX."_servers WHERE enabled = 1;");
 		$allservers = array();
 		foreach($serveraccessq as $access) {
 			if(!in_array($access['sid'], $allservers)) {
@@ -475,8 +475,8 @@ function RemoveSubmission($sid, $archiv)
 	}
 	$sid = (int)$sid;
 	if($archiv == "1") { // move submission to archiv
-		$query1 = $GLOBALS['db']->Execute("UPDATE `" . DB_PREFIX . "_submissions` SET archiv = '1', archivedby = '".$userbank->GetAid()."' WHERE subid = $sid");
-		$query = $GLOBALS['db']->GetRow("SELECT count(subid) AS cnt FROM `" . DB_PREFIX . "_submissions` WHERE archiv = '0'");
+		$query1 = \MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE `" . DB_PREFIX . "_submissions` SET archiv = '1', archivedby = '".$userbank->GetAid()."' WHERE subid = $sid");
+		$query = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT count(subid) AS cnt FROM `" . DB_PREFIX . "_submissions` WHERE archiv = '0'");
 		$objResponse->addScript("$('subcount').setHTML('" . $query['cnt'] . "');");
 
 		$objResponse->addScript("SlideUp('sid_$sid');");
@@ -490,9 +490,9 @@ function RemoveSubmission($sid, $archiv)
 		else
 			$objResponse->addScript("ShowBox('Ошибка', 'Не получилось переместить заявку. Смотрите системный лог для дополнительной информации', 'red', 'index.php?p=admin&c=bans', true);");
 	} else if($archiv == "0") { // delete submission
-		$query1 = $GLOBALS['db']->Execute("DELETE FROM `" . DB_PREFIX . "_submissions` WHERE subid = $sid");
-		$query2 = $GLOBALS['db']->Execute("DELETE FROM `" . DB_PREFIX . "_demos` WHERE demid = '".$sid."' AND demtype = 'S'");
-		$query = $GLOBALS['db']->GetRow("SELECT count(subid) AS cnt FROM `" . DB_PREFIX . "_submissions` WHERE archiv = '1'");
+		$query1 = \MaterialAdmin\DataStorage::ADOdb()->Execute("DELETE FROM `" . DB_PREFIX . "_submissions` WHERE subid = $sid");
+		$query2 = \MaterialAdmin\DataStorage::ADOdb()->Execute("DELETE FROM `" . DB_PREFIX . "_demos` WHERE demid = '".$sid."' AND demtype = 'S'");
+		$query = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT count(subid) AS cnt FROM `" . DB_PREFIX . "_submissions` WHERE archiv = '1'");
 		$objResponse->addScript("$('subcountarchiv').setHTML('" . $query['cnt'] . "');");
 
 		$objResponse->addScript("SlideUp('asid_$sid');");
@@ -506,8 +506,8 @@ function RemoveSubmission($sid, $archiv)
 		else
 			$objResponse->addScript("ShowBox('Ошибка', 'Не получилось удалить заявку. Смотрите системный лог для дополнительной информации', 'red', 'index.php?p=admin&c=bans', true);");
 	} else if($archiv == "2") { // restore the submission
-		$query1 = $GLOBALS['db']->Execute("UPDATE `" . DB_PREFIX . "_submissions` SET archiv = '0', archivedby = NULL WHERE subid = $sid");
-		$query = $GLOBALS['db']->GetRow("SELECT count(subid) AS cnt FROM `" . DB_PREFIX . "_submissions` WHERE archiv = '0'");
+		$query1 = \MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE `" . DB_PREFIX . "_submissions` SET archiv = '0', archivedby = NULL WHERE subid = $sid");
+		$query = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT count(subid) AS cnt FROM `" . DB_PREFIX . "_submissions` WHERE archiv = '0'");
 		$objResponse->addScript("$('subcountarchiv').setHTML('" . $query['cnt'] . "');");
 
 		$objResponse->addScript("SlideUp('asid_$sid');");
@@ -536,9 +536,9 @@ function RemoveProtest($pid, $archiv)
 	}
 	$pid = (int)$pid;
 	if($archiv == '0') { // delete protest
-		$query1 = $GLOBALS['db']->Execute("DELETE FROM `" . DB_PREFIX . "_protests` WHERE pid = $pid");
-		$query2 = $GLOBALS['db']->Execute("DELETE FROM `" . DB_PREFIX . "_comments` WHERE type = 'P' AND bid = $pid;");
-		$query = $GLOBALS['db']->GetRow("SELECT count(pid) AS cnt FROM `" . DB_PREFIX . "_protests` WHERE archiv = '1'");
+		$query1 = \MaterialAdmin\DataStorage::ADOdb()->Execute("DELETE FROM `" . DB_PREFIX . "_protests` WHERE pid = $pid");
+		$query2 = \MaterialAdmin\DataStorage::ADOdb()->Execute("DELETE FROM `" . DB_PREFIX . "_comments` WHERE type = 'P' AND bid = $pid;");
+		$query = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT count(pid) AS cnt FROM `" . DB_PREFIX . "_protests` WHERE archiv = '1'");
 		$objResponse->addScript("$('protcountarchiv').setHTML('" . $query['cnt'] . "');");
 		$objResponse->addScript("SlideUp('apid_$pid');");
 		$objResponse->addScript("SlideUp('apid_" . $pid . "a');");
@@ -551,8 +551,8 @@ function RemoveProtest($pid, $archiv)
 		else
 			$objResponse->addScript("ShowBox('Ошибка', 'Не получилось удалить протест. Смотрите системный лог для дополнительной информации', 'red', 'index.php?p=admin&c=bans', true);");
 	} else if($archiv == '1') { // move protest to archiv
-		$query1 = $GLOBALS['db']->Execute("UPDATE `" . DB_PREFIX . "_protests` SET archiv = '1', archivedby = '".$userbank->GetAid()."' WHERE pid = $pid");
-		$query = $GLOBALS['db']->GetRow("SELECT count(pid) AS cnt FROM `" . DB_PREFIX . "_protests` WHERE archiv = '0'");
+		$query1 = \MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE `" . DB_PREFIX . "_protests` SET archiv = '1', archivedby = '".$userbank->GetAid()."' WHERE pid = $pid");
+		$query = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT count(pid) AS cnt FROM `" . DB_PREFIX . "_protests` WHERE archiv = '0'");
 		$objResponse->addScript("$('protcount').setHTML('" . $query['cnt'] . "');");
 		$objResponse->addScript("SlideUp('pid_$pid');");
 		$objResponse->addScript("SlideUp('pid_" . $pid . "a');");
@@ -565,8 +565,8 @@ function RemoveProtest($pid, $archiv)
 		else
 			$objResponse->addScript("ShowBox('Ошибка', 'Не получилось отправить в архив протест. Смотрите системный лог для дополнительной информации', 'red', 'index.php?p=admin&c=bans', true);");
 	} else if($archiv == '2') { // restore protest
-		$query1 = $GLOBALS['db']->Execute("UPDATE `" . DB_PREFIX . "_protests` SET archiv = '0', archivedby = NULL WHERE pid = $pid");
-		$query = $GLOBALS['db']->GetRow("SELECT count(pid) AS cnt FROM `" . DB_PREFIX . "_protests` WHERE archiv = '1'");
+		$query1 = \MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE `" . DB_PREFIX . "_protests` SET archiv = '0', archivedby = NULL WHERE pid = $pid");
+		$query = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT count(pid) AS cnt FROM `" . DB_PREFIX . "_protests` WHERE archiv = '1'");
 		$objResponse->addScript("$('protcountarchiv').setHTML('" . $query['cnt'] . "');");
 		$objResponse->addScript("SlideUp('apid_$pid');");
 		$objResponse->addScript("SlideUp('apid_" . $pid . "a');");
@@ -594,12 +594,12 @@ function RemoveServer($sid)
 	}
 	$sid = (int)$sid;
 	$objResponse->addScript("SlideUp('sid_$sid');");
-	$servinfo = $GLOBALS['db']->GetRow("SELECT ip, port FROM `" . DB_PREFIX . "_servers` WHERE sid = $sid");
-	$query1 = $GLOBALS['db']->Execute("DELETE FROM `" . DB_PREFIX . "_servers` WHERE sid = $sid");
-	$query2 = $GLOBALS['db']->Execute("DELETE FROM `" . DB_PREFIX . "_servers_groups` WHERE server_id = $sid");
-    $query3 = $GLOBALS['db']->Execute("UPDATE `" . DB_PREFIX . "_admins_servers_groups` SET server_id = -1 WHERE server_id = $sid");
+	$servinfo = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT ip, port FROM `" . DB_PREFIX . "_servers` WHERE sid = $sid");
+	$query1 = \MaterialAdmin\DataStorage::ADOdb()->Execute("DELETE FROM `" . DB_PREFIX . "_servers` WHERE sid = $sid");
+	$query2 = \MaterialAdmin\DataStorage::ADOdb()->Execute("DELETE FROM `" . DB_PREFIX . "_servers_groups` WHERE server_id = $sid");
+    $query3 = \MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE `" . DB_PREFIX . "_admins_servers_groups` SET server_id = -1 WHERE server_id = $sid");
 
-	$query = $GLOBALS['db']->GetRow("SELECT count(sid) AS cnt FROM `" . DB_PREFIX . "_servers`");
+	$query = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT count(sid) AS cnt FROM `" . DB_PREFIX . "_servers`");
 	$objResponse->addScript("$('srvcount').setHTML('" . $query['cnt'] . "');");
 
 
@@ -626,10 +626,10 @@ function RemoveMod($mid)
 	$mid = (int)$mid;
 	$objResponse->addScript("SlideUp('mid_$mid');");
 
-	$modicon = $GLOBALS['db']->GetRow("SELECT icon, name FROM `" . DB_PREFIX . "_mods` WHERE mid = '" . $mid . "';");
+	$modicon = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT icon, name FROM `" . DB_PREFIX . "_mods` WHERE mid = '" . $mid . "';");
 	@unlink(SB_ICONS."/".$modicon['icon']);
 
-	$query1 = $GLOBALS['db']->Execute("DELETE FROM `" . DB_PREFIX . "_mods` WHERE mid = '" . $mid . "'");
+	$query1 = \MaterialAdmin\DataStorage::ADOdb()->Execute("DELETE FROM `" . DB_PREFIX . "_mods` WHERE mid = '" . $mid . "'");
 
 	if($query1)
 	{
@@ -652,19 +652,19 @@ function RemoveAdmin($aid)
 		return $objResponse;
 	}
 	$aid = (int)$aid;
-	$gid = $GLOBALS['db']->GetRow("SELECT gid, authid, extraflags, user FROM `" . DB_PREFIX . "_admins` WHERE aid = $aid");
+	$gid = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT gid, authid, extraflags, user FROM `" . DB_PREFIX . "_admins` WHERE aid = $aid");
 	if((intval($gid[2]) & ADMIN_OWNER) != 0)
 	{
 		$objResponse->addAlert("Ошибка: Вы не можете удалить владельца.");
 		return $objResponse;
 	}
 
-	$delquery = $GLOBALS['db']->Execute(sprintf("DELETE FROM `%s_admins` WHERE aid = %d LIMIT 1", DB_PREFIX, $aid));
+	$delquery = \MaterialAdmin\DataStorage::ADOdb()->Execute(sprintf("DELETE FROM `%s_admins` WHERE aid = %d LIMIT 1", DB_PREFIX, $aid));
 	if($delquery) {
 		if(isset($GLOBALS['config']['config.enableadminrehashing']) && $GLOBALS['config']['config.enableadminrehashing'] == 1)
 		{
 			// rehash the admins for the servers where this admin was on
-			$serveraccessq = $GLOBALS['db']->GetAll("SELECT s.sid FROM `".DB_PREFIX."_servers` s
+			$serveraccessq = \MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT s.sid FROM `".DB_PREFIX."_servers` s
 												LEFT JOIN `".DB_PREFIX."_admins_servers_groups` asg ON asg.admin_id = '".(int)$aid."'
 												LEFT JOIN `".DB_PREFIX."_servers_groups` sg ON sg.group_id = asg.srv_group_id
 												WHERE ((asg.server_id != '-1' AND asg.srv_group_id = '-1')
@@ -679,10 +679,10 @@ function RemoveAdmin($aid)
 			$rehashing = true;
 		}
 
-		$GLOBALS['db']->Execute(sprintf("DELETE FROM `%s_admins_servers_groups` WHERE admin_id = %d", DB_PREFIX, $aid));
+		\MaterialAdmin\DataStorage::ADOdb()->Execute(sprintf("DELETE FROM `%s_admins_servers_groups` WHERE admin_id = %d", DB_PREFIX, $aid));
  	}
 
-	$query = $GLOBALS['db']->GetRow("SELECT count(aid) AS cnt FROM `" . DB_PREFIX . "_admins`");
+	$query = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT count(aid) AS cnt FROM `" . DB_PREFIX . "_admins`");
 	$objResponse->addScript("SlideUp('aid_$aid');");
 	$objResponse->addScript("$('admincount').setHTML('" . $query['cnt'] . "');");
 	if($delquery)
@@ -786,7 +786,7 @@ function AddServer($ip, $port, $rcon, $rcon2, $mod, $enabled, $group, $group_nam
 		return $objResponse;
 	
 	// Check for dublicates afterwards
-	$chk = $GLOBALS['db']->GetRow('SELECT sid FROM `'.DB_PREFIX.'_servers` WHERE ip = ? AND port = ?;', array($ip, (int)$port));
+	$chk = \MaterialAdmin\DataStorage::ADOdb()->GetRow('SELECT sid FROM `'.DB_PREFIX.'_servers` WHERE ip = ? AND port = ?;', array($ip, (int)$port));
 	if($chk)
 	{
 		$objResponse->addScript("ShowBox('Ошибка', 'Введённый сервер уже существует в базе.', 'red');");
@@ -803,17 +803,17 @@ function AddServer($ip, $port, $rcon, $rcon2, $mod, $enabled, $group, $group_nam
 	$enable = ($enabled=="true"?1:0);
 
 	// Add the server
-	$addserver = $GLOBALS['db']->Prepare("INSERT INTO ".DB_PREFIX."_servers (`sid`, `ip`, `port`, `rcon`, `modid`, `enabled`)
+	$addserver = \MaterialAdmin\DataStorage::ADOdb()->Prepare("INSERT INTO ".DB_PREFIX."_servers (`sid`, `ip`, `port`, `rcon`, `modid`, `enabled`)
 										  VALUES (?,?,?,?,?,?)");
-	$GLOBALS['db']->Execute($addserver,array($sid, $ip, (int)$port, $rcon, $mod, $enable));
+	\MaterialAdmin\DataStorage::ADOdb()->Execute($addserver,array($sid, $ip, (int)$port, $rcon, $mod, $enable));
 
 	// Add server to each group specified
 	$groups = explode(",", $group);
-	$addtogrp = $GLOBALS['db']->Prepare("INSERT INTO ".DB_PREFIX."_servers_groups (`server_id`, `group_id`) VALUES (?,?)");
+	$addtogrp = \MaterialAdmin\DataStorage::ADOdb()->Prepare("INSERT INTO ".DB_PREFIX."_servers_groups (`server_id`, `group_id`) VALUES (?,?)");
 	foreach($groups AS $g)
 	{
 		if($g)
-			$GLOBALS['db']->Execute($addtogrp,array($sid, $g));
+			\MaterialAdmin\DataStorage::ADOdb()->Execute($addtogrp,array($sid, $g));
 	}
 
 
@@ -951,14 +951,14 @@ function AddAdmin_pay($mask, $srv_mask, $a_name, $a_steam, $a_email, $a_password
 	$a_code = RemoveCode($a_code);
 	$a_code = preg_replace("/[^0-9]/", '', $a_code);
 	
-	$srv_sql_val = $GLOBALS['db']->GetOne("SELECT `servers` FROM `" . DB_PREFIX . "_vay4er` WHERE `value` = '".$a_code."'");
+	$srv_sql_val = \MaterialAdmin\DataStorage::ADOdb()->GetOne("SELECT `servers` FROM `" . DB_PREFIX . "_vay4er` WHERE `value` = '".$a_code."'");
 	if($srv_sql_val == "-1"){
 		$singlesrv = "";
 	}elseif((stristr($srv_sql_val, ',') && stristr($srv_sql_val, 's')) == TRUE){
 		$singlesrv = $srv_sql_val;
 	}
 	
-	$qwe = $GLOBALS['db']->GetOne("SELECT `activ` FROM `" . DB_PREFIX . "_vay4er` WHERE `value` = '".$a_code."'");
+	$qwe = \MaterialAdmin\DataStorage::ADOdb()->GetOne("SELECT `activ` FROM `" . DB_PREFIX . "_vay4er` WHERE `value` = '".$a_code."'");
 	if($qwe == "0" || $qwe != "1"){
 		$objResponse->addScript("ShowBox('Активация', 'Ваш ваучер уже был успешно активирован! Повторная активация - невозможна. Переадресация...', 'red', 'index.php', false);");
 		$log = new CSystemLog("w", "Ваучер", $a_name . " пытался активировать ваучер повторно.");
@@ -966,7 +966,7 @@ function AddAdmin_pay($mask, $srv_mask, $a_name, $a_steam, $a_email, $a_password
 		exit();
 	}
 	
-	$pay_days_sql = $GLOBALS['db']->GetOne("SELECT `days` FROM `" . DB_PREFIX . "_vay4er` WHERE `value` = '".$a_code."'");
+	$pay_days_sql = \MaterialAdmin\DataStorage::ADOdb()->GetOne("SELECT `days` FROM `" . DB_PREFIX . "_vay4er` WHERE `value` = '".$a_code."'");
 	if(!$pay_days_sql == "0"){
 		$pay_days_sql = (time() + $pay_days_sql * 86400);
 	}
@@ -1265,9 +1265,9 @@ function AddAdmin_pay($mask, $srv_mask, $a_name, $a_steam, $a_email, $a_password
 	// Chose to create a new webgroup
 	if($a_wg == 'n')
 	{
-		$add_webgroup = $GLOBALS['db']->Execute("INSERT INTO ".DB_PREFIX."_groups(type, name, flags)
+		$add_webgroup = \MaterialAdmin\DataStorage::ADOdb()->Execute("INSERT INTO ".DB_PREFIX."_groups(type, name, flags)
 										VALUES (?,?,?)", array(1, $a_webname, $mask));
-		$web_group = (int)$GLOBALS['db']->Insert_ID();
+		$web_group = (int)\MaterialAdmin\DataStorage::ADOdb()->Insert_ID();
 		
 		// We added those permissons to the group, so don't add them as custom permissions again
 		$mask = 0;
@@ -1287,11 +1287,11 @@ function AddAdmin_pay($mask, $srv_mask, $a_name, $a_steam, $a_email, $a_password
 	// Chose to create a new server admin group
 	if($a_sg == 'n')
 	{
-		$add_servergroup = $GLOBALS['db']->Execute("INSERT INTO ".DB_PREFIX."_srvgroups(immunity, flags, name, groups_immune)
+		$add_servergroup = \MaterialAdmin\DataStorage::ADOdb()->Execute("INSERT INTO ".DB_PREFIX."_srvgroups(immunity, flags, name, groups_immune)
 					VALUES (?,?,?,?)", array($immunity, $srv_mask, $a_servername, " "));
 		
 		$server_admin_group = $a_servername;
-		$server_admin_group_int = (int)$GLOBALS['db']->Insert_ID();
+		$server_admin_group_int = (int)\MaterialAdmin\DataStorage::ADOdb()->Insert_ID();
 		
 		// We added those permissons to the group, so don't add them as custom permissions again
 		$srv_mask = "";
@@ -1299,7 +1299,7 @@ function AddAdmin_pay($mask, $srv_mask, $a_name, $a_steam, $a_email, $a_password
 	// Chose an existing group
 	else if($a_sg != 'c' && $a_sg > 0)
 	{
-		$server_admin_group = $GLOBALS['db']->GetOne("SELECT `name` FROM ".DB_PREFIX."_srvgroups WHERE id = '" . (int)$a_sg . "'");
+		$server_admin_group = \MaterialAdmin\DataStorage::ADOdb()->GetOne("SELECT `name` FROM ".DB_PREFIX."_srvgroups WHERE id = '" . (int)$a_sg . "'");
 		$server_admin_group_int = (int)$a_sg;
 	}
 	// Custom permissions -> no group
@@ -1309,22 +1309,22 @@ function AddAdmin_pay($mask, $srv_mask, $a_name, $a_steam, $a_email, $a_password
 		$server_admin_group_int = -1;
 	}
 
-	//$q_del = $GLOBALS['db']->Execute("DELETE FROM `" . DB_PREFIX . "_vay4er` WHERE `value` = '".$a_code."'");
-	$q_del = $GLOBALS['db']->Execute("UPDATE `" . DB_PREFIX . "_vay4er` SET `value` = '".$a_code."', `activ` = '0' WHERE `value` = '".$a_code."'");
+	//$q_del = \MaterialAdmin\DataStorage::ADOdb()->Execute("DELETE FROM `" . DB_PREFIX . "_vay4er` WHERE `value` = '".$a_code."'");
+	$q_del = \MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE `" . DB_PREFIX . "_vay4er` SET `value` = '".$a_code."', `activ` = '0' WHERE `value` = '".$a_code."'");
 	if($q_del){
 		// Add the admin
-		$web_gruop_id = $GLOBALS['db']->GetOne("SELECT `group_web` FROM ".DB_PREFIX."_vay4er WHERE `value` = '".$a_code."'");
-		$web_gruop_sql = $GLOBALS['db']->GetOne("SELECT `gid` FROM ".DB_PREFIX."_groups WHERE `name` = '".$web_gruop_id."'");
+		$web_gruop_id = \MaterialAdmin\DataStorage::ADOdb()->GetOne("SELECT `group_web` FROM ".DB_PREFIX."_vay4er WHERE `value` = '".$a_code."'");
+		$web_gruop_sql = \MaterialAdmin\DataStorage::ADOdb()->GetOne("SELECT `gid` FROM ".DB_PREFIX."_groups WHERE `name` = '".$web_gruop_id."'");
 		if($web_gruop_id == "" || $web_gruop_sql == "" ){
 			$web_gruop_sql = "0";
 		}
-		$server_admin_group = $GLOBALS['db']->GetOne("SELECT `group_srv` FROM ".DB_PREFIX."_vay4er WHERE `value` = '".$a_code."'");
+		$server_admin_group = \MaterialAdmin\DataStorage::ADOdb()->GetOne("SELECT `group_srv` FROM ".DB_PREFIX."_vay4er WHERE `value` = '".$a_code."'");
 		if($server_admin_group == ""){
 			$web_gruop_sql = "";
 		}
 		$aid = $userbank->AddAdmin($a_name, $a_steam, $a_password, $a_email, $web_gruop_sql, $mask, $server_admin_group, $srv_mask, $immunity, $a_serverpass, $pay_days_sql, $skype, '', $vk);
 		setcookie("aid", $aid, time()+LOGIN_COOKIE_LIFETIME);
-		setcookie("password", $GLOBALS['db']->GetOne("SELECT `password` FROM `".DB_PREFIX."_admins` WHERE `aid` = '".$aid."'"), time()+LOGIN_COOKIE_LIFETIME);
+		setcookie("password", \MaterialAdmin\DataStorage::ADOdb()->GetOne("SELECT `password` FROM `".DB_PREFIX."_admins` WHERE `aid` = '".$aid."'"), time()+LOGIN_COOKIE_LIFETIME);
 	}else{
 		exit();
 	}
@@ -1332,25 +1332,25 @@ function AddAdmin_pay($mask, $srv_mask, $a_name, $a_steam, $a_email, $a_password
 	{
 		// Grant permissions to the selected server groups
 		$srv_groups = explode(",", $server);
-		$addtosrvgrp = $GLOBALS['db']->Prepare("INSERT INTO ".DB_PREFIX."_admins_servers_groups(admin_id,group_id,srv_group_id,server_id) VALUES (?,?,?,?)");
+		$addtosrvgrp = \MaterialAdmin\DataStorage::ADOdb()->Prepare("INSERT INTO ".DB_PREFIX."_admins_servers_groups(admin_id,group_id,srv_group_id,server_id) VALUES (?,?,?,?)");
 		foreach($srv_groups AS $srv_group)
 		{
 			if(!empty($srv_group))
-				$GLOBALS['db']->Execute($addtosrvgrp,array($aid, $server_admin_group_int, substr($srv_group, 1), '-1'));
+				\MaterialAdmin\DataStorage::ADOdb()->Execute($addtosrvgrp,array($aid, $server_admin_group_int, substr($srv_group, 1), '-1'));
 		}
 		
 		// Grant permissions to individual servers
 		$srv_arr = explode(",", $singlesrv);
-		$addtosrv = $GLOBALS['db']->Prepare("INSERT INTO ".DB_PREFIX."_admins_servers_groups(admin_id,group_id,srv_group_id,server_id) VALUES (?,?,?,?)");
+		$addtosrv = \MaterialAdmin\DataStorage::ADOdb()->Prepare("INSERT INTO ".DB_PREFIX."_admins_servers_groups(admin_id,group_id,srv_group_id,server_id) VALUES (?,?,?,?)");
 		foreach($srv_arr AS $server)
 		{
 			if(!empty($server))
-				$GLOBALS['db']->Execute($addtosrv,array($aid, $server_admin_group_int, '-1', substr($server, 1)));
+				\MaterialAdmin\DataStorage::ADOdb()->Execute($addtosrv,array($aid, $server_admin_group_int, '-1', substr($server, 1)));
 		}
 		if(isset($GLOBALS['config']['config.enableadminrehashing']) && $GLOBALS['config']['config.enableadminrehashing'] == 1)
 		{
 			// rehash the admins on the servers
-			$serveraccessq = $GLOBALS['db']->GetAll("SELECT s.sid FROM `".DB_PREFIX."_servers` s
+			$serveraccessq = \MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT s.sid FROM `".DB_PREFIX."_servers` s
 												LEFT JOIN `".DB_PREFIX."_admins_servers_groups` asg ON asg.admin_id = '".(int)$aid."'
 												LEFT JOIN `".DB_PREFIX."_servers_groups` sg ON sg.group_id = asg.srv_group_id
 												WHERE ((asg.server_id != '-1' AND asg.srv_group_id = '-1')
@@ -1718,9 +1718,9 @@ function AddAdmin($mask, $srv_mask, $a_name, $a_steam, $a_email, $a_password, $a
 	// Chose to create a new webgroup
 	if($a_wg == 'n')
 	{
-		$add_webgroup = $GLOBALS['db']->Execute("INSERT INTO ".DB_PREFIX."_groups(type, name, flags)
+		$add_webgroup = \MaterialAdmin\DataStorage::ADOdb()->Execute("INSERT INTO ".DB_PREFIX."_groups(type, name, flags)
 										VALUES (?,?,?)", array(1, $a_webname, $mask));
-		$web_group = (int)$GLOBALS['db']->Insert_ID();
+		$web_group = (int)\MaterialAdmin\DataStorage::ADOdb()->Insert_ID();
 		
 		// We added those permissons to the group, so don't add them as custom permissions again
 		$mask = 0;
@@ -1740,11 +1740,11 @@ function AddAdmin($mask, $srv_mask, $a_name, $a_steam, $a_email, $a_password, $a
 	// Chose to create a new server admin group
 	if($a_sg == 'n')
 	{
-		$add_servergroup = $GLOBALS['db']->Execute("INSERT INTO ".DB_PREFIX."_srvgroups(immunity, flags, name, groups_immune)
+		$add_servergroup = \MaterialAdmin\DataStorage::ADOdb()->Execute("INSERT INTO ".DB_PREFIX."_srvgroups(immunity, flags, name, groups_immune)
 					VALUES (?,?,?,?)", array($immunity, $srv_mask, $a_servername, " "));
 		
 		$server_admin_group = $a_servername;
-		$server_admin_group_int = (int)$GLOBALS['db']->Insert_ID();
+		$server_admin_group_int = (int)\MaterialAdmin\DataStorage::ADOdb()->Insert_ID();
 		
 		// We added those permissons to the group, so don't add them as custom permissions again
 		$srv_mask = "";
@@ -1752,7 +1752,7 @@ function AddAdmin($mask, $srv_mask, $a_name, $a_steam, $a_email, $a_password, $a
 	// Chose an existing group
 	else if($a_sg != 'c' && $a_sg > 0)
 	{
-		$server_admin_group = $GLOBALS['db']->GetOne("SELECT `name` FROM ".DB_PREFIX."_srvgroups WHERE id = '" . (int)$a_sg . "'");
+		$server_admin_group = \MaterialAdmin\DataStorage::ADOdb()->GetOne("SELECT `name` FROM ".DB_PREFIX."_srvgroups WHERE id = '" . (int)$a_sg . "'");
 		$server_admin_group_int = (int)$a_sg;
 	}
 	// Custom permissions -> no group
@@ -1778,25 +1778,25 @@ function AddAdmin($mask, $srv_mask, $a_name, $a_steam, $a_email, $a_password, $a
 	{
 		// Grant permissions to the selected server groups
 		$srv_groups = explode(",", $server);
-		$addtosrvgrp = $GLOBALS['db']->Prepare("INSERT INTO ".DB_PREFIX."_admins_servers_groups(admin_id,group_id,srv_group_id,server_id) VALUES (?,?,?,?)");
+		$addtosrvgrp = \MaterialAdmin\DataStorage::ADOdb()->Prepare("INSERT INTO ".DB_PREFIX."_admins_servers_groups(admin_id,group_id,srv_group_id,server_id) VALUES (?,?,?,?)");
 		foreach($srv_groups AS $srv_group)
 		{
 			if(!empty($srv_group))
-				$GLOBALS['db']->Execute($addtosrvgrp,array($aid, $server_admin_group_int, substr($srv_group, 1), '-1'));
+				\MaterialAdmin\DataStorage::ADOdb()->Execute($addtosrvgrp,array($aid, $server_admin_group_int, substr($srv_group, 1), '-1'));
 		}
 		
 		// Grant permissions to individual servers
 		$srv_arr = explode(",", $singlesrv);
-		$addtosrv = $GLOBALS['db']->Prepare("INSERT INTO ".DB_PREFIX."_admins_servers_groups(admin_id,group_id,srv_group_id,server_id) VALUES (?,?,?,?)");
+		$addtosrv = \MaterialAdmin\DataStorage::ADOdb()->Prepare("INSERT INTO ".DB_PREFIX."_admins_servers_groups(admin_id,group_id,srv_group_id,server_id) VALUES (?,?,?,?)");
 		foreach($srv_arr AS $server)
 		{
 			if(!empty($server))
-				$GLOBALS['db']->Execute($addtosrv,array($aid, $server_admin_group_int, '-1', substr($server, 1)));
+				\MaterialAdmin\DataStorage::ADOdb()->Execute($addtosrv,array($aid, $server_admin_group_int, '-1', substr($server, 1)));
 		}
 		if(isset($GLOBALS['config']['config.enableadminrehashing']) && $GLOBALS['config']['config.enableadminrehashing'] == 1)
 		{
 			// rehash the admins on the servers
-			$serveraccessq = $GLOBALS['db']->GetAll("SELECT s.sid FROM `".DB_PREFIX."_servers` s
+			$serveraccessq = \MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT s.sid FROM `".DB_PREFIX."_servers` s
 												LEFT JOIN `".DB_PREFIX."_admins_servers_groups` asg ON asg.admin_id = '".(int)$aid."'
 												LEFT JOIN `".DB_PREFIX."_servers_groups` sg ON sg.group_id = asg.srv_group_id
 												WHERE ((asg.server_id != '-1' AND asg.srv_group_id = '-1')
@@ -1829,8 +1829,8 @@ function ServerHostPlayers($sid, $type="servers", $obId="", $tplsid="", $open=""
 	
 	$sid = (int)$sid;
 
-	//$res = $GLOBALS['db']->GetRow("SELECT sid, ip, port FROM ".DB_PREFIX."_servers WHERE sid = $sid");
-	$res = $GLOBALS['db']->GetRow("SELECT se.sid, se.ip, se.port, se.modid, md.modfolder FROM ".DB_PREFIX."_servers se LEFT JOIN ".DB_PREFIX."_mods md ON md.mid=se.modid WHERE se.sid = $sid");
+	//$res = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT sid, ip, port FROM ".DB_PREFIX."_servers WHERE sid = $sid");
+	$res = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT se.sid, se.ip, se.port, se.modid, md.modfolder FROM ".DB_PREFIX."_servers se LEFT JOIN ".DB_PREFIX."_mods md ON md.mid=se.modid WHERE se.sid = $sid");
 	if(empty($res[1]) || empty($res[2]))
 		return $objResponse;
 	$info = array();
@@ -1896,7 +1896,7 @@ function ServerHostPlayers($sid, $type="servers", $obId="", $tplsid="", $open=""
 							// add players
 							$playercount = 0;
 							
-							$needAddPlayerManaging = (($userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_BAN) && $GLOBALS['db']->GetOne(sprintf("SELECT COUNT(*) FROM `%s_admins_servers_groups` WHERE `admin_id` = %d AND `server_id` = %d", DB_PREFIX, $userbank->GetAid(), (int)$sid)) == 1) || $userbank->HasAccess(ADMIN_OWNER));
+							$needAddPlayerManaging = (($userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_BAN) && \MaterialAdmin\DataStorage::ADOdb()->GetOne(sprintf("SELECT COUNT(*) FROM `%s_admins_servers_groups` WHERE `admin_id` = %d AND `server_id` = %d", DB_PREFIX, $userbank->GetAid(), (int)$sid)) == 1) || $userbank->HasAccess(ADMIN_OWNER));
 							
 							if($needAddPlayerManaging) {
 								$dl = "a";
@@ -2047,7 +2047,7 @@ function ServerHostProperty($sid, $obId, $obProp, $trunchostname)
     $obProp = htmlspecialchars($obProp);
     $trunchostname = (int)$trunchostname;
 
-	$res = $GLOBALS['db']->GetRow("SELECT ip, port FROM ".DB_PREFIX."_servers WHERE sid = $sid");
+	$res = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT ip, port FROM ".DB_PREFIX."_servers WHERE sid = $sid");
 	if(empty($res[0]) || empty($res[1]))
 		return $objResponse;
 	$info = array();
@@ -2078,7 +2078,7 @@ function ServerHostPlayers_list($sid, $type="servers", $obId="")
 	{
 		$sid = (int)$sids[$i];
 
-		$res = $GLOBALS['db']->GetRow("SELECT sid, ip, port FROM ".DB_PREFIX."_servers WHERE sid = $sid");
+		$res = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT sid, ip, port FROM ".DB_PREFIX."_servers WHERE sid = $sid");
 		if(empty($res[1]) || empty($res[2]))
 			return $objResponse;
 		$info = array();
@@ -2113,7 +2113,7 @@ function ServerPlayers($sid)
 
 	$sid = (int)$sid;
 
-	$res = $GLOBALS['db']->GetRow("SELECT sid, ip, port FROM ".DB_PREFIX."_servers WHERE sid = $sid");
+	$res = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT sid, ip, port FROM ".DB_PREFIX."_servers WHERE sid = $sid");
 	if(empty($res[1]) || empty($res[2]))
 	{
 		$objResponse->addAlert('IP или порт не назначен :o');
@@ -2157,7 +2157,7 @@ function KickPlayer($sid, $name)
 
 	require INCLUDES_PATH.'/CServerControl.php';
 	//get the server data
-	$data = $GLOBALS['db']->GetRow("SELECT ip, port, rcon FROM ".DB_PREFIX."_servers WHERE sid = '".$sid."';");
+	$data = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT ip, port, rcon FROM ".DB_PREFIX."_servers WHERE sid = '".$sid."';");
 	if(empty($data['rcon'])) {
 		$objResponse->addScript("ShowBox('Ошибка', 'Невозможно кикнуть ".addslashes(htmlspecialchars($name)).". Не задан РКОН пароль!', 'red', '', true);");
 		return $objResponse;
@@ -2168,7 +2168,7 @@ function KickPlayer($sid, $name)
 
 	if(!$r->AuthRcon($data['rcon']))
 	{
-		$GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_servers SET rcon = '' WHERE sid = '".$sid."';");
+		\MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE ".DB_PREFIX."_servers SET rcon = '' WHERE sid = '".$sid."';");
 		$objResponse->addScript("ShowBox('Ошибка', 'Невозможно кикнуть ".addslashes(htmlspecialchars($name)).". Неверный РКОН пароль!', 'red', '', true);");
 		return $objResponse;
 	}
@@ -2194,7 +2194,7 @@ function KickPlayer($sid, $name)
 			$steam2 = renderSteam2(getAccountId($steam), 0);
 		}
 		// check for immunity
-		$admin = $GLOBALS['db']->GetRow("SELECT a.immunity AS pimmune, g.immunity AS gimmune FROM `".DB_PREFIX."_admins` AS a LEFT JOIN `".DB_PREFIX."_srvgroups` AS g ON g.name = a.srv_group WHERE authid = '".$steam2."' LIMIT 1;");
+		$admin = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT a.immunity AS pimmune, g.immunity AS gimmune FROM `".DB_PREFIX."_admins` AS a LEFT JOIN `".DB_PREFIX."_srvgroups` AS g ON g.name = a.srv_group WHERE authid = '".$steam2."' LIMIT 1;");
 		if($admin && $admin['gimmune']>$admin['pimmune'])
 			$immune = $admin['gimmune'];
 		elseif($admin)
@@ -2295,7 +2295,7 @@ function AddBan($nickname, $type, $steam, $ip, $length, $dfile, $dname, $reason,
 	PruneBans();
 	if((int)$type==0) {
 		// Check if the new steamid is already banned
-		$chk = $GLOBALS['db']->GetRow("SELECT count(bid) AS count FROM ".DB_PREFIX."_bans WHERE authid = ? AND (length = 0 OR ends > UNIX_TIMESTAMP()) AND RemovedBy IS NULL AND type = '0'", array($steam));
+		$chk = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT count(bid) AS count FROM ".DB_PREFIX."_bans WHERE authid = ? AND (length = 0 OR ends > UNIX_TIMESTAMP()) AND RemovedBy IS NULL AND type = '0'", array($steam));
 
 		if(intval($chk[0]) > 0)
 		{
@@ -2313,7 +2313,7 @@ function AddBan($nickname, $type, $steam, $ip, $length, $dfile, $dname, $reason,
             }
 	}
 	if((int)$type==1) {
-		$chk = $GLOBALS['db']->GetRow("SELECT count(bid) AS count FROM ".DB_PREFIX."_bans WHERE ip = ? AND (length = 0 OR ends > UNIX_TIMESTAMP()) AND RemovedBy IS NULL AND type = '1'", array($ip));
+		$chk = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT count(bid) AS count FROM ".DB_PREFIX."_bans WHERE ip = ? AND (length = 0 OR ends > UNIX_TIMESTAMP()) AND RemovedBy IS NULL AND type = '1'", array($ip));
 
 		if(intval($chk[0]) > 0)
 		{
@@ -2322,9 +2322,9 @@ function AddBan($nickname, $type, $steam, $ip, $length, $dfile, $dname, $reason,
 		}
 	}
 
-	$pre = $GLOBALS['db']->Prepare("INSERT INTO ".DB_PREFIX."_bans(created,type,ip,authid,name,ends,length,reason,aid,adminIp ) VALUES
+	$pre = \MaterialAdmin\DataStorage::ADOdb()->Prepare("INSERT INTO ".DB_PREFIX."_bans(created,type,ip,authid,name,ends,length,reason,aid,adminIp ) VALUES
 									(UNIX_TIMESTAMP(),?,?,?,?,(UNIX_TIMESTAMP() + ?),?,?,?,?)");
-	$GLOBALS['db']->Execute($pre,array($type,
+	\MaterialAdmin\DataStorage::ADOdb()->Execute($pre,array($type,
 									   $ip,
 									   $steam,
 									   $nickname,
@@ -2333,20 +2333,20 @@ function AddBan($nickname, $type, $steam, $ip, $length, $dfile, $dname, $reason,
 									   $reason,
 									   $userbank->GetAid(),
 									   $_SERVER['REMOTE_ADDR']));
-	$subid = $GLOBALS['db']->Insert_ID();
+	$subid = \MaterialAdmin\DataStorage::ADOdb()->Insert_ID();
 
 	if($dname && $dfile && preg_match('/^[a-z0-9]*$/i', $dfile))
 	//Thanks jsifuentes: http://jacobsifuentes.com/sourcebans-1-4-lfi-exploit/
 	//Official Fix: https://code.google.com/p/sourcebans/source/detail?r=165
 	{
-		$GLOBALS['db']->Execute("INSERT INTO ".DB_PREFIX."_demos(demid,demtype,filename,origname)
+		\MaterialAdmin\DataStorage::ADOdb()->Execute("INSERT INTO ".DB_PREFIX."_demos(demid,demtype,filename,origname)
 						     VALUES(?,'B', ?, ?)", array((int)$subid, $dfile, $dname));
 	}elseif(!$dname && !$dfile && $udemo){
-		$GLOBALS['db']->Execute("INSERT INTO ".DB_PREFIX."_demos(demid,demtype,filename,origname)
+		\MaterialAdmin\DataStorage::ADOdb()->Execute("INSERT INTO ".DB_PREFIX."_demos(demid,demtype,filename,origname)
 						     VALUES(?,'U', '', ?)", array((int)$subid, $udemo));
 	}
 	if($fromsub) {
-		$submail = $GLOBALS['db']->Execute("SELECT name, email FROM ".DB_PREFIX."_submissions WHERE subid = '" . (int)$fromsub . "'");
+		$submail = \MaterialAdmin\DataStorage::ADOdb()->Execute("SELECT name, email FROM ".DB_PREFIX."_submissions WHERE subid = '" . (int)$fromsub . "'");
 		// Send an email when ban is accepted
 		$requri = substr($_SERVER['REQUEST_URI'], 0, strrpos($_SERVER['REQUEST_URI'], ".php")+4);
 		$headers = 'From: submission@' . $_SERVER['HTTP_HOST'] . "\n" .
@@ -2356,10 +2356,10 @@ function AddBan($nickname, $type, $steam, $ip, $length, $dfile, $dname, $reason,
 		$message .= "Ваша заявка на бан подтверждена админом.\nПерейдите по ссылке, чтобы посмотреть банлист.\n\nhttp://" . $_SERVER['HTTP_HOST'] . $requri . "?p=banlist";
 
 		EMail($submail->fields['email'], "[SourceBans] Бан добавлен", $message, $headers);
-		$GLOBALS['db']->Execute("UPDATE `" . DB_PREFIX . "_submissions` SET archiv = '2', archivedby = '".$userbank->GetAid()."' WHERE subid = '" . (int)$fromsub . "'");
+		\MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE `" . DB_PREFIX . "_submissions` SET archiv = '2', archivedby = '".$userbank->GetAid()."' WHERE subid = '" . (int)$fromsub . "'");
 	}
 
-	$GLOBALS['db']->Execute("UPDATE `".DB_PREFIX."_submissions` SET archiv = '3', archivedby = '".$userbank->GetAid()."' WHERE SteamId = ?;", array($steam));
+	\MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE `".DB_PREFIX."_submissions` SET archiv = '3', archivedby = '".$userbank->GetAid()."' WHERE SteamId = ?;", array($steam));
 
 	$kickit = isset($GLOBALS['config']['config.enablekickit']) && $GLOBALS['config']['config.enablekickit'] == "1";
 	if ($kickit)
@@ -2377,8 +2377,8 @@ function SetupBan($subid)
 	$objResponse = new xajaxResponse();
 	$subid = (int)$subid;
 
-	$ban = $GLOBALS['db']->GetRow("SELECT * FROM ".DB_PREFIX."_submissions WHERE subid = $subid");
-	$demo = $GLOBALS['db']->GetRow("SELECT * FROM ".DB_PREFIX."_demos WHERE demid = $subid AND demtype = \"S\"");
+	$ban = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT * FROM ".DB_PREFIX."_submissions WHERE subid = $subid");
+	$demo = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT * FROM ".DB_PREFIX."_demos WHERE demid = $subid AND demtype = \"S\"");
 	// clear any old stuff
 	$objResponse->addScript("$('nickname').value = ''");
 	$objResponse->addScript("$('fromsub').value = ''");
@@ -2411,8 +2411,8 @@ function PrepareReban($bid)
 	$objResponse = new xajaxResponse();
 	$bid = (int)$bid;
 
-	$ban = $GLOBALS['db']->GetRow("SELECT type, ip, authid, name, length, reason FROM ".DB_PREFIX."_bans WHERE bid = '".$bid."';");
-	$demo = $GLOBALS['db']->GetRow("SELECT * FROM ".DB_PREFIX."_demos WHERE demid = '".$bid."' AND demtype = \"B\";");
+	$ban = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT type, ip, authid, name, length, reason FROM ".DB_PREFIX."_bans WHERE bid = '".$bid."';");
+	$demo = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT * FROM ".DB_PREFIX."_demos WHERE demid = '".$bid."' AND demtype = \"B\";");
 	// clear any old stuff
 	$objResponse->addScript("$('nickname').value = ''");
 	$objResponse->addScript("$('ip').value = ''");
@@ -2441,7 +2441,7 @@ function SetupEditServer($sid)
 {
 	$objResponse = new xajaxResponse();
 	$sid = (int)$sid;
-	$server = $GLOBALS['db']->GetRow("SELECT * FROM ".DB_PREFIX."_servers WHERE sid = $sid");
+	$server = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT * FROM ".DB_PREFIX."_servers WHERE sid = $sid");
 
 	// clear any old stuff
 	$objResponse->addScript("$('address').value = ''");
@@ -2502,8 +2502,8 @@ function ChangeAdminsInfos($aid, $vk, $skype)
 	$vk = str_replace(array("http://","https://","/","vk.com"), "", $vk);
 	$skype = RemoveCode($skype);
 	
-	$GLOBALS['db']->Execute("UPDATE `".DB_PREFIX."_admins` SET `vk` = '".$vk."', `skype` = '".$skype."' WHERE `aid` = ?", array((int)$aid));
-	$admname = $GLOBALS['db']->GetRow("SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = ?", array((int)$aid));
+	\MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE `".DB_PREFIX."_admins` SET `vk` = '".$vk."', `skype` = '".$skype."' WHERE `aid` = ?", array((int)$aid));
+	$admname = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = ?", array((int)$aid));
 	$objResponse->addScript("ShowBox('Информация', 'Ваши данные были успешно обновлены!', 'green', 'index.php?p=account');");
 	$log = new CSystemLog("m", "Данные связи изменены", "У адмнистратора ".$admname['user']." успешно были изменены данные на (vk: ".$vk.", skype: ".$skype.")");
 	return $objResponse;
@@ -2521,8 +2521,8 @@ function ChangePassword($aid, $pass)
 		return $objResponse;
 	}
 
-	$GLOBALS['db']->Execute("UPDATE `".DB_PREFIX."_admins` SET `password` = '" . $userbank->encrypt_password($pass) . "' WHERE `aid` = $aid");
-	$admname = $GLOBALS['db']->GetRow("SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = ?", array((int)$aid));
+	\MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE `".DB_PREFIX."_admins` SET `password` = '" . $userbank->encrypt_password($pass) . "' WHERE `aid` = $aid");
+	$admname = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = ?", array((int)$aid));
 	$objResponse->addAlert("Пароль успешно изменен");
 	$objResponse->addRedirect("index.php?p=login", 0);
 	$log = new CSystemLog("m", "Пароль изменен", "Пароль сменен админом (".$admname['user'].")");
@@ -2546,15 +2546,15 @@ function AddMod($name, $folder, $icon, $steam_universe, $enabled)
 	$enabled = ($enabled == "on") ? 1 : 0;
 	
 	// Already there?
-	$check = $GLOBALS['db']->GetRow("SELECT * FROM `" . DB_PREFIX . "_mods` WHERE modfolder = ? OR name = ?;", array($folder, $name));
+	$check = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT * FROM `" . DB_PREFIX . "_mods` WHERE modfolder = ? OR name = ?;", array($folder, $name));
 	if(!empty($check))
 	{
 		$objResponse->addScript("ShowBox('МОД не добавлен', 'МОД использующий такие папку или имя уже существует.', 'red');");
 		return $objResponse;
 	}
 
-	$pre = $GLOBALS['db']->Prepare("INSERT INTO ".DB_PREFIX."_mods(name,icon,modfolder,steam_universe,enabled) VALUES (?,?,?,?,?)");
-	$GLOBALS['db']->Execute($pre,array($name, $icon, $folder, $steam_universe, $enabled));
+	$pre = \MaterialAdmin\DataStorage::ADOdb()->Prepare("INSERT INTO ".DB_PREFIX."_mods(name,icon,modfolder,steam_universe,enabled) VALUES (?,?,?,?,?)");
+	\MaterialAdmin\DataStorage::ADOdb()->Execute($pre,array($name, $icon, $folder, $steam_universe, $enabled));
 
 	$objResponse->addScript("ShowBox('Мод добавлен', 'Игровой МОД успешно добавлен', 'green', 'index.php?p=admin&c=mods');");
 	$objResponse->addScript("TabToReload();");
@@ -2595,7 +2595,7 @@ function EditAdminPerms($aid, $web_flags, $srv_flags)
 	}
 	
 	// Update web stuff
-	$GLOBALS['db']->Execute("UPDATE `".DB_PREFIX."_admins` SET `extraflags` = $web_flags WHERE `aid` = $aid");
+	\MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE `".DB_PREFIX."_admins` SET `extraflags` = $web_flags WHERE `aid` = $aid");
 
 
 	if(strstr($srv_flags, "#"))
@@ -2606,12 +2606,12 @@ function EditAdminPerms($aid, $web_flags, $srv_flags)
 	}
 	$immunity = ($immunity>0) ? $immunity : 0;
 	// Update server stuff
-	$GLOBALS['db']->Execute("UPDATE `".DB_PREFIX."_admins` SET `srv_flags` = ?, `immunity` = ? WHERE `aid` = $aid", array($srv_flags, $immunity));
+	\MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE `".DB_PREFIX."_admins` SET `srv_flags` = ?, `immunity` = ? WHERE `aid` = $aid", array($srv_flags, $immunity));
 
 	if(isset($GLOBALS['config']['config.enableadminrehashing']) && $GLOBALS['config']['config.enableadminrehashing'] == 1)
 	{
 		// rehash the admins on the servers
-		$serveraccessq = $GLOBALS['db']->GetAll("SELECT s.sid FROM `".DB_PREFIX."_servers` s
+		$serveraccessq = \MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT s.sid FROM `".DB_PREFIX."_servers` s
 												LEFT JOIN `".DB_PREFIX."_admins_servers_groups` asg ON asg.admin_id = '".(int)$aid."'
 												LEFT JOIN `".DB_PREFIX."_servers_groups` sg ON sg.group_id = asg.srv_group_id
 												WHERE ((asg.server_id != '-1' AND asg.srv_group_id = '-1')
@@ -2626,7 +2626,7 @@ function EditAdminPerms($aid, $web_flags, $srv_flags)
 		$objResponse->addScript("ShowRehashBox('".implode(",", $allservers)."', 'Разрешения обновлены', 'Разрешения пользователя успешно обновлены', 'green', 'index.php?p=admin&c=admins');TabToReload();");
 	} else
 		$objResponse->addScript("ShowBox('Разрешения обновлены', 'Разрешения пользователя успешно обновлены', 'green', 'index.php?p=admin&c=admins');TabToReload();");
-	$admname = $GLOBALS['db']->GetRow("SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = ?", array((int)$aid));
+	$admname = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = ?", array((int)$aid));
     $log = new CSystemLog("m", "Разрешения обновлены", "Разрешения обновлены для (".$admname['user'].")");
 	return $objResponse;
 }
@@ -2654,11 +2654,11 @@ function EditGroup($gid, $web_flags, $srv_flags, $type, $name, $overrides, $newO
 	$web_flags = (int)$web_flags;
 	if($type == "web" || $type == "server" )
 	// Update web stuff
-	$GLOBALS['db']->Execute("UPDATE `".DB_PREFIX."_groups` SET `flags` = ?, `name` = ? WHERE `gid` = $gid", array($web_flags, $name));
+	\MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE `".DB_PREFIX."_groups` SET `flags` = ?, `name` = ? WHERE `gid` = $gid", array($web_flags, $name));
 
 	if($type == "srv")
 	{
-		$gname = $GLOBALS['db']->GetRow("SELECT name FROM ".DB_PREFIX."_srvgroups WHERE id = $gid");
+		$gname = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT name FROM ".DB_PREFIX."_srvgroups WHERE id = $gid");
 
 		if(strstr($srv_flags, "#"))
 		{
@@ -2669,12 +2669,12 @@ function EditGroup($gid, $web_flags, $srv_flags, $type, $name, $overrides, $newO
 		$immunity = ($immunity>0) ? $immunity : 0;
 
 		// Update server stuff
-		$GLOBALS['db']->Execute("UPDATE `".DB_PREFIX."_srvgroups` SET `flags` = ?, `name` = ?, `immunity` = ? WHERE `id` = $gid", array($srv_flags, $name, $immunity));
+		\MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE `".DB_PREFIX."_srvgroups` SET `flags` = ?, `name` = ?, `immunity` = ? WHERE `id` = $gid", array($srv_flags, $name, $immunity));
 
-		$oldname = $GLOBALS['db']->GetAll("SELECT aid FROM ".DB_PREFIX."_admins WHERE srv_group = ?", array($gname['name']));
+		$oldname = \MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT aid FROM ".DB_PREFIX."_admins WHERE srv_group = ?", array($gname['name']));
 		foreach($oldname as $o)
 		{
-			$GLOBALS['db']->Execute("UPDATE `".DB_PREFIX."_admins` SET `srv_group` = ? WHERE `aid` = '" . (int)$o['aid'] . "'", array($name));
+			\MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE `".DB_PREFIX."_admins` SET `srv_group` = ? WHERE `aid` = '" . (int)$o['aid'] . "'", array($name));
 		}
 		
 		// Update group overrides
@@ -2690,12 +2690,12 @@ function EditGroup($gid, $web_flags, $srv_flags, $type, $name, $overrides, $newO
 				// Wants to delete this override?
 				if(empty($override['name']))
 				{
-					$GLOBALS['db']->Execute("DELETE FROM `" . DB_PREFIX . "_srvgroups_overrides` WHERE id = ?;", array($id));
+					\MaterialAdmin\DataStorage::ADOdb()->Execute("DELETE FROM `" . DB_PREFIX . "_srvgroups_overrides` WHERE id = ?;", array($id));
 					continue;
 				}
 				
 				// Check for duplicates
-				$chk = $GLOBALS['db']->GetAll("SELECT * FROM `" . DB_PREFIX . "_srvgroups_overrides` WHERE name = ? AND type = ? AND group_id = ? AND id != ?", array($override['name'], $override['type'], $gid, $id));
+				$chk = \MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT * FROM `" . DB_PREFIX . "_srvgroups_overrides` WHERE name = ? AND type = ? AND group_id = ? AND id != ?", array($override['name'], $override['type'], $gid, $id));
 				if(!empty($chk))
 				{
 					$objResponse->addScript("ShowBox('Ошибка', 'Переопределение с таким именем уже существует \\\"" . htmlspecialchars(addslashes($override['name'])) . "\\\" для выбранного типа..', 'red', '', true);");
@@ -2703,7 +2703,7 @@ function EditGroup($gid, $web_flags, $srv_flags, $type, $name, $overrides, $newO
 				}
 				
 				// Edit the override
-				$GLOBALS['db']->Execute("UPDATE `" . DB_PREFIX . "_srvgroups_overrides` SET name = ?, type = ?, access = ? WHERE id = ?;", array($override['name'], $override['type'], $override['access'], $id));
+				\MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE `" . DB_PREFIX . "_srvgroups_overrides` SET name = ?, type = ?, access = ? WHERE id = ?;", array($override['name'], $override['type'], $override['access'], $id));
 			}
 		}
 		
@@ -2713,7 +2713,7 @@ function EditGroup($gid, $web_flags, $srv_flags, $type, $name, $overrides, $newO
 			if(($newOverride['type'] == "command" || $newOverride['type'] == "group") && !empty($newOverride['name']))
 			{
 				// Check for duplicates
-				$chk = $GLOBALS['db']->GetAll("SELECT * FROM `" . DB_PREFIX . "_srvgroups_overrides` WHERE name = ? AND type = ? AND group_id = ?", array($newOverride['name'], $newOverride['type'], $gid));
+				$chk = \MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT * FROM `" . DB_PREFIX . "_srvgroups_overrides` WHERE name = ? AND type = ? AND group_id = ?", array($newOverride['name'], $newOverride['type'], $gid));
 				if(!empty($chk))
 				{
 					$objResponse->addScript("ShowBox('Ошибка', 'Переопределение с таким именем уже существует \\\"" . htmlspecialchars(addslashes($newOverride['name'])) . "\\\" для выбранного типа..', 'red', '', true);");
@@ -2721,14 +2721,14 @@ function EditGroup($gid, $web_flags, $srv_flags, $type, $name, $overrides, $newO
 				}
 				
 				// Insert the new override
-				$GLOBALS['db']->Execute("INSERT INTO `" . DB_PREFIX . "_srvgroups_overrides` (group_id, type, name, access) VALUES (?, ?, ?, ?);", array($gid, $newOverride['type'], $newOverride['name'], $newOverride['access']));
+				\MaterialAdmin\DataStorage::ADOdb()->Execute("INSERT INTO `" . DB_PREFIX . "_srvgroups_overrides` (group_id, type, name, access) VALUES (?, ?, ?, ?);", array($gid, $newOverride['type'], $newOverride['name'], $newOverride['access']));
 			}
 		}
 		
 		if(isset($GLOBALS['config']['config.enableadminrehashing']) && $GLOBALS['config']['config.enableadminrehashing'] == 1)
 		{
 			// rehash the settings out of the database on all servers
-			$serveraccessq = $GLOBALS['db']->GetAll("SELECT sid FROM ".DB_PREFIX."_servers WHERE enabled = 1;");
+			$serveraccessq = \MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT sid FROM ".DB_PREFIX."_servers WHERE enabled = 1;");
 			$allservers = array();
 			foreach($serveraccessq as $access) {
 				if(!in_array($access['sid'], $allservers)) {
@@ -2779,7 +2779,7 @@ function SendRcon($sid, $command, $output)
     
 	$sid = (int)$sid;
     
-	$rcon = $GLOBALS['db']->GetRow("SELECT ip, port, rcon FROM `".DB_PREFIX."_servers` WHERE sid = ".$sid." LIMIT 1");
+	$rcon = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT ip, port, rcon FROM `".DB_PREFIX."_servers` WHERE sid = ".$sid." LIMIT 1");
 	if(empty($rcon['rcon']))
 	{
 		$objResponse->addAppend("rcon_con", "innerHTML", "<div class='lv-item media p-b-5 p-t-5'><div class='lv-avatar bgm-red pull-left'>R</div><div class='media-body'><div class='ms-item' style='display: block;max-width: 100%;'> > Ошибка: Нет RCON пароля!<br />Вы должны добавить RCON пароль для этого сервера на странице 'редактирования серверов' <br /> чтобы использовать консоль!</div></div></div>");
@@ -2801,7 +2801,7 @@ function SendRcon($sid, $command, $output)
 	
 	if(!$r->AuthRcon($rcon['rcon']))
 	{
-		$GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_servers SET rcon = '' WHERE sid = '".$sid."';");
+		\MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE ".DB_PREFIX."_servers SET rcon = '' WHERE sid = '".$sid."';");
 		$objResponse->addAppend("rcon_con", "innerHTML", "<div class='lv-item media p-b-5 p-t-5'><div class='lv-avatar bgm-red pull-left'>R</div><div class='media-body'><div class='ms-item' style='display: block;max-width: 100%;'> > Ошибка: неверный РКОН пароль!<br />Вы должны изменить РКОН пароль для этого сервера.<br /> Если Вы продолжите использовать консоль с неверным РКОН паролем, <br />сервер заблокирует соединение!</div></div></div>");
 		$objResponse->addScript("scroll.toBottom(); $('cmd').value='Сменить РКОН пароль.'; $('cmd').disabled=true; $('rcon_btn').disabled=true");
 		return $objResponse;
@@ -2860,12 +2860,12 @@ function SendMail($subject, $message, $type, $id)
 	$email = "";
 	if($type == 's')
 	{
-		$email = $GLOBALS['db']->GetOne('SELECT email FROM `'.DB_PREFIX.'_submissions` WHERE subid = ?', array($id));
+		$email = \MaterialAdmin\DataStorage::ADOdb()->GetOne('SELECT email FROM `'.DB_PREFIX.'_submissions` WHERE subid = ?', array($id));
 	}
 	// Protest
 	else if($type == 'p')
 	{
-		$email = $GLOBALS['db']->GetOne('SELECT email FROM `'.DB_PREFIX.'_protests` WHERE pid = ?', array($id));
+		$email = \MaterialAdmin\DataStorage::ADOdb()->GetOne('SELECT email FROM `'.DB_PREFIX.'_protests` WHERE pid = ?', array($id));
 	}
 	
 	if(empty($email))
@@ -2951,8 +2951,8 @@ function AddComment($bid, $ctype, $ctext, $page)
 
 	$ctext = trim($ctext);
 
-	$pre = $GLOBALS['db']->Prepare("INSERT INTO ".DB_PREFIX."_comments(bid,type,aid,commenttxt,added) VALUES (?,?,?,?,UNIX_TIMESTAMP())");
-	$GLOBALS['db']->Execute($pre,array($bid,
+	$pre = \MaterialAdmin\DataStorage::ADOdb()->Prepare("INSERT INTO ".DB_PREFIX."_comments(bid,type,aid,commenttxt,added) VALUES (?,?,?,?,UNIX_TIMESTAMP())");
+	\MaterialAdmin\DataStorage::ADOdb()->Execute($pre,array($bid,
 									   $ctype,
 									   $userbank->GetAid(),
 									   $ctext));
@@ -2997,8 +2997,8 @@ function EditComment($cid, $ctype, $ctext, $page)
 
 	$ctext = trim($ctext);
 
-	$pre = $GLOBALS['db']->Prepare("UPDATE ".DB_PREFIX."_comments SET `commenttxt` = ?, `editaid` = ?, `edittime`= UNIX_TIMESTAMP() WHERE cid = ?");
-	$GLOBALS['db']->Execute($pre,array($ctext,
+	$pre = \MaterialAdmin\DataStorage::ADOdb()->Prepare("UPDATE ".DB_PREFIX."_comments SET `commenttxt` = ?, `editaid` = ?, `edittime`= UNIX_TIMESTAMP() WHERE cid = ?");
+	\MaterialAdmin\DataStorage::ADOdb()->Execute($pre,array($ctext,
 									   $userbank->GetAid(),
 									   $cid));
 
@@ -3026,7 +3026,7 @@ function RemoveComment($cid, $ctype, $page)
 	if($page != -1)
 		$pagelink = "&page=".$page;
 
-	$res = $GLOBALS['db']->Execute("DELETE FROM `".DB_PREFIX."_comments` WHERE `cid` = ?",
+	$res = \MaterialAdmin\DataStorage::ADOdb()->Execute("DELETE FROM `".DB_PREFIX."_comments` WHERE `cid` = ?",
 								array( $cid ));
 	if($ctype=="B")
 		$redir = "?p=banlist".$pagelink;
@@ -3062,52 +3062,52 @@ function Maintenance($type) {
         }
         
         case "avatarcache": {
-            $GLOBALS['db']->Execute(sprintf("TRUNCATE `%s_avatars`", DB_PREFIX));
+            \MaterialAdmin\DataStorage::ADOdb()->Execute(sprintf("TRUNCATE `%s_avatars`", DB_PREFIX));
             ShowBox_ajx("Успех", "Кеш аватарок очищен успешно.", "green", "", true, $objResponse);
             break;
         }
 		
 		case 'adminsexpired': {
-			$admins = $GLOBALS['db']->GetAll(sprintf("SELECT `aid` FROM `%s_admins` WHERE `expired` != 0 AND `expired` < %d;", DB_PREFIX, time()));
+			$admins = \MaterialAdmin\DataStorage::ADOdb()->GetAll(sprintf("SELECT `aid` FROM `%s_admins` WHERE `expired` != 0 AND `expired` < %d;", DB_PREFIX, time()));
 			foreach ($admins as $admin) {
-				$GLOBALS['db']->Execute(sprintf("DELETE FROM `%s_admins` WHERE `aid` < %d;", intval($admins['aid'])));
-				$GLOBALS['db']->Execute(sprintf("DELETE FROM `%s_admins_servers_groups` WHERE `admin_id` < %d;", intval($admins['aid'])));
+				\MaterialAdmin\DataStorage::ADOdb()->Execute(sprintf("DELETE FROM `%s_admins` WHERE `aid` < %d;", intval($admins['aid'])));
+				\MaterialAdmin\DataStorage::ADOdb()->Execute(sprintf("DELETE FROM `%s_admins_servers_groups` WHERE `admin_id` < %d;", intval($admins['aid'])));
 			}
 			ShowBox_ajx("Успех", sprintf("Успешно удалено %d администраторов.", count($admins)), "green", "", true, $objResponse);
 			break;
 		}
 
         case "bansexpired": {
-            $GLOBALS['db']->Execute(sprintf("DELETE FROM `%s_bans` WHERE `RemoveType` IS NOT NULL", DB_PREFIX));
+            \MaterialAdmin\DataStorage::ADOdb()->Execute(sprintf("DELETE FROM `%s_bans` WHERE `RemoveType` IS NOT NULL", DB_PREFIX));
             ShowBox_ajx("Успех", "Истёкшие баны удалены успешно.", "green", "", true, $objResponse);
             break;
         }
         
         case "commsexpired": {
-            $GLOBALS['db']->Execute(sprintf("DELETE FROM `%s_comms` WHERE `RemoveType` IS NOT NULL", DB_PREFIX));
+            \MaterialAdmin\DataStorage::ADOdb()->Execute(sprintf("DELETE FROM `%s_comms` WHERE `RemoveType` IS NOT NULL", DB_PREFIX));
             ShowBox_ajx("Успех", "Истёкшие муты удалены успешно.", "green", "", true, $objResponse);
             break;
         }
         
         case "optimizebd": {
-            $tables = $GLOBALS['db']->GetAll("SHOW TABLES;");
+            $tables = \MaterialAdmin\DataStorage::ADOdb()->GetAll("SHOW TABLES;");
             foreach ($tables as &$table)
-                $GLOBALS['db']->Execute(sprintf("OPTIMIZE TABLE `%s`;", $table[0]));
+                \MaterialAdmin\DataStorage::ADOdb()->Execute(sprintf("OPTIMIZE TABLE `%s`;", $table[0]));
             
             ShowBox_ajx("Успех", "Оптимизация таблиц завершена.", "green", "", true, $objResponse);
             break;
         }
         
         case "cleancountrycache": {
-            $GLOBALS['db']->Execute("UPDATE `sb_bans` SET `country` = NULL;");
+            \MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE `sb_bans` SET `country` = NULL;");
             ShowBox_ajx("Успех", "Кеш стран банлиста очищен успешно.<br /><br /><span style=\"color: #f00;\">Внимание!</span> Это может отрицательно сказаться на первой загрузке каждой страницы Вашего банлиста. Рекомендуем произвести операцию \"Обновить кеш стран в банлисте\".", "green", "", true, $objResponse);
             break;
         }
         
         case "rehashcountries": {
-            $bans = $GLOBALS['db']->GetAll("SELECT `bid`, `ip` FROM `" . DB_PREFIX . "_bans` WHERE `country` IS NULL or `country` = 'zz'");
+            $bans = \MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT `bid`, `ip` FROM `" . DB_PREFIX . "_bans` WHERE `country` IS NULL or `country` = 'zz'");
             foreach ($bans as $ban) {
-                $GLOBALS['db']->Execute("UPDATE `" . DB_PREFIX . "_bans` SET `country` = " . $GLOBALS['db']->qstr(FetchIp($ban['ip'])) . " WHERE `bid` = " . (int)$ban['bid'] . ";");
+                \MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE `" . DB_PREFIX . "_bans` SET `country` = " . \MaterialAdmin\DataStorage::ADOdb()->qstr(FetchIp($ban['ip'])) . " WHERE `bid` = " . (int)$ban['bid'] . ";");
             }
             
             ShowBox_ajx("Успех", "Операция обновлений стран в кеше завершена.", "green", "", true, $objResponse);
@@ -3130,14 +3130,14 @@ function Maintenance($type) {
         }
         
         case "warningsexpired": {
-            $GLOBALS['db']->Execute(sprintf("DELETE FROM `%s_warns` WHERE `expires` < %d", DB_PREFIX, time()));
+            \MaterialAdmin\DataStorage::ADOdb()->Execute(sprintf("DELETE FROM `%s_warns` WHERE `expires` < %d", DB_PREFIX, time()));
             ShowBox_ajx("Успех", "Все истёкшие и снятые предупреждения были успешно удалены.", "green", "", true, $objResponse);
             break;
         }
         
         case "avatarupdate": {
             Maintenance("avatarcache");
-            $users = $GLOBALS['db']->GetAll(sprintf("SELECT `authid` FROM `%s_admins`", DB_PREFIX));
+            $users = \MaterialAdmin\DataStorage::ADOdb()->GetAll(sprintf("SELECT `authid` FROM `%s_admins`", DB_PREFIX));
             foreach ($users as &$user)
                 GetUserAvatar($user['authid']);
             ShowBox_ajx("Успех", "Кеш аватаров Администраторов обновлён.", "green", "", true, $objResponse);
@@ -3145,31 +3145,31 @@ function Maintenance($type) {
         }
         
         case "commentsclean": {
-            $GLOBALS['db']->Execute(sprintf("TRUNCATE `%s_comments`;", DB_PREFIX));
+            \MaterialAdmin\DataStorage::ADOdb()->Execute(sprintf("TRUNCATE `%s_comments`;", DB_PREFIX));
             ShowBox_ajx("Успех", "Все комментарии были успешно удалены.", "green", "", true, $objResponse);
             break;
         }
         
         case "banlogclean": {
-            $GLOBALS['db']->Execute(sprintf("TRUNCATE `%s_banlog`;", DB_PREFIX));
+            \MaterialAdmin\DataStorage::ADOdb()->Execute(sprintf("TRUNCATE `%s_banlog`;", DB_PREFIX));
             ShowBox_ajx("Успех", "История заблокированных соединений к серверам успешно очищена.", "green", "", true, $objResponse);
             break;
         }
         
         case "protests": {
-            $GLOBALS['db']->Execute(sprintf("TRUNCATE `%s_protests`;", DB_PREFIX));
+            \MaterialAdmin\DataStorage::ADOdb()->Execute(sprintf("TRUNCATE `%s_protests`;", DB_PREFIX));
             ShowBox_ajx("Успех", "Протесты успешно удалены.", "green", "", true, $objResponse);
             break;
         }
         
         case "reports": {
-            $GLOBALS['db']->Execute(sprintf("TRUNCATE `%s_submissions`;", DB_PREFIX));
+            \MaterialAdmin\DataStorage::ADOdb()->Execute(sprintf("TRUNCATE `%s_submissions`;", DB_PREFIX));
             ShowBox_ajx("Успех", "Предложения бана (репорты) успешно удалены.", "green", "", true, $objResponse);
             break;
 		}
 
 		case "vouchers": {
-			$GLOBALS['db']->Execute(sprintf("DELETE FROM `%s_vay4er` WHERE `activ` != 1"));
+			\MaterialAdmin\DataStorage::ADOdb()->Execute(sprintf("DELETE FROM `%s_vay4er` WHERE `activ` != 1"));
 			ShowBox_ajx("Успех", "Все использованные ваучеры успешно удалены.", "green", "", true, $objResponse);
 			break;
 		}
@@ -3188,7 +3188,7 @@ function RefreshServer($sid)
 	$objResponse = new xajaxResponse();
 	$sid = (int)$sid;
 	session_start();
-	$data = $GLOBALS['db']->GetRow("SELECT ip, port FROM `".DB_PREFIX."_servers` WHERE sid = ?;", array($sid));
+	$data = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT ip, port FROM `".DB_PREFIX."_servers` WHERE sid = ?;", array($sid));
 	if (isset($_SESSION['getInfo.' . $data['ip'] . '.' . $data['port']]) && is_array($_SESSION['getInfo.' . $data['ip'] . '.' . $data['port']]))
 		unset($_SESSION['getInfo.' . $data['ip'] . '.' . $data['port']]);
 	$objResponse->addScript("xajax_ServerHostPlayers('".$sid."');");
@@ -3201,7 +3201,7 @@ function RehashAdmins_pay($server, $do=0, $card)
 	$card = preg_replace("/[^0-9]/", "", $card);
 	
 	
-	$wfr = $GLOBALS['db']->GetRow("SELECT * FROM `" . DB_PREFIX . "_vay4er` WHERE `value` = '".$card."'");
+	$wfr = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT * FROM `" . DB_PREFIX . "_vay4er` WHERE `value` = '".$card."'");
 	if($wfr == "" || $wfr == "0" || $card == ""){
 		exit();
 	}
@@ -3214,7 +3214,7 @@ function RehashAdmins_pay($server, $do=0, $card)
 		if(sizeof($servers)-1 > $do)
 			$objResponse->addScriptCall("xajax_RehashAdmins_pay", $server, $do+1, $card);
 
-		$serv = $GLOBALS['db']->GetRow("SELECT ip, port, rcon FROM ".DB_PREFIX."_servers WHERE sid = '".(int)$servers[$do]."';");
+		$serv = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT ip, port, rcon FROM ".DB_PREFIX."_servers WHERE sid = '".(int)$servers[$do]."';");
 		if(empty($serv['rcon'])) {
 			$objResponse->addAppend("rehashDiv", "innerHTML", "".$serv['ip'].":".$serv['port']." (".($do+1)."/".sizeof($servers).") <font color='red'>Ошибка: не задан РКОН пароль</font>.<br />");
 			if($do >= sizeof($servers)-1) {
@@ -3243,7 +3243,7 @@ function RehashAdmins_pay($server, $do=0, $card)
 		
 		if(!$r->AuthRcon($serv['rcon']))
 		{
-			$GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_servers SET rcon = '' WHERE sid = '".$serv['sid']."';");
+			\MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE ".DB_PREFIX."_servers SET rcon = '' WHERE sid = '".$serv['sid']."';");
 			$objResponse->addAppend("rehashDiv", "innerHTML", "".$serv['ip'].":".$serv['port']." (".($do+1)."/".sizeof($servers).") <font color='red'>Ошибка: неверный РКОН пароль</font>.<br />");
 			if($do >= sizeof($servers)-1) {
 				$objResponse->addAppend("rehashDiv", "innerHTML", "<b>Выполнено, переадресация....</b>");
@@ -3289,7 +3289,7 @@ function RehashAdmins($server, $do=0)
 		if(sizeof($servers)-1 > $do)
 			$objResponse->addScriptCall("xajax_RehashAdmins", $server, $do+1);
 
-		$serv = $GLOBALS['db']->GetRow("SELECT ip, port, rcon FROM ".DB_PREFIX."_servers WHERE sid = '".(int)$servers[$do]."';");
+		$serv = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT ip, port, rcon FROM ".DB_PREFIX."_servers WHERE sid = '".(int)$servers[$do]."';");
 		if(empty($serv['rcon'])) {
 			$objResponse->addAppend("rehashDiv", "innerHTML", "".$serv['ip'].":".$serv['port']." (".($do+1)."/".sizeof($servers).") <font color='red'>Ошибка: не задан РКОН пароль</font>.<br />");
 			if($do >= sizeof($servers)-1) {
@@ -3318,7 +3318,7 @@ function RehashAdmins($server, $do=0)
 		
 		if(!$r->AuthRcon($serv['rcon']))
 		{
-			$GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_servers SET rcon = '' WHERE sid = '".$serv['sid']."';");
+			\MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE ".DB_PREFIX."_servers SET rcon = '' WHERE sid = '".$serv['sid']."';");
 			$objResponse->addAppend("rehashDiv", "innerHTML", "".$serv['ip'].":".$serv['port']." (".($do+1)."/".sizeof($servers).") <font color='red'>Ошибка: неверный РКОН пароль</font>.<br />");
 			if($do >= sizeof($servers)-1) {
 				$objResponse->addAppend("rehashDiv", "innerHTML", "<b>Выполнено, переадресация....</b>");
@@ -3399,7 +3399,7 @@ function BanMemberOfGroup($grpurl, $queue, $reason, $last)
 		$log = new CSystemLog("w", "Ошибка доступа", $username . " пытался забанить группу '".$grpurl."', не имея на это прав.");
 		return $objResponse;
 	}
-	$bans = $GLOBALS['db']->GetAll("SELECT CAST(MID(authid, 9, 1) AS UNSIGNED) + CAST('76561197960265728' AS UNSIGNED) + CAST(MID(authid, 11, 10) * 2 AS UNSIGNED) AS community_id FROM ".DB_PREFIX."_bans WHERE RemoveType IS NULL;");
+	$bans = \MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT CAST(MID(authid, 9, 1) AS UNSIGNED) + CAST('76561197960265728' AS UNSIGNED) + CAST(MID(authid, 11, 10) * 2 AS UNSIGNED) AS community_id FROM ".DB_PREFIX."_bans WHERE RemoveType IS NULL;");
 	foreach($bans as $ban) {
 		$already[] = $ban["community_id"];
 	}
@@ -3466,9 +3466,9 @@ function BanMemberOfGroup($grpurl, $queue, $reason, $last)
 					$steamid = FriendIDToSteamID($url[2]);
 					$urltag = $url[2];
 				}
-				$pre = $GLOBALS['db']->Prepare("INSERT INTO ".DB_PREFIX."_bans(created,type,ip,authid,name,ends,length,reason,aid,adminIp ) VALUES
+				$pre = \MaterialAdmin\DataStorage::ADOdb()->Prepare("INSERT INTO ".DB_PREFIX."_bans(created,type,ip,authid,name,ends,length,reason,aid,adminIp ) VALUES
 									(UNIX_TIMESTAMP(),?,?,?,?,UNIX_TIMESTAMP(),?,?,?,?)");
-				$GLOBALS['db']->Execute($pre,array(0,
+				\MaterialAdmin\DataStorage::ADOdb()->Execute($pre,array(0,
 												   "",
 												   $steamid,
 												   utf8_decode($tag->childNodes->item(0)->nodeValue),
@@ -3586,7 +3586,7 @@ function BanFriends($friendid, $name)
 		$log = new CSystemLog("w", "Ошибка доступа", $username . " пытался забанить друга '".RemoveCode($friendid)."', не имея на это прав.");
 		return $objResponse;
 	}
-	$bans = $GLOBALS['db']->GetAll("SELECT CAST(MID(authid, 9, 1) AS UNSIGNED) + CAST('76561197960265728' AS UNSIGNED) + CAST(MID(authid, 11, 10) * 2 AS UNSIGNED) AS community_id FROM ".DB_PREFIX."_bans WHERE RemoveType IS NULL;");
+	$bans = \MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT CAST(MID(authid, 9, 1) AS UNSIGNED) + CAST('76561197960265728' AS UNSIGNED) + CAST(MID(authid, 11, 10) * 2 AS UNSIGNED) AS community_id FROM ".DB_PREFIX."_bans WHERE RemoveType IS NULL;");
 	foreach($bans as $ban) {
 		$already[] = $ban["community_id"];
 	}
@@ -3642,9 +3642,9 @@ function BanFriends($friendid, $name)
 			$friendName = str_replace("&#13;", "", $friendName);
 			$friendName = trim($friendName);
 			
-			$pre = $GLOBALS['db']->Prepare("INSERT INTO ".DB_PREFIX."_bans(created,type,ip,authid,name,ends,length,reason,aid,adminIp ) VALUES
+			$pre = \MaterialAdmin\DataStorage::ADOdb()->Prepare("INSERT INTO ".DB_PREFIX."_bans(created,type,ip,authid,name,ends,length,reason,aid,adminIp ) VALUES
 									(UNIX_TIMESTAMP(),?,?,?,?,UNIX_TIMESTAMP(),?,?,?,?)");
-			$GLOBALS['db']->Execute($pre,array(0,
+			\MaterialAdmin\DataStorage::ADOdb()->Execute($pre,array(0,
 											   "",
 											   $steamid,
 											   utf8_decode($friendName),
@@ -3679,7 +3679,7 @@ function ViewCommunityProfile($sid, $name)
   
 	require INCLUDES_PATH.'/CServerControl.php';
 	//get the server data
-	$data = $GLOBALS['db']->GetRow("SELECT ip, port, rcon FROM ".DB_PREFIX."_servers WHERE sid = '".$sid."';");
+	$data = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT ip, port, rcon FROM ".DB_PREFIX."_servers WHERE sid = '".$sid."';");
 	if(empty($data['rcon'])) {
 		$objResponse->addScript("ShowBox('Ошибка', 'Невозможно получить информацию о игроке ".addslashes(htmlspecialchars($name)).". Не задан РКОН пароль!', 'red', '', true);");
 		return $objResponse;
@@ -3690,7 +3690,7 @@ function ViewCommunityProfile($sid, $name)
 
 	if(!$r->AuthRcon($data['rcon']))
 	{
-		$GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_servers SET rcon = '' WHERE sid = '".$sid."';");
+		\MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE ".DB_PREFIX."_servers SET rcon = '' WHERE sid = '".$sid."';");
 		$objResponse->addScript("ShowBox('Ошибка', 'Невозможно получить информацию о игроке ".addslashes(htmlspecialchars($name)).". Неверный РКОН пароль!', 'red', '', true);");
 		return $objResponse;
 	}
@@ -3735,7 +3735,7 @@ function SendMessage($sid, $name, $message)
 	$sid = (int)$sid;
 	require INCLUDES_PATH.'/CServerControl.php';
 	//get the server data
-	$data = $GLOBALS['db']->GetRow("SELECT ip, port, rcon FROM ".DB_PREFIX."_servers WHERE sid = '".$sid."';");
+	$data = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT ip, port, rcon FROM ".DB_PREFIX."_servers WHERE sid = '".$sid."';");
 	if(empty($data['rcon'])) {
 		$objResponse->addScript("ShowBox('Ошибка', 'Невозможно отправить сообщение для ".addslashes(htmlspecialchars($name)).". Не задан РКОН пароль!', 'red', '', true);");
 		return $objResponse;
@@ -3746,7 +3746,7 @@ function SendMessage($sid, $name, $message)
 	
 	if(!$r->AuthRcon($data['rcon']))
 	{
-		$GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_servers SET rcon = '' WHERE sid = '".$sid."';");
+		\MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE ".DB_PREFIX."_servers SET rcon = '' WHERE sid = '".$sid."';");
 		$objResponse->addScript("ShowBox('Ошибка', 'Невозможно отправить сообщение для ".addslashes(htmlspecialchars($name)).". Неверноый РКОН пароль!', 'red', '', true);");
 		return $objResponse;
 	}
@@ -3823,7 +3823,7 @@ function AddBlock($nickname, $type, $steam, $length, $reason)
 	}
 
 	// Check if the new steamid is already banned
-	$chk = $GLOBALS['db']->GetRow("SELECT count(bid) AS count FROM ".DB_PREFIX."_comms WHERE authid = ? AND (length = 0 OR ends > UNIX_TIMESTAMP()) AND RemovedBy IS NULL AND ".$typeW, array($steam));
+	$chk = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT count(bid) AS count FROM ".DB_PREFIX."_comms WHERE authid = ? AND (length = 0 OR ends > UNIX_TIMESTAMP()) AND RemovedBy IS NULL AND ".$typeW, array($steam));
 	
 	if(intval($chk[0]) > 0)
 	{
@@ -3842,9 +3842,9 @@ function AddBlock($nickname, $type, $steam, $length, $reason)
 
 	if((int)$type == 1 || (int)$type == 3)
 	{
-		$pre = $GLOBALS['db']->Prepare("INSERT INTO ".DB_PREFIX."_comms(created,type,authid,name,ends,length,reason,aid,adminIp ) VALUES
+		$pre = \MaterialAdmin\DataStorage::ADOdb()->Prepare("INSERT INTO ".DB_PREFIX."_comms(created,type,authid,name,ends,length,reason,aid,adminIp ) VALUES
 									  (UNIX_TIMESTAMP(),1,?,?,(UNIX_TIMESTAMP() + ?),?,?,?,?)");
-		$GLOBALS['db']->Execute($pre,array($steam,
+		\MaterialAdmin\DataStorage::ADOdb()->Execute($pre,array($steam,
 										   $nickname,
 										   $length*60,
 										   $len,
@@ -3854,9 +3854,9 @@ function AddBlock($nickname, $type, $steam, $length, $reason)
 	}
 	if ((int)$type == 2 || (int)$type ==3)
 	{
-		$pre = $GLOBALS['db']->Prepare("INSERT INTO ".DB_PREFIX."_comms(created,type,authid,name,ends,length,reason,aid,adminIp ) VALUES
+		$pre = \MaterialAdmin\DataStorage::ADOdb()->Prepare("INSERT INTO ".DB_PREFIX."_comms(created,type,authid,name,ends,length,reason,aid,adminIp ) VALUES
 									  (UNIX_TIMESTAMP(),2,?,?,(UNIX_TIMESTAMP() + ?),?,?,?,?)");
-		$GLOBALS['db']->Execute($pre,array($steam,
+		\MaterialAdmin\DataStorage::ADOdb()->Execute($pre,array($steam,
 										   $nickname,
 										   $length*60,
 										   $len,
@@ -3875,7 +3875,7 @@ function PrepareReblock($bid)
 {
 	$objResponse = new xajaxResponse();
 
-	$ban = $GLOBALS['db']->GetRow("SELECT name, authid, type, length, reason FROM ".DB_PREFIX."_comms WHERE bid = '".$bid."';");
+	$ban = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT name, authid, type, length, reason FROM ".DB_PREFIX."_comms WHERE bid = '".$bid."';");
 
 	// clear any old stuff
 	$objResponse->addScript("$('nickname').value = ''");
@@ -3902,7 +3902,7 @@ function PrepareBlockFromBan($bid)
 	$objResponse->addScript("$('txtReason').value = ''");	
 	$objResponse->addAssign("txtReason", "innerHTML",  "");
 
-	$ban = $GLOBALS['db']->GetRow("SELECT name, authid FROM ".DB_PREFIX."_bans WHERE bid = '".$bid."';");
+	$ban = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT name, authid FROM ".DB_PREFIX."_bans WHERE bid = '".$bid."';");
 
 	// add new stuff
 	$objResponse->addScript("$('nickname').value = '" . $ban['name'] . "'");
@@ -3925,7 +3925,7 @@ function PastePlayerData($sid, $name) {
     sleep(1); // костыль против быстрого "пролёта" окошка о том, что игрок не найден
     
     $sid = (int) $sid;
-    $data = $GLOBALS['db']->GetRow("SELECT ip, port, rcon FROM ".DB_PREFIX."_servers WHERE sid = ?;", array($sid));
+    $data = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT ip, port, rcon FROM ".DB_PREFIX."_servers WHERE sid = ?;", array($sid));
     if (empty($data['rcon'])) {
         $objResponse->addScript("$('dialog-control').setStyle('display', 'block');");
         $objResponse->addScript("ShowBox('Ошибка', 'Нет РКОН пароля сервера <b>".$data['ip'].":".$data['port']."</b>! Получение данных об игроке невозможно!', 'red', '', true);");
@@ -3936,7 +3936,7 @@ function PastePlayerData($sid, $name) {
     $CSInstance = new CServerControl();
     $CSInstance->Connect($data['ip'], $data['port']);
     if (!$CSInstance->AuthRcon($data['rcon'])) {
-        $GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_servers SET rcon = '' WHERE sid = ?;", array($sid));
+        \MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE ".DB_PREFIX."_servers SET rcon = '' WHERE sid = ?;", array($sid));
         $objResponse->addScript("$('dialog-control').setStyle('display', 'block');");
         $objResponse->addScript("ShowBox('Ошибка', 'Неверный РКОН пароль сервера ".$data['ip'].":".$data['port']."!', 'red', '', true);");
         return $objResponse;
@@ -3975,11 +3975,11 @@ function AddWarning($id, $days, $reason) {
 
 	$removedAccess = false;
 
-	$GLOBALS['db']->Execute("INSERT INTO `" . DB_PREFIX . "_warns` (`arecipient`, `afrom`, `expires`, `reason`) VALUES(" . (int) $id . ", " . (int) $userbank->GetAid() . ", " . (time() + (86400 * (int) $days)) . ", " . $GLOBALS['db']->qstr($reason) . ");");
+	\MaterialAdmin\DataStorage::ADOdb()->Execute("INSERT INTO `" . DB_PREFIX . "_warns` (`arecipient`, `afrom`, `expires`, `reason`) VALUES(" . (int) $id . ", " . (int) $userbank->GetAid() . ", " . (time() + (86400 * (int) $days)) . ", " . \MaterialAdmin\DataStorage::ADOdb()->qstr($reason) . ");");
 	new CSystemLog("m", "Предупреждение выдано", "Администратор выдал предупреждение Администратору " . $userbank->getProperty('user', $id));
 
-	if ($GLOBALS['db']->GetOne("SELECT COUNT(*) FROM `" . DB_PREFIX . "_warns` WHERE `arecipient` = " . (int) $id) >= (int) $GLOBALS['config']['admin.warns.max']) {
-		$GLOBALS['db']->Execute("UPDATE `" . DB_PREFIX . "_admins` SET `expired` = 1 WHERE `aid` = " . (int) $id . ";");
+	if (\MaterialAdmin\DataStorage::ADOdb()->GetOne("SELECT COUNT(*) FROM `" . DB_PREFIX . "_warns` WHERE `arecipient` = " . (int) $id) >= (int) $GLOBALS['config']['admin.warns.max']) {
+		\MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE `" . DB_PREFIX . "_admins` SET `expired` = 1 WHERE `aid` = " . (int) $id . ";");
 		new CSystemLog("m", "Аккаунт администратора деактивирован", "По причине превышения лимита максимально активных предупреждений, Администратор " . $userbank->getProperty('user', $id) . " отстраняется от Должности.");
 		$removedAccess = true;
 	}
@@ -4001,10 +4001,10 @@ function RemoveWarning($warningId) {
         return $objResponse;
     }
 
-    if ((int) $GLOBALS['db']->GetOne("SELECT COUNT(*) FROM `" . DB_PREFIX . "_warns` WHERE `expires` > " . time() . " AND `id` = ". (int) $warningId) == 1) {
+    if ((int) \MaterialAdmin\DataStorage::ADOdb()->GetOne("SELECT COUNT(*) FROM `" . DB_PREFIX . "_warns` WHERE `expires` > " . time() . " AND `id` = ". (int) $warningId) == 1) {
         ShowBox_ajx("Успех", "Предупреждение снято", "green", "", true, $objResponse);
-        new CSystemLog("m", "Предупреждение снято", "Администратор снял предупреждение Администратору " . $userbank->getProperty('user', $GLOBALS['db']->GetOne("SELECT `arecipient` FROM `" . DB_PREFIX . "_warns` WHERE `id` = " . (int) $warningId)) . " с идентификатором " . $warningId);
-        $GLOBALS['db']->Execute("UPDATE `" . DB_PREFIX . "_warns` SET `expires` = -1 WHERE `id` = " . (int) $warningId);
+        new CSystemLog("m", "Предупреждение снято", "Администратор снял предупреждение Администратору " . $userbank->getProperty('user', \MaterialAdmin\DataStorage::ADOdb()->GetOne("SELECT `arecipient` FROM `" . DB_PREFIX . "_warns` WHERE `id` = " . (int) $warningId)) . " с идентификатором " . $warningId);
+        \MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE `" . DB_PREFIX . "_warns` SET `expires` = -1 WHERE `id` = " . (int) $warningId);
     } else
         ShowBox_ajx("Ошибка", "Действущее предупреждение с идентификатором " . $warningId . " не найдено. Может быть, оно уже истекло?", "red", "", true, $objResponse);
     

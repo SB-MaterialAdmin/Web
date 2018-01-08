@@ -26,8 +26,8 @@ if(!isset($_GET['type']) || ($_GET['type'] != 'web' && $_GET['type'] != 'srv' &&
 
 $_GET['id'] = (int)$_GET['id'];
 
-$web_group = $GLOBALS['db']->GetRow("SELECT flags, name FROM ".DB_PREFIX."_groups WHERE gid = {$_GET['id']}");
-$srv_group = $GLOBALS['db']->GetRow("SELECT flags, name, immunity FROM ".DB_PREFIX."_srvgroups WHERE id = {$_GET['id']}");
+$web_group = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT flags, name FROM ".DB_PREFIX."_groups WHERE gid = {$_GET['id']}");
+$srv_group = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT flags, name, immunity FROM ".DB_PREFIX."_srvgroups WHERE id = {$_GET['id']}");
 
 
 $web_flags = intval($web_group[0]);
@@ -59,7 +59,7 @@ echo $permissions;
 // Group overrides
 // ALERT >>> GROSS CODE MIX <<<
 // I'm far to lazy to rewrite this to use smarty right now.
-$overrides_list = $GLOBALS['db']->GetAll("SELECT * FROM `" . DB_PREFIX . "_srvgroups_overrides` WHERE group_id = ?", array($_GET['id']));
+$overrides_list = \MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT * FROM `" . DB_PREFIX . "_srvgroups_overrides` WHERE group_id = ?", array($_GET['id']));
 
 ?>
 <br />

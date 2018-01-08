@@ -50,6 +50,7 @@ define('XAJAX_REQUEST_URI', './index.php');
 include_once(INCLUDES_PATH . "/CSystemLog.php");
 include_once(INCLUDES_PATH . "/CUserManager.php");
 include_once(INCLUDES_PATH . "/CUI.php");
+include_once(INCLUDES_PATH . "/DataStorage.php");
 include_once("theme/theme.conf.php");
 // ---------------------------------------------------
 //  Fix some $_SERVER vars
@@ -126,16 +127,16 @@ error_reporting(E_ALL ^ E_NOTICE);
 // ---------------------------------------------------
 include_once(INCLUDES_PATH . "/adodb/adodb.inc.php");
 include_once(INCLUDES_PATH . "/adodb/adodb-errorhandler.inc.php");
-$GLOBALS['db'] = ADONewConnection("mysqli://".DB_USER.':'.DB_PASS.'@'.DB_HOST.':'.DB_PORT.'/'.DB_NAME);
-$GLOBALS['log'] = new CSystemLog();
+\MaterialAdmin\DataStorage::register("ADOdb", ADONewConnection("mysqli://".DB_USER.':'.DB_PASS.'@'.DB_HOST.':'.DB_PORT.'/'.DB_NAME));
+\MaterialAdmin\DataStorage::register("Logger", new CSystemLog());
 
-if( !is_object($GLOBALS['db']) )
+if( !is_object(\MaterialAdmin\DataStorage::ADOdb()) )
 				die();
 				
-$mysql_server_info = $GLOBALS['db']->ServerInfo();
+$mysql_server_info = \MaterialAdmin\DataStorage::ADOdb()->ServerInfo();
 $GLOBALS['db_version'] = $mysql_server_info['version'];
 
-$debug = $GLOBALS['db']->Execute("SELECT value FROM `".DB_PREFIX."_settings` WHERE setting = 'config.debug';");
+$debug = \MaterialAdmin\DataStorage::ADOdb()->Execute("SELECT value FROM `".DB_PREFIX."_settings` WHERE setting = 'config.debug';");
 if($debug->fields['value']=="1") {
 	define("DEVELOPER_MODE", true);
 }
@@ -229,9 +230,9 @@ define('ALL_WEB', ADMIN_LIST_ADMINS|ADMIN_ADD_ADMINS|ADMIN_EDIT_ADMINS|ADMIN_DEL
 define('ALL_SERVER', SM_RESERVED_SLOT.SM_GENERIC.SM_KICK.SM_BAN.SM_UNBAN.SM_SLAY.SM_MAP.SM_CVAR.SM_CONFIG.SM_VOTE.SM_PASSWORD.SM_RCON.
 					 SM_CHEATS.SM_CUSTOM1.SM_CUSTOM2.SM_CUSTOM3. SM_CUSTOM4.SM_CUSTOM5.SM_CUSTOM6.SM_ROOT);
 
-$GLOBALS['db']->Execute("SET NAMES utf8;");
+\MaterialAdmin\DataStorage::ADOdb()->Execute("SET NAMES utf8;");
 					 
-$res = $GLOBALS['db']->Execute("SELECT * FROM ".DB_PREFIX."_settings GROUP BY `setting`, `value`");
+$res = \MaterialAdmin\DataStorage::ADOdb()->Execute("SELECT * FROM ".DB_PREFIX."_settings GROUP BY `setting`, `value`");
 $GLOBALS['config'] = array();
 while (!$res->EOF)
 {

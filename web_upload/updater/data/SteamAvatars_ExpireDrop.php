@@ -1,2 +1,2 @@
 <?php
-$GLOBALS['db']->Execute("ALTER TABLE `" . DB_PREFIX . "_avatars` DROP `expires`;");
+\MaterialAdmin\DataStorage::ADOdb()->Execute("ALTER TABLE `" . DB_PREFIX . "_avatars` DROP `expires`;");

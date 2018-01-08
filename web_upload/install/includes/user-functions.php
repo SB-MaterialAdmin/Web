@@ -38,7 +38,7 @@ global $user, $db;
  */
 function is_taken($table, $field, $value)
 {
-    $query = $GLOBALS['db']->GetRow("SELECT * FROM `" . DB_PREFIX . "_$table` WHERE `$field` = '$value'");
+    $query = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT * FROM `" . DB_PREFIX . "_$table` WHERE `$field` = '$value'");
     return (count($query) > 0);
 }
 
@@ -55,7 +55,7 @@ function is_taken($table, $field, $value)
  */
 function edit_admin($aid, $username, $name, $email, $authid)
 {
-    $query = $GLOBALS['db']->Execute("UPDATE `" . DB_PREFIX . "_admins` SET `user` = '$username',  `authid` = '$authid', `email` = '$email' WHERE `aid` = '$aid'");
+    $query = \MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE `" . DB_PREFIX . "_admins` SET `user` = '$username',  `authid` = '$authid', `email` = '$email' WHERE `aid` = '$aid'");
     if($query)
     {
         return true;
@@ -74,7 +74,7 @@ function edit_admin($aid, $username, $name, $email, $authid)
  */
 function delete_admin($aid)
 {
-    $query = $GLOBALS['db']->Execute("DELETE FROM `" . DB_PREFIX . "_admins` WHERE `aid` = '$aid'");
+    $query = \MaterialAdmin\DataStorage::ADOdb()->Execute("DELETE FROM `" . DB_PREFIX . "_admins` WHERE `aid` = '$aid'");
     if($query)
     {
         return true;
@@ -96,14 +96,14 @@ function get_user_flags($aid)
 	if(empty($aid))
 		return 0;
 	
-	$admin = $query = $GLOBALS['db']->GetRow("SELECT `gid`, `extraflags` FROM `" . DB_PREFIX . "_admins` WHERE aid = '$aid'");
+	$admin = $query = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT `gid`, `extraflags` FROM `" . DB_PREFIX . "_admins` WHERE aid = '$aid'");
 	if(intval($admin['gid']) == -1)
 	{
 		return intval($admin['extraflags']);
 	}
 	else 
 	{
-		$query = $GLOBALS['db']->GetRow("SELECT `flags` FROM `" . DB_PREFIX . "_groups` WHERE gid = (SELECT gid FROM " . DB_PREFIX . "_admins WHERE aid = '$aid')");
+		$query = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT `flags` FROM `" . DB_PREFIX . "_groups` WHERE gid = (SELECT gid FROM " . DB_PREFIX . "_admins WHERE aid = '$aid')");
 		return (intval($query['flags']) | intval($admin['extraflags']));
 	}
 	
@@ -119,10 +119,10 @@ function get_user_admin($steam)
 {	
 	if(empty($steam))
 		return 0;
-	$admin = $GLOBALS['db']->GetRow("SELECT * FROM `" . DB_PREFIX . "_srvadmins` WHERE identity = '$steam'");
+	$admin = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT * FROM `" . DB_PREFIX . "_srvadmins` WHERE identity = '$steam'");
 	if(strlen($admin['groups']) > 1)
 	{
-		$query = $GLOBALS['db']->GetRow("SELECT `flags` FROM `" . DB_PREFIX . "_srvgroups` WHERE name = (SELECT `groups` FROM " . DB_PREFIX . "_srvadmins WHERE identity = '$steam')");
+		$query = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT `flags` FROM `" . DB_PREFIX . "_srvgroups` WHERE name = (SELECT `groups` FROM " . DB_PREFIX . "_srvadmins WHERE identity = '$steam')");
 		return $query['flags'] . $admin['flags'];
 	}
 	else 
@@ -142,7 +142,7 @@ function get_non_inherited_admin($steam)
 {	
 	if(empty($steam))
 		return 0;
-	$admin = $GLOBALS['db']->GetRow("SELECT * FROM `" . DB_PREFIX . "_srvadmins` WHERE identity = '$steam'");
+	$admin = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT * FROM `" . DB_PREFIX . "_srvadmins` WHERE identity = '$steam'");
 	return $admin['flags'];	
 }
 

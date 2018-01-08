@@ -45,7 +45,7 @@ if(!$userbank->HasAccess(ADMIN_OWNER|ADMIN_EDIT_MODS))
 }
 
 $_GET['id'] = (int)$_GET['id'];
-$res = $GLOBALS['db']->GetRow("
+$res = \MaterialAdmin\DataStorage::ADOdb()->GetRow("
     				SELECT name, modfolder, icon, enabled, steam_universe
     				FROM ".DB_PREFIX."_mods
     				WHERE mid = ?", array($_GET['id']));
@@ -66,7 +66,7 @@ if(isset($_POST['name']))
 	else
 	{
 		// Already there?
-		$check = $GLOBALS['db']->GetRow("SELECT * FROM `" . DB_PREFIX . "_mods` WHERE name = ? AND mid != ?;", array($_POST['name'], $_GET['id']));
+		$check = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT * FROM `" . DB_PREFIX . "_mods` WHERE name = ? AND mid != ?;", array($_POST['name'], $_GET['id']));
 		if(!empty($check))
 		{
 			$error++;
@@ -83,7 +83,7 @@ if(isset($_POST['name']))
 	else
 	{
 		// Already there?
-		$check = $GLOBALS['db']->GetRow("SELECT * FROM `" . DB_PREFIX . "_mods` WHERE modfolder = ? AND mid != ?;", array($_POST['folder'], $_GET['id']));
+		$check = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT * FROM `" . DB_PREFIX . "_mods` WHERE modfolder = ? AND mid != ?;", array($_POST['folder'], $_GET['id']));
 		if(!empty($check))
 		{
 			$error++;
@@ -103,7 +103,7 @@ if(isset($_POST['name']))
 		if($res['icon']!=$_POST['icon_hid'])
 			@unlink(SB_ICONS."/".$res['icon']);
 			
-		$edit = $GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_mods SET
+		$edit = \MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE ".DB_PREFIX."_mods SET
 										`name` = ?, `modfolder` = ?, `icon` = ?, `enabled` = ?, `steam_universe` = ?
 										WHERE `mid` = ?", array($name, $folder, $icon, $enabled, $steam_universe, $_GET['id']));
 		echo '<script>ShowBox("МОД обновлен", "МОД был успешно обновлен", "green", "index.php?p=admin&c=mods");</script>';

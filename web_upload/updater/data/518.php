@@ -1,5 +1,5 @@
 <?php
-$GLOBALS['db']->Execute(sprintf(
+\MaterialAdmin\DataStorage::ADOdb()->Execute(sprintf(
     "INSERT INTO
         `%s_settings`
     (`setting`, `value`)

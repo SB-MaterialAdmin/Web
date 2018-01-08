@@ -31,35 +31,35 @@ global $userbank, $theme;
 echo '<div id="admin-page-content">';
 
 // web groups
-$web_group_list = $GLOBALS['db']->GetAll("SELECT * FROM `" . DB_PREFIX . "_groups` WHERE type != '3'");
+$web_group_list = \MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT * FROM `" . DB_PREFIX . "_groups` WHERE type != '3'");
 for($i=0;$i<count($web_group_list);$i++)
 {
 	$web_group_list[$i]['permissions'] = BitToString($web_group_list[$i]['flags'], $web_group_list[$i]['type']);
-	$query = $GLOBALS['db']->GetRow("SELECT COUNT(gid) AS cnt FROM `" . DB_PREFIX . "_admins` WHERE gid = '" . $web_group_list[$i]['gid'] . "'");
+	$query = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT COUNT(gid) AS cnt FROM `" . DB_PREFIX . "_admins` WHERE gid = '" . $web_group_list[$i]['gid'] . "'");
 	$web_group_count[$i] = $query['cnt'];
-	$web_group_admins[$i] = $GLOBALS['db']->GetAll("SELECT aid, user, authid FROM `" . DB_PREFIX . "_admins` WHERE gid = '" . $web_group_list[$i]['gid'] . "'");
+	$web_group_admins[$i] = \MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT aid, user, authid FROM `" . DB_PREFIX . "_admins` WHERE gid = '" . $web_group_list[$i]['gid'] . "'");
 }
 
 // Server admin groups
-$server_admin_group_list = $GLOBALS['db']->GetAll("SELECT * FROM `" . DB_PREFIX . "_srvgroups`") ;
+$server_admin_group_list = \MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT * FROM `" . DB_PREFIX . "_srvgroups`") ;
 for($i=0;$i<count($server_admin_group_list);$i++)
 {
 	$server_admin_group_list[$i]['permissions'] = SmFlagsToSb($server_admin_group_list[$i]['flags']);
-	$srvGroup = $GLOBALS['db']->qstr($server_admin_group_list[$i]['name']);
-	$query = $GLOBALS['db']->GetRow("SELECT COUNT(aid) AS cnt FROM `" . DB_PREFIX . "_admins` WHERE srv_group = $srvGroup;");
+	$srvGroup = \MaterialAdmin\DataStorage::ADOdb()->qstr($server_admin_group_list[$i]['name']);
+	$query = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT COUNT(aid) AS cnt FROM `" . DB_PREFIX . "_admins` WHERE srv_group = $srvGroup;");
 	$server_admin_group_count[$i] = $query['cnt'];
-	$server_admin_group_admins[$i] = $GLOBALS['db']->GetAll("SELECT aid, user, authid FROM `" . DB_PREFIX . "_admins` WHERE srv_group = $srvGroup;");
-	$server_admin_group_overrides[$i] = $GLOBALS['db']->GetAll("SELECT type, name, access FROM `" . DB_PREFIX . "_srvgroups_overrides` WHERE group_id = ?", array($server_admin_group_list[$i]['id']));
+	$server_admin_group_admins[$i] = \MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT aid, user, authid FROM `" . DB_PREFIX . "_admins` WHERE srv_group = $srvGroup;");
+	$server_admin_group_overrides[$i] = \MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT type, name, access FROM `" . DB_PREFIX . "_srvgroups_overrides` WHERE group_id = ?", array($server_admin_group_list[$i]['id']));
 }
 
 
 // server groups
-$server_group_list = $GLOBALS['db']->GetAll("SELECT * FROM `" . DB_PREFIX . "_groups` WHERE type = '3'") ;
+$server_group_list = \MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT * FROM `" . DB_PREFIX . "_groups` WHERE type = '3'") ;
 for($i=0;$i<count($server_group_list);$i++)
 {
-	$query = $GLOBALS['db']->GetRow("SELECT COUNT(server_id) AS cnt FROM `" . DB_PREFIX . "_servers_groups` WHERE `group_id` = ".  $server_group_list[$i]['gid'] ) ;
+	$query = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT COUNT(server_id) AS cnt FROM `" . DB_PREFIX . "_servers_groups` WHERE `group_id` = ".  $server_group_list[$i]['gid'] ) ;
 	$server_group_count[$i] = $query['cnt'];
-	$server_group_list[$i]['servers'] = $GLOBALS['db']->GetAll("SELECT server_id FROM `" . DB_PREFIX . "_servers_groups` WHERE group_id = " . $server_group_list[$i]['gid']);
+	$server_group_list[$i]['servers'] = \MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT server_id FROM `" . DB_PREFIX . "_servers_groups` WHERE group_id = " . $server_group_list[$i]['gid']);
 }
 
 
