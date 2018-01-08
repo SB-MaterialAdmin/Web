@@ -37,7 +37,7 @@ define('SB_DEMO_LOCATION','demos');
 define('SB_ICON_LOCATION','images/games');
 define('SB_MAP_LOCATION', ROOT . 'images/maps');
 define('SB_ICONS', ROOT . SB_ICON_LOCATION);
-define('SB_DEMOS', ROOT . SB_DEMO_LOCATION);
+define('SB_DEMOS', USER_DATA . SB_DEMO_LOCATION);
 
 define('SB_THEME', ROOT . 'theme/');
 define('SB_THEME_COMPILE', USER_DATA . 'theme_c/');
