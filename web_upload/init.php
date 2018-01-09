@@ -85,7 +85,7 @@ if(!file_exists(USER_DATA.'/config.php') || !include_once(USER_DATA . '/config.p
 	// No were not
 	if($_SERVER['HTTP_HOST'] != "localhost")
 	{
-		echo(\MaterialAdmin\DataStorage::Translator()->getPhrase("init::not_installed"));
+		echo(\MaterialAdmin\DataStorage::Translator()->retrieve("init::not_installed"));
 		die();
 	}
 }
@@ -93,7 +93,7 @@ if(!defined("DEVELOPER_MODE") && !defined("IS_UPDATE") && file_exists(ROOT."/ins
 {
 	if($_SERVER['HTTP_HOST'] != "localhost")
 	{
-		echo(\MaterialAdmin\DataStorage::Translator()->getPhrase("init::security_direxists"));
+		echo(\MaterialAdmin\DataStorage::Translator()->retrieve("init::security_direxists"));
 		die();
 	}
 }
@@ -102,7 +102,7 @@ if(!defined("DEVELOPER_MODE") && !defined("IS_UPDATE") && file_exists(ROOT."/upd
 {
 	if($_SERVER['HTTP_HOST'] != "localhost")
 	{
-		echo(\MaterialAdmin\DataStorage::Translator()->getPhrase("init::redirect_updater"));
+		echo(\MaterialAdmin\DataStorage::Translator()->retrieve("init::redirect_updater"));
 		echo("<script>setTimeout(function() { window.location.replace('./updater'); }, 2000);</script>");
 		die();
 	}
@@ -272,10 +272,10 @@ require(INCLUDES_PATH . '/smarty/Smarty.class.php');
 global $theme, $userbank;
 
 if(!@file_exists(SB_THEME . "/theme.conf.php"))
-	die(\MaterialAdmin\DataStorage::Translator()->getPhrase("init::incorrect_theme"));
+	die(\MaterialAdmin\DataStorage::Translator()->retrieve("init::incorrect_theme"));
 
 if(!@is_writable(SB_THEMES_COMPILE))
-    die(\MaterialAdmin\DataStorage::Translator()->getPhrase("init::themec_not_writable", ["cache_path" => SB_THEME_COMPILE]));
+    die(\MaterialAdmin\DataStorage::Translator()->retrieve("init::themec_not_writable", ["cache_path" => SB_THEME_COMPILE]));
 
 $theme = new Smarty();
 $theme->error_reporting 	= 	E_ALL ^ E_NOTICE;
