@@ -64,6 +64,10 @@ class CServerControl {
         $this->sq = new SourceQuery();
         $this->SetCacheRunState($state);
     }
+
+    public function __destruct() {
+        $this->SaveCacheFile();
+    }
     
     public function Connect($ip, $port = 27015) {
         try {
@@ -140,10 +144,10 @@ class CServerControl {
         if (!$this->cl)
             $this->LoadCacheFile();
 
-        if (!isset($this->cc[$query_type])
+        if (!isset($this->cc[$query_type]))
             return false;
 
-        if ($this->cc[$query_type]['time'] <= time())
+        if ($this->cc[$query_type]['time'] > time())
             return false;
 
         $response = $this->cc[$query_type]['data'];
@@ -172,7 +176,7 @@ class CServerControl {
         $this->cu = false;
         $this->cc = [];
 
-        $path = USER_DATA . 'gc/' . md5($this->gip);
+        $path = $this->GetCachePath();
         if (!file_exists($path))
             return;
 
@@ -188,8 +192,12 @@ class CServerControl {
             return;
 
         $data = serialize($this->cc);
-        $path = USER_DATA . 'gc/' . md5($this->gip);
+        $path = $this->GetCachePath();
         file_put_contents($path, $data);
+    }
+
+    private function GetCachePath() {
+        return USER_DATA . 'gc/' . md5($this->gip) . ".cache";
     }
 
     // executing game server queries

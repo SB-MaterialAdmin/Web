@@ -11,19 +11,19 @@
 <script type="text/javascript" src="./theme/js/contextMenoo.js"></script>
 
 <!-- Vendor CSS -->
-<link href="themes/{$theme_name}/vendors/bower_components/fullcalendar/dist/fullcalendar.min.css" rel="stylesheet" />
-<link href="themes/{$theme_name}/vendors/bower_components/animate.css/animate.min.css" rel="stylesheet" />
-<link href="themes/{$theme_name}/vendors/bower_components/bootstrap-sweetalert/lib/sweet-alert.css" rel="stylesheet" />
-<link href="themes/{$theme_name}/vendors/bower_components/material-design-iconic-font/dist/css/material-design-iconic-font.min.css" rel="stylesheet" />
-<link href="themes/{$theme_name}/vendors/bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.min.css" rel="stylesheet" />
+<link href="theme/vendors/bower_components/fullcalendar/dist/fullcalendar.min.css" rel="stylesheet" />
+<link href="theme/vendors/bower_components/animate.css/animate.min.css" rel="stylesheet" />
+<link href="theme/vendors/bower_components/bootstrap-sweetalert/lib/sweet-alert.css" rel="stylesheet" />
+<link href="theme/vendors/bower_components/material-design-iconic-font/dist/css/material-design-iconic-font.min.css" rel="stylesheet" />
+<link href="theme/vendors/bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.min.css" rel="stylesheet" />
 <link href='https://fonts.googleapis.com/css?family=Roboto:900italic,900,700italic,700,500italic,500,400italic,400,300italic,300' rel='stylesheet' type='text/css' />
-<link href="themes/{$theme_name}/vendors/bower_components/bootstrap-select/dist/css/bootstrap-select.css" rel="stylesheet" />
-<link href="themes/{$theme_name}/vendors/bower_components/chosen/chosen.min.css" rel="stylesheet" />
-<link href="themes/{$theme_name}/vendors/summernote/dist/summernote.css" rel="stylesheet" />   
+<link href="theme/vendors/bower_components/bootstrap-select/dist/css/bootstrap-select.css" rel="stylesheet" />
+<link href="theme/vendors/bower_components/chosen/chosen.min.css" rel="stylesheet" />
+<link href="theme/vendors/summernote/dist/summernote.css" rel="stylesheet" />   
 <!-- CSS -->
-<link href="themes/{$theme_name}/css/app.min.1.css" rel="stylesheet" />
-<link href="themes/{$theme_name}/css/app.min.2.css" rel="stylesheet" />
-<link href="themes/{$theme_name}/css/css_sup.css" rel="stylesheet" />
+<link href="theme/css/app.min.1.css" rel="stylesheet" />
+<link href="theme/css/app.min.2.css" rel="stylesheet" />
+<link href="theme/css/css_sup.css" rel="stylesheet" />
 
 {$tiny_mce_js}
 {$xajax_functions}

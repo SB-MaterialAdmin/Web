@@ -119,13 +119,7 @@ class Language {
      */
     private function getPhrase($lang_phrase, $format_args) {
         $lang_phrase = explode("::", $lang_phrase);
-
-        $sprarg = array();
-        foreach ($format_args as $arg) {
-            $sprarg[] = $arg;
-        }
-
-        return $this->_format($this->cache[$lang_phrase[0]][$lang_phrase[1]], $sprarg);
+        return $this->_format($this->cache[$lang_phrase[0]][$lang_phrase[1]], $format_args);
     }
 
     /**
@@ -138,14 +132,15 @@ class Language {
     private function _format($format_rules, $format_args) {
         $result = $format_rules;
 
-        preg_match('/\{\{ (.?){1,} \}\}/', $format_rules, $matches, PREG_OFFSET_CAPTURE);
+        preg_match('/\{\{ (.{1,}) \}\}/', $format_rules, $matches, PREG_OFFSET_CAPTURE);
         unset($matches[0]);
         foreach ($matches as $match) {
-            if (isset($format_args[$match[0])) {
-                $result = str_replace("{{ " . $match[0] . "}}", $format_args[$match[0]], $result);
-            } else {
-                $result = str_replace("{{ " . $match[0] . "}}", "", $result);
-            }
+            $token = trim($match[0]);
+            $res = (isset($format_args[$token]) ?
+                    $format_args[$token] :
+                    "");
+
+            $result = str_replace("{{ " . $token . " }}", $res, $result);
         }
 
         return $result;

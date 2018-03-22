@@ -50,7 +50,6 @@ define('XAJAX_REQUEST_URI', './index.php');
 include_once(INCLUDES_PATH . "/CSystemLog.php");
 include_once(INCLUDES_PATH . "/CUserManager.php");
 include_once(INCLUDES_PATH . "/CUI.php");
-include_once(INCLUDES_PATH . "/DataStorage.php");
 include_once("theme/theme.conf.php");
 
 // ---------------------------------------------------
@@ -81,7 +80,7 @@ if(trim($_SERVER['PHP_SELF']) == '') $_SERVER['PHP_SELF'] = preg_replace("/(\?.*
 // ---------------------------------------------------
 //  Are we installed?
 // ---------------------------------------------------
-if(!file_exists(USER_DATA.'/config.php') || !include_once(USER_DATA . '/config.php')) {
+if(!file_exists(USER_DATA.'config.php') || !include_once(USER_DATA . 'config.php')) {
 	// No were not
 	if($_SERVER['HTTP_HOST'] != "localhost")
 	{
@@ -141,7 +140,7 @@ error_reporting(E_ALL ^ E_NOTICE);
 include_once(INCLUDES_PATH . "/adodb/adodb.inc.php");
 include_once(INCLUDES_PATH . "/adodb/adodb-errorhandler.inc.php");
 
-$GLOBALS['db'] = ADONewConnection("mysqli://".DB_USER.':'.DB_PASS.'@'.DB_HOST.':'.DB_PORT.'/'.DB_NAME)
+$GLOBALS['db'] = ADONewConnection("mysqli://".DB_USER.':'.DB_PASS.'@'.DB_HOST.':'.DB_PORT.'/'.DB_NAME);
 $GLOBALS['log'] = new CSystemLog();
 
 if( !is_object($GLOBALS['db']) )
@@ -275,7 +274,7 @@ global $theme, $userbank;
 if(!@file_exists(SB_THEME . "/theme.conf.php"))
 	die($GLOBALS['translator']->retrieve("init::incorrect_theme"));
 
-if(!@is_writable(SB_THEMES_COMPILE))
+if(!@is_writable(SB_THEME_COMPILE))
     die($GLOBALS['translator']->retrieve("init::themec_not_writable", ["cache_path" => SB_THEME_COMPILE]));
 
 $theme = new Smarty();
