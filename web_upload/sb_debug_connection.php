@@ -39,7 +39,7 @@ $serverrcon = ""; // Указывайте RCON-пароль, если хотит
 
 
 /******* Ничего не изменяйте после этой линии *******/
-header("Content-Type: text/plain");
+header("Content-Type: text/plain; charset=utf8");
 
 if(empty($serverip) || empty($serverport))
 	die('[-] Не указана информация о сервере. Откройте текстовым редактором этот файл, пропишите в нём IP и порт, сохраните и загрузите обратно на сервер.');
