@@ -191,4 +191,13 @@ class CServerControl {
         $path = USER_DATA . 'gc/' . md5($this->gip);
         file_put_contents($path, $data);
     }
+
+    // executing game server queries
+    private function execute($query_type) {
+        switch ($query_type) {
+            case A2S_INFO:      return $this->sq->GetInfo();
+            case A2S_RULES:     return $this->sq->GetRules();
+            case A2S_PLAYERS:   return $this->sq->GetPlayers();
+        }
+    }
 }
