@@ -671,7 +671,7 @@ function CreateHostnameCache()
 	while (!$res->EOF)
 	{
 		$info = array();
-		$sinfo = new CServerControl($res->fields[1],$res->fields[2]);
+		$sinfo = new CServerControl(intval($GLOBALS['config']['gamecache.enabled']) == 1);
 		$sinfo->Connect($res->fields[1], $res->fields[2]);
 		$info = $sinfo->GetInfo();
 		if(!empty($info['HostName']))
@@ -938,7 +938,7 @@ function checkSinglePlayer($sid, $steamid)
 		return false;
 	}
 	
-	$r = new CServerControl();
+	$r = new CServerControl(intval($GLOBALS['config']['gamecache.enabled']) == 1);
 	$r->Connect($serv['ip'], $serv['port']);
 	
 	if(!$r->AuthRcon($serv['rcon'])) {
@@ -979,7 +979,7 @@ function checkMultiplePlayers($sid, $steamids)
 		return false;
 	}
 	
-	$r = new CServerControl();
+	$r = new CServerControl(intval($GLOBALS['config']['gamecache.enabled']) == 1);
 	$r->Connect($serv['ip'], $serv['port']);
 	
 	if(!$r->AuthRcon($serv['rcon'])) {
@@ -1136,7 +1136,7 @@ function SendRconSilent($rcon, $sid)
 		return false;
 	}
 	
-	$r = new CServerControl($serv['ip'], $serv['port'], $serv['rcon']);
+	$r = new CServerControl(intval($GLOBALS['config']['gamecache.enabled']) == 1);
 	$r->Connect($serv['ip'], $serv['port']);
 	
 	if(!$r->AuthRcon($serv['rcon'])) {

@@ -1834,7 +1834,7 @@ function ServerHostPlayers($sid, $type="servers", $obId="", $tplsid="", $open=""
 	if(empty($res[1]) || empty($res[2]))
 		return $objResponse;
 	$info = array();
-	$sinfo = new CServerControl();
+	$sinfo = new CServerControl(intval($GLOBALS['config']['gamecache.enabled']) == 1);
 	$sinfo->Connect($res[1], $res[2]);
 	$info = $sinfo->GetInfo();
 	if($type == "servers") {
@@ -2052,7 +2052,7 @@ function ServerHostProperty($sid, $obId, $obProp, $trunchostname)
 		return $objResponse;
 	$info = array();
 	
-	$sinfo = new CServerControl();
+	$sinfo = new CServerControl(intval($GLOBALS['config']['gamecache.enabled']) == 1);
 	$sinfo->Connect($res[0], $res[1]);
 	$info = $sinfo->GetInfo();
     
@@ -2082,7 +2082,7 @@ function ServerHostPlayers_list($sid, $type="servers", $obId="")
 		if(empty($res[1]) || empty($res[2]))
 			return $objResponse;
 		$info = array();
-		$sinfo = new CServerControl();
+		$sinfo = new CServerControl(intval($GLOBALS['config']['gamecache.enabled']) == 1);
 		$sinfo->Connect($res[1], $res[2]);
 		$info = $sinfo->GetInfo();
 
@@ -2120,7 +2120,7 @@ function ServerPlayers($sid)
 		return $objResponse;
 	}
 	$info = array();
-	$sinfo = new CServerControl();
+	$sinfo = new CServerControl(intval($GLOBALS['config']['gamecache.enabled']) == 1);
 	$sinfo->Connect($res[1], $res[2]);
 	$info = $sinfo->GetPlayers();
 
@@ -2163,7 +2163,7 @@ function KickPlayer($sid, $name)
 		return $objResponse;
 	}
 	
-	$r = new CServerControl();
+	$r = new CServerControl(intval($GLOBALS['config']['gamecache.enabled']) == 1);
 	$r->Connect($data['ip'], $data['port']);
 
 	if(!$r->AuthRcon($data['rcon']))
@@ -2796,7 +2796,7 @@ function SendRcon($sid, $command, $output)
     @fclose($test);
 	include(INCLUDES_PATH . "/CServerControl.php");
 	
-	$r = new CServerControl();
+	$r = new CServerControl(intval($GLOBALS['config']['gamecache.enabled']) == 1);
 	$r->Connect($rcon['ip'], $rcon['port']);
 	
 	if(!$r->AuthRcon($rcon['rcon']))
@@ -3238,7 +3238,7 @@ function RehashAdmins_pay($server, $do=0, $card)
 
 		require INCLUDES_PATH.'/CServerControl.php';
 		
-		$r = new CServerControl();
+		$r = new CServerControl(intval($GLOBALS['config']['gamecache.enabled']) == 1);
 		$r->Connect($serv['ip'], $serv['port']);
 		
 		if(!$r->AuthRcon($serv['rcon']))
@@ -3313,7 +3313,7 @@ function RehashAdmins($server, $do=0)
 
 		require INCLUDES_PATH.'/CServerControl.php';
 		
-		$r = new CServerControl();
+		$r = new CServerControl(intval($GLOBALS['config']['gamecache.enabled']) == 1);
 		$r->Connect($serv['ip'], $serv['port']);
 		
 		if(!$r->AuthRcon($serv['rcon']))
@@ -3685,7 +3685,7 @@ function ViewCommunityProfile($sid, $name)
 		return $objResponse;
 	}
 	
-	$r = new CServerControl();
+	$r = new CServerControl(intval($GLOBALS['config']['gamecache.enabled']) == 1);
 	$r->Connect($data['ip'], $data['port']);
 
 	if(!$r->AuthRcon($data['rcon']))
@@ -3741,7 +3741,7 @@ function SendMessage($sid, $name, $message)
 		return $objResponse;
 	}
 	
-	$r = new CServerControl();
+	$r = new CServerControl(intval($GLOBALS['config']['gamecache.enabled']) == 1);
 	$r->Connect($data['ip'], $data['port']);
 	
 	if(!$r->AuthRcon($data['rcon']))
@@ -3933,7 +3933,7 @@ function PastePlayerData($sid, $name) {
     }
     
     require(INCLUDES_PATH . '/CServerControl.php');
-    $CSInstance = new CServerControl();
+    $CSInstance = new CServerControl(intval($GLOBALS['config']['gamecache.enabled']) == 1);
     $CSInstance->Connect($data['ip'], $data['port']);
     if (!$CSInstance->AuthRcon($data['rcon'])) {
         $GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_servers SET rcon = '' WHERE sid = ?;", array($sid));

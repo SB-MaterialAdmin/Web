@@ -275,6 +275,11 @@ else
 
 				// Null Admin
 				$GLOBALS['db']->Execute(sprintf("REPLACE INTO `%s_settings` (`value`, `setting`) VALUES (%s, 'nulladmin.name');", DB_PREFIX, $GLOBALS['db']->qstr($_POST['nulladmin_name'])));
+
+                // Game Cache
+                $GLOBALS['db']->Execute(sprintf("REPLACE INTO `%s_settings`
+                    (%d, 'gamecache.enabled'),
+                    (%d, 'gamecache.entry_lifetime');", intval($_POST['gc_enabled']), intval($_POST['gc_entrylf'])));
 				
 				?><script>setTimeout("ShowBox('Главные настройки изменены', 'Изменения были успешно применены!', 'green', 'index.php?p=admin&c=settings', false, 2500);", 1200);</script><?php 
 			}else{
@@ -348,6 +353,10 @@ else
 
 		// Null Admin Name
 		$theme->assign('nulladmin_name', $GLOBALS['config']['nulladmin.name']);
+
+        // GC
+        $theme->assign('gc_enabled',    $GLOBALS['config']['gamecache.enabled']);
+        $theme->assign('gc_entrylf',    $GLOBALS['config']['gamecache.entry_lifetime']);
 		
 		$theme->display('page_admin_settings_settings.tpl');	
 	echo '</div>';

@@ -47,6 +47,7 @@
 		515 =>  "Theme_CFG.php",
 		516 =>  "Warnings.php",
 		517 =>  "Warnings_fixes.php",
-		518	=> 	"518.php"
+		518	=> 	"518.php",
+        519 =>  "519.php"
  ];
 ?>

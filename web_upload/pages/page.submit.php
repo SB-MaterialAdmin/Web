@@ -34,7 +34,7 @@ if($GLOBALS['config']['config.enablesubmit']!="1")
 }
 
 require_once(INCLUDES_PATH.'/CServerControl.php');
-$sinfo = new CServerControl();
+$sinfo = new CServerControl(intval($GLOBALS['config']['gamecache.enabled']) == 1);
 
 if (!isset($_POST['subban']) || $_POST['subban'] != 1)
 {

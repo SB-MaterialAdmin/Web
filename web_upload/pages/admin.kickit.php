@@ -89,7 +89,7 @@ function KickPlayer($check, $sid, $num) {
         @fclose($test);
         require_once(INCLUDES_PATH . "/CServerControl.php");
         
-        $r = new CServerControl();
+        $r = new CServerControl(intval($GLOBALS['config']['gamecache.enabled']) == 1);
         $r->Connect($sdata['ip'], $sdata['port']);
 
         if(!$r->AuthRcon($sdata['rcon'])) {

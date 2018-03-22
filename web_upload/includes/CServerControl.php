@@ -43,21 +43,41 @@ if (!defined('IN_SB')) {echo("You should not be here. Only follow links!");die()
 require INCLUDES_PATH . '/SourceQuery/bootstrap.php';
 use xPaw\SourceQuery\SourceQuery;
 
+/**
+ * Константы для "кеша"
+ */
+define('A2S_INFO',    0);
+define('A2S_RULES',   1);
+define('A2S_PLAYERS', 2);
+
 class CServerControl {
-    private $sq;
-    
-    public function __construct() {
+    private $sq;    /**< Source Query object */
+
+    private $cs;    /**< Cache State (enabled or disabled) */
+    private $cl;    /**< Cache file loaded? */
+    private $cc;    /**< Cache data */
+    private $cu;    /**< File on storage is required to update? */
+
+    private $gip;   /**< IP with port */
+
+    public function __construct($state = true) {
         $this->sq = new SourceQuery();
+        $this->SetCacheRunState($state);
     }
     
     public function Connect($ip, $port = 27015) {
         try {
+            $this->SaveCacheFile();
+            $this->gip = '';
+
             $this->sq->Disconnect();
         } catch (Exception $e) {}
         
         // Connect
         try {
             $this->sq->Connect($ip, $port, 2, SourceQuery::SOURCE);
+            $this->gip = "{$ip}_{$port}";
+
             return true;
         } catch (Exception $e) {
             return false;
@@ -81,29 +101,94 @@ class CServerControl {
             return false;
         }
     }
-    
-    /* Queries */
-    public function GetInfo() {
-        try {
-            return $this->sq->GetInfo();
-        } catch (Exception $e) {
-            return false;
+
+    /**
+     * THESE 3 METHODS ARE DEPRECATED
+     * Use GetData()
+     *
+     * Queries
+     */
+    public function GetInfo()   { return $this->GetData(A2S_INFO);    }
+    public function GetRules()  { return $this->GetData(A2S_RULES);   }
+    public function GetPlayers(){ return $this->GetData(A2S_PLAYERS); }
+
+    public function GetData($query_type) {
+        $response = null;
+        if (!$this->LookupCacheEntry($query_type, $response)) {
+            try {
+                $response = $this->execute($query_type);
+            } catch (Exception $e) {
+                return false;
+            }
         }
+
+        $this->SetCacheEntry($query_type, $response);
+        return $response;
     }
-    
-    public function GetPlayers() {
-        try {
-            return $this->sq->GetPlayers();
-        } catch (Exception $e) {
-            return false;
-        }
+
+    /**
+     * Caching
+     */
+    public function SetCacheRunState($state = true) {
+        $this->cs = $state;
     }
-    
-    public function GetRules() {
-        try {
-            return $this->sq->GetRules();
-        } catch (Exception $e) {
+
+    private function LookupCacheEntry($query_type, &$response) {
+        if (!$this->cs)
             return false;
-        }
+
+        if (!$this->cl)
+            $this->LoadCacheFile();
+
+        if (!isset($this->cc[$query_type])
+            return false;
+
+        if ($this->cc[$query_type]['time'] <= time())
+            return false;
+
+        $response = $this->cc[$query_type]['data'];
+        return true;
+    }
+
+    private function SetCacheEntry($query_type, $response) {
+        if (!$this->cs)
+            return;
+
+        if (!$this->cl)
+            $this->LoadCacheFile();
+
+        $this->cc[$query_type] = [
+            'time'  => time() + intval($GLOBALS['config']['gamecache.entry_lifetime']),
+            'data'  => $response
+        ];
+        $this->cu = true;
+    }
+
+    private function LoadCacheFile() {
+        if (!$this->cs)
+            return;
+
+        $this->cl = true;
+        $this->cu = false;
+        $this->cc = [];
+
+        $path = USER_DATA . 'gc/' . md5($this->gip);
+        if (!file_exists($path))
+            return;
+
+        $this->cc = unserialize(file_get_contents($path));
+    }
+
+    private function SaveCacheFile() {
+        if (!$this->cs || !$this->cl)
+            return;
+
+        $this->cl = false;
+        if (!$this->cu)
+            return;
+
+        $data = serialize($this->cc);
+        $path = USER_DATA . 'gc/' . md5($this->gip);
+        file_put_contents($path, $data);
     }
 }

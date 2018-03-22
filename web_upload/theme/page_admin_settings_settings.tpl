@@ -358,6 +358,18 @@
 				<!-- SMTP settings  end  -->
 			</div>
 			
+            <div class="card-header">
+				<h2>Game Cache</h2>
+			</div>
+			<div class="card-body card-padding p-b-0">
+				<p>Кеширование ответов от игрового сервера позволяет избавиться от лишней нагрузки на порт игрового сервера, но так же может привести к проблемам неактуальных данных в веб-панели.<br />Все ответы сохраняются на ФС веб-сервера, в папке <em>data/gc</em><br /><b>Рекомендуемое значение для хранения ответов</b>: 30</p>
+				
+				{display_material_checkbox name="gc_enabled" help_title="Использовать GC" help_text="Включает использование системы кеширования ответов"}
+				<div id='gc'>
+					{display_material_input name="gc_entrylf" help_title="Время жизни кеша" help_text="Время жизни записи кеша (в секундах)" placeholder="Рекомендуемое значение: 30" value=$gc_entrylf}
+				</div>
+			</div>
+            
 			<div class="card-body card-padding text-center">
 				{sb_button text="Сохранить" icon="<i class='zmdi zmdi-check-all'></i>" class="bgm-green btn-icon-text" id="asettings" submit=true}
 				&nbsp;
@@ -369,12 +381,20 @@
 </form>
 <script>$('sel_timezoneoffset').value = "{$config_time}";
 {if $smtp_enabled}$('smtp_enabled').checked = true;{/if}
+{if $gc_enabled}$('gc_enabled').checked = true;{/if}
 {literal}
 $('smtp_enabled').onclick = function() {
 	if ($('smtp_enabled').checked == false)
 		$('smtp').style.display = "none";
 	else
 		$('smtp').style.display = "";
+}
+
+$('gc_enabled').onclick = function() {
+    if ($('gc_enabled').checked = false)
+        $('gc').style.display = "none";
+    else
+        $('gc').style.display = "";
 }
 {/literal}
 
