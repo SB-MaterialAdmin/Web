@@ -51,7 +51,7 @@ function LoadServers2($check, $type, $length) {
 		return $objResponse;
 	}
 	$id = 0;
-	$servers = \MaterialAdmin\DataStorage::ADOdb()->Execute("SELECT sid, rcon FROM ".DB_PREFIX."_servers WHERE enabled = 1 ORDER BY modid, sid;");
+	$servers = $GLOBALS['db']->Execute("SELECT sid, rcon FROM ".DB_PREFIX."_servers WHERE enabled = 1 ORDER BY modid, sid;");
 	while(!$servers->EOF) {
 		//search for player
 		if(!empty($servers->fields["rcon"])) {
@@ -83,7 +83,7 @@ function BlockPlayer($check, $sid, $num, $type, $length) {
 	}
 	
 	//get the server data
-	$sdata = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT ip, port, rcon FROM ".DB_PREFIX."_servers WHERE sid = '".$sid."';");
+	$sdata = $GLOBALS['db']->GetRow("SELECT ip, port, rcon FROM ".DB_PREFIX."_servers WHERE sid = '".$sid."';");
 	
 	//test if server is online
 	if($test = @fsockopen($sdata['ip'], $sdata['port'], $errno, $errstr, 2)) {
@@ -94,7 +94,7 @@ function BlockPlayer($check, $sid, $num, $type, $length) {
 		$r->Connect($sdata['ip'], $sdata['port']);
 
 		if(!$r->AuthRcon($sdata['rcon'])) {
-			\MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE ".DB_PREFIX."_servers SET rcon = '' WHERE sid = '".$sid."' LIMIT 1;");		
+			$GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_servers SET rcon = '' WHERE sid = '".$sid."' LIMIT 1;");		
 			$objResponse->addAssign("srv_$num", "innerHTML", "<font color='red' size='1'>Неправильный RCON пароль, измените!</font>");
 			$objResponse->addScript('set_counter(1);');
 			return $objResponse;
@@ -119,7 +119,7 @@ function BlockPlayer($check, $sid, $num, $type, $length) {
 			$gothim = (strpos($r->SendCommand("ma_wb_block ".$type." ".$length." ".$check), "ok") !== FALSE);
 
 		if ($gothim) {
-            \MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE `".DB_PREFIX."_comms` SET sid = '".$sid."' WHERE authid = '".$check."' AND RemovedBy IS NULL;");
+            $GLOBALS['db']->Execute("UPDATE `".DB_PREFIX."_comms` SET sid = '".$sid."' WHERE authid = '".$check."' AND RemovedBy IS NULL;");
 			$requri = substr($_SERVER['REQUEST_URI'], 0, strrpos($_SERVER['REQUEST_URI'], "pages/admin.blockit.php"));
 			$objResponse->addAssign("srv_$num", "innerHTML", "<font color='green' size='1'><b>Игрок найден и заблокирован!</b></font>");
 			$objResponse->addScript("set_counter('-1');");
@@ -137,7 +137,7 @@ function BlockPlayer($check, $sid, $num, $type, $length) {
 		return $objResponse;
 	}
 }
-$servers = \MaterialAdmin\DataStorage::ADOdb()->Execute("SELECT ip, port, rcon FROM ".DB_PREFIX."_servers WHERE enabled = 1 ORDER BY modid, sid;");
+$servers = $GLOBALS['db']->Execute("SELECT ip, port, rcon FROM ".DB_PREFIX."_servers WHERE enabled = 1 ORDER BY modid, sid;");
 $theme->assign('total', $servers->RecordCount());
 $serverlinks = array();
 $num = 0;

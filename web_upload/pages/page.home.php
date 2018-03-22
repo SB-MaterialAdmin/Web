@@ -31,10 +31,10 @@ define('IN_HOME', true);
 
 //$GLOBALS['TitleRewrite'] = "HOME";
 
-$res = \MaterialAdmin\DataStorage::ADOdb()->Execute("SELECT count(name) FROM ".DB_PREFIX."_banlog");
+$res = $GLOBALS['db']->Execute("SELECT count(name) FROM ".DB_PREFIX."_banlog");
 $totalstopped = (int)$res->fields[0];
 
-$res = \MaterialAdmin\DataStorage::ADOdb()->Execute("SELECT bl.name, time, bl.sid, bl.bid, b.type, b.authid, b.ip
+$res = $GLOBALS['db']->Execute("SELECT bl.name, time, bl.sid, bl.bid, b.type, b.authid, b.ip
 								FROM ".DB_PREFIX."_banlog AS bl
 								LEFT JOIN ".DB_PREFIX."_bans AS b ON b.bid = bl.bid
 								ORDER BY time DESC LIMIT 10");
@@ -69,10 +69,10 @@ while (!$res->EOF)
     ++$blcount;
 }
 
-$res = \MaterialAdmin\DataStorage::ADOdb()->Execute("SELECT count(bid) FROM ".DB_PREFIX."_bans");
+$res = $GLOBALS['db']->Execute("SELECT count(bid) FROM ".DB_PREFIX."_bans");
 $BanCount = (int)$res->fields[0];
 
-$res = \MaterialAdmin\DataStorage::ADOdb()->Execute("SELECT bid, ba.ip, ba.authid, ba.name, created, ends, length, reason, ba.aid, ba.sid, ad.user, CONCAT(se.ip,':',se.port), se.sid, mo.icon, ba.RemoveType, ba.type
+$res = $GLOBALS['db']->Execute("SELECT bid, ba.ip, ba.authid, ba.name, created, ends, length, reason, ba.aid, ba.sid, ad.user, CONCAT(se.ip,':',se.port), se.sid, mo.icon, ba.RemoveType, ba.type
 			    				FROM ".DB_PREFIX."_bans AS ba 
 			    				LEFT JOIN ".DB_PREFIX."_admins AS ad ON ba.aid = ad.aid
 			    				LEFT JOIN ".DB_PREFIX."_servers AS se ON se.sid = ba.sid
@@ -130,10 +130,10 @@ while (!$res->EOF)
 	$res->MoveNext();
 }
 
-$res = \MaterialAdmin\DataStorage::ADOdb()->Execute("SELECT count(bid) FROM ".DB_PREFIX."_comms");
+$res = $GLOBALS['db']->Execute("SELECT count(bid) FROM ".DB_PREFIX."_comms");
 $CommCount = (int)$res->fields[0];
 	
-$res = \MaterialAdmin\DataStorage::ADOdb()->Execute("SELECT bid, ba.authid, ba.type, ba.name, created, ends, length, reason, ba.aid, ba.sid, ad.user, CONCAT(se.ip,':',se.port), se.sid, mo.icon, ba.RemoveType, ba.type
+$res = $GLOBALS['db']->Execute("SELECT bid, ba.authid, ba.type, ba.name, created, ends, length, reason, ba.aid, ba.sid, ad.user, CONCAT(se.ip,':',se.port), se.sid, mo.icon, ba.RemoveType, ba.type
 				    				FROM ".DB_PREFIX."_comms AS ba 
 				    				LEFT JOIN ".DB_PREFIX."_admins AS ad ON ba.aid = ad.aid
 				    				LEFT JOIN ".DB_PREFIX."_servers AS se ON se.sid = ba.sid
@@ -186,7 +186,7 @@ while (!$res->EOF)
 	$res->MoveNext();
 }
 
-$counts = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT 
+$counts = $GLOBALS['db']->GetRow("SELECT 
          (SELECT COUNT(aid) FROM `" . DB_PREFIX . "_admins` WHERE aid > 0) AS admins,
          (SELECT COUNT(sid) FROM `" . DB_PREFIX . "_servers`) AS servers"); // +
 

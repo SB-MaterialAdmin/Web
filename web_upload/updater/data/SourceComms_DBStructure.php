@@ -1,5 +1,5 @@
 <?php
-	$create = \MaterialAdmin\DataStorage::ADOdb()->Execute("CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "_comms` (
+	$create = $GLOBALS['db']->Execute("CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "_comms` (
 			`bid` int(6) NOT NULL AUTO_INCREMENT,
 			`authid` varchar(64) NOT NULL,
 			`name` varchar(128) NOT NULL DEFAULT 'unnamed',

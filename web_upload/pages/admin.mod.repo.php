@@ -62,7 +62,7 @@ if (json_last_error() != JSON_ERROR_NONE) {
 /* Prepare data to displaying */
 $games = $manifest['games'];
 foreach ($games as &$game) {
-    $game['installed'] = ((int) (\MaterialAdmin\DataStorage::ADOdb()->GetOne(sprintf("SELECT COUNT(*) FROM `%s_mods` WHERE `modfolder` = %s", DB_PREFIX, \MaterialAdmin\DataStorage::ADOdb()->qstr($game['folder'])))) == 1);
+    $game['installed'] = ((int) ($GLOBALS['db']->GetOne(sprintf("SELECT COUNT(*) FROM `%s_mods` WHERE `modfolder` = %s", DB_PREFIX, $GLOBALS['db']->qstr($game['folder'])))) == 1);
 }
 
 /* Display */

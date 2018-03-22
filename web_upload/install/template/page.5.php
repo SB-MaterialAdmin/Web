@@ -92,8 +92,8 @@ define('SB_WP_URL','{sbwpurl}');       				//URL of SourceBans Site
 			{
 				$db->Execute("SET NAMES `utf8`");
 				// Setup Admin
-				$admin = \MaterialAdmin\DataStorage::ADOdb()->Prepare("INSERT INTO ".$_POST['prefix']."_admins(user,authid,password,gid, email, extraflags, immunity) VALUES (?,?,?,?,?,?,?)");
-				\MaterialAdmin\DataStorage::ADOdb()->Execute($admin,array($_POST['uname'], $_POST['steam'], sha1(sha1(SB_SALT . $_POST['pass1'])), -1, $_POST['email'], (1<<24), 100));
+				$admin = $GLOBALS['db']->Prepare("INSERT INTO ".$_POST['prefix']."_admins(user,authid,password,gid, email, extraflags, immunity) VALUES (?,?,?,?,?,?,?)");
+				$GLOBALS['db']->Execute($admin,array($_POST['uname'], $_POST['steam'], sha1(sha1(SB_SALT . $_POST['pass1'])), -1, $_POST['email'], (1<<24), 100));
 				
 				// Auth admin
 				setcookie("aid", 1);

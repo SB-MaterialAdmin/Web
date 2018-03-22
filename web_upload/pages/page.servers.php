@@ -39,7 +39,7 @@ else
 		$number = -1;
 }
 
-$res = \MaterialAdmin\DataStorage::ADOdb()->Execute("SELECT se.sid, se.ip, se.port, se.modid, se.rcon, md.icon FROM ".DB_PREFIX."_servers se LEFT JOIN ".DB_PREFIX."_mods md ON md.mid=se.modid WHERE se.sid > 0 AND se.enabled = 1 ORDER BY se.modid, se.sid");
+$res = $GLOBALS['db']->Execute("SELECT se.sid, se.ip, se.port, se.modid, se.rcon, md.icon FROM ".DB_PREFIX."_servers se LEFT JOIN ".DB_PREFIX."_mods md ON md.mid=se.modid WHERE se.sid > 0 AND se.enabled = 1 ORDER BY se.modid, se.sid");
 $servers = array();
 $i=0;
 while (!$res->EOF)

@@ -62,11 +62,11 @@ if(isset($_GET['validation'],$_GET['email']) && !empty($_GET['email']) && !empty
 		exit();
 	}
 	
-	$q = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT aid, user FROM `" . DB_PREFIX . "_admins` WHERE `email` = ? && `validate` IS NOT NULL && `validate` = ?", array($email, $validation));
+	$q = $GLOBALS['db']->GetRow("SELECT aid, user FROM `" . DB_PREFIX . "_admins` WHERE `email` = ? && `validate` IS NOT NULL && `validate` = ?", array($email, $validation));
 	if($q)
 	{
 		$newpass = generate_salt(MIN_PASS_LENGTH+8);
-		$query = \MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE `" . DB_PREFIX . "_admins` SET `password` = '" . $userbank->encrypt_password($newpass) . "', validate = NULL WHERE `aid` = ?", array($q['aid']));
+		$query = $GLOBALS['db']->Execute("UPDATE `" . DB_PREFIX . "_admins` SET `password` = '" . $userbank->encrypt_password($newpass) . "', validate = NULL WHERE `aid` = ?", array($q['aid']));
 		$message = "Привет " . $q['user'] . ",\n\n";
 		$message .= "Ваш пароль был успешно сброшен.\n";
 		$message .= "Ваш пароль изменен на: ".$newpass."\n\n";

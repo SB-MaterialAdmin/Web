@@ -13,7 +13,7 @@ function smarty_function_translate($params, &$smarty) {
             break;
         }
 
-        return \MaterialAdmin\DataStorage::Translator()->retrieve($params['phrase'], $args);
+        return $GLOBALS['translator']->retrieve($params['phrase'], $args);
     } catch (Exception $e) {
         return "Exception reported: " . $e->getMessage();
     }

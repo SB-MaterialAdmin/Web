@@ -41,7 +41,7 @@ $groupsTabMenu->addMenuItem("Информация об аккаунте", 0);
 $groupsTabMenu->addMenuItem("Редактирование данных", 1);
 $groupsTabMenu->outputMenu();
 
-$res = \MaterialAdmin\DataStorage::ADOdb()->Execute("SELECT `srv_password`, `email` FROM `".DB_PREFIX."_admins` WHERE `aid` = '".$userbank->GetAid()."'");
+$res = $GLOBALS['db']->Execute("SELECT `srv_password`, `email` FROM `".DB_PREFIX."_admins` WHERE `aid` = '".$userbank->GetAid()."'");
 $srvpwset = (!empty($res->fields['srv_password'])?true:false);
 
 $user_time = $userbank->GetProperty("expired", $userbank->GetAid());
@@ -67,7 +67,7 @@ $theme->assign('min_pass_len',			MIN_PASS_LENGTH);
 // WARNINGS
 $theme->assign('warnings_enabled',		$GLOBALS['config']['admin.warns'] == "1");
 $theme->assign('max_warnings',			$GLOBALS['config']['admin.warns.max']);
-$theme->assign('warnings',				\MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT `reason`, `expires` FROM `" . DB_PREFIX . "_warns` WHERE (`expires` > ? OR `expires` = 0) AND `arecipient` = ?;", array(time(), $userbank->GetAid())));
+$theme->assign('warnings',				$GLOBALS['db']->GetAll("SELECT `reason`, `expires` FROM `" . DB_PREFIX . "_warns` WHERE (`expires` > ? OR `expires` = 0) AND `arecipient` = ?;", array(time(), $userbank->GetAid())));
 
 $theme->left_delimiter = "-{";
 $theme->right_delimiter = "}-";

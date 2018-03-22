@@ -3,8 +3,8 @@ $find_su = false;
 $find_oa = false;
 $find_og = false;
 
-$mods_struct = \MaterialAdmin\DataStorage::ADOdb()->GetAll("DESCRIBE `" . DB_PREFIX . "_mods");
-$tables = \MaterialAdmin\DataStorage::ADOdb()->GetAll("SHOW TABLES;");
+$mods_struct = $GLOBALS['db']->GetAll("DESCRIBE `" . DB_PREFIX . "_mods");
+$tables = $GLOBALS['db']->GetAll("SHOW TABLES;");
 
 /* Check */
 foreach ($tables as $table) { // TABLES
@@ -23,12 +23,12 @@ foreach ($mods_struct as $obj) { // MODS STRUCTURE
 
 /* Process requests */
 if (!$find_su) {
-    \MaterialAdmin\DataStorage::ADOdb()->Execute("ALTER TABLE `" . DB_PREFIX . "_mods` ADD `steam_universe` int(11)");
-    \MaterialAdmin\DataStorage::ADOdb()->Execute("ALTER TABLE `" . DB_PREFIX . "_mods` `steam_universe` SET DEFAULT 0;");
+    $GLOBALS['db']->Execute("ALTER TABLE `" . DB_PREFIX . "_mods` ADD `steam_universe` int(11)");
+    $GLOBALS['db']->Execute("ALTER TABLE `" . DB_PREFIX . "_mods` `steam_universe` SET DEFAULT 0;");
 }
 
 if (!$find_oa) {
-    \MaterialAdmin\DataStorage::ADOdb()->Execute("CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "_overrides` (
+    $GLOBALS['db']->Execute("CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "_overrides` (
                                 `id` int(11) NOT NULL AUTO_INCREMENT,
                                 `type` enum('command','group') NOT NULL,
                                 `name` varchar(32) NOT NULL,
@@ -39,7 +39,7 @@ if (!$find_oa) {
 }
 
 if (!$find_og) {
-    \MaterialAdmin\DataStorage::ADOdb()->Execute("CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "_srvgroups_overrides` (
+    $GLOBALS['db']->Execute("CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "_srvgroups_overrides` (
                                 `id` int(11) NOT NULL AUTO_INCREMENT,
                                 `group_id` smallint(5) unsigned NOT NULL,
                                 `type` enum('command','group') NOT NULL,
@@ -50,4 +50,4 @@ if (!$find_og) {
                             ) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
 }
 
-\MaterialAdmin\DataStorage::ADOdb()->Execute("DROP TABLE IF EXISTS `" . DB_PREFIX . "_net_country`, `" . DB_PREFIX . "_net_country_ip`");
+$GLOBALS['db']->Execute("DROP TABLE IF EXISTS `" . DB_PREFIX . "_net_country`, `" . DB_PREFIX . "_net_country_ip`");

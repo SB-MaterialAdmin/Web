@@ -55,12 +55,12 @@ if(!isset($_GET['type']) || ($_GET['type'] != 's' && $_GET['type'] != 'p'))
 $email = "";
 if($_GET['type'] == 's')
 {
-	$email = \MaterialAdmin\DataStorage::ADOdb()->GetOne('SELECT email FROM `'.DB_PREFIX.'_submissions` WHERE subid = ?', array($_GET['id']));
+	$email = $GLOBALS['db']->GetOne('SELECT email FROM `'.DB_PREFIX.'_submissions` WHERE subid = ?', array($_GET['id']));
 }
 // Protest
 else if($_GET['type'] == 'p')
 {
-	$email = \MaterialAdmin\DataStorage::ADOdb()->GetOne('SELECT email FROM `'.DB_PREFIX.'_protests` WHERE pid = ?', array($_GET['id']));
+	$email = $GLOBALS['db']->GetOne('SELECT email FROM `'.DB_PREFIX.'_protests` WHERE pid = ?', array($_GET['id']));
 }
 
 if(empty($email))

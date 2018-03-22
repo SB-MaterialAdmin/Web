@@ -35,7 +35,7 @@ if(strcasecmp($_GET['type'], "U") != 0 && strcasecmp($_GET['type'], "B") != 0 &&
 
 $id = (int)$_GET['id'];
 
-$demo = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT filename, origname FROM `".DB_PREFIX."_demos` WHERE demtype=? AND demid=?;", array($_GET['type'], $id));
+$demo = $GLOBALS['db']->GetRow("SELECT filename, origname FROM `".DB_PREFIX."_demos` WHERE demtype=? AND demid=?;", array($_GET['type'], $id));
 //Official Fix: https://code.google.com/p/sourcebans/source/detail?r=165
 if(!$demo)
 {

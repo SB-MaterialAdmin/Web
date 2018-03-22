@@ -267,14 +267,14 @@ if(isset($_POST['adminname']))
 	if($error == 0)
 	{
 		// set the basic fields
-		$edit = \MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE ".DB_PREFIX."_admins SET
+		$edit = $GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_admins SET
 									`user` = ?, `authid` = ?, `email` = ?
 									WHERE `aid` = ?", array($a_name, $a_steam, $a_email, $_GET['id']));
 		
 		// Password changed?
 		if($pw_changed)
 		{
-			$edit = \MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE ".DB_PREFIX."_admins SET
+			$edit = $GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_admins SET
 									`password` = ?
 									WHERE `aid` = ?", array($userbank->encrypt_password($_POST['password']), $_GET['id']));
 		}
@@ -288,7 +288,7 @@ if(isset($_POST['adminname']))
 			else {
 				$a_period = time() + intval($_POST['period']) * 86400;
 			}
-			$edit = \MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE ".DB_PREFIX."_admins SET
+			$edit = $GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_admins SET
 									`expired` = ?
 									WHERE `aid` = ?", array($a_period, $_GET['id']));
 		}
@@ -297,7 +297,7 @@ if(isset($_POST['adminname']))
 		// ADM skype //
 		if($p_skype)
 		{
-			$edit = \MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE ".DB_PREFIX."_admins SET
+			$edit = $GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_admins SET
 									`skype` = ?
 									WHERE `aid` = ?", array($_POST['skype'], $_GET['id']));
 		}
@@ -306,7 +306,7 @@ if(isset($_POST['adminname']))
 		// ADM vk //
 		if($p_vk)
 		{
-			$edit = \MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE ".DB_PREFIX."_admins SET
+			$edit = $GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_admins SET
 									`vk` = ?
 									WHERE `aid` = ?", array($_POST['vk'], $_GET['id']));
 		}
@@ -315,7 +315,7 @@ if(isset($_POST['adminname']))
 		// ADM comment //
 		if($p_comment)
 		{
-			$edit = \MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE ".DB_PREFIX."_admins SET
+			$edit = $GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_admins SET
 									`comment` = ?
 									WHERE `aid` = ?", array($_POST['comment'], $_GET['id']));
 		}
@@ -324,14 +324,14 @@ if(isset($_POST['adminname']))
 		// Server Admin Password changed?
 		if($serverpw_changed)
 		{
-			$edit = \MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE ".DB_PREFIX."_admins SET
+			$edit = $GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_admins SET
 									`srv_password` = ?
 									WHERE `aid` = ?", array($_POST['a_serverpass'], $_GET['id']));
 		}
 		// Remove the server password
 		else if($_POST['a_useserverpass'] != "on")
 		{
-			$edit = \MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE ".DB_PREFIX."_admins SET
+			$edit = $GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_admins SET
 									`srv_password` = NULL
 									WHERE `aid` = ?", array($_GET['id']));
 		}
@@ -344,7 +344,7 @@ if(isset($_POST['adminname']))
 		if(isset($GLOBALS['config']['config.enableadminrehashing']) && $GLOBALS['config']['config.enableadminrehashing'] == 1)
 		{
 			// rehash the admins on the servers
-			$serveraccessq = \MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT s.sid FROM `".DB_PREFIX."_servers` s
+			$serveraccessq = $GLOBALS['db']->GetAll("SELECT s.sid FROM `".DB_PREFIX."_servers` s
 												LEFT JOIN `".DB_PREFIX."_admins_servers_groups` asg ON asg.admin_id = '".(int)$_GET['id']."'
 												LEFT JOIN `".DB_PREFIX."_servers_groups` sg ON sg.group_id = asg.srv_group_id
 												WHERE ((asg.server_id != '-1' AND asg.srv_group_id = '-1')
@@ -359,7 +359,7 @@ if(isset($_POST['adminname']))
 			$rehashing = true;
 		}
 		
-		$admname = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = ?", array((int)$_GET['id']));
+		$admname = $GLOBALS['db']->GetRow("SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = ?", array((int)$_GET['id']));
 		$log = new CSystemLog("m", "Обновление данных администратора", "Админ (" . $admname['user'] . ") изменил детали администратора");
 		if($ownpwchanged)
 			echo '<script>setTimeout(\'ShowBox("Обновление данных", "Обновление данных администратора...", "green", "index.php?p=admin&c=admins", true);TabToReload();\', 1200);</script>';

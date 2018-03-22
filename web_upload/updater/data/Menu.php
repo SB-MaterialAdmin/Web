@@ -10,7 +10,7 @@ $qs = array("CREATE TABLE IF NOT EXISTS `".DB_PREFIX."_menu` ( `id` int(11) NOT 
        $insq_menu . " (7, '<i class=''zmdi zmdi-accounts zmdi-hc-fw''></i> Админлист', 'Список администраторов на доступных серверах.', 'index.php?p=adminlist', 1, 0, 994);");
 
 foreach ($qs as $query)
-    if (!\MaterialAdmin\DataStorage::ADOdb()->Execute($query)) return false;
+    if (!$GLOBALS['db']->Execute($query)) return false;
 
 return true;
 ?>

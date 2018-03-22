@@ -259,22 +259,22 @@ function PrintArray($array)
 
 function NextGid()
 {
-	$gid = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT MAX(gid) AS next_gid FROM `" . DB_PREFIX . "_groups`");
+	$gid = $GLOBALS['db']->GetRow("SELECT MAX(gid) AS next_gid FROM `" . DB_PREFIX . "_groups`");
 	return ($gid['next_gid']+1);
 }
 function NextSGid()
 {
-	$gid = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT MAX(id) AS next_id FROM `" . DB_PREFIX . "_srvgroups`");
+	$gid = $GLOBALS['db']->GetRow("SELECT MAX(id) AS next_id FROM `" . DB_PREFIX . "_srvgroups`");
 	return ($gid['next_id']+1);
 }
 function NextSid()
 {
-	$sid = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT MAX(sid) AS next_sid FROM `" . DB_PREFIX . "_servers`");
+	$sid = $GLOBALS['db']->GetRow("SELECT MAX(sid) AS next_sid FROM `" . DB_PREFIX . "_servers`");
 	return ($sid['next_sid']+1);
 }
 function NextAid()
 {
-	$aid = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT MAX(aid) AS next_aid FROM `" . DB_PREFIX . "_admins`");
+	$aid = $GLOBALS['db']->GetRow("SELECT MAX(aid) AS next_aid FROM `" . DB_PREFIX . "_admins`");
 	return ($aid['next_aid']+1);
 }
 

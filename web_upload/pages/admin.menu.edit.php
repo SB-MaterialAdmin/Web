@@ -10,9 +10,9 @@ global $userbank, $theme;
 		{ 
 			if ($_POST['Link'] == "edit"){
 				$on_act = (isset($_POST['on_link']) && $_POST['on_link'] == "on" ? 1 : 0);
-				$system = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT url,system FROM `" . DB_PREFIX . "_menu` WHERE `id` = " . (int) $_GET['id']);
+				$system = $GLOBALS['db']->GetRow("SELECT url,system FROM `" . DB_PREFIX . "_menu` WHERE `id` = " . (int) $_GET['id']);
 				
-				$add = \MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE `" . DB_PREFIX . "_menu` SET `text` = ?, `description` = ?, `url` = ?, `system` = ?, `enabled` = ?, `priority` = ?, `newtab` = ? WHERE `id` = ?", array($_POST['names_link'], $_POST['des_link'], ((int) $system['system']!=0)?$_POST['url_link']:$system['url'], $system['system'], $on_act, $_POST['priora_link'], (($_POST['onNewTab']=="on")?"1":"0"), (int) $_GET['id']));
+				$add = $GLOBALS['db']->Execute("UPDATE `" . DB_PREFIX . "_menu` SET `text` = ?, `description` = ?, `url` = ?, `system` = ?, `enabled` = ?, `priority` = ?, `newtab` = ? WHERE `id` = ?", array($_POST['names_link'], $_POST['des_link'], ((int) $system['system']!=0)?$_POST['url_link']:$system['url'], $system['system'], $on_act, $_POST['priora_link'], (($_POST['onNewTab']=="on")?"1":"0"), (int) $_GET['id']));
 				
 				PushScriptToExecuteAfterLoadPage(sprintf("setTimeout(function() { %s; }, 1350);", generateMsgBoxJS("Успех!", "Ссылка успешно сохранена!", "green", "", true)));
 				FatalRefresh("index.php?p=admin&c=menu");
@@ -20,7 +20,7 @@ global $userbank, $theme;
 		}
 			
 			
-		$list_menu = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT * FROM ".DB_PREFIX."_menu WHERE id = '".(int)$_GET['id']."';");
+		$list_menu = $GLOBALS['db']->GetRow("SELECT * FROM ".DB_PREFIX."_menu WHERE id = '".(int)$_GET['id']."';");
 		if (count($list_menu) > 0) {
 			$theme->assign('text', $list_menu['text']);
 			$theme->assign('url', $list_menu['url']);

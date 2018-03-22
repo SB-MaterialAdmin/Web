@@ -90,7 +90,7 @@ if(isset($_POST['wg']) || isset($_GET['wg']) || isset($_GET['sg']))
 				$_POST['wg'] = 0;
 			
 			// Edit the web group
-			$edit = \MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE ".DB_PREFIX."_admins SET
+			$edit = $GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_admins SET
 											`gid` = ?
 											WHERE `aid` = ?;", array($_POST['wg'], $_GET['id']));
 		}
@@ -100,16 +100,16 @@ if(isset($_POST['wg']) || isset($_GET['wg']) || isset($_GET['sg']))
 			$group = "";
 			if($_POST['sg'] != -1)
 			{
-				$grps = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT name FROM ".DB_PREFIX."_srvgroups WHERE id = ?;", array($_POST['sg']));
+				$grps = $GLOBALS['db']->GetRow("SELECT name FROM ".DB_PREFIX."_srvgroups WHERE id = ?;", array($_POST['sg']));
 				if($grps)
 					$group = $grps['name'];
 			}
 				
-			$edit = \MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE ".DB_PREFIX."_admins SET
+			$edit = $GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_admins SET
 											`srv_group` = ?
 											WHERE aid = ?", array($group, $_GET['id']));
 			
-			$edit = \MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE ".DB_PREFIX."_admins_servers_groups SET
+			$edit = $GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_admins_servers_groups SET
 										`group_id` = ?
 										WHERE admin_id = ?;", array($_POST['sg'], $_GET['id']));
 				
@@ -117,7 +117,7 @@ if(isset($_POST['wg']) || isset($_GET['wg']) || isset($_GET['sg']))
 		if(isset($GLOBALS['config']['config.enableadminrehashing']) && $GLOBALS['config']['config.enableadminrehashing'] == 1)
 		{
 			// rehash the admins on the servers
-			$serveraccessq = \MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT s.sid FROM `".DB_PREFIX."_servers` s
+			$serveraccessq = $GLOBALS['db']->GetAll("SELECT s.sid FROM `".DB_PREFIX."_servers` s
 													LEFT JOIN `".DB_PREFIX."_admins_servers_groups` asg ON asg.admin_id = '".(int)$_GET['id']."'
 													LEFT JOIN `".DB_PREFIX."_servers_groups` sg ON sg.group_id = asg.srv_group_id
 													WHERE ((asg.server_id != '-1' AND asg.srv_group_id = '-1')
@@ -134,13 +134,13 @@ if(isset($_POST['wg']) || isset($_GET['wg']) || isset($_GET['sg']))
 		else
 			echo '<script>setTimeout(\'ShowBox("Администратор обновлен", "Детали админа были успешно обновлены", "green", "index.php?p=admin&c=admins");TabToReload();\', 1350);</script>';
 		
-		$admname = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = ?", array((int)$_GET['id']));
+		$admname = $GLOBALS['db']->GetRow("SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = ?", array((int)$_GET['id']));
 		$log = new CSystemLog("m", "Группа админа обновлена", "Группа админа (" . $admname['user'] . ") была обновлена");
 	}
 }
 
-$wgroups = \MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT gid, name FROM ".DB_PREFIX."_groups WHERE type != 3");
-$sgroups = \MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT id, name FROM ".DB_PREFIX."_srvgroups");
+$wgroups = $GLOBALS['db']->GetAll("SELECT gid, name FROM ".DB_PREFIX."_groups WHERE type != 3");
+$sgroups = $GLOBALS['db']->GetAll("SELECT id, name FROM ".DB_PREFIX."_srvgroups");
 
 $server_admin_group = $userbank->GetProperty('srv_groups', $_GET['id']);
 foreach($sgroups as $sg)

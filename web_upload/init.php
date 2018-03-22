@@ -59,7 +59,7 @@ include_once("theme/theme.conf.php");
 require_once(INCLUDES_PATH . "/KruzyaExceptions.php");
 require_once(INCLUDES_PATH . "/Language.php");
 try {
-    \MaterialAdmin\DataStorage::register("Translator", new Kruzya\Generic\Language(ROOT . "langs/"));
+    $GLOBALS['translator'] = new Kruzya\Generic\Language(ROOT . "langs/");
 } catch (Exception $e) {
     // nope.
     die("Can't initialize multilanguage system. Try request again later.");
@@ -85,7 +85,7 @@ if(!file_exists(USER_DATA.'/config.php') || !include_once(USER_DATA . '/config.p
 	// No were not
 	if($_SERVER['HTTP_HOST'] != "localhost")
 	{
-		echo(\MaterialAdmin\DataStorage::Translator()->retrieve("init::not_installed"));
+		echo($GLOBALS['translator']->retrieve("init::not_installed"));
 		die();
 	}
 }
@@ -93,7 +93,7 @@ if(!defined("DEVELOPER_MODE") && !defined("IS_UPDATE") && file_exists(ROOT."/ins
 {
 	if($_SERVER['HTTP_HOST'] != "localhost")
 	{
-		echo(\MaterialAdmin\DataStorage::Translator()->retrieve("init::security_direxists"));
+		echo($GLOBALS['translator']->retrieve("init::security_direxists"));
 		die();
 	}
 }
@@ -102,7 +102,7 @@ if(!defined("DEVELOPER_MODE") && !defined("IS_UPDATE") && file_exists(ROOT."/upd
 {
 	if($_SERVER['HTTP_HOST'] != "localhost")
 	{
-		echo(\MaterialAdmin\DataStorage::Translator()->retrieve("init::redirect_updater"));
+		echo($GLOBALS['translator']->retrieve("init::redirect_updater"));
 		echo("<script>setTimeout(function() { window.location.replace('./updater'); }, 2000);</script>");
 		die();
 	}
@@ -140,16 +140,17 @@ error_reporting(E_ALL ^ E_NOTICE);
 // ---------------------------------------------------
 include_once(INCLUDES_PATH . "/adodb/adodb.inc.php");
 include_once(INCLUDES_PATH . "/adodb/adodb-errorhandler.inc.php");
-\MaterialAdmin\DataStorage::register("ADOdb", ADONewConnection("mysqli://".DB_USER.':'.DB_PASS.'@'.DB_HOST.':'.DB_PORT.'/'.DB_NAME));
-\MaterialAdmin\DataStorage::register("Logger", new CSystemLog());
 
-if( !is_object(\MaterialAdmin\DataStorage::ADOdb()) )
+$GLOBALS['db'] = ADONewConnection("mysqli://".DB_USER.':'.DB_PASS.'@'.DB_HOST.':'.DB_PORT.'/'.DB_NAME)
+$GLOBALS['log'] = new CSystemLog();
+
+if( !is_object($GLOBALS['db']) )
 				die();
 				
-$mysql_server_info = \MaterialAdmin\DataStorage::ADOdb()->ServerInfo();
+$mysql_server_info = $GLOBALS['db']->ServerInfo();
 $GLOBALS['db_version'] = $mysql_server_info['version'];
 
-$debug = \MaterialAdmin\DataStorage::ADOdb()->Execute("SELECT value FROM `".DB_PREFIX."_settings` WHERE setting = 'config.debug';");
+$debug = $GLOBALS['db']->Execute("SELECT value FROM `".DB_PREFIX."_settings` WHERE setting = 'config.debug';");
 if($debug->fields['value']=="1") {
 	define("DEVELOPER_MODE", true);
 }
@@ -243,9 +244,9 @@ define('ALL_WEB', ADMIN_LIST_ADMINS|ADMIN_ADD_ADMINS|ADMIN_EDIT_ADMINS|ADMIN_DEL
 define('ALL_SERVER', SM_RESERVED_SLOT.SM_GENERIC.SM_KICK.SM_BAN.SM_UNBAN.SM_SLAY.SM_MAP.SM_CVAR.SM_CONFIG.SM_VOTE.SM_PASSWORD.SM_RCON.
 					 SM_CHEATS.SM_CUSTOM1.SM_CUSTOM2.SM_CUSTOM3. SM_CUSTOM4.SM_CUSTOM5.SM_CUSTOM6.SM_ROOT);
 
-\MaterialAdmin\DataStorage::ADOdb()->Execute("SET NAMES utf8;");
+$GLOBALS['db']->Execute("SET NAMES utf8;");
 					 
-$res = \MaterialAdmin\DataStorage::ADOdb()->Execute("SELECT * FROM ".DB_PREFIX."_settings GROUP BY `setting`, `value`");
+$res = $GLOBALS['db']->Execute("SELECT * FROM ".DB_PREFIX."_settings GROUP BY `setting`, `value`");
 $GLOBALS['config'] = array();
 while (!$res->EOF)
 {
@@ -272,10 +273,10 @@ require(INCLUDES_PATH . '/smarty/Smarty.class.php');
 global $theme, $userbank;
 
 if(!@file_exists(SB_THEME . "/theme.conf.php"))
-	die(\MaterialAdmin\DataStorage::Translator()->retrieve("init::incorrect_theme"));
+	die($GLOBALS['translator']->retrieve("init::incorrect_theme"));
 
 if(!@is_writable(SB_THEMES_COMPILE))
-    die(\MaterialAdmin\DataStorage::Translator()->retrieve("init::themec_not_writable", ["cache_path" => SB_THEME_COMPILE]));
+    die($GLOBALS['translator']->retrieve("init::themec_not_writable", ["cache_path" => SB_THEME_COMPILE]));
 
 $theme = new Smarty();
 $theme->error_reporting 	= 	E_ALL ^ E_NOTICE;

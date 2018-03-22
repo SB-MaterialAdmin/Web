@@ -40,7 +40,7 @@ if(!isset($_GET['id']) || !is_numeric($_GET['id']))
 	PageDie();
 }
 
-$res = \MaterialAdmin\DataStorage::ADOdb()->GetRow("
+$res = $GLOBALS['db']->GetRow("
     				SELECT bid, ba.type, ba.authid, ba.name, created, ends, length, reason, ba.aid, ba.sid, ad.user, ad.gid
     				FROM ".DB_PREFIX."_comms AS ba
     				LEFT JOIN ".DB_PREFIX."_admins AS ad ON ba.aid = ad.aid
@@ -95,7 +95,7 @@ if(isset($_POST['name']))
 	if($error == 0)
 	{
 		// Check if the new steamid is already banned
-		$chk = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT count(bid) AS count FROM ".DB_PREFIX."_comms WHERE authid = ? AND RemovedBy IS NULL AND type = ? AND bid != ? AND (length = 0 OR ends > UNIX_TIMESTAMP())", array($_POST['steam'], (int)$_POST['type'], (int)$_GET['id']));
+		$chk = $GLOBALS['db']->GetRow("SELECT count(bid) AS count FROM ".DB_PREFIX."_comms WHERE authid = ? AND RemovedBy IS NULL AND type = ? AND bid != ? AND (length = 0 OR ends > UNIX_TIMESTAMP())", array($_POST['steam'], (int)$_POST['type'], (int)$_GET['id']));
 		if((int)$chk[0] > 0)
 		{
 			$error++;
@@ -138,10 +138,10 @@ if(isset($_POST['name']))
 	// Only process if there are still no errors
 	if($error == 0)
 	{
-		$lengthrev = \MaterialAdmin\DataStorage::ADOdb()->Execute("SELECT length, authid, type FROM ".DB_PREFIX."_comms WHERE bid = '".(int)$_GET['id']."'");
+		$lengthrev = $GLOBALS['db']->Execute("SELECT length, authid, type FROM ".DB_PREFIX."_comms WHERE bid = '".(int)$_GET['id']."'");
 		
 		
-		$edit = \MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE ".DB_PREFIX."_comms SET
+		$edit = $GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_comms SET
 										`name` = ?, `type` = ?, `reason` = ?, `authid` = ?,
 										`length` = ?,
 										`ends` 	 =  `created` + ?

@@ -96,7 +96,7 @@ else
 			$validsubmit = false;
 		}
 	}
-	$checkres = \MaterialAdmin\DataStorage::ADOdb()->Execute("SELECT length FROM ".DB_PREFIX."_bans WHERE authid = ? AND RemoveType IS NULL", array($SteamID));
+	$checkres = $GLOBALS['db']->Execute("SELECT length FROM ".DB_PREFIX."_bans WHERE authid = ? AND RemoveType IS NULL", array($SteamID));
 	$numcheck = $checkres->RecordCount();
 	if($numcheck == 1 && $checkres->fields['length'] == 0)
 	{
@@ -116,7 +116,7 @@ else
 		if($demo || empty($_FILES['demo_file']['name']))
 		{
 			if($SID!=0) {
-				$res = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT ip, port FROM ".DB_PREFIX."_servers WHERE sid = $SID");
+				$res = $GLOBALS['db']->GetRow("SELECT ip, port FROM ".DB_PREFIX."_servers WHERE sid = $SID");
 				
 				$sinfo->Connect($res[0],$res[1]);
 				
@@ -125,18 +125,18 @@ else
 					$mailserver = "Сервер: " . $info['HostName'] . " (" . $res[0] . ":" . $res[1] . ")\n";
 				else
 					$mailserver = "Сервер: Ошибка соединения (" . $res[0] . ":" . $res[1] . ")\n";
-				$modid = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT m.mid FROM `".DB_PREFIX."_servers` as s LEFT JOIN `".DB_PREFIX."_mods` as m ON m.mid = s.modid WHERE s.sid = '".$SID."';");
+				$modid = $GLOBALS['db']->GetRow("SELECT m.mid FROM `".DB_PREFIX."_servers` as s LEFT JOIN `".DB_PREFIX."_mods` as m ON m.mid = s.modid WHERE s.sid = '".$SID."';");
 			} else {
 				$mailserver = "Сервер: Другой сервер\n";
 				$modid[0] = 0;
 			}
 			if($SteamID == "STEAM_0:") $SteamID = "";
-			$pre = \MaterialAdmin\DataStorage::ADOdb()->Prepare("INSERT INTO ".DB_PREFIX."_submissions(submitted,SteamId,name,email,ModID,reason,ip,subname,sip,archiv,server) VALUES (UNIX_TIMESTAMP(),?,?,?,?,?,?,?,?,0,?)");
-			\MaterialAdmin\DataStorage::ADOdb()->Execute($pre,array($SteamID,$PlayerName,$Email,$modid[0],$BanReason, $_SERVER['REMOTE_ADDR'], $SubmitterName, $BanIP, $SID));
-			$subid = (int)\MaterialAdmin\DataStorage::ADOdb()->Insert_ID();
+			$pre = $GLOBALS['db']->Prepare("INSERT INTO ".DB_PREFIX."_submissions(submitted,SteamId,name,email,ModID,reason,ip,subname,sip,archiv,server) VALUES (UNIX_TIMESTAMP(),?,?,?,?,?,?,?,?,0,?)");
+			$GLOBALS['db']->Execute($pre,array($SteamID,$PlayerName,$Email,$modid[0],$BanReason, $_SERVER['REMOTE_ADDR'], $SubmitterName, $BanIP, $SID));
+			$subid = (int)$GLOBALS['db']->Insert_ID();
 
 			if(!empty($_FILES['demo_file']['name']))
-				\MaterialAdmin\DataStorage::ADOdb()->Execute("INSERT INTO ".DB_PREFIX."_demos(demid,demtype,filename,origname) VALUES (?, 'S', ?, ?)", array($subid, $filename, $_FILES['demo_file']['name']));
+				$GLOBALS['db']->Execute("INSERT INTO ".DB_PREFIX."_demos(demid,demtype,filename,origname) VALUES (?, 'S', ?, ?)", array($subid, $filename, $_FILES['demo_file']['name']));
 			$SteamID = "";
 			$BanIP = "";
 			$PlayerName = "";
@@ -170,9 +170,9 @@ else
 	}
 }
 
-//$mod_list = \MaterialAdmin\DataStorage::ADOdb()->GetAssoc("SELECT mid,name FROM ".DB_PREFIX."_mods WHERE `mid` > 0 AND `enabled`= 1 ORDER BY mid ");
+//$mod_list = $GLOBALS['db']->GetAssoc("SELECT mid,name FROM ".DB_PREFIX."_mods WHERE `mid` > 0 AND `enabled`= 1 ORDER BY mid ");
 //serverlist
-$server_list = \MaterialAdmin\DataStorage::ADOdb()->Execute("SELECT sid, ip, port FROM `" . DB_PREFIX . "_servers` WHERE enabled = 1 ORDER BY modid, sid");
+$server_list = $GLOBALS['db']->Execute("SELECT sid, ip, port FROM `" . DB_PREFIX . "_servers` WHERE enabled = 1 ORDER BY modid, sid");
 $servers = array();
 while (!$server_list->EOF)
 {

@@ -1,6 +1,6 @@
 <?php
     $_need_expired = true;
-    $_struct = \MaterialAdmin\DataStorage::ADOdb()->GetAll("DESCRIBE `" . DB_PREFIX . "_admins`");
+    $_struct = $GLOBALS['db']->GetAll("DESCRIBE `" . DB_PREFIX . "_admins`");
     foreach ($_struct as $_obj) {
         if ($_obj['Field'] == "expired") {
             $_need_expired = false;
@@ -9,14 +9,14 @@
     }
     
     if ($_need_expired) {
-        $_expired = \MaterialAdmin\DataStorage::ADOdb()->Execute("ALTER TABLE `" . DB_PREFIX . "_admins` 
+        $_expired = $GLOBALS['db']->Execute("ALTER TABLE `" . DB_PREFIX . "_admins` 
             ADD `expired` 	int(11) NULL;");
         
         if (!$_expired)
             return false;
     }
     
-	$_admins = \MaterialAdmin\DataStorage::ADOdb()->Execute("ALTER TABLE `" . DB_PREFIX . "_admins` 
+	$_admins = $GLOBALS['db']->Execute("ALTER TABLE `" . DB_PREFIX . "_admins` 
 			ADD `skype`		varchar(128) 	NULL,
 			ADD `comment`	varchar(128)	 NULL,
 			ADD `vk`		varchar(128) 	NULL,
@@ -25,7 +25,7 @@
 	if(!$_admins)
 		return false;
 		
-	$_settings = \MaterialAdmin\DataStorage::ADOdb()->Execute("INSERT INTO `" . DB_PREFIX . "_settings` (`setting`, `value`) VALUES
+	$_settings = $GLOBALS['db']->Execute("INSERT INTO `" . DB_PREFIX . "_settings` (`setting`, `value`) VALUES
 			('config.dateformat_ver2', 'd.m.Y'),
 			('config.text_home', 'Добро пожаловать на сайт игрового портала: AZAZA'),
 			('config.text_mon', 'У вас есть возможность управлять игроками через мониторинг(test)'),
@@ -58,7 +58,7 @@
             "UPDATE `" . DB_PREFIX . "_settings` SET `value` = 'new_box' WHERE `setting` = 'config.theme';",
             "UPDATE `" . DB_PREFIX . "_admins` SET `expired` = 0");
 	foreach ($qs as &$query) {
-        if (!\MaterialAdmin\DataStorage::ADOdb()->Execute($query)) return false;
+        if (!$GLOBALS['db']->Execute($query)) return false;
 	}
 
 	return true;

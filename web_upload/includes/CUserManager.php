@@ -69,7 +69,7 @@ class CUserManager
 		if(isset($this->admins[$aid]) && !empty($this->admins[$aid]))
 			return $this->admins[$aid];
 		// Not in the manager, so we need to get them from DB
-		$res = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT adm.user user, adm.authid authid, adm.password password, adm.gid gid, adm.email email, adm.validate validate, adm.extraflags extraflags, 
+		$res = $GLOBALS['db']->GetRow("SELECT adm.user user, adm.authid authid, adm.password password, adm.gid gid, adm.email email, adm.validate validate, adm.extraflags extraflags, 
 									   adm.immunity admimmunity,sg.immunity sgimmunity, adm.srv_password srv_password, adm.srv_group srv_group, adm.srv_flags srv_flags,sg.flags sgflags,
 									   wg.flags wgflags, wg.name wgname, adm.lastvisit lastvisit, adm.expired expired, adm.skype skype, adm.comment comment, adm.vk vk
 									   FROM " . DB_PREFIX . "_admins AS adm
@@ -187,7 +187,7 @@ class CUserManager
 			
 		if($password == $this->admins[$aid]['password'])
 		{
-			\MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE `" . DB_PREFIX . "_admins` SET `lastvisit` = UNIX_TIMESTAMP() WHERE `aid` = '$aid'");
+			$GLOBALS['db']->Execute("UPDATE `" . DB_PREFIX . "_admins` SET `lastvisit` = UNIX_TIMESTAMP() WHERE `aid` = '$aid'");
 			return true;
 		}
 		else 
@@ -262,7 +262,7 @@ class CUserManager
 	
 	function GetAllAdmins()
 	{
-		$res = \MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT aid FROM " . DB_PREFIX . "_admins");
+		$res = $GLOBALS['db']->GetAll("SELECT aid FROM " . DB_PREFIX . "_admins");
 		foreach($res AS $admin)
 			$this->GetUserArray($admin['aid']);
 		return $this->admins;
@@ -286,10 +286,10 @@ class CUserManager
 	
 	function AddAdmin($name, $steam, $password, $email, $web_group, $web_flags, $srv_group, $srv_flags, $immunity, $srv_password, $period, $skype, $comment, $vk)
 	{		
-		$add_admin = \MaterialAdmin\DataStorage::ADOdb()->Prepare("INSERT INTO ".DB_PREFIX."_admins(user, authid, password, gid, email, extraflags, immunity, srv_group, srv_flags, srv_password, expired, skype, comment, vk)
+		$add_admin = $GLOBALS['db']->Prepare("INSERT INTO ".DB_PREFIX."_admins(user, authid, password, gid, email, extraflags, immunity, srv_group, srv_flags, srv_password, expired, skype, comment, vk)
 											 VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
-		\MaterialAdmin\DataStorage::ADOdb()->Execute($add_admin,array($name, $steam, $this->encrypt_password($password), $web_group, $email, $web_flags, $immunity, $srv_group, $srv_flags, $srv_password, $period, $skype, $comment, $vk));
-		return ($add_admin) ? (int)\MaterialAdmin\DataStorage::ADOdb()->Insert_ID() : -1;
+		$GLOBALS['db']->Execute($add_admin,array($name, $steam, $this->encrypt_password($password), $web_group, $email, $web_flags, $immunity, $srv_group, $srv_flags, $srv_password, $period, $skype, $comment, $vk));
+		return ($add_admin) ? (int)$GLOBALS['db']->Insert_ID() : -1;
 	}
 }
 ?>

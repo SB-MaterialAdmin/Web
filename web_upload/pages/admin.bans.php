@@ -40,14 +40,14 @@ if(isset($_POST['action']) && $_POST['action'] == "importBans")
 		{
 			if(validate_ip($line[2])) // if its an banned_ip.cfg
 			{
-				$check = \MaterialAdmin\DataStorage::ADOdb()->Execute("SELECT ip FROM `" . DB_PREFIX . "_bans` WHERE ip = ? AND RemoveType IS NULL", array($line[2]));
+				$check = $GLOBALS['db']->Execute("SELECT ip FROM `" . DB_PREFIX . "_bans` WHERE ip = ? AND RemoveType IS NULL", array($line[2]));
 
 				if($check->RecordCount() == 0)
 				{
 					$bancnt++;
-					$pre = \MaterialAdmin\DataStorage::ADOdb()->Prepare("INSERT INTO ".DB_PREFIX."_bans(created,authid,ip,name,ends,length,reason,aid,adminIp,type) VALUES
+					$pre = $GLOBALS['db']->Prepare("INSERT INTO ".DB_PREFIX."_bans(created,authid,ip,name,ends,length,reason,aid,adminIp,type) VALUES
 										(UNIX_TIMESTAMP(),?,?,?,(UNIX_TIMESTAMP() + ?),?,?,?,?,?)");
-					\MaterialAdmin\DataStorage::ADOdb()->Execute($pre, array("", $line[2], "Импортированный бан", 0, 0, "Импорт из banned_ip.cfg", $_COOKIE['aid'], $_SERVER['REMOTE_ADDR'], 1));
+					$GLOBALS['db']->Execute($pre, array("", $line[2], "Импортированный бан", 0, 0, "Импорт из banned_ip.cfg", $_COOKIE['aid'], $_SERVER['REMOTE_ADDR'], 1));
 				}
 			} else { // if its an banned_user.cfg
 				if (!validate_steam($line[2])) {
@@ -59,16 +59,16 @@ if(isset($_POST['action']) && $_POST['action'] == "importBans")
 				} else {
 					$steam = $line[2];
 				}
-				$check = \MaterialAdmin\DataStorage::ADOdb()->Execute("SELECT authid FROM `" . DB_PREFIX . "_bans` WHERE authid = ? AND RemoveType IS NULL", array($steam));
+				$check = $GLOBALS['db']->Execute("SELECT authid FROM `" . DB_PREFIX . "_bans` WHERE authid = ? AND RemoveType IS NULL", array($steam));
 				if($check->RecordCount() == 0)
 				{
 					if(!isset($_POST['friendsname']) || $_POST['friendsname'] != "on" || ($pname = GetCommunityName($steam)) == "")
 						$pname = "Импортированный бан";
 					
 					$bancnt++;
-					$pre = \MaterialAdmin\DataStorage::ADOdb()->Prepare("INSERT INTO ".DB_PREFIX."_bans(created,authid,ip,name,ends,length,reason,aid,adminIp,type) VALUES
+					$pre = $GLOBALS['db']->Prepare("INSERT INTO ".DB_PREFIX."_bans(created,authid,ip,name,ends,length,reason,aid,adminIp,type) VALUES
 										(UNIX_TIMESTAMP(),?,?,?,(UNIX_TIMESTAMP() + ?),?,?,?,?,?)");
-					\MaterialAdmin\DataStorage::ADOdb()->Execute($pre, array($steam, "", $pname, 0, 0, "Импорт из banned_user.cfg", $_COOKIE['aid'], $_SERVER['REMOTE_ADDR'], 0));
+					$GLOBALS['db']->Execute($pre, array($steam, "", $pname, 0, 0, "Импорт из banned_user.cfg", $_COOKIE['aid'], $_SERVER['REMOTE_ADDR'], 0));
 				}
 			}
 		}
@@ -117,8 +117,8 @@ echo '<div id="admin-page-content">';
         {
             $page = intval($_GET['ppage']);
         }
-        $protests = \MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT * FROM `" . DB_PREFIX . "_protests` WHERE archiv = '0' ORDER BY pid DESC LIMIT " . intval(($page-1) * $ItemsPerPage) . "," . intval($ItemsPerPage));
-        $protests_count = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT count(pid) AS count FROM `" . DB_PREFIX . "_protests` WHERE archiv = '0' ORDER BY pid DESC");
+        $protests = $GLOBALS['db']->GetAll("SELECT * FROM `" . DB_PREFIX . "_protests` WHERE archiv = '0' ORDER BY pid DESC LIMIT " . intval(($page-1) * $ItemsPerPage) . "," . intval($ItemsPerPage));
+        $protests_count = $GLOBALS['db']->GetRow("SELECT count(pid) AS count FROM `" . DB_PREFIX . "_protests` WHERE archiv = '0' ORDER BY pid DESC");
         $page_count = $protests_count['count'];
         $PageStart = intval(($page-1) * $ItemsPerPage);
         $PageEnd = intval($PageStart+$ItemsPerPage);
@@ -163,7 +163,7 @@ echo '<div id="admin-page-content">';
 		foreach($protests as $prot)
 		{
 			$prot['reason'] = wordwrap(htmlspecialchars($prot['reason']), 55, "<br />\n", true);
-			$protestb = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT bid, ba.ip, ba.authid, ba.name, created, ends, length, reason, ba.aid, ba.sid, email,ad.user, CONCAT(se.ip,':',se.port), se.sid
+			$protestb = $GLOBALS['db']->GetRow("SELECT bid, ba.ip, ba.authid, ba.name, created, ends, length, reason, ba.aid, ba.sid, email,ad.user, CONCAT(se.ip,':',se.port), se.sid
 							    				FROM ".DB_PREFIX."_bans AS ba
 							    				LEFT JOIN ".DB_PREFIX."_admins AS ad ON ba.aid = ad.aid
 							    				LEFT JOIN ".DB_PREFIX."_servers AS se ON se.sid = ba.sid
@@ -194,7 +194,7 @@ echo '<div id="admin-page-content">';
 			//COMMENT STUFF
 			//-----------------------------------
 			$view_comments = true;
-			$commentres = \MaterialAdmin\DataStorage::ADOdb()->Execute("SELECT cid, aid, commenttxt, added, edittime,
+			$commentres = $GLOBALS['db']->Execute("SELECT cid, aid, commenttxt, added, edittime,
 												(SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = C.aid) AS comname,
 												(SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = C.editaid) AS editname
 												FROM `".DB_PREFIX."_comments` AS C
@@ -249,7 +249,7 @@ echo '<div id="admin-page-content">';
 		if(count($delete) > 0) {//time for protest cleanup
 			$ids = rtrim(implode(',', $delete), ',');
 			$cnt = count($delete);
-			\MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE ".DB_PREFIX."_protests SET archiv = '2' WHERE bid IN($ids) limit $cnt");
+			$GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_protests SET archiv = '2' WHERE bid IN($ids) limit $cnt");
 		}
 
 		$theme->assign('permission_protests', $userbank->HasAccess(ADMIN_OWNER|ADMIN_BAN_PROTESTS));
@@ -260,7 +260,7 @@ echo '<div id="admin-page-content">';
 		$theme->display('page_admin_bans_protests.tpl');
 		echo '</div>';
 
-		$protestsarchiv = \MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT * FROM `" . DB_PREFIX . "_protests` WHERE archiv > '0' ORDER BY pid DESC");
+		$protestsarchiv = $GLOBALS['db']->GetAll("SELECT * FROM `" . DB_PREFIX . "_protests` WHERE archiv > '0' ORDER BY pid DESC");
 		// archived protests
 		echo '<div id="p1" style="display:none;">';
         
@@ -270,8 +270,8 @@ echo '<div id="admin-page-content">';
         {
             $page = intval($_GET['papage']);
         }
-        $protestsarchiv = \MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT p.*, (SELECT user FROM `" . DB_PREFIX . "_admins` WHERE aid = p.archivedby) AS archivedby FROM `" . DB_PREFIX . "_protests` p WHERE archiv > '0' ORDER BY pid DESC LIMIT " . intval(($page-1) * $ItemsPerPage) . "," . intval($ItemsPerPage));
-        $protestsarchiv_count = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT count(pid) AS count FROM `" . DB_PREFIX . "_protests` WHERE archiv > '0' ORDER BY pid DESC");
+        $protestsarchiv = $GLOBALS['db']->GetAll("SELECT p.*, (SELECT user FROM `" . DB_PREFIX . "_admins` WHERE aid = p.archivedby) AS archivedby FROM `" . DB_PREFIX . "_protests` p WHERE archiv > '0' ORDER BY pid DESC LIMIT " . intval(($page-1) * $ItemsPerPage) . "," . intval($ItemsPerPage));
+        $protestsarchiv_count = $GLOBALS['db']->GetRow("SELECT count(pid) AS count FROM `" . DB_PREFIX . "_protests` WHERE archiv > '0' ORDER BY pid DESC");
         $page_count = $protestsarchiv_count['count'];
         $PageStart = intval(($page-1) * $ItemsPerPage);
         $PageEnd = intval($PageStart+$ItemsPerPage);
@@ -318,13 +318,13 @@ echo '<div id="admin-page-content">';
 			$prot['reason'] = wordwrap(htmlspecialchars($prot['reason']), 55, "<br />\n", true);
 
 			if($prot['archiv'] != "2") {
-				$protestb = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT bid, ba.ip, ba.authid, ba.name, created, ends, length, reason, ba.aid, ba.sid, email,ad.user, CONCAT(se.ip,':',se.port), se.sid
+				$protestb = $GLOBALS['db']->GetRow("SELECT bid, ba.ip, ba.authid, ba.name, created, ends, length, reason, ba.aid, ba.sid, email,ad.user, CONCAT(se.ip,':',se.port), se.sid
 								    				FROM ".DB_PREFIX."_bans AS ba
 								    				LEFT JOIN ".DB_PREFIX."_admins AS ad ON ba.aid = ad.aid
 								    				LEFT JOIN ".DB_PREFIX."_servers AS se ON se.sid = ba.sid
 								    				WHERE bid = \"". (int)$prot['bid'] . "\"");
 				if(!$protestb) {
-					\MaterialAdmin\DataStorage::ADOdb()->Execute("UPDATE `".DB_PREFIX."_protests` SET archiv = '2' WHERE pid = '". (int)$prot['pid'] . "';");
+					$GLOBALS['db']->Execute("UPDATE `".DB_PREFIX."_protests` SET archiv = '2' WHERE pid = '". (int)$prot['pid'] . "';");
 					$prot['archiv'] = "2";
 					$prot['archive'] = "бан был удален.";
 				} else {
@@ -357,7 +357,7 @@ echo '<div id="admin-page-content">';
 			//COMMENT STUFF
 			//-----------------------------------
 			$view_comments = true;
-			$commentres = \MaterialAdmin\DataStorage::ADOdb()->Execute("SELECT cid, aid, commenttxt, added, edittime,
+			$commentres = $GLOBALS['db']->Execute("SELECT cid, aid, commenttxt, added, edittime,
 												(SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = C.aid) AS comname,
 												(SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = C.editaid) AS editname
 												FROM `".DB_PREFIX."_comments` AS C
@@ -442,8 +442,8 @@ echo '<div id="admin-page-content">';
             {
                 $page = intval($_GET['spage']);
             }
-            $submissions = \MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT * FROM `" . DB_PREFIX . "_submissions` WHERE archiv = '0' ORDER BY subid DESC LIMIT " . intval(($page-1) * $ItemsPerPage) . "," . intval($ItemsPerPage));
-            $submissions_count = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT count(subid) AS count FROM `" . DB_PREFIX . "_submissions` WHERE archiv = '0' ORDER BY subid DESC");
+            $submissions = $GLOBALS['db']->GetAll("SELECT * FROM `" . DB_PREFIX . "_submissions` WHERE archiv = '0' ORDER BY subid DESC LIMIT " . intval(($page-1) * $ItemsPerPage) . "," . intval($ItemsPerPage));
+            $submissions_count = $GLOBALS['db']->GetRow("SELECT count(subid) AS count FROM `" . DB_PREFIX . "_submissions` WHERE archiv = '0' ORDER BY subid DESC");
             $page_count = $submissions_count['count'];
             $PageStart = intval(($page-1) * $ItemsPerPage);
             $PageEnd = intval($PageStart+$ItemsPerPage);
@@ -492,7 +492,7 @@ echo '<div id="admin-page-content">';
                 $sub['name'] = wordwrap(htmlspecialchars($sub['name']), 55, "<br />", true);
                 $sub['reason'] = wordwrap(htmlspecialchars($sub['reason']), 55, "<br />", true);
             
-				$dem = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT filename FROM " . DB_PREFIX . "_demos
+				$dem = $GLOBALS['db']->GetRow("SELECT filename FROM " . DB_PREFIX . "_demos
 												WHERE demtype = \"S\" AND demid = " .(int)$sub['subid']);
 
 			    if($dem && !empty($dem['filename']) && @file_exists(SB_DEMOS . "/" . $dem['filename']))
@@ -502,7 +502,7 @@ echo '<div id="admin-page-content">';
 
 			    $sub['submitted'] = SBDate($dateformat, $sub['submitted']);
 
-				$mod = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT m.name FROM `".DB_PREFIX."_submissions` AS s
+				$mod = $GLOBALS['db']->GetRow("SELECT m.name FROM `".DB_PREFIX."_submissions` AS s
 												LEFT JOIN `".DB_PREFIX."_mods` AS m ON m.mid = s.ModID
 												WHERE s.subid = ".(int)$sub['subid']);
 			    $sub['mod'] = $mod['name'];
@@ -515,7 +515,7 @@ echo '<div id="admin-page-content">';
 				//COMMENT STUFF
 				//-----------------------------------
 				$view_comments = true;
-					$commentres = \MaterialAdmin\DataStorage::ADOdb()->Execute(
+					$commentres = $GLOBALS['db']->Execute(
 														"SELECT cid, aid, commenttxt, added, edittime,
 														(SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = C.aid) AS comname,
 														(SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = C.editaid) AS editname
@@ -580,8 +580,8 @@ echo '<div id="admin-page-content">';
             {
                 $page = intval($_GET['sapage']);
             }
-            $submissionsarchiv = \MaterialAdmin\DataStorage::ADOdb()->GetAll("SELECT s.*, (SELECT user FROM `" . DB_PREFIX . "_admins` WHERE aid = s.archivedby) AS archivedby FROM `" . DB_PREFIX . "_submissions` s WHERE archiv > '0' ORDER BY subid DESC LIMIT " . intval(($page-1) * $ItemsPerPage) . "," . intval($ItemsPerPage));
-            $submissionsarchiv_count = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT count(subid) AS count FROM `" . DB_PREFIX . "_submissions` WHERE archiv > '0' ORDER BY subid DESC");
+            $submissionsarchiv = $GLOBALS['db']->GetAll("SELECT s.*, (SELECT user FROM `" . DB_PREFIX . "_admins` WHERE aid = s.archivedby) AS archivedby FROM `" . DB_PREFIX . "_submissions` s WHERE archiv > '0' ORDER BY subid DESC LIMIT " . intval(($page-1) * $ItemsPerPage) . "," . intval($ItemsPerPage));
+            $submissionsarchiv_count = $GLOBALS['db']->GetRow("SELECT count(subid) AS count FROM `" . DB_PREFIX . "_submissions` WHERE archiv > '0' ORDER BY subid DESC");
             $page_count = $submissionsarchiv_count['count'];
             $PageStart = intval(($page-1) * $ItemsPerPage);
             $PageEnd = intval($PageStart+$ItemsPerPage);
@@ -630,7 +630,7 @@ echo '<div id="admin-page-content">';
                 $sub['name'] = wordwrap(htmlspecialchars($sub['name']), 55, "<br />", true);
                 $sub['reason'] = wordwrap(htmlspecialchars($sub['reason']), 55, "<br />", true);
             
-				$dem = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT filename FROM " . DB_PREFIX . "_demos
+				$dem = $GLOBALS['db']->GetRow("SELECT filename FROM " . DB_PREFIX . "_demos
 												WHERE demtype = \"S\" AND demid = " .(int)$sub['subid']);
 
 			    if($dem && !empty($dem['filename']) && @file_exists(SB_DEMOS . "/" . $dem['filename']))
@@ -640,7 +640,7 @@ echo '<div id="admin-page-content">';
 
 			    $sub['submitted'] = SBDate($dateformat, $sub['submitted']);
 
-				$mod = \MaterialAdmin\DataStorage::ADOdb()->GetRow("SELECT m.name FROM `".DB_PREFIX."_submissions` AS s
+				$mod = $GLOBALS['db']->GetRow("SELECT m.name FROM `".DB_PREFIX."_submissions` AS s
 												LEFT JOIN `".DB_PREFIX."_mods` AS m ON m.mid = s.ModID
 												WHERE s.subid = ".(int)$sub['subid']);
 			    $sub['mod'] = $mod['name'];
@@ -657,7 +657,7 @@ echo '<div id="admin-page-content">';
 				//COMMENT STUFF
 				//-----------------------------------
 				$view_comments = true;
-					$commentres = \MaterialAdmin\DataStorage::ADOdb()->Execute(
+					$commentres = $GLOBALS['db']->Execute(
 														"SELECT cid, aid, commenttxt, added, edittime,
 														(SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = C.aid) AS comname,
 														(SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = C.editaid) AS editname
