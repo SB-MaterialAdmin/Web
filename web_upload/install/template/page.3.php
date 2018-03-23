@@ -128,6 +128,22 @@ if(isset($_POST['username'], $_POST['password'], $_POST['server'], $_POST['port'
 									?>
 									<td class="<?= $class ?>"><?= $bcmath ? 'Да' : 'Нет' ?></td>
 								</tr>
+                                <tr>
+									<td>Поддержка gmp \ 64-битный PHP</td>
+									<td>Н/А</td>
+									<td>Да</td>
+									<?php
+										$arch = getPhpArchitecture();
+                                        $gmp = extension_loaded('gmp');
+                                        $res = false;
+
+										if($gmp == true || $arch == 'amd64') {
+											$class = "success c-white";
+                                            $res = true;
+										} else { $class = "danger c-white"; $errors++; }
+									?>
+									<td class="<?= $class ?>"><?= $res ? 'Да' : 'Нет' ?></td>
+								</tr>
 								<tr>
 									<td>Загрузка файлов</td>
 									<td>Н/А</td>

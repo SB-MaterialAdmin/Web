@@ -336,4 +336,9 @@ function TryAutodetectURL() {
     
     return sprintf("%s://%s%s", $proto, $domain, $uri[0]);
 }
-?>
+
+function getPhpArchitecture() {
+  if(2147483647 == PHP_INT_MAX) {
+    return 'i386';
+  return 'amd64';
+}
