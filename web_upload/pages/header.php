@@ -144,6 +144,4 @@ $theme->assign('vay4er_act', $GLOBALS['config']['page.vay4er']);
 $theme->assign('header_logo', $GLOBALS['config']['template.logo']);
 $theme->assign('username', $userbank->GetProperty("user"));
 $theme->assign('logged_in', $userbank->is_logged_in());
-$theme->assign('theme_name', isset($GLOBALS['config']['config.theme'])?$GLOBALS['config']['config.theme']:'default');
 $theme->display('page_header.tpl');
-?>
