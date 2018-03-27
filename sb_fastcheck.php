@@ -9,6 +9,7 @@ Header("Content-Type: text/plain; charset=utf8");
 $warnings   = 0;
 $success    = 0;
 $errors     = 0;
+$howto      = [];
 
 define('TEXT_DELIMITER', str_repeat('-', 100));
 
@@ -33,6 +34,7 @@ if (version_compare(PHP_VERSION, '5.5') != -1) {
   $warnings++;
 } else {
   echo('[-] Версия PHP не поддерживается');
+  $howto[] = 'Обновите версию PHP. Если Вы используете shared-хостинг (чисто под сайт) - напишите в ТП, либо смените его.';
   $errors++;
 }
 echo(' (' . PHP_VERSION . ")\n");
@@ -45,6 +47,7 @@ if (function_exists('bcadd')) {
   $success++;
 } else {
   echo('[-] BCMath не установлен.');
+  $howto[] = 'Установите расширение BCMath (команду для VPS/VDS/DS можно найти в поисковой системе Google). Если у Вас shared-хостинг (чисто под сайт) - поищите в панели пункт для включения напишите в ТП, либо смените его.';
   $errors++;
 }
 echo("\n");
@@ -60,6 +63,7 @@ if (extension_loaded('gmp')) {
   $success++;
 } else {
   echo('[-] Отсутствует поддержка 64-битных чисел.');
+  $howto[] = 'Обновите PHP-интерпретатор или установите расширение GMP.';
   $errors++;
 }
 echo("\n");
@@ -72,6 +76,7 @@ if (ini_get('file_uploads')) {
   $success++;
 } else {
   echo('[-] Загрузка файлов запрещена.');
+  $howto[] = 'В конфигурационном файле PHP установите значение переменной file_uploads значение 1.';
   $errors++;
 }
 echo("\n");
@@ -84,6 +89,7 @@ if (extension_loaded('xml')) {
   $success++;
 } else {
   echo('[-] XML-расширение недоступно.');
+  $howto[] = 'Установите XML-расширение, если оно не установлено.';
   $errors++;
 }
 echo("\n");
@@ -96,6 +102,7 @@ if (!ini_get('register_globals')) {
   $success++;
 } else {
   echo('[o] Глобальные переменные включены.');
+  $howto[] = 'В конфигурационном файле PHP установите значение переменной register_globals значение 0.';
   $warnings++;
 }
 echo("\n");
@@ -108,6 +115,7 @@ if (ini_get('safe_mode') == 0) {
   $success++;
 } else {
   echo('[o] Безопасный режим включен.');
+  $howto[] = 'В конфигурационном файле PHP установите значение переменной safe_mode значение 0.';
   $warnings++;
 }
 echo("\n");
@@ -120,6 +128,7 @@ if (extension_loaded('mysqli')) {
   $success++;
 } else {
   echo('[-] Работа с БД невозможна.');
+  $howto[] = 'Подключите расширение MySQLi';
   $errors++;
 }
 echo("\n");
@@ -129,12 +138,20 @@ echo("\n");
  */
 echo("\n");
 if ($errors > 0) {
-  echo('SourceBans работать не будет: есть пункты, мешающие корректной работе. Исправьте их, и вернитесь к этому скрипту.');
+  echo('SourceBans работать не будет: есть пункты, мешающие корректной работе. Исправьте их, и вернитесь к этому скрипту.' . "\n\n");
+  echo('Варианты исправления проблем:');
+  foreach ($howto as $item)
+    echo($item . "\n");
+
   exit();
 }
 
 if ($warnings > 0) {
-  echo('SourceBans работать будет, но часть функционала может либо не работать, либо работать крайне криво.');
+  echo('SourceBans работать будет, но часть функционала может либо не работать, либо работать крайне криво.' . "\n\n");
+  echo('Варианты исправления проблем:');
+  foreach ($howto as $item)
+    echo($item . "\n");
+
   exit();
 }
 
