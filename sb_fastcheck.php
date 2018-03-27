@@ -113,6 +113,18 @@ if (ini_get('safe_mode') == 0) {
 echo("\n");
 
 /**
+ * MySQLi
+ */
+if (extension_loaded('mysqli')) {
+  echo('[+] MySQLi-расширение доступно.');
+  $success++;
+} else {
+  echo('[-] Работа с БД невозможна.');
+  $errors++;
+}
+echo("\n");
+
+/**
  * Итог.
  */
 echo("\n");
