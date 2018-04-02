@@ -279,7 +279,7 @@ else
                 // Game Cache
                 $GLOBALS['db']->Execute(sprintf("REPLACE INTO `%s_settings`
                     (%d, 'gamecache.enabled'),
-                    (%d, 'gamecache.entry_lifetime');", intval($_POST['gc_enabled']), intval($_POST['gc_entrylf'])));
+                    (%d, 'gamecache.entry_lifetime');", DB_PREFIX, intval($_POST['gc_enabled']), intval($_POST['gc_entrylf'])));
 				
 				?><script>setTimeout("ShowBox('Главные настройки изменены', 'Изменения были успешно применены!', 'green', 'index.php?p=admin&c=settings', false, 2500);", 1200);</script><?php 
 			}else{
