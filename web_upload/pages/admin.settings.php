@@ -127,11 +127,11 @@ if(!defined("IN_SB")){echo "Ошибка доступа!";die();}
 	{
 		$log_item = array();
 		if($l['type'] == "m")
-			$log_item['type_img'] = "<img src='themes/".SB_THEME."/images/admin/help.png' alt='Info'>"; 
+			$log_item['type_img'] = "<img src='theme/images/admin/help.png' alt='Info'>"; 
 		elseif($l['type'] == "w")
-			$log_item['type_img'] = "<img src='themes/".SB_THEME."/images/admin/warning.png' alt='Warning'>"; 
+			$log_item['type_img'] = "<img src='themes/images/admin/warning.png' alt='Warning'>"; 
 		elseif($l['type'] == "e")
-			$log_item['type_img'] = "<img src='themes/".SB_THEME."/images/admin/error.png' alt='Warning'>"; 
+			$log_item['type_img'] = "<img src='themes/images/admin/error.png' alt='Error'>"; 
 		$log_item['user'] = !empty($l['user'])?$l['user']:'Guest';
 		$log_item['date_str'] = SBDate($dateformat, $l['created']);
 		$log_item = array_merge($l, $log_item);	
@@ -278,6 +278,7 @@ else
 
                 // Game Cache
                 $GLOBALS['db']->Execute(sprintf("REPLACE INTO `%s_settings`
+                    (`value`, `setting`) VALUES 
                     (%d, 'gamecache.enabled'),
                     (%d, 'gamecache.entry_lifetime');", DB_PREFIX, intval($_POST['gc_enabled']), intval($_POST['gc_entrylf'])));
 				

@@ -333,7 +333,7 @@ function CreateLinkR($title, $url, $tooltip="", $target="_self", $wide=false, $o
 
 function HelpIcon($title, $text)
 {
-	return '<img border="0" align="absbottom" src="themes/' . SB_THEME .'/images/admin/help.png" class="tip" title="' .  $title . ' :: ' .  $text . '">&nbsp;&nbsp;';
+	return '<img border="0" align="absbottom" src="theme/images/admin/help.png" class="tip" title="' .  $title . ' :: ' .  $text . '">&nbsp;&nbsp;';
 }
 
 /**
@@ -1496,4 +1496,16 @@ function kickClient($serverInstance, $identity) {
     $serverInstance->sendCommand(sprintf("kickid \"%s\"", $client['steam']));
     return true;
 }
-?>
+
+function FindConfig(&$cfg_path) {
+  $cfg_path = USER_DATA . 'config.php';
+  if (file_exists($cfg_path))
+    return true;
+
+  $cfg_path = ROOT . 'config.php';
+  if (file_exists($cfg_path))
+    return true;
+
+  $cfg_path = '';
+  return false;
+}
