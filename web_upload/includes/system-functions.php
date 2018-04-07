@@ -1395,6 +1395,23 @@ function EMail($to, $subject, $message, $headers) { // SendMail - registered in 
     return $func($to, $subject, $message, $headers);
 }
 
+function PrepareMailText($TemplateName, $Data = array()) {
+  global $theme;
+
+  $theme->assign($Data);
+  $Text = $theme->fetch("mail/{$TemplateName}.tpl", 'TMail');
+  $theme->clear_assign($Data);
+
+  return $Text;
+}
+
+function GetGenericMailHeaders() {
+  return 'From: sourcebans@' . $_SERVER['HTTP_HOST'] . "\n" .
+    'X-Mailer: PHP/' . phpversion() . "\n" .
+    'MIME-Version: 1.0' . "\n" .
+    'Content-Type: text/html; charset=UTF-8';
+}
+
 function decompress_tar($path, $output) {
     try {
         $phar = new PharData($path);
@@ -1508,4 +1525,19 @@ function FindConfig(&$cfg_path) {
 
   $cfg_path = '';
   return false;
+}
+
+function ReplaceArrayKeyNames($data, $what, $to) {
+  foreach ($data as $key => $value) {
+    $data[str_replace($what, $to, $key)] = $value;
+    unset($data[$key]);
+  }
+
+  return $data;
+}
+
+function GetRequesterIP() {
+  if(isset($_SERVER['HTTP_X_REAL_IP']))
+    return $_SERVER['HTTP_X_REAL_IP'];
+  return $_SERVER['REMOTE_ADDR'];
 }

@@ -787,6 +787,16 @@ $theme->assign('comment', (isset($_GET["comment"])&&$view_comments?$_GET["commen
 
 unset($_SESSION['CountryFetchHndl']);
 
+// BAN NOTIFY
+if (!$userbank->is_admin()) {
+  $ReqIP = GetRequesterIP();
+  $IsBanned = $GLOBALS['db']->GetOne("SELECT COUNT(*) FROM `" . DB_PREFIX . "_bans` WHERE `type` = 1 AND ip = ? AND (length = '0' OR ends > UNIX_TIMESTAMP()) AND RemoveType IS NULL", array($ReqIP));
+  $theme->assign('UserIP', $ReqIP);
+  $theme->assign('IsBanned', $IsBanned);
+  $theme->display('page_bans_notify.tpl');
+}
+
+// BANLIST
 $theme->assign('searchlink', $searchlink);
 $theme->assign('hidetext', $hidetext);
 $theme->assign('hidetext_darf', $hidetext_darf);
@@ -810,4 +820,3 @@ $theme->assign('can_delete', $userbank->HasAccess(ADMIN_DELETE_BAN));
 $theme->assign('view_bans', ($userbank->HasAccess(ADMIN_OWNER|ADMIN_EDIT_ALL_BANS|ADMIN_EDIT_OWN_BANS|ADMIN_EDIT_GROUP_BANS|ADMIN_UNBAN|ADMIN_UNBAN_OWN_BANS|ADMIN_UNBAN_GROUP_BANS|ADMIN_DELETE_BAN)));
 $theme->assign('can_export',($userbank->HasAccess(ADMIN_OWNER) || (isset($GLOBALS['config']['config.exportpublic']) && $GLOBALS['config']['config.exportpublic'] == "1")));
 $theme->display('page_bans.tpl');
-?>
