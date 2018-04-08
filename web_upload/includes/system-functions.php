@@ -1541,3 +1541,9 @@ function GetRequesterIP() {
     return $_SERVER['HTTP_X_REAL_IP'];
   return $_SERVER['REMOTE_ADDR'];
 }
+
+function GetRequesterSteam() {
+  if (!isset($_SESSION['steam']))
+    return false;
+  return $_SESSION['steam'];
+}
