@@ -790,7 +790,7 @@ unset($_SESSION['CountryFetchHndl']);
 // BAN NOTIFY
 if (!$userbank->is_admin()) {
   $ReqIP = GetRequesterIP();
-  $IsBanned = $GLOBALS['db']->GetOne("SELECT COUNT(*) FROM `" . DB_PREFIX . "_bans` WHERE `type` = 1 AND ip = ? AND (length = '0' OR ends > UNIX_TIMESTAMP()) AND RemoveType IS NULL", array($ReqIP));
+  $IsBanned = $GLOBALS['db']->GetOne("SELECT `bid` FROM `" . DB_PREFIX . "_bans` WHERE `type` = 1 AND ip = ? AND (length = '0' OR ends > UNIX_TIMESTAMP()) AND RemoveType IS NULL", array($ReqIP));
   $theme->assign('UserIP', $ReqIP);
   $theme->assign('IsBanned', $IsBanned);
   $theme->display('page_bans_notify.tpl');

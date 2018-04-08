@@ -16,10 +16,10 @@
   </div>
 
   <ul class="clist clist-star">
-    <li><b>Бан по IP</b>: {if $check_result.GameBan.IP}Активен, см. подробнее <a href="index.php?p=banlist&advType=banid&advSearch={$check_result.GameBan.IP}">здесь.{else}Отсутствует{/if}</li>
-    <li><b>Бан по SteamID</b>: {if $user.steam}{if $check_result.GameBan.IP}Активен, см. подробнее <a href="index.php?p=banlist&advType=banid&advSearch={$check_result.GameBan.IP}">здесь.{else}Отсутствует{/if}{else}Не удаётся проверить, SteamID неизвестен.{/if}</li>
-    <li><b>Текстовый чат</b>: {if $user.steam}{if $check_result.CommBan.Gag}Активен, см. подробнее <a href="index.php?p=comms&advType=banid&advSearch={$check_result.CommBan.Gag}">здесь.{else}Отсутствует{/if}{else}Не удаётся проверить, SteamID неизвестен.{/if}</li>
-    <li><b>Голосовой чат</b>: {if $user.steam}{if $check_result.CommBan.Voice}Активен, см. подробнее <a href="index.php?p=comms&advType=banid&advSearch={$check_result.CommBan.Voice}">здесь.{else}Отсутствует{/if}{else}Не удаётся проверить, SteamID неизвестен.{/if}</li>
+    <li><b>Бан по IP</b>: {if $check_result.GameBan.IP}Активен, см. подробнее <a href="index.php?p=banlist&advType=banid&advSearch={$check_result.GameBan.IP}">здесь</a>{else}Отсутствует{/if}.</li>
+    <li><b>Бан по SteamID</b>: {if $user.steam}{if $check_result.GameBan.Steam > 0}Активен, см. подробнее <a href="index.php?p=banlist&advType=banid&advSearch={$check_result.GameBan.Steam}">здесь</a>{else}Отсутствует{/if}{else}Не удаётся проверить, SteamID неизвестен{/if}.</li>
+    <li><b>Текстовый чат</b>: {if $user.steam}{if $check_result.CommBan.Gag > 0}Активен, см. подробнее <a href="index.php?p=comms&advType=banid&advSearch={$check_result.CommBan.Gag}">здесь</a>{else}Отсутствует{/if}{else}Не удаётся проверить, SteamID неизвестен{/if}.</li>
+    <li><b>Голосовой чат</b>: {if $user.steam}{if $check_result.CommBan.Voice > 0}Активен, см. подробнее <a href="index.php?p=comms&advType=banid&advSearch={$check_result.CommBan.Voice}">здесь</a>{else}Отсутствует{/if}{else}Не удаётся проверить, SteamID неизвестен{/if}.</li>
   </ul>
   <br />
 </div>

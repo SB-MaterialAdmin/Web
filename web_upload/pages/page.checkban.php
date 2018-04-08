@@ -28,3 +28,4 @@ global $theme;
 $theme->assign('check_result', $Result);
 $theme->assign('user', array('ip' => $ReqIP, 'steam' => $ReqSteam));
 $theme->display('page_checkban.tpl');
+// var_dump($Result);
