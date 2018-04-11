@@ -1547,3 +1547,17 @@ function GetRequesterSteam() {
     return false;
   return $_SESSION['steam'];
 }
+
+function BuildPath($append_slash = true) {
+  $arg_count = func_num_args();
+  $args = func_get_args();
+  unset($args[0]);
+
+  $result = (PHP_SHLIB_SUFFIX !== 'dll') ? '/' : '';
+
+  foreach ($args as $arg)
+    $result .= (($args[1] == $arg) ? '' : '/') . trim($arg, "/\\");
+  if ($append_slash)
+    $result .= '/';
+  return $result;
+}

@@ -39,6 +39,7 @@ define('SB_ICONS', ROOT . SB_ICON_LOCATION);
 define('SB_DEMOS', USER_DATA . SB_DEMO_LOCATION);
 
 define('SB_THEME', ROOT . 'theme');
+define('SB_USER_THEME', USER_DATA . 'theme');
 define('SB_THEME_COMPILE', USER_DATA . 'theme_c/');
 
 define('SCRIPT_PATH', SB_THEME . '/js');
@@ -50,6 +51,7 @@ define('XAJAX_REQUEST_URI', './index.php');
 include_once(INCLUDES_PATH . "/CSystemLog.php");
 include_once(INCLUDES_PATH . "/CUserManager.php");
 include_once(INCLUDES_PATH . "/CUI.php");
+include_once(INCLUDES_PATH . "/system-functions.php");
 include_once("theme/theme.conf.php");
 
 // ---------------------------------------------------
@@ -58,10 +60,10 @@ include_once("theme/theme.conf.php");
 require_once(INCLUDES_PATH . "/KruzyaExceptions.php");
 require_once(INCLUDES_PATH . "/Language.php");
 try {
-    $GLOBALS['translator'] = new Kruzya\Generic\Language(ROOT . "langs/");
+    $GLOBALS['translator'] = new Kruzya\Generic\Language(USER_DATA . "langs/");
 } catch (Exception $e) {
     // nope.
-    die("Can't initialize multilanguage system. Try request again later.");
+    die("Can't initialize multi-language system. Try request again later.");
 }
 
 // ---------------------------------------------------
@@ -80,7 +82,8 @@ if(trim($_SERVER['PHP_SELF']) == '') $_SERVER['PHP_SELF'] = preg_replace("/(\?.*
 // ---------------------------------------------------
 //  Are we installed?
 // ---------------------------------------------------
-if(!file_exists(USER_DATA.'config.php') || !include_once(USER_DATA . 'config.php')) {
+$cfg_path = '';
+if(!FindConfig($cfg_path) || !include_once($cfg_path)) {
 	// No were not
 	if($_SERVER['HTTP_HOST'] != "localhost")
 	{
@@ -267,7 +270,7 @@ if(empty($GLOBALS['config']['config.timezone'])) {
 // ---------------------------------------------------
 // Setup our templater
 // ---------------------------------------------------
-require(INCLUDES_PATH . '/smarty/Smarty.class.php');
+require(INCLUDES_PATH . '/CSmarty.php');
 
 global $theme, $userbank;
 
@@ -277,13 +280,17 @@ if(!@file_exists(SB_THEME . "/theme.conf.php"))
 if(!@is_writable(SB_THEME_COMPILE))
     die($GLOBALS['translator']->retrieve("init::themec_not_writable", ["cache_path" => SB_THEME_COMPILE]));
 
-$theme = new Smarty();
-$theme->error_reporting 	= 	E_ALL ^ E_NOTICE;
-$theme->use_sub_dirs 		= 	false;
-$theme->compile_id			= 	"TCache";
-$theme->caching 			= 	false;
-$theme->template_dir 		= 	SB_THEME;
-$theme->compile_dir 		= 	SB_THEME_COMPILE;
+$theme = new CSmarty();
+$theme->error_reporting   = E_ALL ^ E_NOTICE;
+$theme->use_sub_dirs      = false;
+$theme->compile_id        = "TCache";
+$theme->caching           = false;
+$theme->template_dir      = SB_THEME;
+$theme->template_user_dir = SB_USER_THEME;
+$theme->compile_dir       = SB_THEME_COMPILE;
+
+$theme->assign('SITE_ADDRESS',  SB_WP_URL);
+$theme->assign('SBConfig',      ReplaceArrayKeyNames($config, ".", "_"));
 
 if ((isset($_GET['debug']) && $_GET['debug'] == 1) || defined("DEVELOPER_MODE") )
 {
