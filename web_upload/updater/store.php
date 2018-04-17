@@ -25,29 +25,29 @@
 //
 // *************************************************************************
 
- return [
-		352 =>  "SourceBans_MyArena.php",
-		356 =>  "SourceComms_DBStructure.php",
-		480 =>  "MATERIAL_Admin_Upgrade.php",
-		500 =>  "ThemeCustom_Header.php",
-		501 =>  "Voucher_System_1.php",
-		502 =>  "Voucher_System_2.php",
-		503 =>  "ThemeCustom_Background_1.php",
-		504 =>  "ThemeCustom_Background_2.php",
-		505 =>  "SteamAvatars.php",
-		506 =>  "Dashboard_Comms.php",
-		507 =>  "ShowAdminInfo_Banlist.php",
-		508 =>  "ChangePersonalAdminInfo_Profile.php",
-		509 =>  "Menu.php",
-		510 =>  "SMTP.php",
-		511 =>  "Menu_NewTab.php",
-		512 =>  "GenerationPage_Footer.php",
-		513 =>  "SteamAvatars_ExpireDrop.php",
-		514 =>  "OldServerSide.php",
-		515 =>  "Theme_CFG.php",
-		516 =>  "Warnings.php",
-		517 =>  "Warnings_fixes.php",
-		518	=> 	"518.php",
-        519 =>  "519.php"
- ];
-?>
+return [
+  352 =>  "SourceBans_MyArena.php",
+  356 =>  "SourceComms_DBStructure.php",
+  480 =>  "MATERIAL_Admin_Upgrade.php",
+  500 =>  "ThemeCustom_Header.php",
+  501 =>  "Voucher_System_1.php",
+  502 =>  "Voucher_System_2.php",
+  503 =>  "ThemeCustom_Background_1.php",
+  504 =>  "ThemeCustom_Background_2.php",
+  505 =>  "SteamAvatars.php",
+  506 =>  "Dashboard_Comms.php",
+  507 =>  "ShowAdminInfo_Banlist.php",
+  508 =>  "ChangePersonalAdminInfo_Profile.php",
+  509 =>  "Menu.php",
+  510 =>  "SMTP.php",
+  511 =>  "Menu_NewTab.php",
+  512 =>  "GenerationPage_Footer.php",
+  513 =>  "SteamAvatars_ExpireDrop.php",
+  514 =>  "OldServerSide.php",
+  515 =>  "Theme_CFG.php",
+  516 =>  "Warnings.php",
+  517 =>  "Warnings_fixes.php",
+  518	=> 	"518.php",
+  519 =>  "519.php",
+  520 =>  '520.php'
+];

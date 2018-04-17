@@ -40,13 +40,6 @@ $AdminsStart = intval(($page-1) * $AdminsPerPage);
 $AdminsEnd = intval($AdminsStart+$AdminsPerPage);
 if ($AdminsEnd > $admin_count) $AdminsEnd = $admin_count;
 
-function SteamID2CommunityID($steamid) 
-{ 
-    $parts = explode(':', str_replace('STEAM_', '' ,$steamid)); 
-
-    return bcadd(bcadd('76561197960265728', $parts['1']), bcmul($parts['2'], '2')); 
-} 
-
 // List Page
 $admin_list = array();
 foreach($admins AS $admin)
@@ -77,7 +70,9 @@ foreach($admins AS $admin)
 	}
 	
 	$admin['email_profile'] = $userbank->GetProperty("email", $admin['aid']);
-	$admin['communityid_profile'] = SteamID2CommunityID($userbank->GetProperty("authid", $admin['aid']));
+  $admin['communityid_profile'] = CSteamId::factory(
+    $userbank->GetProperty('authid', $admin['aid']
+  )->CommunityID;
 	$admin['steam_id_amd'] = $userbank->GetProperty("authid", $admin['aid']);
 	// Add contakt
 	

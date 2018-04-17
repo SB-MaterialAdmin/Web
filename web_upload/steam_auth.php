@@ -23,12 +23,6 @@ function RedirectToSite($url = SB_WP_URL, $text = "", $NotJS = false) {
   exit();
 }
 
-function CommunityIDToSteamID($communityid) {
-  $authserver = bcsub( $communityid, '76561197960265728' ) & 1;
-  $authid = (bcsub( $communityid, '76561197960265728' ) - $authserver ) / 2;
-  return sprintf("STEAM_0:%d:%d", $authserver, $authid);
-}
-
 $Site = SB_WP_URL;
 $Site = str_replace(array('https', 'http', '://'), '', $Site);
 
@@ -46,7 +40,7 @@ else if (strpos($AuthResult, 'steamcommunity') !== false) {
   RedirectToSite($AuthResult); // Auth started. Redirect to Steam.
 } else {
   // Auth success. Steam returned SteamID64
-  $SteamID = CommunityIDToSteamID($AuthResult);
+  $SteamID = CSteamId::factory($AuthResult)->v2;
 
   @session_start();
   switch ($_SESSION['why']) {

@@ -1561,3 +1561,76 @@ function BuildPath($append_slash = true) {
     $result .= '/';
   return $result;
 }
+
+function ProcessSteamRequest($InterfaceName, $FunctionName, $Version, $Params, $RequireKey = false) {
+  if ($RequireKey && (!defined('STEAMAPIKEY') || empty(constant('STEAMAPIKEY')))) {
+    return false;
+  }
+
+  $request_url = sprintf(
+    'https://api.steampowered.com/%s/%s/v' . is_int($Version) ? '%d' : '%s',
+    $InterfaceName, $FunctionName, $Version
+  );
+
+  $session = curl_init($request_url);
+  curl_setopt($session, CURLOPT_RETURNTRANSFER, true);
+  curl_setopt($session, CURLOPT_POST, true);
+  curl_setopt($session, CURLOPT_POSTFIELDS, array_merge(
+    $Params,
+    [
+      'key' => defined('STEAMAPIKEY') ? STEAMAPIKEY : '',
+      'format' => 'json'
+    ]
+  ));
+
+  $result = curl_exec($session);
+  $code   = curl_getinfo($session, CURLINFO_HTTP_CODE);
+
+  curl_close($session);
+  if ($code != 200)
+    return false;
+  return json_decode($result, true);
+}
+
+function GetVACStatus($steamid) {
+  static $job = null;
+  static $cache = null;
+
+  if ($job === null) {
+    require_once(INCLUDES_PATH . '/CJob.php');
+    $database = $GLOBALS['db'];
+    $job = CJob::factory()->SetTask(function() use (&$cache, $database) {
+      $query = $database->Prepare('INSERT INTO `' . DB_PREFIX . '_vac` (`account_id`, `status`, `updated_on`) VALUES(?, ?, ?) ON DUPLICATE KEY UPDATE `status` = ?, `updated_on` = ?;');
+
+      foreach($cache as $entry) {
+        var_dump($entry);
+        echo('\n');
+        $database->Execute($query, array_merge($entry, [$entry['status'], $entry['updated_on']]));
+      }
+    });
+
+    $cache = [];
+    $temp = $GLOBALS['db']->GetAll('SELECT * FROM `' . DB_PREFIX . '_vac`');
+    foreach ($temp as $value)
+      $cache[intval($value['account_id'])] = $value;
+  }
+
+  $user = CSteamId::factory($steamid);
+  if (isset($cache[$user->AccountID]) && ($cache[$user->AccountID]['updated_on'] + 86400 > time() || $cache[$user->AccountID]['status'] != 0)) {
+    return ($cache[$user->AccountID]['status'] != 0);
+  }
+
+  $Result = ProcessSteamRequest(
+    'ISteamUser', 'GetPlayerSummaries', 1, [
+      'steamids' => $user->CommunityID
+    ], true
+  );
+
+  $banned = false;
+  if ($result !== false && isset($result['players'][0])) {
+    $banned = $result['players'][0]['VACBanned'];
+  }
+
+  $cache[$user->AccountID] = [$user->AccountID, $banned, time()];
+  return $banned;
+}

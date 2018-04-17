@@ -308,3 +308,4 @@ if (!defined('IS_UPDATE') && isset($_COOKIE['password']))
     $p = $_COOKIE['password'];
 
 $userbank = new CUserManager($l, $p);
+require_once(INCLUDES_PATH . '/CSteamId.php');

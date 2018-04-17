@@ -9,23 +9,6 @@ if($GLOBALS['config']['page.adminlist']!="1"){
     PageDie();
 }
 
-function SteamIDToCommunityID($sid) {
-    /**
-     * Thanks Valve and AlliedModders!
-     * https://developer.valvesoftware.com/wiki/SteamID#Steam_Community_ID_as_a_Steam_ID
-     * https://forums.alliedmods.net/showthread.php?t=60899
-     *
-     * STEAM_X:Y:Z
-     * V=76561197960265728
-     * W=Z*2+V+Y
-     */
-    
-    $result = array();
-    $res = preg_match('/STEAM_[0-9]:(0|1):([0-9]{1,})/', $sid, $result);
-    if ($res) return bcadd(bcadd(bcmul($result[2], '2'), '76561197960265728'), $result[1]);
-    else return false;
-}
-
 function FindAdminById($adlist, $aid) {
     $countl = count($adlist);
     for ($i = 0; $i < $countl; $i++) {
@@ -84,7 +67,7 @@ for ($iServer = 0; $iServer < $iServerCount; $iServer++) {
         $administrator = $admins[$iAdmin];
         if ($administrator['srv'] == $servers[$iServer]['sid'] && !IsExpired($administrator)) {
             $administrator['avatar'] = GetUserAvatar($administrator['authid']);
-            $administrator['authid'] = SteamIDToCommunityID($administrator['authid']);
+            $administrator['authid'] = CSteamId::factory($administrator['authid'])->CommunityID;
                 
             $servers[$iServer]['adminlist'][$administrator['aid']] = $administrator;
         }
