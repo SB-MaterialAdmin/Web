@@ -1183,46 +1183,56 @@ function GetCommunityIDFromSteamID2($sid) {
 }
 
 function GetUserAvatar($sid = -1) {
-    global $userbank;
+  global $userbank;
     
-    static $avatarCache = null;
-    if (!$avatarCache) {
-        $query = $GLOBALS['db']->Execute(sprintf("SELECT * FROM `%s_avatars`", DB_PREFIX));
-        $avatarCache = [];
+  static $avatarCache = null;
+  if (!$avatarCache) {
+    $query = $GLOBALS['db']->Execute(sprintf("SELECT * FROM `%s_avatars`", DB_PREFIX));
+    $avatarCache = [];
 
-        while (!$query->EOF) {
-            $avatarCache[$query->fields['authid']] = $query->fields['url'];
-            $query->MoveNext();
-        }
+    while (!$query->EOF) {
+      $avatarCache[$query->fields['authid']] = $query->fields['url'];
+      $query->MoveNext();
     }
-    
-    $communityid = false;
-    $res = false;
-    $AvatarFile = sprintf("theme/img/profile-pics/%d.jpg", rand(1,9));
-    $sid = ($sid==-1)?($userbank->is_logged_in()?$userbank->getProperty("authid"):0):$sid;
-    
-    if ($sid) $communityid = GetCommunityIDFromSteamID2($sid);
-    if ($communityid)
-        $res = isset($avatarCache[$communityid]) ? $avatarCache[$communityid] : null;
-    
+  }
+
+  $communityid = false;
+  $res = false;
+  $AvatarFile = sprintf("theme/img/profile-pics/%d.jpg", rand(1,9));
+  $sid = ($sid==-1)?($userbank->is_logged_in()?$userbank->getProperty("authid"):0):$sid;
+
+  try {
+    if ($sid) $communityid = CSteamId::factory($sid)->CommunityID;
+  } catch(InvalidArgumentException $e) {
+    $communityid = 0;
+  }
+  if ($communityid)
+    $res = isset($avatarCache[$communityid]) ? $avatarCache[$communityid] : null;
+
+  if ($res)
+    $AvatarFile = $res;
+  else if ($communityid) {
+    $SteamResponse = ProcessSteamRequest('ISteamUser', 'GetPlayerSummaries', '0002', [
+      'steamids' => $communityid
+    ], true);
+
+    if ($SteamResponse !== false && isset($SteamResponse['response']['players'][0]['avatarfull']))
+      $AvatarFile = $SteamResponse['response']['players'][0]['avatarfull'];
+
+    // Add file to memory cache
+    $avatarCache[$communityid] = $AvatarFile;
+
+    // And insert to DB
+    $query = null;
+    $AF = $GLOBALS['db']->qstr($AvatarFile);
     if ($res)
-        $AvatarFile = $res;
-    else if ($communityid) {
-        $SteamResponse = @json_decode(file_get_contents(sprintf("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=%s&steamids=%s", STEAMAPIKEY, $communityid)));
-        if (isset($SteamResponse->response->players[0]->avatarfull))
-            $AvatarFile = $SteamResponse->response->players[0]->avatarfull;
-        
-        // Add file to memory cache
-        $avatarCache[$communityid] = $AvatarFile;
-        
-        // And insert to DB
-        $query = null;
-        $AF = $GLOBALS['db']->qstr($AvatarFile);
-        if ($res) $query = sprintf("UPDATE `%s_avatars` SET `url` = %s", DB_PREFIX, $AF);
-        else $query = sprintf("INSERT INTO `%s_avatars` (`authid`, `url`) VALUES ('%s', %s)", DB_PREFIX, $communityid, $AF);
-        $GLOBALS['db']->Execute($query);
-    }
-    return $AvatarFile;
+      $query = sprintf("UPDATE `%s_avatars` SET `url` = %s", DB_PREFIX, $AF);
+    else
+      $query = sprintf("INSERT INTO `%s_avatars` (`authid`, `url`) VALUES ('%s', %s)", DB_PREFIX, $communityid, $AF);
+    $GLOBALS['db']->Execute($query);
+  }
+
+  return $AvatarFile;
 }
 
 function normalize_files_array($files = []) {
@@ -1563,8 +1573,13 @@ function BuildPath($append_slash = true) {
 }
 
 function ProcessSteamRequest($InterfaceName, $FunctionName, $Version, $Params, $RequireKey = false) {
-  if ($RequireKey && (!defined('STEAMAPIKEY') || empty(constant('STEAMAPIKEY')))) {
-    return false;
+  if ($RequireKey) {
+    if (!defined('STEAMAPIKEY'))
+      return false;
+
+    $Key = constant('STEAMAPIKEY');
+    if (empty($Key))
+      return false;
   }
 
   $request_url = sprintf(
@@ -1603,14 +1618,12 @@ function GetVACStatus($steamid) {
       $query = $database->Prepare('INSERT INTO `' . DB_PREFIX . '_vac` (`account_id`, `status`, `updated_on`) VALUES(?, ?, ?) ON DUPLICATE KEY UPDATE `status` = ?, `updated_on` = ?;');
 
       foreach($cache as $entry) {
-        var_dump($entry);
-        echo('\n');
-        $database->Execute($query, array_merge($entry, [$entry['status'], $entry['updated_on']]));
+        $database->Execute($query, [$entry['account_id'], $entry['status'], $entry['updated_on'], $entry['status'], $entry['updated_on']]);
       }
     });
 
     $cache = [];
-    $temp = $GLOBALS['db']->GetAll('SELECT * FROM `' . DB_PREFIX . '_vac`');
+    $temp = $GLOBALS['db']->GetAll('SELECT `account_id`, `status`, `updated_on` FROM `' . DB_PREFIX . '_vac`');
     foreach ($temp as $value)
       $cache[intval($value['account_id'])] = $value;
   }

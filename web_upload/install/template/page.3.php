@@ -4,28 +4,156 @@ $errors = 0;
 $warnings = 0;
 
 if(isset($_POST['username'], $_POST['password'], $_POST['server'], $_POST['port'], $_POST['database'])) {
-	require(ROOT . "../includes/adodb/adodb.inc.php");
-	include_once(ROOT . "../includes/adodb/adodb-errorhandler.inc.php");
-	$server = "mysqli://" . $_POST['username'] . ":" . $_POST['password'] . "@" . $_POST['server'] . ":" . $_POST['port'] . "/" . $_POST['database'];
-	$db = ADONewConnection($server);
-	$db->Execute("SET NAMES `utf8`");
-	$vars = $db->Execute("SHOW VARIABLES");
-	$sql_version = "";
-	while(!$vars->EOF)
-	{
-		if($vars->fields['Variable_name'] == "version")
-		{
-			$sql_version = $vars->fields['Value'];
-			break;
-		}
-		$vars->MoveNext();
-	}
+    require(ROOT . "../includes/adodb/adodb.inc.php");
+    include_once(ROOT . "../includes/adodb/adodb-errorhandler.inc.php");
+    $server = "mysqli://" . $_POST['username'] . ":" . $_POST['password'] . "@" . $_POST['server'] . ":" . $_POST['port'] . "/" . $_POST['database'];
+    $db = ADONewConnection($server);
+    $db->Execute("SET NAMES `utf8`");
+    $vars = $db->Execute("SHOW VARIABLES");
+    $sql_version = "";
+    while(!$vars->EOF)
+    {
+      if($vars->fields['Variable_name'] == "version")
+      {
+        $sql_version = $vars->fields['Value'];
+        break;
+      }
+      $vars->MoveNext();
+    }
 } else {
-	$sql_version = "Невозможно соединиться, не введены детали базы данных. (Вернитесь назад и введите данные заново.)";
+    $sql_version = "НЕТ СОЕДИНЕНИЯ";
+}
+
+// В дальнейшем, в установщик будет интегрироваться мульти-язычность.
+// Потому эти переменные заведены под мульти-язычность. Здесь с течением времени, будут вызовы функций "переводчика".
+$disabled   = 'Выкл.';
+$enabled    = 'Вкл.';
+$unknown    = 'Н/А';
+$yes        = 'Да';
+$no         = 'Нет';
+
+// ['Папка для демок', 'data/demos', $yes, $unknown, $translations, false],
+$gendirdata = function($dirname, $dirpath, $required, $recommended, $display, &$name, $is_warning = false) {
+  $data = [
+    'required'    => $required,
+    'recommended' => $recommended,
+
+    'result'      => is_writable('../' . $dirpath),
+    'display'     => $display
+  ];
+
+  if ($is_warning)
+    $data['is_warning'] = true;
+
+  $name = $dirname . '(' . $dirpath . ')';
+  return $data;
+};
+
+$requirements = [
+  /**
+   * О структуре массива
+   *
+   * Ключи в нём - это названия секций, которые проверяет установщик
+   * Ключи в секциях - названия "параметров"
+   */
+  'Требования PHP' => [
+    'Версия PHP'  =>  [
+      'required'    => '5.4', /**< Значение, которое будет выведено в "Требуется" */
+      'recommended' => '5.5', /**< Значение, которое будет выведено в "Рекомендуется" */
+
+      'result'      => (version_compare(PHP_VERSION, "5.4") != -1), /**< Результат проверки установщиком. Должно быть булевой переменной. GUI на её основе будет выводить нужные стили. */
+      /* Так же возможен ключ "is_warning", наличие которого заставляет установщик превратить "ошибку" в "предупреждение", в случае не успешной проверки */
+
+      // Если является массивом, то:
+      // - выводит первый ключ, если всё хорошо
+      // - выводит второй ключ, если не всё так гладко
+      //
+      // Если является чем-то иным, то просто выводит, как строку
+      'display'     => PHP_VERSION
+    ],
+
+    'Расширение BCMath' => [
+      'required'    => $yes,
+      'recommended' => $unknown,
+      
+      'result'      =>  function_exists('bcadd'),
+      'display'     => [$yes, $no]
+    ],
+
+    'Расширение GMP / 64-битный PHP' => [
+      'required'    => $yes,
+      'recommended' => $unknown,
+
+      'result'      => (extension_loaded('gmp') || getPhpArchitecture() == 'amd64'),
+      'display'     => [$yes, $no]
+    ],
+
+    'Загрузка файлов' => [
+      'required'    => $enabled,
+      'recommended' => $unknown,
+
+      'result'      => ini_get("file_uploads"),
+      'display'     => [$enabled, $disabled]
+    ],
+
+    'Поддержка XML' => [
+      'required'    => $enabled,
+      'recommended' => $unknown,
+
+      'result'      => extension_loaded('xml'),
+      'display'     => [$enabled, $disabled]
+    ],
+
+    'Глобальные переменные' => [
+      'required'    => $disabled,
+      'recommended' => $unknown,
+
+      'result'      => ini_get('register_globals') == 0,
+      'display'     => [$disabled, $enabled]
+    ],
+
+    'Safe Mode' => [
+      'required'    => $disabled,
+      'recommended' => $unknown,
+
+      'result'      => (ini_get('safe_mode') == 0),
+      'is_warning'  => true,
+      'display'     => [$disabled, $enabled]
+    ]
+  ],
+
+  'Требования MySQL'  => [
+    'Версия сервера'  => [
+      'required'      => '5.0',
+      'recommended'   => '5.5',
+
+      'result'        => (version_compare($sql_version, '5') != -1),
+      'display'       => [$yes, $no]
+    ]
+  ],
+
+  'Требования ФС' => [] // это - динамически наполняемый массив. См. ниже.
+];
+
+// Наполняем "Требования ФС"...
+// $gendirdata = function($dirname, $dirpath, $required, $recommended, $display, &$name, $is_warning = false) {
+$translations = [$yes, $no];
+$fs = [
+  ['Папка для демок',                   'data/demos',       $yes, $unknown, $translations, false],
+  ['Папка кеша шаблона',                'data/theme_c',     $yes, $unknown, $translations, false],
+  ['Папка иконок МОДов',                'images/games',     $unknown, $yes, $translations, true],
+  ['Папка изображений карт',            'images/maps',      $unknown, $yes, $translations, true],
+  ['Конфигурационный файл',             'data/config.php',  $unknown, $yes, $translations, false],
+  ['Кеш мета-данных игровых серверов',  'data/gc',          $unknown, $yes, $translations, true]
+];
+$req_FS = &$requirements['Требования ФС'];
+foreach ($fs as $f) {
+  $name = '';
+  $data = $gendirdata($f[0], $f[1], $f[2], $f[3], $f[4], $name, $f[5]);
+
+  $req_FS[$name] = $data;
 }
 ?>
-
-
 <div class="card m-b-0" id="messages-main">
 		<div class="ms-menu">
 			<div class="ms-block p-10">
@@ -86,131 +214,16 @@ if(isset($_POST['username'], $_POST['password'], $_POST['server'], $_POST['port'
 				<div class="lv-body p-15">
 					На этой странице перечислены все требования для работы веб-панели SourceBans. Система сверит их с текущими данными. На этой странице будут также перечислены некоторые рекомендациями.
 				</div>
-				
-				<div class="lv-header-alt clearfix">
-					<div class="lvh-label">
-						<span class="c-black">Требования PHP</span>
-					</div>
-				</div>
-				<div class="lv-body p-15">
-					<div class="col-sm-12">
-						
-						<table class="table table-hover">
-							<thead>
-								<tr>
-									<th width="30%">Настройка</th>
-									<th>Рекомендуется</th>
-									<th>Требуется</th>
-									<th width="30%">Значения сервера</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<td>Версия PHP</td>
-									<td>5.5</td>
-									<td>5.4</td>
-									<?php 
-										if(version_compare(PHP_VERSION, "5.4") != -1)
-											$class = "success c-white";
-										else {  $class = "danger c-white"; $errors++;}
-									?>
-									<td class="<?= $class ?>"><?= PHP_VERSION ?></td>
-								</tr>
-								<tr>
-									<td>Поддержка bcmath</td>
-									<td>Н/А</td>
-									<td>Да</td>
-									<?php
-										$bcmath = function_exists('bcadd');
-										if($bcmath)
-											$class = "success c-white";
-										else { $class = "danger c-white"; $errors++; }
-									?>
-									<td class="<?= $class ?>"><?= $bcmath ? 'Да' : 'Нет' ?></td>
-								</tr>
-                                <tr>
-									<td>Поддержка gmp \ 64-битный PHP</td>
-									<td>Н/А</td>
-									<td>Да</td>
-									<?php
-										$arch = getPhpArchitecture();
-                                        $gmp = extension_loaded('gmp');
-                                        $res = false;
 
-										if($gmp == true || $arch == 'amd64') {
-											$class = "success c-white";
-                                            $res = true;
-										} else { $class = "danger c-white"; $errors++; }
-									?>
-									<td class="<?= $class ?>"><?= $res ? 'Да' : 'Нет' ?></td>
-								</tr>
-								<tr>
-									<td>Загрузка файлов</td>
-									<td>Н/А</td>
-									<td>Вкл</td>
-									<?php 
-										$uploads = ini_get("file_uploads");
-										if($uploads)
-											$class = "success c-white";
-										else {  $class = "danger c-white"; $errors++; }
-									?>
-									<td class="<?= $class ?>"><?= $uploads ? 'Вкл' : 'Выкл' ?></td>
-								</tr>
-								<tr>
-									<td>Поддержка XML</td>
-									<td>Н/А</td>
-									<td>Вкл</td>
-									<?php 
-										$xml = extension_loaded('xml');
-										if($xml)
-											$class = "success c-white";
-										else { $class = "danger c-white"; $errors++; }
-									?>
-									<td class="<?= $class ?>"><?= $xml ? 'Вкл' : 'Выкл' ?></td>
-								</tr>
-								<tr>
-									<td>Глобальные переменные</td>
-									<td>Выкл</td>
-									<td>Н/A</td>
-									<?php 
-										$rg = ini_get("register_globals");
-										if(!$rg)
-											$class = "success c-white";
-										else {  $class = "active"; $errors++;}
-									?>
-									<td class="<?= $class ?>"><?= $rg=="" ? 'Выкл' : 'Вкл' ;?></td>
-								</tr>
-								<tr>
-									<td>Safe Mode</td>
-									<td>Выкл</td>
-									<td>Н/A</td>
-									<?php 
-										if(ini_get('safe_mode')==0) {
-											$class = "success c-white";
-											$safem = "Выкл";
-										}
-										else {	
-											$safem = "Вкл";
-											$class = "active"; 
-											$warnings++;
-										}
-									?>
-									<td class="<?= $class ?>"><?= $safem ?></td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-					&nbsp;
-				</div>
-				
+        <!-- Installer Logic and Checks -->
+<?php foreach ($requirements as $name => $data): ?>
 				<div class="lv-header-alt clearfix">
 					<div class="lvh-label">
-						<span class="c-black">Требования MySQL</span>
+						<span class="c-black"><?= $name ?></span>
 					</div>
 				</div>
 				<div class="lv-body p-15">
 					<div class="col-sm-12">
-						
 						<table class="table table-hover">
 							<thead>
 								<tr>
@@ -221,100 +234,44 @@ if(isset($_POST['username'], $_POST['password'], $_POST['server'], $_POST['port'
 								</tr>
 							</thead>
 							<tbody>
+<?php foreach ($data as $key => $values): ?>
 								<tr>
-									<td>Версия MySQL</td>
-									<td>Н/A</td>
-									<td>5.0</td>
+									<td><?= $key ?></td>
+									<td><?= $values['recommended'] ?></td>
+									<td><?= $values['required'] ?></td>
 									<?php 
-										if(version_compare($sql_version, "5") != -1){
-											$class = "success c-white";
-											$par = "width=\"30%\"";
-										} else { $class = "danger c-white"; $errors++; $par = "width=\"50%\"";}
-									?>
-									<td class="<?= $class ?>" <?= $par ?>><?= $sql_version ?></td>
+                    $class = "";
+                    $drawable = $values['display'];
+										if ($values['result']) {
+                      $class = 'success c-white';
+
+                      if (is_array($drawable))
+                        $drawable = $drawable[0];
+                    } else if (isset($values['is_warning'])) {
+                      $class = 'active';
+                      $warnings++;
+
+                      if (is_array($drawable))
+                        $drawable = $drawable[1];
+                    } else {
+                      $class = "danger c-white";
+                      $errors++;
+
+                      if (is_array($drawable))
+                        $drawable = $drawable[1];
+                    }
+									?><td class="<?= $class ?>"><?= $drawable ?></td>
 								</tr>
+<?php endforeach; ?>
 							</tbody>
 						</table>
-						
 					</div>
-					&nbsp;
+          <?php /** Я без понятия, зачем этот &nbsp; здесь, но, видимо, он какую-то роль играет... */ ?>
+          &nbsp;
 				</div>
-				
-				<div class="lv-header-alt clearfix">
-					<div class="lvh-label">
-						<span class="c-black">Требования файловой системы</span>
-					</div>
-				</div>
+<?php endforeach; ?>
 				<div class="lv-body p-15">
 					<div class="col-sm-12">
-						
-						<table class="table table-hover">
-							<thead>
-								<tr>
-									<th width="30%">Настройка</th>
-									<th>Рекомендуется</th>
-									<th>Требуется</th>
-									<th>Значения сервера</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<td>Папка для демок (/data/demos)</td>
-									<td>Н/A</td>
-									<td>Перезаписываемая</td>
-									<?php 
-										if(is_writable("../data/demos")){
-											$class = "success c-white";
-										} else { $class = "danger c-white"; $errors++; }
-									?>
-									<td class="<?= $class ?>"><?= is_writable("../data/demos") ? "Да" : "Нет" ?></td>
-								</tr>
-								<tr>
-									<td>Папка кэша (/data/theme_c)</td>
-									<td>Н/A</td>
-									<td>Перезаписываемая</td>
-									<?php 
-										if(is_writable("../data/theme_c")){
-											$class = "success c-white";
-										} else {  $class = "danger c-white"; $errors++; }
-									?>
-									<td class="<?= $class ?>"><?= is_writable("../data/theme_c") ? "Да" : "Нет" ?></td>
-								</tr>
-								<tr>
-									<td>Папка иконок МОДов (/images/games)</td>
-									<td>Н/A</td>
-									<td>Перезаписываемая</td>
-									<?php 
-										if(is_writable("../images/games")){
-											$class = "success c-white";
-										} else {  $class = "danger c-white"; $errors++; }
-									?>
-									<td class="<?= $class ?>"><?= is_writable("../images/games") ? "Да" : "Нет" ?></td>
-								</tr>
-								<tr>
-									<td>Папка изображений карт (/images/maps)</td>
-									<td>Н/A</td>
-									<td>Перезаписываемая</td>
-									<?php 
-										if(is_writable("../images/maps")){
-											$class = "success c-white";
-										} else {  $class = "danger c-white"; $errors++; }
-									?>
-									<td class="<?= $class ?>"><?= is_writable("../images/maps") ? "Да" : "Нет" ?></td>
-								</tr>
-								<tr>
-									<td>Конфигурационный файл (/data/config.php)</td>
-									<td>Н/A</td>
-									<td>Перезаписываемая</td>
-									<?php 
-										if(is_writable("../data/config.php")){
-											$class = "success c-white";
-										} else {  $class = "danger c-white"; $errors++; }
-									?>
-									<td class="<?= $class ?>"><?= is_writable("../data/config.php") ? "Да" : "Нет" ?></td>
-								</tr>
-							</tbody>
-						</table>
 						<?php /* WhiteWolf: This is a hack to make sure the user didn't refresh the page, in the future we should tell them what they did. */
 							if(!isset($_POST['username'], $_POST['password'], $_POST['server'], $_POST['database'], $_POST['port'], $_POST['prefix'])) {
 						?>
