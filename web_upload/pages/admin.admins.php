@@ -71,7 +71,7 @@ foreach($admins AS $admin)
 	
 	$admin['email_profile'] = $userbank->GetProperty("email", $admin['aid']);
   $admin['communityid_profile'] = CSteamId::factory(
-    $userbank->GetProperty('authid', $admin['aid']
+    $userbank->GetProperty('authid', $admin['aid'])
   )->CommunityID;
 	$admin['steam_id_amd'] = $userbank->GetProperty("authid", $admin['aid']);
 	// Add contakt
