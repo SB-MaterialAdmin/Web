@@ -1618,6 +1618,9 @@ function GetVACStatus($steamid) {
       $query = $database->Prepare('INSERT INTO `' . DB_PREFIX . '_vac` (`account_id`, `status`, `updated_on`) VALUES(?, ?, ?) ON DUPLICATE KEY UPDATE `status` = ?, `updated_on` = ?;');
 
       foreach($cache as $entry) {
+        if (!isset($entry['account_id']) || $entry['account_id'] === null)
+          break;
+
         $database->Execute($query, [$entry['account_id'], $entry['status'], $entry['updated_on'], $entry['status'], $entry['updated_on']]);
       }
     });
