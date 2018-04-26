@@ -91,6 +91,10 @@ switch ($_GET['p'])
 		RewritePageTitle("АдминЛист");
 		$page = TEMPLATES_PATH . "/page.adminlist.php";
 		break;
+  case "check":
+    RewritePageTitle("Проверка наличия бана");
+    $page = TEMPLATES_PATH . "/page.checkban.php";
+    break;
 	default:
 		switch($GLOBALS['config']['config.defaultpage'])
 		{
