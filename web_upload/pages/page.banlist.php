@@ -554,7 +554,11 @@ while (!$res->EOF)
 		$modicon = $res->fields['mod_icon'];
 	}
 
-  $data['vac'] = GetVACStatus($data['steamid']);
+  $data['vacshow'] = true;
+  if (!empty($data['steamid']))
+    $data['vac'] = GetVACStatus($data['steamid']);
+  else
+    $data['vacshow'] = false;
 
 	$data['mod_icon'] = '<img src="images/games/' .$modicon . '" alt="MOD" border="0" align="absmiddle" />';
 	$data['country_icon'] = $data['country'] . ' &nbsp;';

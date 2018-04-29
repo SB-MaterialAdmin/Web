@@ -210,12 +210,14 @@
 											</div>
 										</div>
 										{/if}
+                                        {if $ban.vacshow}
 										<div class="form-group col-sm-12 m-b-5">
 											<label class="col-sm-4 control-label"><i class="zmdi zmdi-circle-o text-left"></i> VAC-бан</label>
 											<div class="col-sm-8">
 												<strong>{if $ban.vac}В наличии{else}Отсутствует{/if}.</strong>
 											</div>
 										</div>
+                                        {/if}
 										{if !$hideplayerips}
 											{if $ban.ip != "none"}
 												<div class="form-group col-sm-12 m-b-5">
