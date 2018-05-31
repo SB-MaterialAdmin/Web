@@ -24,4 +24,3 @@
 * [[ G-44.RU ] :: Bans](http://bans.g-44.ru/)
 * [gmode.ru - SourceBans](https://gmode.ru/sourcebans/)
 * [Игровой проект :: L4D-Zone.RU - Комплекс игровых серверов](https://l4d-zone.ru/)
-* [SourceBans Final Night](http://final-night.ru/bans/)
