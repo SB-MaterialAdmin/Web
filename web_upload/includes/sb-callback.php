@@ -3388,7 +3388,7 @@ function BanMemberOfGroup($grpurl, $queue, $reason, $last)
   // https://partner.steamgames.com/documentation/community_data
   // http://steamcommunity.com/groups/<GroupName>/memberslistxml/?xml=1
   // but we'd need to open every single profile of every member to get the name..
-  $raw = file_get_contents("http://steamcommunity.com/groups/".$grpurl."/members"); // get the members page
+  $raw = file_get_contents("https://steamcommunity.com/groups/".$grpurl."/members"); // get the members page
   @$doc->loadHTML($raw); // load it into a handy object so we can maintain it
   // the memberlist is paginated, so we need to check the number of pages
   $pagetag = $doc->getElementsByTagName('div');
@@ -3412,13 +3412,13 @@ function BanMemberOfGroup($grpurl, $queue, $reason, $last)
   $error = 0;
   for($i=1;$i<=max($pagenumbers);$i++) { // loop through all the pages
     if($i!=1) { // if we are on page 1 we don't need to reget the content as we did above already.
-      $raw = file_get_contents("http://steamcommunity.com/groups/".$grpurl."/members?p=".$i); // open the memberpage
+      $raw = file_get_contents("https://steamcommunity.com/groups/".$grpurl."/members?p=".$i); // open the memberpage
       @$doc->loadHTML($raw);
     }
     $tags = $doc->getElementsByTagName('a');
     foreach ($tags as $tag) {
       // search for the member profile links
-      if((strstr($tag->getAttribute('href'), "http://steamcommunity.com/id/") || strstr($tag->getAttribute('href'), "http://steamcommunity.com/profiles/")) && $tag->hasChildNodes() && $tag->childNodes->length == 1 && $tag->childNodes->item(0)->nodeValue != "") {
+      if((strstr($tag->getAttribute('href'), "https://steamcommunity.com/id/") || strstr($tag->getAttribute('href'), "https://steamcommunity.com/profiles/")) && $tag->hasChildNodes() && $tag->childNodes->length == 1 && $tag->childNodes->item(0)->nodeValue != "") {
         $total++;
         $url = parse_url($tag->getAttribute('href'), PHP_URL_PATH);
         $url = explode("/", $url);
@@ -3426,7 +3426,7 @@ function BanMemberOfGroup($grpurl, $queue, $reason, $last)
           $bannedbefore++;
           continue;
         }
-        if(strstr($tag->getAttribute('href'), "http://steamcommunity.com/id/")) {
+        if(strstr($tag->getAttribute('href'), "https://steamcommunity.com/id/")) {
           // we don't have the friendid as this player is using a custom id :S need to get the friendid
           if($tfriend = GetFriendIDFromCommunityID($url[2])) {
             if(in_array($tfriend, $already)) {
