@@ -772,12 +772,22 @@ function ShowBox_ajx($title, $msg, $color, $redir="", $noclose=false, &$response
 
 function PruneBans()
 {
-	global $userbank;
+  $aid = \UserManager::getMyID();
+  if ($aid == -1)
+    $aid = 0;
 
-	$res = $GLOBALS['db']->Execute('UPDATE `'.DB_PREFIX.'_bans` SET `RemovedBy` = 0, `RemoveType` = \'E\', `RemovedOn` = UNIX_TIMESTAMP() WHERE `length` != 0 and `ends` < UNIX_TIMESTAMP() and `RemoveType` IS NULL');
-	$prot = $GLOBALS['db']->Execute("UPDATE `".DB_PREFIX."_protests` SET archiv = '3', archivedby = ".($userbank->GetAid()<0?0:$userbank->GetAid())." WHERE archiv = '0' AND bid IN((SELECT bid FROM `".DB_PREFIX."_bans` WHERE `RemoveType` = 'E'))");
-	$submission = $GLOBALS['db']->Execute('UPDATE `'.DB_PREFIX.'_submissions` SET archiv = \'3\', archivedby = '.($userbank->GetAid()<0?0:$userbank->GetAid()).' WHERE archiv = \'0\' AND (SteamId IN((SELECT authid FROM `'.DB_PREFIX.'_bans` WHERE `type` = 0 AND `RemoveType` IS NULL)) OR sip IN((SELECT ip FROM `'.DB_PREFIX.'_bans` WHERE `type` = 1 AND `RemoveType` IS NULL)))');
-    return $res?true:false;
+  $DB = \DatabaseManager::GetConnection();
+  $DB->Query('UPDATE `{{prefix}}bans` SET `RemovedBy` = 0, `RemoveType` = "E", `RemovedOn` = UNIX_TIMESTAMP() WHERE `length` != 0 AND `ends` < UNIX_TIMESTAMP() AND `RemoveType` IS NULL');
+
+  $DB->Prepare('UPDATE `{{prefix}}protests` SET `archiv` = 3, `archivedby` = :adminid WHERE `archiv` = 0 AND `bid` IN ((SELECT `bid` FROM `{{prefix}}bans` WHERE `RemoveType` = "E"))');
+  $DB->BindData('adminid', $aid);
+  $DB->Finish()->EndData();
+
+  $DB->Prepare('UPDATE `{{prefix}}submissions` SET `archiv` = 3, `archivedby` = :adminid WHERE `archiv` = 0 AND (SteamId IN((SELECT `authid` FROM `{{prefix}}bans` WHERE `type` = 0 AND `RemoveType` IS NULL)) OR sip IN((SELECT `ip` FROM `{{prefix}}bans` WHERE `type` = 1 AND `RemoveType` IS NULL)))');
+  $DB->BindData('adminid', $aid);
+  $DB->Finish()->EndData();
+
+  $DB->Query('DELETE FROM `{{prefix}}bans` WHERE `authid` NOT REGEXP "^STEAM_[0-9]:[0-9]:[0-9]"');
 }
 
 function PruneComms()

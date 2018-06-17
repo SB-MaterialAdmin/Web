@@ -3,8 +3,8 @@ class DatabaseResult {
   private $Statement;
   private $Result;
 
-  public function __construct($PDO, $Statement) {
-    $this->Statement = $PDO->prepare($Statement);
+  public function __construct($Statement) {
+    $this->Statement = $Statement;
   }
 
   public function Execute($data = null) {

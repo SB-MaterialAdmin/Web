@@ -14,7 +14,7 @@ class UserManager {
 
   public static function getInstance() {
     if (self::$instance === NULL)
-      self::init(-1, '');
+      self::init(-1);
 
     return self::$instance;
   }
@@ -62,6 +62,10 @@ class UserManager {
       return self::ContinueLogin($Data, $reason);
     }
     return false;
+  }
+
+  public static function getMyID() {
+    return self::$aid;
   }
 
   private static function ContinueLogin($UserData, &$reason) {

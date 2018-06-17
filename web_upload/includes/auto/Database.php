@@ -9,13 +9,14 @@ class Database {
     $this->Connect($config);
   }
 
+  public function Query($query) {
+    $query = $this->ReplacePrefix($query);
+    return new \DatabaseResult($this->PDO->query($query));
+  }
+
   public function Prepare($query) {
-    try {
-      $query = $this->ReplacePrefix($query);
-      $this->Statement = new \DatabaseResult($this->PDO, $query);
-    } catch (\Exception $e) {
-      \ExceptionHandler::handle($e);
-    }
+    $query = $this->ReplacePrefix($query);
+    $this->Statement = new \DatabaseResult($this->PDO->prepare($query));
   }
 
   public function BindData($name, $value, $type = NULL) {
