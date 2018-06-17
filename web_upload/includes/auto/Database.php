@@ -41,7 +41,7 @@ class Database {
       $Statement = $this->Statement;
       $Statement->Execute($data);
 
-      if ($this->Clean)
+      if ($Clean)
         $this->Statement = NULL;
 
       return $Statement;

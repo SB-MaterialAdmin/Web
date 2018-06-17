@@ -64,6 +64,26 @@ class UserManager {
     return false;
   }
 
+  public static function forceLoginBySteam($steamId, &$reason) {
+    if (!is_object($steamId) || get_class($steamId) != 'CSteamId')
+      throw new \LogicException('Invalid SteamID object passed.');
+
+    $DB = \DatabaseManager::GetConnection();
+    $DB->Prepare('SELECT `aid`, `expired` FROM `{{prefix}}admins` WHERE `authid` LIKE :auth');
+    $DB->BindData('auth', '%' . str_replace('STEAM_0:', '', $steamId->v2));
+
+    $Result = $DB->Finish();
+    $UserData = $Result->Single();
+    $Result->EndData();
+
+    if (!$UserData) {
+      $reason = 'Пользователя с Вашим SteamID не найдено.';
+      return false;
+    }
+
+    return self::ContinueLogin($UserData, $reason);
+  }
+
   public static function getMyID() {
     return self::$aid;
   }
