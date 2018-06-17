@@ -75,6 +75,16 @@
 					<div id="enabled.msg"></div>
 				</div>
 			</div>
+            <div class="form-group m-b-5">
+				<label for="priority" class="col-sm-3 control-label">{help_icon title="Приоритет" message="Чем меньше число, тем выше сервер в списке."} Приоритет отображения:</label>
+				<div class="col-sm-9">
+					<div class="fg-line">
+						<input type="hidden" id="fromsub" value="" />
+						<input type="text" TABINDEX=1 class="form-control" id="priority" name="priority" value="{if $priority}{$priority}{else}0{/if}" placeholder="Введите данные">
+					</div>
+					<div id="priority.msg"></div>
+				</div>
+			</div>
 			<div class="form-group m-b-5">
 				<label class="col-sm-3 control-label">{help_icon title="Группы сервера" message="Выберите группы серверов. Используется для добавления администраторов на группу игровых серверов"} Группы серверов:</label>
 				<div class="col-sm-9">

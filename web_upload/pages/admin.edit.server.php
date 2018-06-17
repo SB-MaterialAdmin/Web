@@ -144,8 +144,9 @@ if(isset($_POST['address']))
 										`ip` = ?,
 										`port` = ?,
 										`modid` = ?,
-										`enabled` = ?
-										WHERE `sid` = ?", array($ip, (int)$_POST['port'], (int)$_POST['mod'], $enabled, (int)$_GET['id']));
+										`enabled` = ?,
+                    `priority` = ?
+										WHERE `sid` = ?", array($ip, (int)$_POST['port'], (int)$_POST['mod'], $enabled, (int)$_POST['priority'], (int)$_GET['id']));
 
 	// don't change rcon password if not changed
 	if($_POST['rcon'] != '*Скрыт*')
@@ -166,6 +167,7 @@ $theme->assign('ip', 	$server['ip']);
 $theme->assign('port', 	 $server['port']);
 $theme->assign('rcon', 	'*Скрыт*'); // Mh, some random string
 $theme->assign('modid', 	$server['modid']);
+$theme->assign('priority', $server['priority']);
 
 
 $theme->assign('permission_addserver', $userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_SERVER));
