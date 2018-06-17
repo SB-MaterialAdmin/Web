@@ -1650,3 +1650,30 @@ function GetVACStatus($steamid) {
   $cache[$user->AccountID] = [$user->AccountID, $banned, time()];
   return $banned;
 }
+
+function getRequestType() {
+  switch ($_SERVER['REQUEST_METHOD']) {
+    case 'GET':   return 0;
+    case 'PUT':   return 3;
+    case 'POST':  return 1;
+    case 'HEAD':  return 2;
+    default:      return -1;
+  }
+}
+
+// Own implementation for filter_input()
+// INPUT_SESSION not yet implemented.
+function filterInput($type, $name, $filter = FILTER_DEFAULT, $options = []) {
+  if ($type != INPUT_SESSION)
+    return filter_input($type, $name, $filter, $options);
+
+  if (!isset($_SESSION[$name]))
+    return FALSE;
+
+  $data = $_SESSION[$name];
+  return filter_var($data, $filter, $options);
+}
+
+function clearSystemPath($path) {
+  return str_replace(ROOT, '/', $path);
+}

@@ -25,6 +25,47 @@
 //
 // *************************************************************************
 
+if (!file_exists('../data/db.php')) {
+  define('IN_SB', true);
+  include('../data/config.php');
+  $config  = "<?php\n";
+  $config .= "if (!defined('IN_SB')) exit();\n\n";
+
+  $config .= "/**\n";
+  $config .= " * This file contains all database configurations for\n";
+  $config .= " * using in SourceBans in new DB Framework.\n";
+  $config .= " */\n";
+  $config .= "\DatabaseManager::CreateConfig('SourceBans', [\n";
+  $config .= "  'dsn'     => 'mysql:dbname=" . DB_NAME . ";host=" . DB_HOST . ";charset=UTF8;port=" . DB_PORT . "',\n";
+  $config .= "  'user'    => '" . DB_USER . "',\n";
+  $config .= "  'pass'    => '" . DB_PASS . "',\n";
+  $config .= "  'prefix'  => '" . DB_PREFIX . "_',\n";
+  $config .= "  'options' => [\n";
+  $config .= "    \\PDO::ATTR_ERRMODE  => \\PDO::ERRMODE_EXCEPTION\n";
+  $config .= "  ]\n";
+  $config .= "]);";
+
+  if (!is_writable('../data/')) {
+    $config = htmlspecialchars($config);
+
+    Header("Content-Type: text/html; charset=UTF8");
+    echo('<html><body>');
+    echo('<p>Не удаётся записать конфигурационный файл для фреймворка работы с БД.</p>');
+    echo('<p>Пожалуйста, скопируйте и вставьте следующий текст в <em>data/db.php</em> для продолжения работы апдейтера:</p>');
+    echo("<pre>$config</pre>");
+    echo('<p>Этот текст автоматически пропадёт, когда файл будет создан и записан.</p>');
+    echo('<script>setTimeout(function() { location.reload(); }, 5000);</script>');
+    echo('</body></html>');
+
+    exit();
+  }
+
+  file_put_contents('../data/db.php', $config);
+  Header("Content-Type: text/html; charset=UTF8");
+  echo('<script>setTimeout(location.reload, 500);</script>');
+  exit();
+}
+
  define('IS_UPDATE', true);
  include "../init.php";
  $theme->clear_compiled_tpl();

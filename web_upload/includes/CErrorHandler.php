@@ -15,6 +15,9 @@ class CErrorHandler {
         set_error_handler(function($errno, $errstr, $errfile, $errline) {
             return CErrorHandler::BasicErrorCatcher($errno, $errstr, $errfile, $errline);
         });
+        set_exception_handler(function($e) {
+          return \ExceptionHandler::handle($e);
+        });
         register_shutdown_function(function() {
             CErrorHandler::FatalErrorCatcher();
         });

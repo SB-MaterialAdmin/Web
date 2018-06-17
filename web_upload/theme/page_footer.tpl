@@ -76,6 +76,6 @@
 		  $.noConflict();
 		</script>
         
-
+        <script>setInterval(xajax_CSRF, 15000);</script>
 	{*/body*}
 {*/html*}

@@ -33,7 +33,7 @@ switch ($_GET['p'])
 		$page = TEMPLATES_PATH . "/page.login.php";
 		break;
 	case "logout":
-		logout();
+		unset($_SESSION['admin_id']);
 		Header("Location: index.php");
 		break;
 	case "admin":

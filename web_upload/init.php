@@ -26,6 +26,13 @@
 // *************************************************************************
 
 // ---------------------------------------------------
+// Disable error output
+// ---------------------------------------------------
+ini_set('display_startup_errors', 0);
+ini_set('display_errors', 0);
+error_reporting(0);
+
+// ---------------------------------------------------
 //  Directories
 // ---------------------------------------------------
 define('ROOT', dirname(__FILE__) . "/");
@@ -45,7 +52,6 @@ define('SB_THEME_COMPILE', USER_DATA . 'theme_c/');
 define('SCRIPT_PATH', SB_THEME . '/js');
 
 define('IN_SB', true);
-define('SB_AID', isset($_COOKIE['aid'])?$_COOKIE['aid']:null);
 define('XAJAX_REQUEST_URI', './index.php');
 
 include_once(INCLUDES_PATH . "/CSystemLog.php");
@@ -53,6 +59,12 @@ include_once(INCLUDES_PATH . "/CUserManager.php");
 include_once(INCLUDES_PATH . "/CUI.php");
 include_once(INCLUDES_PATH . "/system-functions.php");
 include_once("theme/theme.conf.php");
+
+// ---------------------------------------------------
+// Init new framework
+// ---------------------------------------------------
+include_once(INCLUDES_PATH . '/auto/__loader.php');
+include_once(USER_DATA . '/db.php');
 
 // ---------------------------------------------------
 //  Init translator
@@ -132,10 +144,6 @@ ini_set('date.timezone', 'GMT');
 
 if(defined("SB_MEM"))
 	ini_set('memory_limit', SB_MEM);
-
-ini_set('display_errors', 1);
-error_reporting(E_ALL ^ E_NOTICE);
-
 
 // ---------------------------------------------------
 //  Setup our DB
@@ -298,14 +306,16 @@ if ((isset($_GET['debug']) && $_GET['debug'] == 1) || defined("DEVELOPER_MODE") 
 }
 
 // ---------------------------------------------------
+// Start our session manager.
+// ---------------------------------------------------
+\SessionManager::startSession(\SessionManager::getSessionName());
+
+// ---------------------------------------------------
 // Setup our user manager
 // ---------------------------------------------------
-$l = '';
-$p = '';
-if (!defined('IS_UPDATE') && isset($_COOKIE['aid']))
-    $l = $_COOKIE['aid'];
-if (!defined('IS_UPDATE') && isset($_COOKIE['password']))
-    $p = $_COOKIE['password'];
+$aid   = filterInput(INPUT_SESSION, 'admin_id',    FILTER_VALIDATE_INT);
 
-$userbank = new CUserManager($l, $p);
+\UserManager::init($aid);
+$userbank = \UserManager::getInstance(); // for old code.
+
 require_once(INCLUDES_PATH . '/CSteamId.php');
