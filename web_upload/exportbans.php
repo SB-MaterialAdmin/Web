@@ -1,30 +1,34 @@
 <?php
-include_once("init.php");
-$exportpublic = (isset($GLOBALS['config']['config.exportpublic']) && $GLOBALS['config']['config.exportpublic'] == "1");
-if(!$userbank->HasAccess(ADMIN_OWNER) && !$exportpublic) {
-    echo "У Вас нет доступа к данной функции.";
-    exit();
-} else if(!isset($_GET['type'])) {
-	echo "Используйте только линки в самой системе!";
-    exit();
-}
+include_once('init.php');
 
-if($_GET['type'] == 'steam') {
-	header('Content-Type: text/plain');
-	header('Content-Disposition: attachment; filename="banned_user.cfg"');
-	$bans = $GLOBALS['db']->Execute("SELECT authid FROM `".DB_PREFIX."_bans` WHERE length = '0' AND RemoveType IS NULL AND type = '0'");
-	$num = $bans->RecordCount();
-	for($x=0;$x<$num;$x++) {
-		print("banid 0 ".$bans->fields['authid']."\r\n");
-		$bans->MoveNext();
-	}
-} elseif($_GET['type'] == 'ip') {
-	header('Content-Type: text/plain');
-	header('Content-Disposition: attachment; filename="banned_ip.cfg"');
-	$bans = $GLOBALS['db']->Execute("SELECT ip FROM `".DB_PREFIX."_bans` WHERE length = '0' AND RemoveType IS NULL AND type = '1'");
-	$num = $bans->RecordCount();
-	for($x=0;$x<$num;$x++) {
-		print("addip 0 ".$bans->fields['ip']."\r\n");
-		$bans->MoveNext();
-	}
-}
+$type = filterInput(INPUT_GET, 'type', FILTER_SANITIZE_STRING);
+
+if (!$userbank->HasAccess(ADMIN_OWNER) && !$GLOBALS['config']['config.exportpublic'])
+  die('У Вас нет доступа к данной функции.');
+else if (is_null($type))
+	die('Используйте только ссылки в самой системе!');
+
+$cmd    = '';
+$file   = '';
+$type   = 0;
+$column = '';
+if ($type == 'steam') {
+  $cmd    = 'banid';
+  $file   = 'banned_user.cfg';
+  $type   = 0;
+  $column = 'authid';
+} elseif ($type == 'ip') {
+  $cmd    = 'addip';
+  $file   = 'banned_ip.cfg';
+  $type   = 1;
+  $column = 'ip';
+} else
+  die("Unknown type $type");
+
+$DB = \DatabaseManager::GetConnection();
+$Result = $DB->Query("SELECT $column AS id FROM `{{prefix}}bans` WHERE `length` = 0 AND `RemoveType` IS NULL AND `type` = $type");
+
+Header('Content-Type: text/plain; charset=UTF8');
+Header("Content-Disposition: attachment; filename=$file");
+foreach ($Result->All() as $ban)
+  echo("$cmd 0 $ban[id]\r\n");

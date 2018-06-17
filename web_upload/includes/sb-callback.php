@@ -58,7 +58,7 @@ $methods = array(
   )
 );
 
-if(isset($_COOKIE['aid'], $_COOKIE['password']) && $userbank->CheckLogin($_COOKIE['password'], $_COOKIE['aid']))
+if(\UserManager::getMyID() != -1)
     foreach ($methods['admin'] as $method)
         $xajax->registerFunction($method);
 

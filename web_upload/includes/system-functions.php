@@ -1687,3 +1687,7 @@ function filterInput($type, $name, $filter = FILTER_DEFAULT, $options = []) {
 function clearSystemPath($path) {
   return str_replace(ROOT, '/', $path);
 }
+
+function isCsrfEnabled() {
+  return (defined('USE_CSRF') && constant('USE_CSRF') == true);
+}

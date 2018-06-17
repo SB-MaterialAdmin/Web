@@ -317,5 +317,3 @@ $aid   = filterInput(INPUT_SESSION, 'admin_id',    FILTER_VALIDATE_INT);
 
 \UserManager::init($aid);
 $userbank = \UserManager::getInstance(); // for old code.
-
-require_once(INCLUDES_PATH . '/CSteamId.php');
