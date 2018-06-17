@@ -45,7 +45,7 @@ else if (strpos($AuthResult, 'steamcommunity') !== false) {
   switch ($_SESSION['why']) {
     case 'user_auth': {
       $_SESSION['steam']  = $SteamID->v2;
-      @session_write_close();
+      \SessionManager::closeWrite();
       RedirectToSite($_SESSION['from'], 'Вы успешно авторизованы в системе. Теперь Ваш SteamID будет автоматически подставляться там, где это возможно.', true);
       break;
     }
