@@ -32,7 +32,7 @@ include_once(INCLUDES_PATH . "/system-functions.php");
 include_once(INCLUDES_PATH . "/sb-callback.php");
 
 $DB = \DatabaseManager::GetConnection();
-if (getRequestType() == 1 && (defined('USE_CSRF') && constant('USE_CSRF') == true) {
+if (getRequestType() == 1 && (defined('USE_CSRF') && constant('USE_CSRF') == true)) {
   $name   = (isset($_POST['xajax']) ? 'csrf'        : '__sb_csrf');
   $input  = (isset($_POST['xajax']) ? INPUT_SESSION : INPUT_POST);
 
