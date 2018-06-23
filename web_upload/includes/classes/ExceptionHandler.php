@@ -1,8 +1,10 @@
 <?php
 class ExceptionHandler {
-  public static function handle($e, $kill = true) {
+  public static function handle($e) {
     while (ob_get_level() > 0)
       ob_end_clean();
+
+    http_response_code(500);
 
     $name    = get_class($e);
     $message = $e->getMessage();
@@ -11,9 +13,7 @@ class ExceptionHandler {
 
     echo("An exception occured: [<b>{$name}</b>] <b>{$message}</b> in <i>{$path}</i> on line {$line} <br />");
     self::printStackTrace($e->getTrace());
-
-    if ($kill)
-      exit();
+    exit();
   }
 
   private static function printStackTrace($trace = []) {

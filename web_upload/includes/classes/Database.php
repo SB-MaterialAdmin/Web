@@ -72,6 +72,11 @@ class Database {
   public function ErrorInfo() {
     return $this->PDO->errorInfo();
   }
+
+  public function GetAttribute($attr) {
+    return $this->PDO->getAttribute($attr);
+  }
+
   /**
    * internals
    */

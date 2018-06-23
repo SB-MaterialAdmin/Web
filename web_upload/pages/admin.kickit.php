@@ -87,7 +87,6 @@ function KickPlayer($check, $sid, $num) {
     //test if server is online
     if($test = @fsockopen($sdata['ip'], $sdata['port'], $errno, $errstr, 2)) {
         @fclose($test);
-        require_once(INCLUDES_PATH . "/CServerControl.php");
         
         $r = new CServerControl(intval($GLOBALS['config']['gamecache.enabled']) == 1);
         $r->Connect($sdata['ip'], $sdata['port']);

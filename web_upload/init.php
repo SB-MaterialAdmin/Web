@@ -63,7 +63,10 @@ include_once("theme/theme.conf.php");
 // ---------------------------------------------------
 // Init new framework
 // ---------------------------------------------------
-include_once(INCLUDES_PATH . '/auto/__loader.php');
+include_once(INCLUDES_PATH . '/__loader.php');
+RegisterDirForAutoload(INCLUDES_PATH . '/classes');
+RegisterDirForAutoload(INCLUDES_PATH . '/cron');
+
 include_once(USER_DATA . '/db.php');
 
 // ---------------------------------------------------
@@ -255,15 +258,23 @@ define('ALL_SERVER', SM_RESERVED_SLOT.SM_GENERIC.SM_KICK.SM_BAN.SM_UNBAN.SM_SLAY
 					 SM_CHEATS.SM_CUSTOM1.SM_CUSTOM2.SM_CUSTOM3. SM_CUSTOM4.SM_CUSTOM5.SM_CUSTOM6.SM_ROOT);
 
 $GLOBALS['db']->Execute("SET NAMES utf8;");
-					 
-$res = $GLOBALS['db']->Execute("SELECT * FROM ".DB_PREFIX."_settings GROUP BY `setting`, `value`");
-$GLOBALS['config'] = array();
-while (!$res->EOF)
-{
-	$setting = array($res->fields['setting'] => $res->fields['value']);
-	$GLOBALS['config'] = array_merge_recursive($GLOBALS['config'], $setting);
-	$res->MoveNext();
+
+// Prepare DB handle.
+$DB = \DatabaseManager::GetConnection();
+
+// ---------------------------------------------------
+// Load settings from Database
+// ---------------------------------------------------
+$SettingsStatement = $DB->Query('SELECT * FROM `{{prefix}}settings` GROUP BY `setting`, `value`');
+$GLOBALS['config'] = [];
+
+while ($row = $SettingsStatement->Single()) {
+  $setting = $row['setting'];
+  $value   = $row['value'];
+
+  $GLOBALS['config'][$setting] = $value;
 }
+$SettingsStatement->EndData();
 
 define('SB_BANS_PER_PAGE', $GLOBALS['config']['banlist.bansperpage']);
 define('MIN_PASS_LENGTH', $GLOBALS['config']['config.password.minlength']);
@@ -274,6 +285,25 @@ if(empty($GLOBALS['config']['config.timezone'])) {
 } else {
     define('SB_TIMEZONE', $GLOBALS['config']['config.timezone']);
 }
+
+// ---------------------------------------------------
+// Load admin flags for SM from Database
+// ---------------------------------------------------
+/*$FlagsStatement = $DB->Query('SELECT * FROM `{{prefix}}flags` ORDER BY `bit` ASC');
+$GLOBALS['flags'] = [];
+
+while ($row = $FlagsStatement->Single()) {
+  $flag = $row['flag_char'];
+  $name = $row['name'];
+  $bit  = $row['bit'];
+  $GLOBALS['flags'][$flag] = [
+    'name'  => $name,
+    'bit'   => $bit
+  ];
+}
+
+$FlagsStatement->EndData();
+*/
 
 // ---------------------------------------------------
 // Setup our templater

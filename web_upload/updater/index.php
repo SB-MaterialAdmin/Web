@@ -67,6 +67,10 @@ if (!file_exists('../data/db.php')) {
 }
 
  define('IS_UPDATE', true);
+
+ ignore_user_abort(true);
+ set_time_limit(0);
+
  include "../init.php";
  $theme->clear_compiled_tpl();
 
