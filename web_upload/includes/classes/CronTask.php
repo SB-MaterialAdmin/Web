@@ -1,7 +1,7 @@
 <?php
 class CronTask {
   private $_name;
-  private $_enabled;
+  private $_enabled = false;
   private $_lastexec = 0;
   private $_frequency;
 
