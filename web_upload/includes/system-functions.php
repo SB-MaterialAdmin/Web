@@ -1583,13 +1583,6 @@ function BuildPath($append_slash = true) {
 }
 
 function ProcessSteamRequest($InterfaceName, $FunctionName, $Version, $Params, $RequireKey = false) {
-  $request_url = sprintf(
-    '%s/%s/v' . is_int($Version) ? '%d' : '%s',
-    $InterfaceName, $FunctionName, $Version
-  );
-
-  $Params['format'] = 'json';
-
   if ($RequireKey) {
     if (!defined('STEAMAPIKEY'))
       return false;
@@ -1597,14 +1590,31 @@ function ProcessSteamRequest($InterfaceName, $FunctionName, $Version, $Params, $
     $Key = constant('STEAMAPIKEY');
     if (empty($Key))
       return false;
-
-    $Params['key'] = $Key;
   }
 
-  $Request = \HTTP::request('https://api.steampowered.com', 'POST')->setData($Params)->run($request_url);
-  if ($Request->Status != 200)
+  $request_url = sprintf(
+    'https://api.steampowered.com/%s/%s/v' . is_int($Version) ? '%d' : '%s',
+    $InterfaceName, $FunctionName, $Version
+  );
+
+  $session = curl_init($request_url);
+  curl_setopt($session, CURLOPT_RETURNTRANSFER, true);
+  curl_setopt($session, CURLOPT_POST, true);
+  curl_setopt($session, CURLOPT_POSTFIELDS, array_merge(
+    $Params,
+    [
+      'key' => defined('STEAMAPIKEY') ? STEAMAPIKEY : '',
+      'format' => 'json'
+    ]
+  ));
+
+  $result = curl_exec($session);
+  $code   = curl_getinfo($session, CURLINFO_HTTP_CODE);
+
+  curl_close($session);
+  if ($code != 200)
     return false;
-  return $Request->JSON();
+  return json_decode($result, true);
 }
 
 function GetVACStatus($steamid) {
@@ -1680,10 +1690,4 @@ function clearSystemPath($path) {
 
 function isCsrfEnabled() {
   return (defined('USE_CSRF') && constant('USE_CSRF') == true);
-}
-
-function resolveSteamURL() {
-  if (strpos('steamcommunity.com/id/') !== FALSE) {
-    
-  }
 }
