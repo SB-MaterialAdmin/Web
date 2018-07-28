@@ -1695,6 +1695,11 @@ function resolveSteamURL($url) {
     if ($response['success'] != 1)
       return NULL;
     return \CSteamId::factory($response['steamid']);
+  } else if (strpos($url, 'steamcommunity.com/profiles/7656') !== FALSE) {
+    preg_match('/^https?:\/\/steamcommunity\.com\/profiles\/(.{1,})$/', $url, $results, PREG_OFFSET_CAPTURE);
+
+    $uniqueId = $results[1][0];
+    return \CSteamId::factory($uniqueId);
   }
 
   return NULL;
