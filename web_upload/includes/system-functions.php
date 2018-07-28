@@ -1683,7 +1683,7 @@ function isCsrfEnabled() {
 }
 
 function resolveSteamURL($url) {
-  if (strpos('steamcommunity.com/id/', $url) === FALSE) {
+  if (strpos($url, 'steamcommunity.com/id/') !== FALSE) {
     preg_match('/^https?:\/\/steamcommunity\.com\/id\/(.{1,})$/', $url, $results, PREG_OFFSET_CAPTURE);
 
     $uniqueId = $results[1][0];
