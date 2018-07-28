@@ -1682,10 +1682,20 @@ function isCsrfEnabled() {
   return (defined('USE_CSRF') && constant('USE_CSRF') == true);
 }
 
-/*
-function resolveSteamURL() {
-  if (strpos('steamcommunity.com/id/') === FALSE) {
-    
+function resolveSteamURL($url) {
+  if (strpos('steamcommunity.com/id/', $url) === FALSE) {
+    preg_match('/^https?:\/\/steamcommunity\.com\/id\/(.{1,})$/', $url, $results, PREG_OFFSET_CAPTURE);
+
+    $uniqueId = $results[1][0];
+    $response = ProcessSteamRequest('ISteamUser', 'ResolveVanityURL', 1, [
+      'vanityurl'   => $uniqueId,
+      'url_type'    => 1
+    ], true);
+
+    if ($response['success'] != 1)
+      return NULL;
+    return \CSteamId::factory($response['steamid']);
   }
+
+  return NULL;
 }
-*/
