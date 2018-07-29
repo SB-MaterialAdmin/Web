@@ -311,10 +311,12 @@ $FlagsStatement->EndData();
 global $userbank;
 
 if(!@file_exists(SB_THEME . "/theme.conf.php"))
-	die($GLOBALS['translator']->retrieve("init::incorrect_theme"));
+  die($GLOBALS['translator']->retrieve("init::incorrect_theme"));
 
 if(!@is_writable(SB_THEME_COMPILE))
-    die($GLOBALS['translator']->retrieve("init::themec_not_writable", ["cache_path" => SB_THEME_COMPILE]));
+  die($GLOBALS['translator']->retrieve("init::themec_not_writable", ["cache_path" => SB_THEME_COMPILE]));
+
+\TemplateManager::Initialize(SB_THEME, SB_THEME_COMPILE, INCLUDES_PATH . '/Twig/');
 
 // ---------------------------------------------------
 // Start our session manager.
