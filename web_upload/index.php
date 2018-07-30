@@ -25,6 +25,14 @@
 //
 // *************************************************************************
 
+// Check PHP environment.
+if (version_compare(PHP_VERSION, '5.5') == -1) {
+  Header('Content-Type: text/plain; charset=UTF8');
+  echo("Работа SourceBans невозможна: для работы требуется PHP версии 5.5 и выше.\n");
+  echo('На данный момент установлена версия ' . PHP_VERSION);
+  exit();
+}
+
 // Шесть месяцев назад лишь двое знали, как это работает - я и Бог. Сейчас это знает уже только Бог.
 include_once 'init.php';
 include_once(INCLUDES_PATH . "/user-functions.php");
