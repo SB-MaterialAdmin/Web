@@ -1,0 +1,6 @@
+Официальные темы SourceBans:
+ -> HLmod   - https://hlmod.ru/threads/38415/
+ -> Dev-CS  - https://dev-cs.ru/threads/380/
+ -> MyArena - http://forum.myarena.ru/index.php?/topic/35781-alpha-material-admin-refork-sb-1547/
+
+Обратите внимание: тема на MyArena авторами не поддерживается по некоторым причинам (в частности, негодование на политику администрации форума и хостинга).
