@@ -26,12 +26,12 @@ echo("\n\n");
 /**
  * PHP-версия
  */
-if (version_compare(PHP_VERSION, '5.5') != -1) {
+if (version_compare(PHP_VERSION, '7.0') != -1) {
   echo('[+] Установлена рекомендуемая версия PHP или выше');
   $success++;
 } else if (version_compare(PHP_VERSION, '5.4') != -1) {
-  echo('[o] Установлена минимально требуемая версия PHP');
-  $warnings++;
+  echo('[+] Установлена минимально требуемая версия PHP');
+  $success++;
 } else {
   echo('[-] Версия PHP не поддерживается');
   $howto[] = 'Обновите версию PHP. Если Вы используете shared-хостинг (чисто под сайт) - напишите в ТП, либо смените его.';
