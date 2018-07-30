@@ -102,23 +102,6 @@ $requirements = [
 
       'result'      => extension_loaded('xml'),
       'display'     => [$enabled, $disabled]
-    ],
-
-    'Глобальные переменные' => [
-      'required'    => $disabled,
-      'recommended' => $unknown,
-
-      'result'      => ini_get('register_globals') == 0,
-      'display'     => [$disabled, $enabled]
-    ],
-
-    'Safe Mode' => [
-      'required'    => $disabled,
-      'recommended' => $unknown,
-
-      'result'      => (ini_get('safe_mode') == 0),
-      'is_warning'  => true,
-      'display'     => [$disabled, $enabled]
     ]
   ],
 

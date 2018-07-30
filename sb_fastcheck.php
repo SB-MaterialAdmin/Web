@@ -95,32 +95,6 @@ if (extension_loaded('xml')) {
 echo("\n");
 
 /**
- * Глобальные переменные
- */
-if (!ini_get('register_globals')) {
-  echo('[+] Глобальные переменные выключены.');
-  $success++;
-} else {
-  echo('[o] Глобальные переменные включены.');
-  $howto[] = 'В конфигурационном файле PHP установите значение переменной register_globals значение 0.';
-  $warnings++;
-}
-echo("\n");
-
-/**
- * Safe Mode
- */
-if (ini_get('safe_mode') == 0) {
-  echo('[+] Безопасный режим выключен.');
-  $success++;
-} else {
-  echo('[o] Безопасный режим включен.');
-  $howto[] = 'В конфигурационном файле PHP установите значение переменной safe_mode значение 0.';
-  $warnings++;
-}
-echo("\n");
-
-/**
  * MySQLi
  */
 if (extension_loaded('mysqli')) {
