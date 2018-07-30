@@ -7,12 +7,6 @@ global $theme, $userbank;
 	}
 if(isset($_POST['pay_v4']) && !empty($_POST['pay_v4']))
 {
-	if($_POST['kapcha'] != $_SESSION['rand_code']){
-		//echo "Капча введена неверно";
-		echo '<div class="alert alert-danger" role="alert" id="msg-red"><h4>Ошибка!</h4><span class="p-l-10">Проверочный код - не верен!</span></div>';
-		require(TEMPLATES_PATH . "/footer.php");
-		exit();
-	}
 	preg_match("@^(?:http://)?([^/]+)@i", $_SERVER['HTTP_HOST'], $match);	
 	if($match[0] != $_SERVER['HTTP_HOST']) 
 	{ 

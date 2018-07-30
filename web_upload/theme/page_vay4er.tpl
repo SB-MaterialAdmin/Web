@@ -13,12 +13,6 @@
 						<label>Ваучер</label>
 						<input type="text" class="form-control input-mask" id="pay_v4" name="pay_v4" data-mask="0000-0000-0000-0000" placeholder="Пример: 2000 2098 0500 0188">
 					</div>
-					<div class="form-group fg-line">
-						<img src="includes/captcha/captcha.php" />
-						<form name="register" method="post">
-							<input type="text" class="form-control input-mask" name="kapcha" placeholder="Проверочный код"/>
-						</form>
-					</div>
 				</div>
 			</div>
 		</div>
