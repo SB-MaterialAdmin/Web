@@ -98,15 +98,11 @@ echo '<div id="admin-page-content">';
 	// Protests
 	echo '<div id="1" style="display:none;">';
 	echo '<div id="tabsWrapper" style="margin:0px;">
-    <div id="tabs">
-	<ul>
-		<li id="utab-p0" class="active">
-			<a href="index.php?p=admin&c=bans#^1~p0" id="admin_utab_p0" onclick="Swap2ndPane(0,\'p\');" class="tip" title="Показать протесты :: Показать активные протесты." target="_self">Активные</a>
-		</li>
-		<li id="utab-p1" class="nonactive">
-			<a href="index.php?p=admin&c=bans#^1~p1" id="admin_utab_p1" onclick="Swap2ndPane(1,\'p\');" class="tip" title="Показать архивы :: Показать архив протестов." target="_self">Архив</a>
-		</li>
-	</ul>
+    <div id="tabs"><br>
+    	<ul class="tab-nav text-center fw-nav">
+            <li id="utab-p0" class="active"><a href="index.php?p=admin&c=bans#^1~p0" id="admin_utab_p0" onclick="Swap2ndPane(0,\'p\');" class="tip"> Активные </a></li> 
+            <li id="utab-p1" class="nonactive"><a href="index.php?p=admin&c=bans#^1~p1" id="admin_utab_p1" onclick="Swap2ndPane(1,\'p\');" class="tip"> Архив </a></li> 
+    	</ul>
 	</div>
 	</div>';
 		// current protests
