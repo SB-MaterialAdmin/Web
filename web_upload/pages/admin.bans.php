@@ -241,6 +241,8 @@ echo '<div id="admin-page-content">';
 
 			$prot['commentdata'] = $comment;
 			$prot['protaddcomment'] = CreateLinkR('<img src="images/details.png" border="0" alt="" style="vertical-align:middle" /> Add Comment','index.php?p=banlist&comment='.(int)$prot['pid'].'&ctype=P');
+			$sid = \CSteamId::factory("{$prot['authid']}");
+			$prot['commid'] = $sid->CommunityID;
 			//-----------------------------------------
 
             array_push($protest_list, $prot);
@@ -404,6 +406,8 @@ echo '<div id="admin-page-content">';
 
 			$prot['commentdata'] = $comment;
 			$prot['protaddcomment'] = CreateLinkR('<img src="images/details.png" border="0" alt="" style="vertical-align:middle" /> Добавить комментарий','index.php?p=banlist&comment='.(int)$prot['pid'].'&ctype=P');
+			$sid = \CSteamId::factory("{$prot['authid']}");
+			$prot['commid'] = $sid->CommunityID;
 			//-----------------------------------------
 
             array_push($protest_list_archiv, $prot);
@@ -856,3 +860,4 @@ function CheckGroupBan()
 }
 </script>
 </div>
+
