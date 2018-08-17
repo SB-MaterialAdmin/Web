@@ -34,13 +34,13 @@
                 {/foreach}
                 <tr>
                     <td class="text-left">
-                        <select class="select" name="new_override_type">
+                        <select class="selectpicker" name="new_override_type">
                             <option value="command">Команда</option>
                             <option value="group">Группа</option>
                         </select>
                     </td>
-                    <td class="text-center"><input class="textbox" name="new_override_name" /></td>
-                    <td class="text-right"><input class="textbox" name="new_override_flags" /></td>
+                    <td class="text-center"><input class="form-control" name="new_override_name" placeholder="Введите данные(обязательное поле)" /></td>
+                    <td class="text-right"><input class="form-control" name="new_override_flags" placeholder="Введите данные(обязательное поле)" /></td>
                 </tr>
             </table>
         </div>
