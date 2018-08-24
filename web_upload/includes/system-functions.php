@@ -1222,9 +1222,9 @@ function GetUserAvatar($sid = -1) {
   if ($res)
     $AvatarFile = $res;
   else if ($communityid) {
-    $SteamResponse = ProcessSteamRequest('ISteamUser', 'GetPlayerSummaries', '0002', [
+    $SteamResponse = ProcessSteamRequest('ISteamUser', 'GetPlayerSummaries', 2, [
       'steamids' => $communityid
-    ], true);
+    ], true, false);
 
     if ($SteamResponse !== false && isset($SteamResponse['response']['players'][0]['avatarfull']))
       $AvatarFile = $SteamResponse['response']['players'][0]['avatarfull'];
@@ -1582,9 +1582,9 @@ function BuildPath($append_slash = true) {
   return $result;
 }
 
-function ProcessSteamRequest($InterfaceName, $FunctionName, $Version, $Params, $RequireKey = false) {
+function ProcessSteamRequest($InterfaceName, $FunctionName, $Version, $Params, $RequireKey = false, $IsPOST = false) {
   $request_url = sprintf(
-    '%s/%s/v' . is_int($Version) ? '%d' : '%s',
+    '%s/%s/v' . (is_int($Version) ? '%d' : '%s'),
     $InterfaceName, $FunctionName, $Version
   );
 
@@ -1601,10 +1601,10 @@ function ProcessSteamRequest($InterfaceName, $FunctionName, $Version, $Params, $
     $Params['key'] = $Key;
   }
 
-  $Request = \HTTP::request('https://api.steampowered.com', 'POST')->setData($Params)->run($request_url);
+  $Request = \HTTP::request('https://api.steampowered.com', ($IsPOST == true ? 'POST' : 'GET'))->setData($Params)->run($request_url);
   if ($Request->Status != 200)
     return false;
-  return $Request->JSON();
+  return $Request->JSON(true);
 }
 
 function GetVACStatus($steamid) {
@@ -1683,11 +1683,12 @@ function isCsrfEnabled() {
 }
 
 function resolveSteamURL($url) {
+  $url = trim($url, '/');
   if (strpos($url, 'steamcommunity.com/id/') !== FALSE) {
     preg_match('/^https?:\/\/steamcommunity\.com\/id\/(.{1,})$/', $url, $results, PREG_OFFSET_CAPTURE);
 
     $uniqueId = $results[1][0];
-    $response = ProcessSteamRequest('ISteamUser', 'ResolveVanityURL', 1, [
+    $response = ProcessSteamRequest('ISteamUser', 'ResolveVanityURL', '0001', [
       'vanityurl'   => $uniqueId,
       'url_type'    => 1
     ], true);
