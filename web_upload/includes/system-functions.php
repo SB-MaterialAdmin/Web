@@ -1608,46 +1608,42 @@ function ProcessSteamRequest($InterfaceName, $FunctionName, $Version, $Params, $
 }
 
 function GetVACStatus($steamid) {
-  static $job = null;
-  static $cache = null;
+	static $cache = null;
+	$DB = \DatabaseManager::GetConnection();
 
-  if ($job === null) {
-    require_once(INCLUDES_PATH . '/CJob.php');
-    $database = $GLOBALS['db'];
-    $job = CJob::factory()->SetTask(function() use (&$cache, $database) {
-      $query = $database->Prepare('INSERT INTO `' . DB_PREFIX . '_vac` (`account_id`, `status`, `updated_on`) VALUES(?, ?, ?) ON DUPLICATE KEY UPDATE `status` = ?, `updated_on` = ?;');
+  if ($cache === null) {
+		$DB->Prepare('SELECT `account_id`, `status` FROM `{{prefix}}vac` WHERE `updated_on` > :ts OR `status` = 1');
+		$DB->BindData('ts', time() - 86400);
+		$Result = $DB->Finish();
+		$cache = [];
 
-      foreach($cache as $entry) {
-        if (!isset($entry['account_id']) || $entry['account_id'] === null)
-          break;
-
-        $database->Execute($query, [$entry['account_id'], $entry['status'], $entry['updated_on'], $entry['status'], $entry['updated_on']]);
-      }
-    });
-
-    $cache = [];
-    $temp = $GLOBALS['db']->GetAll('SELECT `account_id`, `status`, `updated_on` FROM `' . DB_PREFIX . '_vac`');
-    foreach ($temp as $value)
-      $cache[intval($value['account_id'])] = $value;
+		while ($Row = $Result->Single())
+			$cache[intval($Row['account_id'])] = intval($Row['status']) == 1;
   }
 
   $user = CSteamId::factory($steamid);
-  if (isset($cache[$user->AccountID]) && ($cache[$user->AccountID]['updated_on'] + 86400 > time() || $cache[$user->AccountID]['status'] != 0)) {
-    return ($cache[$user->AccountID]['status'] != 0);
+  if (isset($cache[$user->AccountID])) {
+    return $cache[$user->AccountID];
   }
 
   $Result = ProcessSteamRequest(
-    'ISteamUser', 'GetPlayerSummaries', 1, [
+    'ISteamUser', 'GetPlayerBans', 1, [
       'steamids' => $user->CommunityID
     ], true
   );
 
   $banned = false;
-  if ($result !== false && isset($result['players'][0])) {
-    $banned = $result['players'][0]['VACBanned'];
+  if ($Result !== false && isset($Result['players'][0])) {
+    $banned = $Result['players'][0]['VACBanned'] || $Result['players'][0]['NumberOfGameBans'] != 0;
   }
 
-  $cache[$user->AccountID] = [$user->AccountID, $banned, time()];
+	$DB->Prepare('INSERT INTO `{{prefix}}vac` (`account_id`, `status`, `updated_on`) VALUES(:id, :status, :ts) ON DUPLICATE KEY UPDATE `status` = :status, `updated_on` = :ts');
+	$DB->BindData('id', $user->AccountID);
+	$DB->BindData('status', $banned);
+	$DB->BindData('ts', time());
+	$DB->Finish();
+
+	$cache[$user->AccountID] = $banned;
   return $banned;
 }
 

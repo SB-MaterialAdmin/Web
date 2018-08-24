@@ -214,7 +214,7 @@
 										<div class="form-group col-sm-12 m-b-5">
 											<label class="col-sm-4 control-label"><i class="zmdi zmdi-circle-o text-left"></i> VAC-бан</label>
 											<div class="col-sm-8">
-												<strong id="vacban_{$ban.bid}">{if $ban.vac}В наличии{else}Отсутствует{/if}.</strong>
+												<strong id="vacban_{$ban.ban_id}">Загружается...</strong>
 											</div>
 										</div>
                                         {/if}
