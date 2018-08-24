@@ -11,7 +11,7 @@ class cURL extends AbstractClient {
     if (!is_resource($curl))
       throw new \Exception('Cannot initialize cURL client.');
 
-    if ($this->method == 'GET') {
+    if ($this->_method == 'GET') {
       curl_setopt($curl, CURLOPT_URL, $this->_url . '?' . $this->_body);
     } else if ($this->_method == 'POST') {
       curl_setopt($curl, CURLOPT_URL, $this->_url);

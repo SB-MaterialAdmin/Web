@@ -6,7 +6,7 @@ class Response {
   public $Content = '';
   public $Status;
 
-  public function JSON() {
-    return @json_decode($this->Content);  
+  public function JSON($Associative = false, $Depth = 512, $Options = 0) {
+    return @json_decode($this->Content, $Associative, $Depth, $Options);
   }
 }
