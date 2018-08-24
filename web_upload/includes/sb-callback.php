@@ -54,7 +54,7 @@ $methods = array(
     'Plogin', 'ServerHostPlayers', 'ServerHostProperty',
     'ServerHostPlayers_list', 'ServerPlayers', 'LostPassword',
     'RefreshServer', 'AddAdmin_pay', 'RehashAdmins_pay',
-    'CSRF'
+    'CSRF', 'GetVACBan'
   )
 );
 
@@ -67,6 +67,31 @@ foreach ($methods['default'] as $method)
 
 global $userbank;
 $username = $userbank->GetProperty("user");
+
+function GetVACBan($bid) {
+  $xajax = new xajaxResponse();
+  $DB = \DatabaseManager::GetConnection();
+
+  $DB->Prepare('SELECT `authid` FROM `{{prefix}}bans` WHERE `bid` = :bid');
+  $DB->BindData('bid', $bid);
+  $Result = $DB->Finish();
+
+  $Ban = $Result->Single();
+  $Result->EndData();
+
+  if ($Ban) {
+    $Ban = $Ban['authid'];
+
+    if (GetVACStatus($Ban)) {
+      $xajax->assign("vacban_{$bid}", 'innerHTML', 'Забанен');
+      $xajax->assign("vacban_{$bid}", 'style', 'color: #F00;');
+    } else {
+      $xajax->assign("vacban_{$bid}", 'innerHTML', 'Отсутствует');
+      $xajax->assign("vacban_{$bid}", 'style', '');
+    }
+  }
+  return $xajax;
+}
 
 function CSRF() {
   return new xajaxResponse();
