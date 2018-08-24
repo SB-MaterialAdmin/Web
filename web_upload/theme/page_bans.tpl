@@ -77,7 +77,7 @@
 		</thead>
 		<tbody>
 			{foreach from=$ban_list item=ban name=banlist}
-				<tr class="opener" {if $ban.server_id != 0}onclick="xajax_ServerHostPlayers({$ban.server_id}, {$ban.ban_id});"{/if} style="cursor: pointer;">
+				<tr class="opener" onclick="{if $ban.server_id != 0}xajax_ServerHostPlayers({$ban.server_id}, {$ban.ban_id});{/if}{if $ban.vacshow}xajax_GetVACBan({$ban.ban_id});{/if}" style="cursor: pointer;">
 					{if $view_bans}
 						<td>
 							<label class="checkbox checkbox-inline m-r-20" for="chkb_{$smarty.foreach.banlist.index}" onclick="event.cancelBubble = true;">
@@ -214,7 +214,7 @@
 										<div class="form-group col-sm-12 m-b-5">
 											<label class="col-sm-4 control-label"><i class="zmdi zmdi-circle-o text-left"></i> VAC-бан</label>
 											<div class="col-sm-8">
-												<strong>{if $ban.vac}В наличии{else}Отсутствует{/if}.</strong>
+												<strong id="vacban_{$ban.ban_id}">Загружается...</strong>
 											</div>
 										</div>
                                         {/if}

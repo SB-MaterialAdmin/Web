@@ -1222,9 +1222,9 @@ function GetUserAvatar($sid = -1) {
   if ($res)
     $AvatarFile = $res;
   else if ($communityid) {
-    $SteamResponse = ProcessSteamRequest('ISteamUser', 'GetPlayerSummaries', '0002', [
+    $SteamResponse = ProcessSteamRequest('ISteamUser', 'GetPlayerSummaries', 2, [
       'steamids' => $communityid
-    ], true);
+    ], true, false);
 
     if ($SteamResponse !== false && isset($SteamResponse['response']['players'][0]['avatarfull']))
       $AvatarFile = $SteamResponse['response']['players'][0]['avatarfull'];
@@ -1582,9 +1582,9 @@ function BuildPath($append_slash = true) {
   return $result;
 }
 
-function ProcessSteamRequest($InterfaceName, $FunctionName, $Version, $Params, $RequireKey = false) {
+function ProcessSteamRequest($InterfaceName, $FunctionName, $Version, $Params, $RequireKey = false, $IsPOST = false) {
   $request_url = sprintf(
-    '%s/%s/v' . is_int($Version) ? '%d' : '%s',
+    '%s/%s/v' . (is_int($Version) ? '%d' : '%s'),
     $InterfaceName, $FunctionName, $Version
   );
 
@@ -1601,53 +1601,49 @@ function ProcessSteamRequest($InterfaceName, $FunctionName, $Version, $Params, $
     $Params['key'] = $Key;
   }
 
-  $Request = \HTTP::request('https://api.steampowered.com', 'POST')->setData($Params)->run($request_url);
+  $Request = \HTTP::request('https://api.steampowered.com', ($IsPOST == true ? 'POST' : 'GET'))->setData($Params)->run($request_url);
   if ($Request->Status != 200)
     return false;
-  return $Request->JSON();
+  return $Request->JSON(true);
 }
 
 function GetVACStatus($steamid) {
-  static $job = null;
-  static $cache = null;
+	static $cache = null;
+	$DB = \DatabaseManager::GetConnection();
 
-  if ($job === null) {
-    require_once(INCLUDES_PATH . '/CJob.php');
-    $database = $GLOBALS['db'];
-    $job = CJob::factory()->SetTask(function() use (&$cache, $database) {
-      $query = $database->Prepare('INSERT INTO `' . DB_PREFIX . '_vac` (`account_id`, `status`, `updated_on`) VALUES(?, ?, ?) ON DUPLICATE KEY UPDATE `status` = ?, `updated_on` = ?;');
+  if ($cache === null) {
+		$DB->Prepare('SELECT `account_id`, `status` FROM `{{prefix}}vac` WHERE `updated_on` > :ts OR `status` = 1');
+		$DB->BindData('ts', time() - 86400);
+		$Result = $DB->Finish();
+		$cache = [];
 
-      foreach($cache as $entry) {
-        if (!isset($entry['account_id']) || $entry['account_id'] === null)
-          break;
-
-        $database->Execute($query, [$entry['account_id'], $entry['status'], $entry['updated_on'], $entry['status'], $entry['updated_on']]);
-      }
-    });
-
-    $cache = [];
-    $temp = $GLOBALS['db']->GetAll('SELECT `account_id`, `status`, `updated_on` FROM `' . DB_PREFIX . '_vac`');
-    foreach ($temp as $value)
-      $cache[intval($value['account_id'])] = $value;
+		while ($Row = $Result->Single())
+			$cache[intval($Row['account_id'])] = intval($Row['status']) == 1;
   }
 
   $user = CSteamId::factory($steamid);
-  if (isset($cache[$user->AccountID]) && ($cache[$user->AccountID]['updated_on'] + 86400 > time() || $cache[$user->AccountID]['status'] != 0)) {
-    return ($cache[$user->AccountID]['status'] != 0);
+  if (isset($cache[$user->AccountID])) {
+    return $cache[$user->AccountID];
   }
 
   $Result = ProcessSteamRequest(
-    'ISteamUser', 'GetPlayerSummaries', 1, [
+    'ISteamUser', 'GetPlayerBans', 1, [
       'steamids' => $user->CommunityID
     ], true
   );
 
   $banned = false;
-  if ($result !== false && isset($result['players'][0])) {
-    $banned = $result['players'][0]['VACBanned'];
+  if ($Result !== false && isset($Result['players'][0])) {
+    $banned = $Result['players'][0]['VACBanned'] || $Result['players'][0]['NumberOfGameBans'] != 0;
   }
 
-  $cache[$user->AccountID] = [$user->AccountID, $banned, time()];
+	$DB->Prepare('INSERT INTO `{{prefix}}vac` (`account_id`, `status`, `updated_on`) VALUES(:id, :status, :ts) ON DUPLICATE KEY UPDATE `status` = :status, `updated_on` = :ts');
+	$DB->BindData('id', $user->AccountID);
+	$DB->BindData('status', $banned);
+	$DB->BindData('ts', time());
+	$DB->Finish();
+
+	$cache[$user->AccountID] = $banned;
   return $banned;
 }
 
@@ -1683,11 +1679,12 @@ function isCsrfEnabled() {
 }
 
 function resolveSteamURL($url) {
+  $url = trim($url, '/');
   if (strpos($url, 'steamcommunity.com/id/') !== FALSE) {
     preg_match('/^https?:\/\/steamcommunity\.com\/id\/(.{1,})$/', $url, $results, PREG_OFFSET_CAPTURE);
 
     $uniqueId = $results[1][0];
-    $response = ProcessSteamRequest('ISteamUser', 'ResolveVanityURL', 1, [
+    $response = ProcessSteamRequest('ISteamUser', 'ResolveVanityURL', '0001', [
       'vanityurl'   => $uniqueId,
       'url_type'    => 1
     ], true);
