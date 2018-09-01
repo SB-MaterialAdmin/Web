@@ -25,6 +25,10 @@ class CSteamId {
     return self::$_cache[$AccountID];
   }
 
+  public static function validate($sid) {
+    return (self::ResolveToAccountID($sid) != -1);
+  }
+
   private static function ResolveToAccountID($sid) {
     if (strncmp('STEAM_', $sid, 6) == 0) {
       $parts = explode(':', $sid);
