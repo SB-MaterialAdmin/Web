@@ -33,7 +33,7 @@ if (!defined('IN_SB')) {echo("Вы не должны быть здесь. Исп
 
 global $userbank, $theme;
 
-if($userbank->GetAid() == -1){echo "Вы не должны быть здесь ><";die();}
+\Asserts::requireLogin();
 		
 $groupsTabMenu = new CTabsMenu();
 

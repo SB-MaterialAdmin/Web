@@ -26,6 +26,9 @@
 // *************************************************************************
 
 if(!defined("IN_SB")){echo "Ошибка доступа!";die();}
+
+\Asserts::isNotLogged('account');
+
 RewritePageTitle("Вход администратора");
 
 global $userbank, $theme;

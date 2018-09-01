@@ -27,6 +27,8 @@
 
 global $theme, $userbank;
 
+\Asserts::isNotLogged();
+
 if(isset($_GET['validation'],$_GET['email']) && !empty($_GET['email']) && !empty($_GET['validation']))
 {  
 	$email = $_GET['email'];

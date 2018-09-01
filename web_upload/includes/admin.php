@@ -27,6 +27,8 @@
 
 global $userbank;
 
+\Asserts::requireLogin();
+
 if(!isset($_GET['c']))
 {
 	include TEMPLATES_PATH . "/page.admin.php";
