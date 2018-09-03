@@ -1,9 +1,9 @@
 <?php
 class HTTP {
   public static function client() {
-    if (extension_loaded('curl'))
+    if (\HTTP\Client\cURL::isSupported())
       return new \HTTP\Client\cURL();
-    else
+    else if (\HTTP\Client\Stream::isSupported())
       return new \HTTP\Client\Stream();
   }
 
