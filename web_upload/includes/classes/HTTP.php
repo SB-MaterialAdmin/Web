@@ -5,6 +5,8 @@ class HTTP {
       return new \HTTP\Client\cURL();
     else if (\HTTP\Client\Stream::isSupported())
       return new \HTTP\Client\Stream();
+    else 
+      throw new \Exception('No available supported HTTP client.');
   }
 
   public static function request($url, $method = 'GET') {
