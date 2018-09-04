@@ -144,4 +144,5 @@ $theme->assign('vay4er_act', $GLOBALS['config']['page.vay4er']);
 $theme->assign('header_logo', $GLOBALS['config']['template.logo']);
 $theme->assign('username', $userbank->GetProperty("user"));
 $theme->assign('logged_in', $userbank->is_logged_in());
+$theme->assign('sbjs', filemtime(SB_THEME . '/js/sourcebans.js'));
 $theme->display('page_header.tpl');

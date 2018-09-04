@@ -6,7 +6,7 @@
 <link rel="Shortcut Icon" href="./images/favicon.ico" />
 
 <!--SB -->
-<script type="text/javascript" src="./theme/js/sourcebans.js"></script>
+<script type="text/javascript" src="./theme/js/sourcebans.js?_={$sbjs}"></script>
 <script type="text/javascript" src="./theme/js/mootools.js"></script>
 <script type="text/javascript" src="./theme/js/contextMenoo.js"></script>
 
