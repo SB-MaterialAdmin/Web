@@ -958,7 +958,8 @@ function process_add_server()
 				document.getElementById('mod').value, 
 				document.getElementById('enabled').checked,
 				grp, 
-				-1);
+				-1,
+				document.getElementById('priority').value);
 	
 }
 

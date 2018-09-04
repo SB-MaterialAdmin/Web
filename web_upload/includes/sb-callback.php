@@ -703,7 +703,7 @@ function RemoveAdmin($aid)
   return $objResponse;
 }
 
-function AddServer($ip, $port, $rcon, $rcon2, $mod, $enabled, $group, $group_name)
+function AddServer($ip, $port, $rcon, $rcon2, $mod, $enabled, $group, $group_name, $priority)
 {
   $objResponse = new xajaxResponse();
   global $userbank, $username;
@@ -808,9 +808,9 @@ function AddServer($ip, $port, $rcon, $rcon2, $mod, $enabled, $group, $group_nam
   $enable = ($enabled=="true"?1:0);
 
   // Add the server
-  $addserver = $GLOBALS['db']->Prepare("INSERT INTO ".DB_PREFIX."_servers (`sid`, `ip`, `port`, `rcon`, `modid`, `enabled`)
-                      VALUES (?,?,?,?,?,?)");
-  $GLOBALS['db']->Execute($addserver,array($sid, $ip, (int)$port, $rcon, $mod, $enable));
+  $addserver = $GLOBALS['db']->Prepare("INSERT INTO ".DB_PREFIX."_servers (`sid`, `ip`, `port`, `rcon`, `modid`, `enabled`, `priority`)
+                      VALUES (?,?,?,?,?,?,?)");
+  $GLOBALS['db']->Execute($addserver,array($sid, $ip, (int)$port, $rcon, $mod, $enable, intval($priority)));
 
   // Add server to each group specified
   $groups = explode(",", $group);
