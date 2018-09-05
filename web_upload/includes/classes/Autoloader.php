@@ -25,16 +25,20 @@ class Autoloader {
       $PSR = $Path[0];
       $DirPath = $Path[1];
 
-      $Pos = strpos($ClassName, $PSR);
-      if ($Pos !== FALSE && $PSR == 0) {
-        $ClassName = str_replace($PSR, '', $ClassName);
-        $ClassName = str_replace('\\', '/', $ClassName);
+      if (!empty($PSR)) {
+        $Pos = strpos($ClassName, $PSR);
+        if ($Pos === FALSE || $PSR != 0)
+          continue;
 
-        $ClassPath = "{$DirPath}/{$ClassName}.php";
-        if (file_exists($ClassPath)) {
-          require($ClassPath);
-          break;
-        }
+        $ClassName = str_replace($PSR, '', $ClassName);
+      }
+
+      $ClassName = str_replace('\\', '/', $ClassName);
+
+      $ClassPath = "{$DirPath}/{$ClassName}.php";
+      if (file_exists($ClassPath)) {
+        require($ClassPath);
+        break;
       }
     }
   }

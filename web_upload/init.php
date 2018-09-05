@@ -58,12 +58,11 @@ include_once(INCLUDES_PATH . "/CSystemLog.php");
 include_once(INCLUDES_PATH . "/CUserManager.php");
 include_once(INCLUDES_PATH . "/CUI.php");
 include_once(INCLUDES_PATH . "/system-functions.php");
-include_once("theme/theme.conf.php");
 
 // ---------------------------------------------------
 // Init new framework
 // ---------------------------------------------------
-include_once(INCLUDES_PATH . '/__loader.php');
+include_once(INCLUDES_PATH . '/classes/Autoloader.php');
 \Autoloader::RegisterPath(INCLUDES_PATH . '/classes');
 \Autoloader::RegisterPath(INCLUDES_PATH . '/cron');
 
@@ -312,9 +311,6 @@ require(INCLUDES_PATH . '/CSmarty.php');
 
 global $theme, $userbank;
 
-if(!@file_exists(SB_THEME . "/theme.conf.php"))
-	die($GLOBALS['translator']->retrieve("init::incorrect_theme"));
-
 if(!@is_writable(SB_THEME_COMPILE))
     die($GLOBALS['translator']->retrieve("init::themec_not_writable", ["cache_path" => SB_THEME_COMPILE]));
 
@@ -328,7 +324,7 @@ $theme->template_user_dir = SB_USER_THEME;
 $theme->compile_dir       = SB_THEME_COMPILE;
 
 $theme->assign('SITE_ADDRESS',  SB_WP_URL);
-$theme->assign('SBConfig',      ReplaceArrayKeyNames($config, ".", "_"));
+$theme->assign('SBConfig',      ReplaceArrayKeyNames($config, '.', '_'));
 
 if ((isset($_GET['debug']) && $_GET['debug'] == 1) || defined("DEVELOPER_MODE") )
 {
