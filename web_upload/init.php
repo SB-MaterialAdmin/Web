@@ -64,8 +64,8 @@ include_once("theme/theme.conf.php");
 // Init new framework
 // ---------------------------------------------------
 include_once(INCLUDES_PATH . '/__loader.php');
-RegisterDirForAutoload(INCLUDES_PATH . '/classes');
-RegisterDirForAutoload(INCLUDES_PATH . '/cron');
+\Autoloader::RegisterPath(INCLUDES_PATH . '/classes');
+\Autoloader::RegisterPath(INCLUDES_PATH . '/cron');
 
 include_once(USER_DATA . '/db.php');
 
