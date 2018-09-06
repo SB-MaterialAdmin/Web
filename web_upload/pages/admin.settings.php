@@ -277,10 +277,11 @@ else
 				$GLOBALS['db']->Execute(sprintf("REPLACE INTO `%s_settings` (`value`, `setting`) VALUES (%s, 'nulladmin.name');", DB_PREFIX, $GLOBALS['db']->qstr($_POST['nulladmin_name'])));
 
                 // Game Cache
+                $gc_enabled = (isset($_POST['gc_enabled']) && $_POST['gc_enabled'] == 'on') ? 1 : 0;
                 $GLOBALS['db']->Execute(sprintf("REPLACE INTO `%s_settings`
                     (`value`, `setting`) VALUES 
                     (%d, 'gamecache.enabled'),
-                    (%d, 'gamecache.entry_lifetime');", DB_PREFIX, intval($_POST['gc_enabled']), intval($_POST['gc_entrylf'])));
+                    (%d, 'gamecache.entry_lifetime');", DB_PREFIX, $gc_enabled, intval($_POST['gc_entrylf'])));
 				
 				?><script>setTimeout("ShowBox('Главные настройки изменены', 'Изменения были успешно применены!', 'green', 'index.php?p=admin&c=settings', false, 2500);", 1200);</script><?php 
 			}else{
