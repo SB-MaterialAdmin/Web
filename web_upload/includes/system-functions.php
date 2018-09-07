@@ -1612,18 +1612,22 @@ function GetVACStatus($steamid) {
 	$DB = \DatabaseManager::GetConnection();
 
   if ($cache === null) {
-		$DB->Prepare('SELECT `account_id`, `status` FROM `{{prefix}}vac` WHERE `updated_on` > :ts OR `status` = 1');
-		$DB->BindData('ts', time() - 86400);
-		$Result = $DB->Finish();
-		$cache = [];
+    $DB->Prepare('SELECT `account_id`, `status` FROM `{{prefix}}vac` WHERE `updated_on` > :ts OR `status` = 1');
+    $DB->BindData('ts', time() - 86400);
+    $Result = $DB->Finish();
+    $cache = [];
 
-		while ($Row = $Result->Single())
-			$cache[intval($Row['account_id'])] = intval($Row['status']) == 1;
+    while ($Row = $Result->Single())
+      $cache[intval($Row['account_id'])] = intval($Row['status']) == 1;
   }
 
   $user = CSteamId::factory($steamid);
   if (isset($cache[$user->AccountID])) {
     return $cache[$user->AccountID];
+  }
+
+  if ($user->IsEmulated) {
+    return false; // Just skip user: this is NoSteam, we can get Exception when saving to DB
   }
 
   $Result = ProcessSteamRequest(
@@ -1637,13 +1641,13 @@ function GetVACStatus($steamid) {
     $banned = $Result['players'][0]['VACBanned'] || $Result['players'][0]['NumberOfGameBans'] != 0;
   }
 
-	$DB->Prepare('INSERT INTO `{{prefix}}vac` (`account_id`, `status`, `updated_on`) VALUES(:id, :status, :ts) ON DUPLICATE KEY UPDATE `status` = :status, `updated_on` = :ts');
-	$DB->BindData('id', $user->AccountID);
-	$DB->BindData('status', $banned);
-	$DB->BindData('ts', time());
-	$DB->Finish();
+  $DB->Prepare('INSERT INTO `{{prefix}}vac` (`account_id`, `status`, `updated_on`) VALUES(:id, :status, :ts) ON DUPLICATE KEY UPDATE `status` = :status, `updated_on` = :ts');
+  $DB->BindData('id', $user->AccountID);
+  $DB->BindData('status', $banned);
+  $DB->BindData('ts', time());
+  $DB->Finish();
 
-	$cache[$user->AccountID] = $banned;
+  $cache[$user->AccountID] = $banned;
   return $banned;
 }
 

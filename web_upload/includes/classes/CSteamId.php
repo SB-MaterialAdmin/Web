@@ -2,6 +2,8 @@
 class CSteamId {
   private static $_cache = [];
 
+  public $IsEmulated = false;
+
   public $CommunityID;
   public $AccountID;
   public $v2;
@@ -18,6 +20,10 @@ class CSteamId {
       $CacheEntry->AccountID    = $AccountID;
       $CacheEntry->v3           = sprintf('[U:1:%d]', $AccountID);
       $CacheEntry->v2           = sprintf('STEAM_%d:%d:%d', $GameID, ($AccountID % 2), $AccountID / 2);
+
+      if ($AccountID > 2147483647) {
+        $CacheEntry->IsEmulated = true;
+      }
 
       self::$_cache[$AccountID] = $CacheEntry;
     }
