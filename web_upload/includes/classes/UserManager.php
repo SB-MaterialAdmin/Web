@@ -9,7 +9,11 @@ class UserManager {
 
     if (is_int($aid))
       self::$aid = $aid;
+
     self::$instance = new CUserManager(self::$aid);
+    if (self::$aid != -1) {
+      self::updateEntity('lastvisit', time()); // update visiting time
+    }
   }
 
   public static function getInstance() {
@@ -96,5 +100,13 @@ class UserManager {
 
     $_SESSION['admin_id'] = $UserData['aid'];
     return true;
+  }
+
+  private static function updateEntity($field, $value) {
+    $DB = \DatabaseManager::GetConnection();
+    $DB->Prepare("UPDATE `{{prefix}}admins` SET $field = :value WHERE `aid` = :id");
+    $DB->BindData('id', self::$aid);
+    $DB->BindData('value', $value);
+    $DB->Finish();
   }
 }
