@@ -207,8 +207,6 @@ else
 				
 				$debugmode = (isset($_POST['config_debug']) && $_POST['config_debug'] == "on" ? 1 : 0);
 				
-				$summertime = (isset($_POST['config_summertime']) && $_POST['config_summertime'] == "on" ? 1 : 0);
-				
 				$hideadmname = (isset($_POST['banlist_hideadmname']) && $_POST['banlist_hideadmname'] == "on" ? 1 : 0);
                 
 				$hideplayerips = (isset($_POST['banlist_hideplayerips']) && $_POST['banlist_hideplayerips'] == "on" ? 1 : 0);
@@ -253,13 +251,12 @@ else
 												(" . (int)$submit . ", 'config.enablesubmit'),
 												(" . (int)$onlyinvolved . ", 'protest.emailonlyinvolved'),
 												(?, 'config.timezone'),
-												(?, 'config.summertime'),
 												(?, 'bans.customreasons'),
 												(" . (int)$_POST['default_page'] . ", 'config.defaultpage'),
 												(" . (int)$_POST['block_home'] . ", 'config.home.comms'),
 												(".(int)$admin_list_en.", 'page.adminlist'),
 												('".(int)$gendata."', 'page.footer.allow_show_data'),
-												(".(int)$vay4_en.", 'page.vay4er')", array($_POST['template_title'], $_POST['template_logo'], $_POST['config_dateformat'], $_POST['config_dateformat2'], $_POST['dash_intro_text'], $tz_string, $summertime, $cureason));
+												(".(int)$vay4_en.", 'page.vay4er')", array($_POST['template_title'], $_POST['template_logo'], $_POST['config_dateformat'], $_POST['config_dateformat2'], $_POST['dash_intro_text'], $tz_string, $cureason));
 				
 				/* SMTP */
 				$GLOBALS['db']->Execute(sprintf("REPLACE INTO `%s_settings` (`value`, `setting`) VALUES
@@ -439,7 +436,6 @@ $('splashscreen').checked = <?php echo $GLOBALS['config']['theme.splashscreen']?
 $('home_stats').checked = <?php echo $GLOBALS['config']['theme.home.stats']?>;
 
 $('config_debug').checked = <?php echo $GLOBALS['config']['config.debug']?>;
-$('config_summertime').checked = <?php echo $GLOBALS['config']['config.summertime']?>;
 $('enable_submit').checked = <?php echo $GLOBALS['config']['config.enablesubmit']?>;
 $('enable_protest').checked = <?php echo $GLOBALS['config']['config.enableprotest']?>;
 $('enable_kickit').checked = <?php echo $GLOBALS['config']['config.enablekickit']?>;
