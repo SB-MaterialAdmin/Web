@@ -358,7 +358,10 @@ else
 
         // GC
         $theme->assign('gc_enabled',    $GLOBALS['config']['gamecache.enabled']);
-        $theme->assign('gc_entrylf',    $GLOBALS['config']['gamecache.entry_lifetime']);
+				$theme->assign('gc_entrylf',    $GLOBALS['config']['gamecache.entry_lifetime']);
+
+		// TZ
+		$theme->assign('timezones', TimeZone::getDataSet());
 		
 		$theme->display('page_admin_settings_settings.tpl');	
 	echo '</div>';

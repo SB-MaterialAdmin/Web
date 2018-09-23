@@ -1041,34 +1041,12 @@ function renderSteam2($accountId, $universe)
 	return "STEAM_" . $universe . ":" . ($accountId & 1) . ":" . ($accountId >> 1);
 }
 
-function SBDate($format, $timestamp="")
-{
-    if(version_compare(PHP_VERSION, "5") != -1)
-    {
-        if($GLOBALS['config']['config.summertime'] == "1")
-        {
-            $str = date("r", $timestamp);
-            $date = new DateTime($str);
-            $date->modify("+1 hour");
-            return $date->format($format);
-        }
-        else if(empty($timestamp))
-            return date($format);
-    }
-    else
-    {
-        if($GLOBALS['config']['config.summertime'] == "1") {
-            $summertime = 3600;
-        } else {
-            $summertime = 0;
-        }
-        if(empty($timestamp)) {
-            $timestamp = time() + SB_TIMEZONE*3600 + $summertime;
-        } else {
-            $timestamp = $timestamp + SB_TIMEZONE*3600 + $summertime;
-        }
-    }
-	return date($format, $timestamp);
+function SBDate($format, $timestamp = -1) {
+	TimeZone::setFormat($format);
+	if ($timestamp == -1)
+		$timestamp = time();
+
+	return TimeZone::FormatTime($timestamp);
 }
 
 /**

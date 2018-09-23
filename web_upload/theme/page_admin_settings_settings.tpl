@@ -56,62 +56,12 @@
 					<label for="sel_timezoneoffset" class="col-sm-3 control-label">{help_icon title="Часовой пояс" message="Задайте часовой пояс."} Часовой пояс</label>
 					<div class="col-sm-5 p-t-5">
 						<select class="selectpicker" name="timezoneoffset" id="sel_timezoneoffset">
-							<option value="-12" class="">(GMT -12:00) Eniwetok, Kwajalein</option>
-						
-							<option value="-11" id="-39600" class="" >(GMT -11:00) Midway Island, Samoa</option>
-							<option value="-10" id="-36000" class="">(GMT -10:00) Hawaii</option>
-							<option value="-9" class="">(GMT -9:00) Alaska</option>
-							<option value="-8" class="">(GMT -8:00) Pacific Time (US &amp; Canada)</option>
-							<option value="-7" class="">(GMT -7:00) Mountain Time (US &amp; Canada)</option>
-							<option value="-6" class="">(GMT -6:00) Central Time (US &amp; Canada), Mexico City</option>
-							
-							<option value="-5" class="">(GMT -5:00) Eastern Time (US &amp; Canada), Bogota, Lima</option>
-							<option value="-4" class="">(GMT -4:00) Atlantic Time (Canada), Caracas, La Paz</option>
-							<option value="-3.5" class="">(GMT -3:30) Newfoundland</option>
-							<option value="-3" class="">(GMT -3:00) Brazil, Buenos Aires, Georgetown</option>
-							<option value="-2" class="">(GMT -2:00) Mid-Atlantic</option>
-							<option value="-1" class="">(GMT -1:00 hour) Azores, Cape Verde Islands</option>
-							<option value="0" class="">(GMT) Western Europe Time, London, Lisbon, Casablanca</option>
-							<option value="1" class="">(GMT +1:00 hour) Brussels, Copenhagen, Madrid, Paris</option>
-							
-							<option value="2" class="">(GMT +2:00) Kaliningrad, South Africa</option>
-							<option value="3" class="">(GMT +3:00) Baghdad, Riyadh, Moscow, St. Petersburg</option>
-							<option value="3.5" class="">(GMT +3:30) Tehran</option>
-							<option value="4" class="">(GMT +4:00) Abu Dhabi, Muscat, Baku, Tbilisi</option>
-							<option value="4.5" class="">(GMT +4:30) Kabul</option>
-							<option value="5" class="">(GMT +5:00) Ekaterinburg, Islamabad, Karachi, Tashkent</option>
-							<option value="5.5" class="">(GMT +5:30) Bombay, Calcutta, Madras, New Delhi</option>
-							<option value="6" class="">(GMT +6:00) Almaty, Dhaka, Colombo</option>
-							<option value="7" class="">(GMT +7:00) Bangkok, Hanoi, Jakarta</option>
-							
-							<option value="8" class="">(GMT +8:00) Beijing, Perth, Singapore, Hong Kong</option>
-							<option value="9" class="">(GMT +9:00) Tokyo, Seoul, Osaka, Sapporo, Yakutsk</option>
-							<option value="9.5" class="">(GMT +9:30) Adelaide, Darwin</option>
-							<option value="10" class="">(GMT +10:00) Eastern Australia, Guam, Vladivostok</option>
-							<option value="11" class="">(GMT +11:00) Magadan, Solomon Islands, New Caledonia</option>
-							<option value="12" class="">(GMT +12:00) Auckland, Wellington, Fiji, Kamchatka</option>
+							{foreach from=$timezones key=tz item=name}
+								<option value="{$tz}">{$name}</option>
+							{/foreach}
 						</select>
 					</div>
-					<div class="col-sm-4 p-t-5">
-						<div class="checkbox m-b-15">
-							<label for="config_summertime">
-								<input type="checkbox" name="config_summertime" id="config_summertime" hidden="hidden" />
-								<i class="input-helper"></i> Летнее время
-							</label>
-						</div>
-					</div>
 				</div>
-{*				<div class="form-group m-b-5">
-					<label for="config_summertime" class="col-sm-3 control-label">{help_icon title="Летнее время" message="Включить автоматический переход на летнее время."} Летнее время</label>
-					<div class="col-sm-9">
-						<div class="checkbox m-b-15">
-							<label for="config_summertime">
-								<input type="checkbox" name="config_summertime" id="config_summertime" hidden="hidden" />
-								<i class="input-helper"></i> Включить?
-							</label>
-						</div>
-					</div>
-				</div>*}
 				<div class="form-group m-b-5">
 					<label for="config_debug" class="col-sm-3 control-label">{help_icon title="Режим отладки" message="Включить режим отладки."} Режим отладки</label>
 					<div class="col-sm-9">
