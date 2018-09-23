@@ -57,7 +57,7 @@
 					<div class="col-sm-5 p-t-5">
 						<select class="selectpicker" name="timezoneoffset" id="sel_timezoneoffset">
 							{foreach from=$timezones key=tz item=name}
-								<option value="{$tz}">{$name}</option>
+								<option value="{$tz}">{$name|escape:'html'}</option>
 							{/foreach}
 						</select>
 					</div>
