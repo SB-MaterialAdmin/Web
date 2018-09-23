@@ -115,7 +115,7 @@ function BlockPlayer($check, $sid, $num, $type, $length) {
     	        }
     	    }
 		} else
-			$gothim = (strpos($r->SendCommand("ma_wb_block ".$type." ".$length." ".$check), "ok") !== FALSE);
+			$gothim = (strpos($r->SendCommand("ma_wb_mute {$type} {$length} {$check}"), "ok") !== FALSE);
 
 		if ($gothim) {
             $GLOBALS['db']->Execute("UPDATE `".DB_PREFIX."_comms` SET sid = '".$sid."' WHERE authid = '".$check."' AND RemovedBy IS NULL;");
