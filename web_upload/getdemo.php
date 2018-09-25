@@ -20,17 +20,17 @@ $Result->EndData();
 if (!$Demo)
   die('Demo not found.');
 
-$path = SB_DEMOS . '/' . $demo['filename'];
+$path = SB_DEMOS . '/' . $Demo['filename'];
 
-if ($type != 'U' && (!in_array($demo['filename'], scandir(SB_DEMOS)) || !file_exists($path)))
+if ($type != 'U' && (!in_array($Demo['filename'], scandir(SB_DEMOS)) || !file_exists($path)))
   die('File not found.');
 
 if ($type != 'U'){
-  $demo['filename'] = basename($demo['filename']);
+  $demo['filename'] = basename($Demo['filename']);
 
   Header('Content-type: application/force-download');
   Header('Content-Transfer-Encoding: Binary');
-  Header('Content-disposition: attachment; filename="' . $demo['origname'] . '"');
+  Header('Content-disposition: attachment; filename="' . $Demo['origname'] . '"');
   Header('Content-Length: ' . filesize($path));
   readfile($path);
 } else
