@@ -38,9 +38,6 @@ class Autoloader {
       $ClassPath = "{$DirPath}/{$ClassName}.php";
       if (file_exists($ClassPath)) {
         require($ClassPath);
-
-        if (is_callable([$ClassName, 'boot']))
-          call_user_func_array([$ClassName, 'boot'], []);
         break;
       }
     }

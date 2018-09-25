@@ -158,7 +158,7 @@ echo '<div id="admin-page-content">';
 		$protest_list = array();
 		foreach($protests as $prot)
 		{
-			$prot['reason'] = wordwrap(htmlspecialchars($prot['reason']), 55, "<br />\n", true);
+			//$prot['reason'] = wordwrap(htmlspecialchars($prot['reason']), 55, "<br />\n", true);
 			$protestb = $GLOBALS['db']->GetRow("SELECT bid, ba.ip, ba.authid, ba.name, created, ends, length, reason, ba.aid, ba.sid, email,ad.user, CONCAT(se.ip,':',se.port), se.sid
 							    				FROM ".DB_PREFIX."_bans AS ba
 							    				LEFT JOIN ".DB_PREFIX."_admins AS ad ON ba.aid = ad.aid
@@ -317,7 +317,7 @@ echo '<div id="admin-page-content">';
 		$protest_list_archiv = array();
 		foreach($protestsarchiv as $prot)
 		{
-			$prot['reason'] = wordwrap(htmlspecialchars($prot['reason']), 55, "<br />\n", true);
+			//$prot['reason'] = wordwrap(htmlspecialchars($prot['reason']), 55, "<br />\n", true);
 
 			if($prot['archiv'] != "2") {
 				$protestb = $GLOBALS['db']->GetRow("SELECT bid, ba.ip, ba.authid, ba.name, created, ends, length, reason, ba.aid, ba.sid, email,ad.user, CONCAT(se.ip,':',se.port), se.sid
