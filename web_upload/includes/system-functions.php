@@ -640,7 +640,7 @@ function SecondsToString($sec, $textual=true)
 	if($textual)
 	{
 		$div = array( 2592000, 604800, 86400, 3600, 60, 1 );
-		$desc = array('Мес','Нед','Дн','Час','Мин','Сек');
+		$desc = array('мес.','нед.','дн.','ч.','мин.','с.');
 		$ret = null;
 		foreach($div as $index => $value)
 		{
