@@ -12,7 +12,7 @@
 					<label for="names_link" class="col-sm-3 control-label">{help_icon title="Заголовок" message="Введите заголовок названия ссылки. Грубо говоря 'Имя' ссылки."} Заголовок</label>
 					<div class="col-sm-9">
 						<div class="fg-line">
-							<input type="text" TABINDEX=1 class="form-control" id="names_link" name="names_link" value="{$text}" placeholder="Введите данные" />
+							<input type="text" TABINDEX=1 class="form-control" id="names_link" name="names_link" value="{$text|escape:'html'}" placeholder="Введите данные" />
 						</div>
 						<div id="names_link.msg"></div>
 					</div>
