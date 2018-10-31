@@ -37,8 +37,8 @@ $finish = $time;
 $totaltime = ($finish - $start);
 
 $theme->assign('UPDATE_NUM', $GLOBALS['config']['config.version']);
-$theme->assign('THEME_VERSION', theme_version);
-$theme->assign('THEME_LINK', theme_link);
+$theme->assign('THEME_VERSION', VersionController::$Version);
+$theme->assign('THEME_LINK', VersionController::$URLs['GitHub']);
 $theme->assign('SB_VERSION', SB_VERSION);
 
 $theme->assign('show_gendata',      ($GLOBALS['config']['page.footer.allow_show_data'] == "1"));
