@@ -29,7 +29,7 @@ echo("\n\n");
 if (version_compare(PHP_VERSION, '7.0') != -1) {
   echo('[+] Установлена рекомендуемая версия PHP или выше');
   $success++;
-} else if (version_compare(PHP_VERSION, '5.4') != -1) {
+} else if (version_compare(PHP_VERSION, '5.5') != -1) {
   echo('[+] Установлена минимально требуемая версия PHP');
   $success++;
 } else {
