@@ -25,6 +25,13 @@
 //
 // *************************************************************************
 
+// Check PHP environment.
+if (version_compare(PHP_VERSION, '5.5') == -1) {
+  Header('Content-Type: text/plain; charset=UTF8');
+  echo("Работа SourceBans невозможна: для работы требуется PHP версии 5.5 и выше.\n");
+  echo('На данный момент установлена версия ' . PHP_VERSION);
+  exit();
+}
 
 session_start();
 include_once 'init.php';
