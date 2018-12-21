@@ -7,9 +7,6 @@
 		<div class="card-header">
 			<h2>Управление серверами ({$server_count}) <small>Список всех доступных серверов.</small></h2>
 		</div>
-		{if $permission_config}
-			<div class="alert alert-info" role="alert">Чтобы просмотреть информацию для конфигурационного файла SourceBans кликните <b><a href="index.php?p=admin&c=servers&o=dbsetup" class="c-red">здесь</a></b>.</div>
-		{/if}
 		<div class="card-body table-responsive">
 
 			<table id="data-table-command" class="table table-striped table-vmiddle bootgrid-table" aria-busy="false">
