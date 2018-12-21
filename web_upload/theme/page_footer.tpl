@@ -81,5 +81,10 @@
         <!-- Cron -->
         <script type="text/javascript" src="theme/js/cron.js"></script>
         <script type="text/javascript">RunCron("{$cron_token}");</script>
+        
+        {if $custom_css > 0}
+            <link rel="stylesheet" href="theme/css/custom.css">
+        {/if}
+        <!-- Custom CSS -->
 	{*/body*}
 {*/html*}

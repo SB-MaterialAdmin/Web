@@ -52,6 +52,9 @@ if (!isset($_SESSION['CronToken']))
 
 $theme->assign('cron_token',        $_SESSION['CronToken']);
 
+$custom = BuildPath(false, 'theme', 'css', 'custom.css');
+$theme->assign('custom_css',        file_exists($custom) ? @filemtime($custom) : 0);
+
 $theme->display('page_footer.tpl');
 
 if(isset($_GET['p']))
