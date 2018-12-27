@@ -172,10 +172,10 @@ class SBCronJob {
 
         foreach ($Servers as $Server) {
           // Build permission ID.
-          $PermissionID   = "{$aid}_{$server}";
+          $PermissionID   = "{$aid}_{$Server}";
           $CacheEntry = [
             'user'      => $user,
-            'sid'       => $server,
+            'sid'       => $Server,
             'password'  => $PermissionEntry['password'],
             'srv_flags' => $PermissionEntry['server_flags'],
             'web_flags' => (
@@ -211,5 +211,6 @@ class SBCronJob {
 
     // Seven step: finish transaction.
     $db->EndTxn();
+    $finished = true;
   }
 }
