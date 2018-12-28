@@ -58,6 +58,16 @@ $DB->Prepare("
 ");
 $SelectServerByGIDStatement = $DB->GetStatement();
 
+$DB->Prepare("
+  SELECT
+    `id`
+  FROM
+    `{{prefix}}srvgroups`
+  WHERE
+    `name` = :name;
+");
+$SelectGIDByGroupNameStatement = $DB->GetStatement();
+
 // Третий шаг: пройдёмся по админам.
 foreach ($Admins as $Admin) {
   $aid = $Admin['aid'];
@@ -100,16 +110,23 @@ foreach ($Admins as $Admin) {
     }
   }
 
+  // Получаем GroupID.
+  $SelectGIDByGroupNameStatement->BindData('name', $Admin['srv_group']);
+  $SelectGIDByGroupNameStatement->Execute();
+  $gid = $SelectGIDByGroupNameStatement->Single();
+  $SelectGIDByGroupNameStatement->EndData();
+  $gid = $gid['id'];
+
   // Биндим данные и заносим в таблицу.
   $InsertRightsStatement->BindMultipleData([
     'aid'           => $aid, 
     'servers'       => json_encode($Servers),
-    'gid'           => -1, // TODO: сделать импорт группы
+    'gid'           => $gid,
     'password'      => $Admin['srv_password'],
     'expires'       => $Admin['expired'],
     'immunity'      => $Admin['immunity'],
     'web_flags'     => 0,
-    'server_flags'  => 0, // TODO: сделать импорт флагов
+    'server_flags'  => ParseAdminFlags($Admin['srv_flags']),
   ]);
   $InsertRightsStatement->Execute();
   $InsertRightsStatement->EndData();
