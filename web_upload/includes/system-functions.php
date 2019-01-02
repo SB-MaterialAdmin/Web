@@ -1599,7 +1599,12 @@ function GetVACStatus($steamid) {
       $cache[intval($Row['account_id'])] = intval($Row['status']) == 1;
   }
 
-  $user = CSteamId::factory($steamid);
+	$user = null;
+	try {
+		$user = CSteamId::factory($steamid);
+	} catch (\Exception $e) {
+		return false;
+	}
   if (isset($cache[$user->AccountID])) {
     return $cache[$user->AccountID];
   }
