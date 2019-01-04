@@ -637,27 +637,47 @@ class xajaxResponse
 	 */
 	function getOutput()
 	{
-		$xml = "";
+		$Encoding = trim($this->sEncoding);
+		if (empty($Encoding))
+			$Encoding = 'utf-8';
+
+		$XML = new \DOMDocument('1.0', $Encoding);
+		$XML->formatOutput = false;	// Непозволительная роскошь - красивый вывод. Будем экономить на трафике.
+
+		$Root = $XML->createElement('xjx');
+		$XML->appendChild($Root);
+
 		if (is_array($this->aCommands))
 		{
 			foreach($this->aCommands as $aCommand)
 			{
-				$sData = $aCommand['data'];
+				$CommandItem = null;
+				$Content = $aCommand['data'];
 				unset($aCommand['data']);
-				$xml .= $this->_getXMLForCommand($aCommand, $sData);
+
+				if (is_array($Content)) {
+					$CommandItem = $XML->createElement('cmd', '');
+					$this->_arrayToXML($XML, $CommandItem, $Content);
+				} else {
+					$CommandItem = $XML->createElement('cmd', $Content);
+				}
+
+				foreach ($aCommand as $Name => $Value) {
+					$CommandItem->setAttribute($Name, $Value);
+				}
+
+				$Root->appendChild($CommandItem);
 			}
 		}
 		
 		$charSet = '';
-		$encoding = '';
 		
-		if (trim($this->sEncoding)) {
-			$charSet = '; charset="'.$this->sEncoding.'"';
-			$encoding = ' encoding="'.$this->sEncoding.'"';
+		if (!empty($Encoding)) {
+			$charSet = '; charset="'.$Encoding.'"';
 		}
 		
-		@header('content-type: text/xml'.$charSet);
-		return '<?xml version="1.0"'.$encoding.' ?'.'><xjx>'.$xml.'</xjx>';
+		@header('Content-Type: text/xml'.$charSet);
+		return $XML->saveXML();
 	}
 	
 	function getXML()
@@ -698,93 +718,43 @@ class xajaxResponse
 	{
 		return $this->loadXML($mCommands);
 	}
-
-	/**
-	 * Generates XML from command data
-	 * 
-	 * @access private
-	 * @param array associative array of attributes
-	 * @param string data
-	 * @return string XML command
-	 */
-	function _cmdXML($aAttributes, $sData)
-	{
-		if ($this->bOutputEntities) {
-			if (function_exists('mb_convert_encoding')) {
-				$sData = call_user_func_array('mb_convert_encoding', array(&$sData, 'HTML-ENTITIES', $this->sEncoding));
-			}
-			else {
-				trigger_error("The xajax XML response output could not be converted to HTML entities because the mb_convert_encoding function is not available", E_USER_NOTICE);
-			}
-		}
-		$xml = "<cmd";
-		foreach($aAttributes as $sAttribute => $sValue)
-			$xml .= " $sAttribute=\"$sValue\"";
-		if ($sData !== null && !stristr($sData,'<![CDATA['))
-			$xml .= "><![CDATA[$sData]]></cmd>";
-		else if ($sData !== null)
-			$xml .= ">$sData</cmd>";
-		else
-			$xml .= "></cmd>";
-		
-		return $xml;
-	}
-	
-	/**
-	 * Generates XML from command data
-	 * 
-	 * @access private
-	 * @param array associative array of attributes
-	 * @param mixed data
-	 * @return string XML command
-	 */
-	function _getXMLForCommand($aAttributes, $mData)
-	{
-		$xml = '<cmd';
-		foreach($aAttributes as $sAttribute => $sValue)
-			if ($sAttribute)
-				$xml .= " $sAttribute=\"$sValue\"";
-		
-		if (is_array($mData)) 
-			$xml .= '>'.$this->_arrayToXML($mData).'</cmd>';
-		else 
-			$xml .= '>'.$this->_escape($mData).'</cmd>';
-		
-		return $xml;
-	}
 	
 	/**
 	 * Converts an array of data into XML
 	 * 
 	 * @access private
+	 * @param DOMDocument xml document
+	 * @param DOMNode	xml node
 	 * @param mixed associative array of data or string of data
-	 * @return string XML command
+	 * @return null
 	 */
-	function _arrayToXML($mArray) {
-		if (!is_array($mArray))
-			return $this->_escape($mArray);
-		
-		$xml = '<xjxobj>';
-		foreach ($mArray as $aKey=>$aKeyValues) {
+	function _arrayToXML($XML, $node, $data) {
+		$NewItem = $XML->createElement('xjxobj');
+		$node->appendChild($NewItem);
+
+		foreach ($data as $aKey=>$aKeyValues) {
+			$NewChildItem = $XML->createElement('e');
+			$NewItem->appendChild($NewChildItem);
 			if (is_array($aKeyValues)) {
-				$xml .= '<e>';
 				foreach($aKeyValues as $sKey => $sValue) {
-					$xml .= '<'.htmlentities($sKey).'>';
-					$xml .= $this->_arrayToXML($sValue);
-					$xml .= '</'.htmlentities($sKey).'>';	
+					$NewChildChildItem = null;
+					if (is_array($sValue)) {
+						$NewChildChildItem = $XML->createElement($sKey);
+						$this->_arrayToXML($XML, $NewChildChildItem, $sValue);
+					} else {
+						$NewChildChildItem = $XML->createElement($sKey, $sValue);
+					}
+
+					$NewChildItem->appendChild($NewChildChildItem);
 				}
-				$xml .= '</e>';
 			} else {
-				$xml .= '<e><k>';
-				$xml .= $this->_escape($aKey);
-				$xml .= '</k><v>';
-				$xml .= $this->_escape($aKeyValues);
-				$xml .= '</v></e>';
+				$NewChildKeyItem 		= $XML->createElement('k', $aKey);
+				$NewChildValueItem 	= $XML->createElement('v', $aKeyValues);
+
+				$NewChildItem->appendChild($NewChildKeyItem);
+				$NewChildItem->appendChild($NewChildValueItem);
 			}
 		}
-		$xml .= '</xjxobj>';
-
-		return $xml;
 	}
 	
 	/**
