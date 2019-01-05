@@ -651,15 +651,15 @@ class xajaxResponse
 		{
 			foreach($this->aCommands as $aCommand)
 			{
-				$CommandItem = null;
+				$CommandItem = $XML->createElement('cmd');
 				$Content = $aCommand['data'];
 				unset($aCommand['data']);
 
 				if (is_array($Content)) {
-					$CommandItem = $XML->createElement('cmd', '');
 					$this->_arrayToXML($XML, $CommandItem, $Content);
 				} else {
-					$CommandItem = $XML->createElement('cmd', $Content);
+					$Content = $XML->createCDATASection($Content);
+					$CommandItem->appendChild($Content);
 				}
 
 				foreach ($aCommand as $Name => $Value) {
@@ -737,19 +737,24 @@ class xajaxResponse
 			$NewItem->appendChild($NewChildItem);
 			if (is_array($aKeyValues)) {
 				foreach($aKeyValues as $sKey => $sValue) {
-					$NewChildChildItem = null;
+					$NewChildChildItem = $XML->createElement($sKey);
 					if (is_array($sValue)) {
-						$NewChildChildItem = $XML->createElement($sKey);
 						$this->_arrayToXML($XML, $NewChildChildItem, $sValue);
 					} else {
-						$NewChildChildItem = $XML->createElement($sKey, $sValue);
+						$CData = $XML->createCDATASection($sValue);
+						$NewChildChildItem->appendChild($CData);
 					}
 
 					$NewChildItem->appendChild($NewChildChildItem);
 				}
 			} else {
-				$NewChildKeyItem 		= $XML->createElement('k', $aKey);
-				$NewChildValueItem 	= $XML->createElement('v', $aKeyValues);
+				$NewChildKeyItem 		= $XML->createElement('k');
+				$NewChildValueItem 	= $XML->createElement('v');
+
+				$CDataKey = $XML->createCDATASection($aKey);
+				$CDataValue = $XML->createCDATASection($aKeyValues);
+				$NewChildKeyItem->appendChild($CDataKey);
+				$NewChildValueItem->appendChild($CDataValue);
 
 				$NewChildItem->appendChild($NewChildKeyItem);
 				$NewChildItem->appendChild($NewChildValueItem);
