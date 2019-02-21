@@ -88,12 +88,6 @@
 		
 		<div class="card-body card-padding p-b-0">
 			<div class="form-group m-b-5 col-sm-6">
-				<label class="col-sm-5 control-label">Последний релиз:</label>
-				<div class="col-sm-5 control-label" style="text-align: left;" {if not $sb_svn}id='relver'{else}id='svnrev'{/if}>
-					Подождите...
-				</div>
-			</div>
-			<div class="form-group m-b-5 col-sm-6">
 				<label class="col-sm-5 control-label">Всего админов:</label>
 				<div class="col-sm-5 control-label" style="text-align: left;">
 					{$total_admins}
@@ -152,4 +146,3 @@
 	&nbsp;
 </div>
 <br />
-<script type="text/javascript">xajax_CheckVersion();</script>

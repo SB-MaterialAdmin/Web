@@ -45,8 +45,8 @@ $methods = array(
     'Maintenance', 'KickPlayer', 'GroupBan', 'BanMemberOfGroup',
     'GetGroups', 'BanFriends', 'SendMessage', 'ViewCommunityProfile',
     'SetupBan', 'CheckPassword', 'ChangePassword', 'CheckSrvPassword',
-    'ChangeSrvPassword', 'ChangeEmail', 'CheckVersion', 'SendMail',
-    'AddBlock', 'PrepareReblock', 'PrepareBlockFromBan', 'removeExpiredAdmins',
+    'ChangeSrvPassword', 'ChangeEmail', 'SendMail', 'AddBlock',
+    'PrepareReblock', 'PrepareBlockFromBan', 'removeExpiredAdmins',
     'AddSupport', 'ChangeAdminsInfos', 'InstallMOD', 'UpdateGroupPermissions',
     'PastePlayerData', 'AddWarning', 'RemoveWarning'
   ),
@@ -2886,34 +2886,6 @@ function SendMail($subject, $message, $type, $id)
     $objResponse->addScript("ShowBox('Ошибка', 'Не удалось отправить e-mail пользователю.', 'red', '');");
   
   return $objResponse;
-}
-
-function CheckVersion() {
-    $objResponse = new xajaxResponse();
-    $relver = @file_get_contents("https://raw.githubusercontent.com/CrazyHackGUT/SB_Material_Design/" . MA_BRANCH . "/updates.json");
-    $version = 0;
-
-    if (strlen($relver)<8 || $relver == "") {
-        $version = "<span style='color:#aa0000;'>Ошибка</span>";
-        $msg = "<span style='color:#aa0000;'><strong>Ошибка получения обновлений</strong></span>";
-    } else {
-        $reldata = json_decode($relver);
-        $version = $reldata->release;
-
-        if(version_compare($reldata->release, theme_version, ">")) {
-            $VersionInformation  = "<div style=\"text-align: left\">";
-            foreach ($reldata->changes as $change)
-                $VersionInformation .= "<strong>*</strong> ".$change."<br />";
-            $VersionInformation .= "И многое другое...</div><br />";
-
-            $msg = "<span style='color:#aa0000;'><strong>Доступна новая версия.</strong></span> <a href ='#' onClick='" . generateMsgBoxJS("Доступна новая версия!", $VersionInformation . "<a href=\"" . $reldata->download_url . "\">Скачать</a> / <a href=\"" . $reldata->changelist . "\">Список изменений</a>", "red", "", true) . "'>Подробнее...</a>";
-        } else
-            $msg = "<span style='color:#00aa00;'><strong>Вы используете последнюю версию</strong></span>";
-
-    }
-
-    $objResponse->addAssign("relver", "innerHTML",  sprintf("%s (%s)", $version, $msg));
-    return $objResponse;
 }
 
 function AddComment($bid, $ctype, $ctext, $page)
