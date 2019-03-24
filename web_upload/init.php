@@ -258,22 +258,10 @@ define('ALL_SERVER', SM_RESERVED_SLOT.SM_GENERIC.SM_KICK.SM_BAN.SM_UNBAN.SM_SLAY
 
 $GLOBALS['db']->Execute("SET NAMES utf8;");
 
-// Prepare DB handle.
-$DB = \DatabaseManager::GetConnection();
-
 // ---------------------------------------------------
 // Load settings from Database
 // ---------------------------------------------------
-$SettingsStatement = $DB->Query('SELECT * FROM `{{prefix}}settings` GROUP BY `setting`, `value`');
-$GLOBALS['config'] = [];
-
-while ($row = $SettingsStatement->Single()) {
-  $setting = $row['setting'];
-  $value   = $row['value'];
-
-  $GLOBALS['config'][$setting] = $value;
-}
-$SettingsStatement->EndData();
+$GLOBALS['config'] = \App::options(); // by compability reasons
 
 define('SB_BANS_PER_PAGE', $GLOBALS['config']['banlist.bansperpage']);
 define('MIN_PASS_LENGTH', $GLOBALS['config']['config.password.minlength']);
@@ -314,22 +302,7 @@ global $theme, $userbank;
 if(!@is_writable(SB_THEME_COMPILE))
     die($GLOBALS['translator']->retrieve("init::themec_not_writable", ["cache_path" => SB_THEME_COMPILE]));
 
-$theme = new CSmarty();
-$theme->error_reporting   = E_ALL ^ E_NOTICE;
-$theme->use_sub_dirs      = false;
-$theme->compile_id        = "TCache";
-$theme->caching           = false;
-$theme->template_dir      = SB_THEME;
-$theme->template_user_dir = SB_USER_THEME;
-$theme->compile_dir       = SB_THEME_COMPILE;
-
-$theme->assign('SITE_ADDRESS',  SB_WP_URL);
-$theme->assign('SBConfig',      ReplaceArrayKeyNames($config, '.', '_'));
-
-if ((isset($_GET['debug']) && $_GET['debug'] == 1) || defined("DEVELOPER_MODE") )
-{
-	$theme->force_compile = true;
-}
+$theme = \App::templater(); // by compability reasons
 
 // ---------------------------------------------------
 // Start our session manager.
