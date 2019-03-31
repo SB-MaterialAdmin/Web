@@ -57,12 +57,12 @@
         }
         
         // Only show the RCON link for servers he's access to
+        // And update our global server list with separator.
+        $global_servers = [];
         foreach($servers as &$server)
         {
-            if(in_array($server['sid'], $server_access))
-                $server['rcon_access'] = true;
-            else
-                $server['rcon_access'] = false;
+            $server['rcon_access'] = (in_array($server['sid'], $server_access));
+            $global_servers[] = $server['sid'];
         }
         
 		// List mods
@@ -75,7 +75,8 @@
 		$theme->assign('permission_editserver', $userbank->HasAccess(ADMIN_OWNER|ADMIN_EDIT_SERVERS));
 		$theme->assign('pemission_delserver', $userbank->HasAccess(ADMIN_OWNER|ADMIN_DELETE_SERVERS));
 		$theme->assign('server_count', $server_count['cnt']);
-		$theme->assign('server_list', $servers);
+        $theme->assign('server_list', $servers);
+        $theme->assign('servers_separated', implode(',', $global_servers));
 		
 		// Vars for add server
 		$theme->assign('permission_addserver', $userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_SERVER));

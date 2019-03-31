@@ -1460,19 +1460,21 @@ function ShowKickBox(check, type)
 	ShowBox('Бан добавлен', 'Бан был успешно добавлен<br><iframe id="srvkicker" frameborder="0" width="100%" src="pages/admin.kickit.php?check='+check+'&type='+type+'"></iframe>', 'green', '', false);
 }
 
-function ShowRehashBox(servers, title, msg, color, redir)
+function ShowRehashBox(servers, title, msg, color, redirUrl = '', appendText = true)
 {
 	// Don't show anything sm_rehash related, if there are no servers to rcon.
 	if(servers == '')
 	{
 		ShowBox(title, msg, color, '', true);
 		$('dialog-control').setStyle('display', 'none');
-		xajax_RehashAdmins(servers);
+		xajax_RehashAdmins(servers, 0, redirUrl);
 	}else{
-		msg = msg + '<br /><hr /><i>Обновление данных администратора и группы по всем связанным серверам...</i><div id="rehashDiv" name="rehashDiv" width="100%"></div>';
+		if (appendText)
+			msg = msg + '<br /><hr /><i>Обновление данных администратора и группы по всем связанным серверам...</i>';
+		msg = msg + '<div id="rehashDiv" name="rehashDiv" width="100%"></div>';
 		ShowBox(title, msg, color, '', false);
 		$('dialog-control').setStyle('display', 'none');
-		xajax_RehashAdmins(servers);
+		xajax_RehashAdmins(servers, 0, redirUrl);
 	}
 }
 

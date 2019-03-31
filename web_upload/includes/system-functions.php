@@ -997,7 +997,7 @@ function checkMultiplePlayers($sid, $steamids)
 		return false;
 	}
 
-	$ret = $r->rconCommand("status");
+	$ret = $r->SendCommand("status");
 	$search = preg_match_all(STATUS_PARSE,$ret,$matches,PREG_PATTERN_ORDER);
 	$i = 0;
 	$found = array();

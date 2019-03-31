@@ -36,8 +36,10 @@
 					{/if}
 					
 					{if $pemission_delserver}
-						<a href="#" onclick="RemoveServer({$server.sid}, '{$server.ip}:{$server.port}');">Удалить</a>
+						<a href="#" onclick="RemoveServer({$server.sid}, '{$server.ip}:{$server.port}');">Удалить</a> -
 					{/if}
+
+					<a href="index.php?p=admin&c=servers" onclick="ShowRehashBox('{$server.sid}', 'Обновление админкеша', 'Пожалуйста, подождите. Производится выполнение операции...', 'green', 'index.php?p=admin&c=servers', false); return false;">Обновить админкеш</a>
 					</td>
 				</tr>
 				
@@ -45,8 +47,8 @@
 			</table>
 		
 		</div>
-		{if $permission_addserver}
-			<div class="card-body card-padding">
+		<div class="card-body card-padding">
+			{if $permission_addserver}
 				<button class="btn bgm-orange waves-effect save" onclick="childWindow=open('pages/admin.uploadmapimg.php','upload','resizable=yes,width=300,height=130');" id="upload">Загрузить изображение карты</button>
 				<div id="mapimg1.msg" class="contacts c-profile clearfix p-t-20 p-l-0" style="display:none;">
 					<div class="col-md-3 col-sm-4 col-xs-6 p-l-0 p-r-0">
@@ -65,8 +67,10 @@
 						</div>
 					</div>
 				</div>
-			</div>
-		{/if}
+			{/if}
+
+			<button class="btn bgm-green waves-effect" onclick="ShowRehashBox('{$servers_separated}', 'Обновление админкеша на серверах', 'Пожалуйста, подождите. Производится выполнение операции...', 'green', 'index.php?p=admin&c=servers', false);">Обновить админкеш на серверах</button>
+		</div>
 	</div>
 </div>
 

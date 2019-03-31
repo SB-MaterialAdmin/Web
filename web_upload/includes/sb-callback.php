@@ -3227,7 +3227,7 @@ function RehashAdmins_pay($server, $do=0, $card)
       sleep(1);
       $r->SendCommand("sm_reloadadmins");
     } else
-      $r->SendCommand("ma_wb_rehashadm");
+      $r->SendCommand("ma_rehashadm");
 
     $objResponse->addAppend("rehashDiv", "innerHTML", "".$serv['ip'].":".$serv['port']." (".($do+1)."/".sizeof($servers).") <font color='green'>успешно</font>.<br />");
     if($do >= sizeof($servers)-1) {
@@ -3242,8 +3242,11 @@ function RehashAdmins_pay($server, $do=0, $card)
   return $objResponse;
 }
 
-function RehashAdmins($server, $do=0)
+function RehashAdmins($server, $do=0, $redirUrl = '')
 {
+  if (empty($redirUrl))
+    $redirUrl = 'index.php?p=admin&c=admins';
+
   $objResponse = new xajaxResponse();
     global $userbank, $username;
   $do = (int)$do;
@@ -3256,7 +3259,7 @@ function RehashAdmins($server, $do=0)
   $servers = explode(",",$server);
   if(sizeof($servers)>0) {
     if(sizeof($servers)-1 > $do)
-      $objResponse->addScriptCall("xajax_RehashAdmins", $server, $do+1);
+      $objResponse->addScriptCall("xajax_RehashAdmins", $server, $do+1, $redirUrl);
 
     $serv = $GLOBALS['db']->GetRow("SELECT ip, port, rcon FROM ".DB_PREFIX."_servers WHERE sid = '".(int)$servers[$do]."';");
     if(empty($serv['rcon'])) {
@@ -3264,7 +3267,7 @@ function RehashAdmins($server, $do=0)
       if($do >= sizeof($servers)-1) {
         $objResponse->addAppend("rehashDiv", "innerHTML", "<b>Выполнено, переадресация....</b>");
         $objResponse->addScript("$('dialog-control').setStyle('display', 'block');");
-        $objResponse->addScript("setTimeout(\"window.location = 'index.php?p=admin&c=admins';\", 1800);");
+        $objResponse->addScript("setTimeout(\"window.location = '{$redirUrl}';\", 1800);");
       }
       return $objResponse;
     }
@@ -3275,7 +3278,7 @@ function RehashAdmins($server, $do=0)
       if($do >= sizeof($servers)-1) {
         $objResponse->addAppend("rehashDiv", "innerHTML", "<b>Выполнено, переадресация....</b>");
         $objResponse->addScript("$('dialog-control').setStyle('display', 'block');");
-        $objResponse->addScript("setTimeout(\"window.location = 'index.php?p=admin&c=admins';\", 1800);");
+        $objResponse->addScript("setTimeout(\"window.location = '{$redirUrl}';\", 1800);");
       }
       return $objResponse;
     }
@@ -3290,7 +3293,7 @@ function RehashAdmins($server, $do=0)
       if($do >= sizeof($servers)-1) {
         $objResponse->addAppend("rehashDiv", "innerHTML", "<b>Выполнено, переадресация....</b>");
         $objResponse->addScript("$('dialog-control').setStyle('display', 'block');");
-        $objResponse->addScript("setTimeout(\"window.location = 'index.php?p=admin&c=admins';\", 1800);");
+        $objResponse->addScript("setTimeout(\"window.location = '{$redirUrl}';\", 1800);");
       }
       return $objResponse;
     }
@@ -3300,13 +3303,13 @@ function RehashAdmins($server, $do=0)
       sleep(1);
       $r->SendCommand("sm_reloadadmins");
     } else
-      $r->SendCommand("ma_wb_rehashadm");
+      $r->SendCommand("ma_rehashadm");
 
     $objResponse->addAppend("rehashDiv", "innerHTML", "".$serv['ip'].":".$serv['port']." (".($do+1)."/".sizeof($servers).") <font color='green'>успешно</font>.<br />");
     if($do >= sizeof($servers)-1) {
       $objResponse->addAppend("rehashDiv", "innerHTML", "<b>Выполнено, переадресация....</b>");
       $objResponse->addScript("$('dialog-control').setStyle('display', 'block');");
-      $objResponse->addScript("setTimeout(\"window.location = 'index.php?p=admin&c=admins';\", 1800);");
+      $objResponse->addScript("setTimeout(\"window.location = '{$redirUrl}';\", 1800);");
     }
   } else {
     $objResponse->addAppend("rehashDiv", "innerHTML", "Не выбран сервер.");
