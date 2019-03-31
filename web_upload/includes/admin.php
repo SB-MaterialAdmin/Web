@@ -268,15 +268,6 @@ else
 			include TEMPLATES_PATH . "/admin.rcon.php";
 			RewritePageTitle("RCON");
 		}
-		elseif($_GET['o'] == 'admincheck')
-		{
-			$serverTabMenu = new CTabsMenu();
-			$serverTabMenu->addMenuItem("Назад", 0,"", "javascript:history.go(-1);", true);
-			$serverTabMenu->outputMenu();
-						
-			include TEMPLATES_PATH . "/admin.srvadmins.php";
-			RewritePageTitle("Админы сервера");
-		}
 	}
 	elseif($_GET['c'] == "bans")
 	 // ###################[ Bans ]##################################################################
