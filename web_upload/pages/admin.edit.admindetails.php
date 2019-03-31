@@ -40,7 +40,7 @@ if(!isset($_GET['id']))
 }
 $_GET['id'] = (int)$_GET['id'];
 
-if(!$userbank->GetProperty("user", $_GET['id']))
+if(!$userbank->GetProperty("authid", $_GET['id']))
 {
 	$log = new CSystemLog("e", "Получение данных администратора не удалось", "Не могу найти данные для администратора с идентификатором '".$_GET['id']."'");
 	echo '<div id="msg-red" >
