@@ -268,9 +268,9 @@ define('MIN_PASS_LENGTH', $GLOBALS['config']['config.password.minlength']);
 $dateformat = !empty($GLOBALS['config']['config.dateformat'])?$GLOBALS['config']['config.dateformat']:"m-d-y H:i";
 
 if(empty($GLOBALS['config']['config.timezone'])) {
-  TimeZone::setTimeZone('Europe/London');
+    define('SB_TIMEZONE', 0);
 } else {
-	TimeZone::setTimeZone($GLOBALS['config']['config.timezone']);
+    define('SB_TIMEZONE', $GLOBALS['config']['config.timezone']);
 }
 
 // ---------------------------------------------------

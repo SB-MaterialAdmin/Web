@@ -51,6 +51,11 @@ jQuery(document).ready(function(){
         });
     })();
 
+
+  
+   
+   
+
     /* --------------------------------------------------------
         Scrollbar
     -----------------------------------------------------------*/
@@ -895,5 +900,7 @@ jQuery(document).ready(function(){
         jQuery('[data-current-skin]').attr('data-current-skin', skin)
 
     });
+
+
 
 });

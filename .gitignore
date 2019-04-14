@@ -45,3 +45,10 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+
+# =========================
+# SourceBans
+# =========================
+web_upload/data/config.php
+web_upload/data/theme_c/*.php
+web_upload/data/theme/*

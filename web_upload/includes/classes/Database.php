@@ -19,17 +19,6 @@ class Database {
     $this->Statement = new \DatabaseResult($this->PDO->prepare($query));
   }
 
-  public function GetStatement($cleanup = true) {
-    if ($this->Statement === NULL)
-      throw new \LogicException('No one query has been prepared');
-
-    $Stmt = $this->Statement;
-    if ($cleanup)
-      $this->Statement = null;
-
-    return $Stmt;
-  }
-
   public function BindData($name, $value, $type = NULL) {
     if ($this->Statement === NULL)
       throw new \LogicException('No one query has been prepared');

@@ -7,15 +7,22 @@
 <div id="banlist-nav"> 
     {$protest_nav}
 </div>
+
+
 	<table class="table table-bordered">
 		<tr>
-        	<th width="20%" class="text-center">Ник</th>
+            <th width="10%" class="text-center">Ник</th>
+        	<th width="50%" class="text-center">Собщение</th>
       		<th width="20%" class="text-center">Steam ID</th>
            	<th width="20%" class="text-center">Действие</th>
 		</tr>
 		{foreach from="$protest_list" item="protest"}
+
 		<tr>
-            <td class="text-center"><a href="./index.php?p=banlist&advSearch={$protest.authid}&advType=steamid" title="Показать бан">{$protest.name}</a></td>
+            <td class="text-center"><a  href="./index.php?p=banlist&advSearch={$protest.authid}&advType=steamid" title="Показать бан" class="name_protest">{$protest.name}</a></td>
+
+             <td>{$protest.reason}</td>
+
             <td class="text-center">{if $protest.authid!=""}<a href="https://steamcommunity.com/profiles/{$protest.commid}">{$protest.authid}</a>{else}{$protest.ip}{/if}</td>
             <td class="text-center">
             {if $permission_editban}
@@ -27,4 +34,10 @@
 		{/foreach}
 	</table>
 {/if}
+
+
+
+
+
+
 
