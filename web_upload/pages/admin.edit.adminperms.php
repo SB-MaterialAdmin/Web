@@ -71,32 +71,43 @@ $steam = trim($userbank->GetProperty("authid", $_GET['id']));
 $web_flags = intval($userbank->GetProperty("extraflags", $_GET['id']));
 $name = $userbank->GetProperty("user", $_GET['id']);
 ?>
-<div id="admin-page-content">
-<div id="add-group">
-<h3>ВЕБ разрешения</h3>
-<input type="hidden" id="admin_id" value=<?php echo $_GET['id']?> />
-<?php echo str_replace("{title}", $name, file_get_contents(TEMPLATES_PATH . "/groups.web.perm.php")) ;?>
-<br />
-<h3>Серверные разрешения</h3>
 
-<?php echo str_replace("{title}", $name, file_get_contents(TEMPLATES_PATH . "/groups.server.perm.php")) ;?>
-
-<table width="100%">
-<tr><td>&nbsp;</td>
-</tr>
-<tr align="center">
-    <td>&nbsp;</td>
-    <td>
-    <div align="center">
-       <?php echo $ui->drawButton("Сохранить", "ProcessEditAdminPermissions();", "ok", "editadmingroup");?>
-      &nbsp;<?php echo $ui->drawButton("Назад", "history.go(-1)", "cancel", "back");?>
-      
-      </div>	</td>
-  </tr>
-</table>
-
-
-
+<style>
+   #add-group {text-align:center;}	
+   .col-6 {text-align:center;}
+   .table>thead>tr>th, .table>tbody>tr>th, .table>tfoot>tr>th, .table>thead>tr>td, .table>tbody>tr>td, .table>tfoot>tr>td {text-align: center;}	
+   .table>thead>tr>th, .table>tbody>tr>th, .table>tfoot>tr>th, .table>thead>tr>td, .table>tbody>tr>td, .table>tfoot>tr>td {
+   vertical-align: inherit;
+   }	
+   h3 {margin-top: 0;margin-bottom: 20px}
+   .main {
+   font-weight: bold;
+   text-transform: uppercase;	
+   background-color: #f4f4f4;	
+   }
+</style>
+<div class="card-header">
+   <h2>Настройка разрешений <small>Выберите опции</small></h2>
+</div>
+<div class="row">
+   <div class="col-6 col-md-6">
+      <h3>ВЕБ разрешения</h3>
+      <input type="hidden" id="admin_id" value=<?php echo $_GET['id']?> />
+      <?php echo str_replace("{title}", $name, file_get_contents(TEMPLATES_PATH . "/groups.web.perm.php")) ;?>
+   </div>
+   <div class="col-6 col-md-6">
+      <h3>Серверные разрешения</h3>
+      <?php echo str_replace("{title}", $name, file_get_contents(TEMPLATES_PATH . "/groups.server.perm.php")) ;?>
+   </div>
+</div>
+<div class="card-body card-padding text-center">
+   <button type="submit" onclick="ProcessEditAdminPermissions();" name="editadmingroup" class="btn bgm-green btn-icon-text waves-effect" onmouseover="ButtonOver(&quot;editadmingroup&quot;)" onmouseout="ButtonOver(&quot;editadmingroup&quot;)" id="editadmingroup" value="Обновить данные">
+   <i class="zmdi zmdi-check-all"></i>Обновить данные
+   </button>
+   <button type="button" onclick="history.go(-1)" name="back" class="btn bgm-red btn-icon-text waves-effect" onmouseover="ButtonOver(&quot;back&quot;)" onmouseout="ButtonOver(&quot;back&quot;)" id="back">
+   <i class="zmdi zmdi-undo"></i>Назад
+   </button>
+</div>
 
 <script>
 <?php if(!$userbank->HasAccess(ADMIN_OWNER)) { ?>
@@ -172,5 +183,3 @@ $('s22').checked = <?php echo strstr(get_non_inherited_admin($admin['authid']), 
 
 $('immunity').value = <?php echo $admin['immunity'] ? $admin['immunity'] : "0"?>;
 </script>
-</div></div>
-
