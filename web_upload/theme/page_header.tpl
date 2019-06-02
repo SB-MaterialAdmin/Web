@@ -4,6 +4,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>{if $header_title != ""}{$header_title}{else}SourceBans :: MATERIAL{/if}</title>
 <link rel="Shortcut Icon" href="./images/favicon.ico" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
 <!--SB -->
 <script type="text/javascript" src="./theme/js/sourcebans.js?_={$sbjs}"></script>
@@ -24,7 +25,7 @@
 <link href="theme/css/app.min.1.css" rel="stylesheet" />
 <link href="theme/css/app.min.2.css" rel="stylesheet" />
 <link href="theme/css/css_sup.css" rel="stylesheet" />
-<link href="theme/css/custom.css rel="stylesheet" />
+<link href="theme/css/custom.css" rel="stylesheet" />
 
 {$tiny_mce_js}
 {$xajax_functions}
