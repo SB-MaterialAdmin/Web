@@ -254,7 +254,7 @@
  * Used for Heading outside the Cards.
  */
 
-.block-header {
+ .block-header {
   margin-bottom: 25px;
   position: relative;
 }
@@ -299,7 +299,7 @@
  * Header Actions
  */
 
-.actions {
+ .actions {
   list-style: none;
   padding: 0;
   z-index: 3;
@@ -414,7 +414,7 @@
  * Collapse Menu Icons
  */
 
-.line-wrap {
+ .line-wrap {
   width: 18px;
   height: 12px;
   -webkit-transition: all;
@@ -462,7 +462,7 @@
  * Load More
  */
 
-.load-more {
+ .load-more {
   text-align: center;
   margin-top: 30px;
 }
@@ -491,7 +491,7 @@
  * Page Loader
  */
 
-html:not(.ismobile) .page-loader {
+ html:not(.ismobile) .page-loader {
   background: #fff;
   position: fixed;
   width: 100%;
@@ -963,7 +963,7 @@ html.ismobile .page-loader {
  * You may remove these if you opt header 2
  */
 
-#header .skin-switch {
+ #header .skin-switch {
   padding: 10px 0 2px;
   text-align: center;
 }
@@ -984,7 +984,7 @@ html.ismobile .page-loader {
  * You may remove these if you opt header 1
  */
 
-#header-2 .skin-switch {
+ #header-2 .skin-switch {
   position: absolute;
   right: 50px;
   bottom: 23px;
@@ -1082,7 +1082,7 @@ html.ismobile .page-loader {
  * This is common for both
  */
 
-.ss-skin {
+ .ss-skin {
   width: 16px;
   height: 16px;
   border-radius: 50%;
@@ -1372,10 +1372,10 @@ html.ismobile .page-loader {
 }
 
 @media print {
-@page {
+  @page {
     margin: 0;
     size: auto;
-}
+  }
 
   body {
     margin: 0mm 0mm 0mm 0mm !important;
@@ -1395,32 +1395,32 @@ html.ismobile .page-loader {
      * INVOICE
      */
 
-  .invoice {
-    padding: 30px !important;
-    -webkit-print-color-adjust: exact !important;
-  }
+     .invoice {
+      padding: 30px !important;
+      -webkit-print-color-adjust: exact !important;
+    }
 
-  .invoice .card-header {
-    background: #eee !important;
-    padding: 20px;
-    margin-bottom: 20px;
-    margin: -60px -30px 25px -30px;
-  }
+    .invoice .card-header {
+      background: #eee !important;
+      padding: 20px;
+      margin-bottom: 20px;
+      margin: -60px -30px 25px -30px;
+    }
 
-  .invoice .block-header {
-    display: none;
-  }
+    .invoice .block-header {
+      display: none;
+    }
 
-  .invoice .highlight {
-    background: #eee !important;
+    .invoice .highlight {
+      background: #eee !important;
+    }
   }
-}
 
 /*
  * Vendor Overrides
  */
 
-.mejs-container {
+ .mejs-container {
   outline: none;
 }
 
@@ -1992,6 +1992,10 @@ hr.fc-divider {
   pointer-events: none;
   z-index: 5;
 }
+
+.table-striped > tbody > tr:nth-of-type(odd) .bootstrap-select > .btn-default:before {background-color: #f4f4f4;}
+
+.table-striped > tbody > tr:nth-of-type(odd) .form-control {background:none}
 
 @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 2/1), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
   .bootstrap-select > .btn-default:before {
@@ -2695,15 +2699,15 @@ select.chosen {
 }
 
 .fa-edit:before{
-content:'\f158';
+  content:'\f158';
 }
 
 .fa-edit:before{
-content:'\f158';
+  content:'\f158';
 }
 
 .fa-unlink:before{
-content:'\f154';
+  content:'\f154';
 }
 
 .note-editor .fa.fa-picture-o:before,
@@ -2763,6 +2767,10 @@ content:'\f154';
 
 .note-editor .note-editable {
   padding: 20px 23px;
+}
+
+#banlist-nav {
+  padding: 8px 25px;
 }
 
 .bootstrap-datetimepicker-widget {
