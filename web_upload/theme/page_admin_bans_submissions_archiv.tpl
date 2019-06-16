@@ -2,7 +2,7 @@
 Доступ запрещен!
 {else}
 <div class="card-header">
-  <h2>Архив заявок на бан (<span id="subcountarchiv">{$submission_count_archiv}</span>)<small>Кликните на имени игрока для просмотра подробностей</small></h2>
+  <h2>Архив заявок на бан (<span id="subcountarchiv">{$submission_count_archiv}</span>)<small>Кликните на имя игрока для просмотра подробностей</small></h2>
 </div>  
 <div id="banlist-nav">
   {$asubmission_nav}
@@ -13,7 +13,7 @@
     <th>Steam ID</th>
   </thead>
   {foreach from="$submission_list_archiv" item="sub"}
-  <tr id="asid_{$sub.subid}" class="opener opener4 tbl_out" {if $sub.hostname == ""}onclick="xajax_ServerHostPlayers('{$sub.server}', 'id', 'suba{$sub.subid}');"{/if} onmouseout="this.className='tbl_out'" onmouseover="this.className='tbl_hover'">
+  <tr id="asid_{$sub.subid}" class="opener opener4 tbl_out" {if $sub.hostname == ""}onclick="xajax_ServerHostPlayers('{$sub.server}', 'id', 'suba{$sub.subid}');"{/if} onmouseout="this.className='tbl_out'" onmouseover="this.className='tbl_hover'" style="cursor: pointer;">
     <td>{$sub.name}</td>
     <td>{if $sub.SteamId!=""}{$sub.SteamId}{else}{$sub.sip}{/if}</td>
   </tr>

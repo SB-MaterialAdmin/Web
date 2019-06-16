@@ -2,7 +2,7 @@
 Доступ запрещен!
 {else}
 <div class="card-header">
-  <h2>Заявки на бан (<span id="subcount">{$submission_count}</span>)<small>Кликните на нике игрока для просмотра подробностей</small></h2>
+  <h2>Заявки на бан (<span id="subcount">{$submission_count}</span>)<small>Кликните на имя игрока для просмотра подробностей</small></h2>
 </div>
 
 <div id="banlist-nav"> 
