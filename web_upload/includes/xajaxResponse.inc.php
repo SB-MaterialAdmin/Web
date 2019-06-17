@@ -656,7 +656,7 @@ class xajaxResponse
 				unset($aCommand['data']);
 
 				if (is_array($Content)) {
-					$this->_arrayToXML($XML, $CommandItem, $Content);
+					$this->_arrayToXML($CommandItem, $Content);
 				} else {
 					$Content = $XML->createCDATASection($Content);
 					$CommandItem->appendChild($Content);
@@ -723,36 +723,35 @@ class xajaxResponse
 	 * Converts an array of data into XML
 	 * 
 	 * @access private
-	 * @param DOMDocument xml document
 	 * @param DOMNode	xml node
 	 * @param mixed associative array of data or string of data
 	 * @return null
 	 */
-	function _arrayToXML($XML, $node, $data) {
-		$NewItem = $XML->createElement('xjxobj');
+	function _arrayToXML($node, $data) {
+		$NewItem = $node->ownerDocument->createElement('xjxobj');
 		$node->appendChild($NewItem);
 
 		foreach ($data as $aKey=>$aKeyValues) {
-			$NewChildItem = $XML->createElement('e');
+			$NewChildItem = $node->ownerDocument->createElement('e');
 			$NewItem->appendChild($NewChildItem);
 			if (is_array($aKeyValues)) {
 				foreach($aKeyValues as $sKey => $sValue) {
-					$NewChildChildItem = $XML->createElement($sKey);
+					$NewChildChildItem = $node->ownerDocument->createElement($sKey);
 					if (is_array($sValue)) {
-						$this->_arrayToXML($XML, $NewChildChildItem, $sValue);
+						$this->_arrayToXML($NewChildChildItem, $sValue);
 					} else {
-						$CData = $XML->createCDATASection($sValue);
+						$CData = $node->ownerDocument->createCDATASection($sValue);
 						$NewChildChildItem->appendChild($CData);
 					}
 
 					$NewChildItem->appendChild($NewChildChildItem);
 				}
 			} else {
-				$NewChildKeyItem 		= $XML->createElement('k');
-				$NewChildValueItem 	= $XML->createElement('v');
+				$NewChildKeyItem 		= $node->ownerDocument->createElement('k');
+				$NewChildValueItem 	= $node->ownerDocument->createElement('v');
 
-				$CDataKey = $XML->createCDATASection($aKey);
-				$CDataValue = $XML->createCDATASection($aKeyValues);
+				$CDataKey = $node->ownerDocument->createCDATASection($aKey);
+				$CDataValue = $node->ownerDocument->createCDATASection($aKeyValues);
 				$NewChildKeyItem->appendChild($CDataKey);
 				$NewChildValueItem->appendChild($CDataValue);
 
