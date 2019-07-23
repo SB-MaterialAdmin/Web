@@ -3038,15 +3038,17 @@ function Maintenance($type) {
             break;
         }
     
-    case 'adminsexpired': {
-      $admins = $GLOBALS['db']->GetAll(sprintf("SELECT `aid` FROM `%s_admins` WHERE `expired` != 0 AND `expired` < %d;", DB_PREFIX, time()));
-      foreach ($admins as $admin) {
-        $GLOBALS['db']->Execute(sprintf("DELETE FROM `%s_admins` WHERE `aid` < %d;", intval($admins['aid'])));
-        $GLOBALS['db']->Execute(sprintf("DELETE FROM `%s_admins_servers_groups` WHERE `admin_id` < %d;", intval($admins['aid'])));
-      }
-      ShowBox_ajx("Успех", sprintf("Успешно удалено %d администраторов.", count($admins)), "green", "", true, $objResponse);
-      break;
-    }
+        case 'adminsexpired': {
+            $admins = $GLOBALS['db']->GetAll(sprintf("SELECT `aid` FROM `%s_admins` WHERE `expired` != 0 AND `expired` < %d;", DB_PREFIX, time()));
+            foreach ($admins as $admin) {
+                $aid = intval($admin['aid']);
+
+                $GLOBALS['db']->Execute(sprintf("DELETE FROM `%s_admins` WHERE `aid` = %d;", DB_PREFIX, $aid));
+                $GLOBALS['db']->Execute(sprintf("DELETE FROM `%s_admins_servers_groups` WHERE `admin_id` = %d;", DB_PREFIX, $aid));
+            }
+            ShowBox_ajx("Успех", sprintf("Успешно удалено %d администраторов.", count($admins)), "green", "", true, $objResponse);
+            break;
+        }
 
         case "bansexpired": {
             $GLOBALS['db']->Execute(sprintf("DELETE FROM `%s_bans` WHERE `RemoveType` IS NOT NULL", DB_PREFIX));
