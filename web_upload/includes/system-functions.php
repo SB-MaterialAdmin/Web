@@ -894,22 +894,22 @@ function sizeFormat($size)
 {
 	if($size<1024)
 	{
-		return $size." bytes";
+		return $size." байт";
 	}
 	else if($size<(1024*1024))
 	{
 		$size=round($size/1024,1);
-		return $size." KB";
+		return $size." Кбайт";
 	}
 	else if($size<(1024*1024*1024))
 	{
 		$size=round($size/(1024*1024),2);
-		return $size." MB";
+		return $size." Мбайт";
 	}
 	else
 	{
 		$size=round($size/(1024*1024*1024),2);
-		return $size." GB";
+		return $size." Гбайт";
 	}
 }
 
