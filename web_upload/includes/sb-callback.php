@@ -3072,7 +3072,7 @@ function Maintenance($type) {
         }
         
         case "cleancountrycache": {
-            $GLOBALS['db']->Execute("UPDATE `sb_bans` SET `country` = NULL;");
+            $GLOBALS['db']->Execute("UPDATE `" . DB_PREFIX . "_bans` SET `country` = NULL;");
             ShowBox_ajx("Успех", "Кеш стран банлиста очищен успешно.<br /><br /><span style=\"color: #f00;\">Внимание!</span> Это может отрицательно сказаться на первой загрузке каждой страницы Вашего банлиста. Рекомендуем произвести операцию \"Обновить кеш стран в банлисте\".", "green", "", true, $objResponse);
             break;
         }
@@ -3142,7 +3142,7 @@ function Maintenance($type) {
     }
 
     case "vouchers": {
-      $GLOBALS['db']->Execute(sprintf("DELETE FROM `%s_vay4er` WHERE `activ` != 1"));
+      $GLOBALS['db']->Execute(sprintf("DELETE FROM `%s_vay4er` WHERE `activ` != 1", DB_PREFIX));
       ShowBox_ajx("Успех", "Все использованные ваучеры успешно удалены.", "green", "", true, $objResponse);
       break;
     }
