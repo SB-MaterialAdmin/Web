@@ -223,7 +223,7 @@
 									<div class="form-group col-sm-12 m-b-5">
 										<label class="col-sm-4 control-label"><i class="zmdi zmdi-circle-o text-left"></i> IP адрес</label>
 										<div class="col-sm-8">
-											{$ban.ip}
+											<a href="https://whatismyipaddress.com/ip/{$ban.ip}" target="_blank" title="Просмотреть детали об IP-адресе">{$ban.ip}</a>
 										</div>
 									</div>
 									{/if}
