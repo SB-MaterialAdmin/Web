@@ -568,7 +568,7 @@ while (!$res->EOF)
 	if (strlen($res->fields['ban_ip']) < 7)
 		$data['ip'] = 'none';
 	else
-		$data['ip'] =  $data['country'] . '&nbsp;' . $res->fields['ban_ip'];
+		$data['ip'] =  $res->fields['ban_ip'];
 
 	if ($res->fields['ban_length'] == 0)
 		$data['expires'] = 'never';
