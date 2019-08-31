@@ -2308,7 +2308,7 @@ function AddBan($nickname, $type, $steam, $ip, $length, $dfile, $dname, $reason,
         foreach($admchk as $admin)
             if($admin['authid'] == $steam && $userbank->GetProperty('srv_immunity') < $admin['srv_immunity'])
             {
-                $objResponse->addScript("ShowBox('Ошибка', 'SteamID: админ ".$admin['user']." ($steam) под иммунитетом.', 'red', '');");
+                $objResponse->addScript("ShowBox('Ошибка', 'SteamID: админ ".$admin['user']." ($steam) под иммунитетом.', 'red', '', true);");
                 return $objResponse;
             }
   }
@@ -3797,7 +3797,7 @@ function AddBlock($nickname, $type, $steam, $length, $reason)
   
   if(intval($chk[0]) > 0)
   {
-    $objResponse->addScript("ShowBox('Ошибка', 'SteamID: $steam уже заблокирован.', 'red', '');");
+    $objResponse->addScript("ShowBox('Ошибка', 'SteamID: $steam уже заблокирован.', 'red', '', true);");
     return $objResponse;
   }
 
