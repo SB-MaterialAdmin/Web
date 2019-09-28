@@ -30,6 +30,15 @@ include_once("../init.php");
 include_once("../includes/system-functions.php");
 global $theme, $userbank;
 
+if (\App::options()->demoEnabled == false)
+{
+  http_response_code(400);
+  header('X-DenyReason: Disabled feature');
+  echo('This action cannot be completed: Demos disabled');
+
+  return;
+}
+
 if (!$userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_BAN|ADMIN_EDIT_OWN_BANS|ADMIN_EDIT_GROUP_BANS|ADMIN_EDIT_ALL_BANS))
 {
     $log = new CSystemLog("w", "Попытка взлома", $userbank->GetProperty('user') . " пытался загрузить демо, не имея на это прав.");
@@ -57,5 +66,3 @@ $theme->assign("form_name", "demup");
 $theme->assign("formats", "DEM, ZIP, RAR, 7Z, BZ2 или GZ");
 
 $theme->display('page_uploadfile.tpl');
-?>
-

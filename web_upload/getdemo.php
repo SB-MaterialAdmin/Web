@@ -1,6 +1,15 @@
 <?php
 require_once('init.php');
 
+if (\App::options()->demoEnabled == false)
+{
+  http_response_code(400);
+  header('X-DenyReason: Disabled feature');
+  echo('This action cannot be completed: Demos disabled');
+
+  return;
+}
+
 $id   = filterInput(INPUT_GET, 'id',    FILTER_SANITIZE_NUMBER_INT);
 $type = filterInput(INPUT_GET, 'type',  FILTER_SANITIZE_STRING);
 if(is_null($id) || is_null($type))

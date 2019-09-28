@@ -143,6 +143,7 @@
 					<div id="demo_link.msg"></div>
 				</div>
 			</div>
+			{if $demoEnabled}
 			<div class="form-group m-b-5">
 				<label class="col-sm-3 control-label">{help_icon title="Загрузить демо" message="Кликните тут, чтобы загрузить демо."} Загрузить демо</label>
 				<div class="col-sm-9 p-t-10">
@@ -166,7 +167,7 @@
 					</div>
 				</div>
 			</div>
-
+			{/if}
 			
 			
 		</div>

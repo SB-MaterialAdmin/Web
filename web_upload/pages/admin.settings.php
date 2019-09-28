@@ -302,6 +302,7 @@ else
 			$alladmininfos = (isset($_POST['allow_admininfo']) && $_POST['allow_admininfo'] == "on" ? 1 : 0);
 
 			$old_serverside = (isset($_POST['old_serverside']) && $_POST['old_serverside'] == "on" ? 1 : 0);
+			$demoEnabled = (isset($_POST['demoEnabled']) && $_POST['demoEnabled'] == 'on' ? 1 : 0);
 			
 			$admin_warns = (isset($_POST['admin_warns']) && $_POST['admin_warns'] == "on" ? 1 : 0);
 			
@@ -315,6 +316,7 @@ else
 											(" . (int)$alladmininfos . ", 'config.changeadmininfos'),
 											(" . (int)$adminrehash . ", 'config.enableadminrehashing'),
 											(" . (int)$old_serverside . ", 'feature.old_serverside'),
+											(" . (int)$demoEnabled . ", 'demoEnabled'),
 											(" . (int)$admin_warns . ", 'admin.warns'),
 											(" . (int)$_POST['admin_warns_max'] . ", 'admin.warns.max');");
 
@@ -369,6 +371,7 @@ else
 		$theme->assign('old_serverside', ($GLOBALS['config']['feature.old_serverside'] == "1"));
 		$theme->assign('maxWarnings', $GLOBALS['config']['admin.warns.max']);
 		$theme->assign('warnings_enabled', ($GLOBALS['config']['admin.warns'] == "1"));
+		$theme->assign('demoEnabled', (\App::options()->demoEnabled == 1));
 		$theme->display('page_admin_settings_features.tpl');
 	echo '</div>';
 	#########/[Features Page]###############

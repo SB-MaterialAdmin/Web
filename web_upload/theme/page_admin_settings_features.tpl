@@ -101,6 +101,7 @@
 				</div>
 				
 				{display_material_checkbox name="old_serverside" help_title="Режим совместимости с плагинами SB" help_text="Переключает веб-панель в режим совместимости со старой серверной частью SourceBans."}
+				{display_material_checkbox name="demoEnabled" help_title="Демо-записи" help_text="Разрешает загрузку демо-записей на веб-сайт."}
 				
 				<div class="form-group form-inline m-b-5">
 					<label for="admin_warns" class="col-sm-3 control-label">{help_icon title="Предупреждения" message="Позволяет включить систему предупреждений для Администраторов."} Предупреждения</label>
@@ -131,6 +132,7 @@
 
 {if $old_serverside}<script>$('old_serverside').checked = true;</script>{/if}
 {if $warnings_enabled}<script>$('admin_warns').checked = true;</script>{/if}
+{if $demoEnabled}<script>$('demoEnabled').checked = true;</script>{/if}
 
 {literal}
 <script>$('admin_warns').onclick = function() {

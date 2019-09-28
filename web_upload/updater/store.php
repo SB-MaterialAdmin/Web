@@ -55,4 +55,5 @@ return [
   523 =>  '523.php',
   524 =>  '524.php', // drop summertime support
   525 =>  '525.php', // reset default TZ
+  526 =>  '526.php', // demo enable feature
 ];

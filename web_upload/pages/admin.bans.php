@@ -91,6 +91,7 @@ echo '<div id="admin-page-content">';
 	// Add Ban
 echo '<div id="0" style="display:none;">';
 $theme->assign('permission_addban', $userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_BAN));
+$theme->assign('demoEnabled', (\App::options()->demoEnabled == true));
 $theme->assign('customreason', ((isset($GLOBALS['config']['bans.customreasons'])&&$GLOBALS['config']['bans.customreasons']!="")?unserialize($GLOBALS['config']['bans.customreasons']):false));
 $theme->display('page_admin_bans_add.tpl');
 echo '</div>';
