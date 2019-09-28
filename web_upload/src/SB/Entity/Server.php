@@ -8,11 +8,20 @@
 namespace SB\Entity;
 
 use Framework\Entity\AbstractEntity;
+use Spot\Mapper;
+use Spot\Entity;
 
 /**
  * FIELDS
- * @property string $id
- * @property array $data
+ * @property integer        $id
+ * @property integer        $priority
+ * @property string         $ip
+ * @property integer        $port
+ * @property integer        $modid
+ * @property integer        $enabled
+ *
+ * RELATIONS
+ * @property \SB\Entity\Mod $mod
  */
 class Server extends AbstractEntity
 {
@@ -21,9 +30,19 @@ class Server extends AbstractEntity
     public static function fields()
     {
         return [
-            'id'    => [
-                
-            ]
+            'id'        =>  ['type'     => 'integer',   'primary'   => true,    'autoincrement' => true],
+            'priority'  =>  ['type'     => 'integer',   'required'  => true,    'default'       => 0],
+            'ip'        =>  ['type'     => 'string',    'required'  => true],
+            'port'      =>  ['type'     => 'integer',   'required'  => true,    'default'       => 27015,   'unsigned'  => true],
+            'modid'     =>  ['type'     => 'integer',   'required'  => true],
+            'enabled'   =>  ['type'     => 'boolean',   'required'  => true,    'default'       => true,    'unsigned'  => true],
+        ];
+    }
+
+    public static function relations(Mapper $mapper, Entity $entity)
+    {
+        return [
+            'mod'   => $mapper->belongsTo($entity, '\SB\Entity\Mod', 'modid'),
         ];
     }
 }
