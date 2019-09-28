@@ -3,8 +3,8 @@
 namespace SB\Entity;
 
 use Framework\Entity\AbstractEntity;
-use Spot\Mapper;
-use Spot\Entity;
+use Spot\MapperInterface;
+use Spot\EntityInterface;
 
 /**
  * FIELDS
@@ -62,7 +62,7 @@ abstract class AbstractPunishment extends AbstractEntity
         ];
     }
 
-    public static function relations(Mapper $mapper, Entity $entity)
+    public static function relations(MapperInterface $mapper, EntityInterface $entity)
     {
         return [
             'admin'             =>  $mapper->belongsTo($entity, '\SB\Entity\Administrator', 'aid'),

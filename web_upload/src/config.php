@@ -23,7 +23,7 @@ $config['settings']['database']['connections'] = [
 
 // You should uncomment this line and set own Application Key.
 // Application key uses when Core builds some paths.
-$config['settings']['app_key'] = md5('FrameworkApp');
+$config['settings']['app_key'] = '81ca9f278e43fc9198b7945a47c2efec'; // md5('SourceBans')
 
 // Uncomment this line if you have problems with running site.
 $config['settings']['debug'] = true;

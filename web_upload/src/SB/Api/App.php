@@ -9,6 +9,7 @@ use Slim\Http\Request;
 use Slim\Http\Response;
 
 use Framework\Util\Arr;
+use SB\Api\Middleware\ServerTokenMiddleware;
 
 class App extends \Framework\App
 {
@@ -50,6 +51,7 @@ class App extends \Framework\App
 
     protected function buildMiddlewares()
     {
-        
+        $this->slim->add(new ServerTokenMiddleware());
+        parent::buildMiddlewares();
     }
 }

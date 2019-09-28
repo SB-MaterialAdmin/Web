@@ -8,8 +8,8 @@
 namespace SB\Entity;
 
 use Framework\Entity\AbstractEntity;
-use Spot\Mapper;
-use Spot\Entity;
+use Spot\MapperInterface;
+use Spot\EntityInterface;
 
 /**
  * FIELDS
@@ -30,19 +30,29 @@ class Server extends AbstractEntity
     public static function fields()
     {
         return [
-            'id'        =>  ['type'     => 'integer',   'primary'   => true,    'autoincrement' => true],
+            'sid'       =>  ['type'     => 'integer',   'primary'   => true,    'autoincrement' => true],
             'priority'  =>  ['type'     => 'integer',   'required'  => true,    'default'       => 0],
             'ip'        =>  ['type'     => 'string',    'required'  => true],
             'port'      =>  ['type'     => 'integer',   'required'  => true,    'default'       => 27015,   'unsigned'  => true],
             'modid'     =>  ['type'     => 'integer',   'required'  => true],
             'enabled'   =>  ['type'     => 'boolean',   'required'  => true,    'default'       => true,    'unsigned'  => true],
+
+            'token'     =>  ['type'     => 'string',    'required'  => true,    'notnull'       => false,   'default'       => ''],
         ];
     }
 
-    public static function relations(Mapper $mapper, Entity $entity)
+    public static function relations(MapperInterface $mapper, EntityInterface $entity)
     {
         return [
             'mod'   => $mapper->belongsTo($entity, '\SB\Entity\Mod', 'modid'),
         ];
+    }
+
+    public function regenerateToken(&$token = null)
+    {
+        $token = base64_encode(random_bytes(48));
+
+        $this->token = $token;
+        $this->save();
     }
 }
