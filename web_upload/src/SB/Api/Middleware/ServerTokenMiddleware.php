@@ -9,13 +9,7 @@ class ServerTokenMiddleware extends AbstractMiddleware
 {
     protected function preHandle()
     {
-        $headers = $this->request->getHeaders();
-        $token = '';
-        if (Arr::keyExists($headers, 'X-ServerToken'))
-        {
-            $token = $headers['X-ServerToken'];
-        }
-
+        $token = $this->request->getHeaderLine('X-ServerToken');
         $server = \Framework::container()->get('database')
             ->mapper('\SB\Entity\Server')
             ->first(['token'    => $token]);
@@ -31,6 +25,6 @@ class ServerTokenMiddleware extends AbstractMiddleware
             ], 400));
         }
 
-        $this->request->set('server', $server);
+        return $this->request->withAttribute('server', $server);
     }
 }
