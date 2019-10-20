@@ -52,6 +52,10 @@ abstract class AbstractMiddleware
 		{
 			$this->response = $response;
 		}
+		else if ($response instanceof Request)
+        {
+            $this->request = $response;
+        }
 	}
 
 	/**
