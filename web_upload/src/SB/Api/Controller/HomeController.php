@@ -13,6 +13,7 @@ class HomeController extends \Framework\Controller\AbstractController
 	{
 		return $this->json([
 			'success'	=> true,
+			'server'	=> $this->server()->toArray(),
 		]);
 	}
 }

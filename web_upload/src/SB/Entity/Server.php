@@ -7,13 +7,12 @@
 
 namespace SB\Entity;
 
-use Framework\Entity\AbstractEntity;
 use Spot\MapperInterface;
 use Spot\EntityInterface;
 
 /**
  * FIELDS
- * @property integer        $id
+ * @property integer        $sid
  * @property integer        $priority
  * @property string         $ip
  * @property integer        $port
@@ -55,4 +54,12 @@ class Server extends AbstractEntity
         $this->token = $token;
         $this->save();
     }
+
+    public function getAdministrators()
+    {
+        return $this->getMapper('AdminServerGroup')
+            ->where(['server_id' => $this->sid])
+            ->with(['administrator'])
+            ->all();
+    }// 322776
 }

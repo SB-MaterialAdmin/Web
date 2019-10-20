@@ -11,5 +11,6 @@ class IndexRouteGroup extends AbstractIndexRouteGroup
 		$this->get('/', 'HomeController:index');
 
 		$this->subGroup(new DebugRouteGroup());
+		$this->subGroup(new ServerRouteGroup());
 	}
 }

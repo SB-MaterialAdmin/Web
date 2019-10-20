@@ -12,7 +12,9 @@ class ServerTokenMiddleware extends AbstractMiddleware
         $token = $this->request->getHeaderLine('X-ServerToken');
         $server = \Framework::container()->get('database')
             ->mapper('\SB\Entity\Server')
-            ->first(['token'    => $token]);
+            ->where(['token' => $token])
+            ->with('mod')
+            ->first();
 
         if (!$server)
         {
