@@ -48,3 +48,6 @@ Temporary Items
 
 # Composer
 web_upload/src/vendor
+
+# phpStorm
+.idea
