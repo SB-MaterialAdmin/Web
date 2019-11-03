@@ -164,7 +164,13 @@ while (!$res->EOF)
 	$info['search_link'] = "index.php?p=commslist&advSearch=" . $info['authid'] . "&advType=steamid&Submit";
 	$info['link_url'] = "window.location = '" . $info['search_link'] . "';";
 	$info['short_name'] = trunc($info['name'], 25, false);
-	$info['type'] = $res->fields['type'] == 2 ? "images/type_c.png" : "images/type_v.png";
+
+	switch ($res->fields['type'])
+	{
+		case 1:	$info['type'] = 'images/type_v.png';
+		case 2: $info['type'] = 'images/type_c.png';
+		case 3: $info['type'] = 'images/type_silence.png';
+	}
 		
 	if($res->fields[14] == 'D' || $res->fields[14] == 'U' || $res->fields[14] == 'E' || ($res->fields[6] && $res->fields[5] < time()))
 	{
