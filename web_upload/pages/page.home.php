@@ -167,9 +167,9 @@ while (!$res->EOF)
 
 	switch (intval($res->fields['type']))
 	{
-		case 1:	$info['type'] = 'images/type_v.png';
-		case 2: $info['type'] = 'images/type_c.png';
-		case 3: $info['type'] = 'images/type_silence.png';
+		case 1:	$info['type'] = 'images/type_v.png'; break;
+		case 2: $info['type'] = 'images/type_c.png'; break;
+		case 3: $info['type'] = 'images/type_silence.png'; break;
 	}
 		
 	if($res->fields[14] == 'D' || $res->fields[14] == 'U' || $res->fields[14] == 'E' || ($res->fields[6] && $res->fields[5] < time()))
