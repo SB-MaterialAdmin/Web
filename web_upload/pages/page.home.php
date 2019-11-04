@@ -165,7 +165,7 @@ while (!$res->EOF)
 	$info['link_url'] = "window.location = '" . $info['search_link'] . "';";
 	$info['short_name'] = trunc($info['name'], 25, false);
 
-	switch ($res->fields['type'])
+	switch (intval($res->fields['type']))
 	{
 		case 1:	$info['type'] = 'images/type_v.png';
 		case 2: $info['type'] = 'images/type_c.png';
