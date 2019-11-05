@@ -529,11 +529,14 @@ while (!$res->EOF)
 
 	switch($data['type'])
 	{
+		case 3:
+			$data['unban_link'] = CreateLinkR('Снять наказание (мут + гаг)',"#","", "_self", false, "UnGag('".$res->fields['ban_id']."', '".$_SESSION['banlist_postkey']."', '".$pagelink."', '".StripQuotes($data['player'])."', 1);return false;");
+			break;
 		case 2:
-			$data['unban_link'] = CreateLinkR('РазГаг',"#","", "_self", false, "UnGag('".$res->fields['ban_id']."', '".$_SESSION['banlist_postkey']."', '".$pagelink."', '".StripQuotes($data['player'])."', 1);return false;");
+			$data['unban_link'] = CreateLinkR('Снять наказание (гаг)',"#","", "_self", false, "UnGag('".$res->fields['ban_id']."', '".$_SESSION['banlist_postkey']."', '".$pagelink."', '".StripQuotes($data['player'])."', 1);return false;");
 			break;
 		case 1:
-			$data['unban_link'] = CreateLinkR('РазМут',"#","", "_self", false, "UnMute('".$res->fields['ban_id']."', '".$_SESSION['banlist_postkey']."', '".$pagelink."', '".StripQuotes($data['player'])."', 1);return false;");
+			$data['unban_link'] = CreateLinkR('Снять наказание (мут)',"#","", "_self", false, "UnMute('".$res->fields['ban_id']."', '".$_SESSION['banlist_postkey']."', '".$pagelink."', '".StripQuotes($data['player'])."', 1);return false;");
 			break;
 		default:
 			break;
