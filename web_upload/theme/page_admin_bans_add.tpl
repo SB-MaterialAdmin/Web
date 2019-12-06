@@ -55,34 +55,11 @@
 				</div>
 				<div class="col-sm-3 p-t-5">
 					<select id="listReason" name="listReason" TABINDEX=4 class="selectpicker" onChange="changeReason(this[this.selectedIndex].value);">
-						  <option value="" selected> -- Выберите причину -- </option>
-						  <optgroup label="Читы">
-							<option value="Aimbot">Aimbot</option>
-							<option value="Antirecoil">Antirecoil</option>
-							<option value="Wallhack">Wallhack</option>
-							<option value="Spinhack">Spinhack</option>
-							<option value="Multi-Hack">Multi-Hack</option>
-							<option value="No Smoke">No Smoke</option>
-							<option value="No Flash">No Flash</option>
-						  </optgroup>
-						  <optgroup label="Поведение">
-							<option value="Убийство союзников">Убийство союзников</option>
-								<option value="Ослепление союзников">Ослепление союзников</option>
-								<option value="Спамил В Мик/Чат">Спамил В Мик/Чат</option>
-								<option value="Неуместный спрей">Неуместный спрей</option>
-								<option value="Неуместный язык">Неуместный язык</option>
-								<option value="Неуместный ник">Неуместный ник</option>
-								<option value="Игнорирование админа">Игнорирование админа</option>
-								<option value="Блокировка союзников">Блокировка союзников</option>
-								<option value="Мат/Оскорбления">Мат/Оскорбления</option>
-								<option value="Реклама">Реклама</option>
-						  </optgroup>
+						  <option value="" selected>-- Выберите причину --</option>
 						  {if $customreason}
-						  <optgroup label="Custom">
 						  {foreach from="$customreason" item="creason"}
 							<option value="{$creason}">{$creason}</option>
 						  {/foreach}
-						  </optgroup>
 						  {/if}
 						  <option value="other">Другая причина</option>
 					</select>

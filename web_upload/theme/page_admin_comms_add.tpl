@@ -51,15 +51,11 @@
 				<div class="col-sm-3 p-t-5">
 					<select class="selectpicker" id="listReason" name="listReason" onChange="changeReason(this[this.selectedIndex].value);">
 						<option value="" selected> -- Выберите причину -- </option>
-						<optgroup label="Нарушение">
-							<option value="Непристойное общение">Непристойное общение</option>
-							<option value="Оскорбление игроков">Оскорбление игроков</option>
-							<option value="Неуважение администрации">Неуважение администрации</option>
-							<option value="Неприемлимое общение">Неприемлимое общение</option>
-							<option value="Торговля">Торговля</option>
-							<option value="Спам">Спам</option>
-							<option value="Реклама">Реклама</option>
-						</optgroup>
+						{if $customreason}
+							{foreach from="$customreason" item="creason"}
+								<option value="{$creason}">{$creason}</option>
+							{/foreach}
+						{/if}
 						<option value="other">Своя причина</option>
 					</select>
 				</div>
