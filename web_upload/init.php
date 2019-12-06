@@ -66,6 +66,8 @@ include_once(INCLUDES_PATH . '/classes/Autoloader.php');
 \Autoloader::RegisterPath(INCLUDES_PATH . '/classes');
 \Autoloader::RegisterPath(INCLUDES_PATH . '/cron');
 
+stream_wrapper_register('sb', 'StreamWrapper');
+
 include_once(USER_DATA . '/db.php');
 
 // ---------------------------------------------------
@@ -295,8 +297,6 @@ $FlagsStatement->EndData();
 // ---------------------------------------------------
 // Setup our templater
 // ---------------------------------------------------
-require(INCLUDES_PATH . '/CSmarty.php');
-
 global $theme, $userbank;
 
 if(!@is_writable(SB_THEME_COMPILE))
