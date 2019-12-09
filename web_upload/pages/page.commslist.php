@@ -231,7 +231,7 @@ if (isset($_GET['searchText']))
 
 	$res = $GLOBALS['db']->Execute(
 		"SELECT bid ban_id, CO.type, CO.authid, CO.name player_name, created ban_created, ends ban_ends, length ban_length, reason ban_reason, CO.ureason unban_reason, CO.aid, AD.gid AS gid, adminIp, CO.sid ban_server, RemovedOn, RemovedBy, RemoveType row_type,
-		SE.ip server_ip, AD.user admin_name, MO.icon as mod_icon,
+		SE.ip server_ip, AD.user admin_name, AD.comment admin_comm, AD.skype admin_skype, AD.vk admin_vk, MO.icon as mod_icon,
 		CAST(MID(CO.authid, 9, 1) AS UNSIGNED) + CAST('76561197960265728' AS UNSIGNED) + CAST(MID(CO.authid, 11, 10) * 2 AS UNSIGNED) AS community_id,
 		(SELECT count(*) FROM ".DB_PREFIX."_comms as BH WHERE (BH.authid = CO.authid AND BH.authid != '' AND BH.authid IS NOT NULL AND BH.type = 1)) as mute_count,
 		(SELECT count(*) FROM ".DB_PREFIX."_comms as BH WHERE (BH.authid = CO.authid AND BH.authid != '' AND BH.authid IS NOT NULL AND BH.type = 2)) as gag_count,
@@ -253,7 +253,7 @@ elseif(!isset($_GET['advSearch']))
 {
 	$res = $GLOBALS['db']->Execute(
 	"SELECT bid ban_id, CO.type, CO.authid, CO.name player_name, created ban_created, ends ban_ends, length ban_length, reason ban_reason, CO.ureason unban_reason, CO.aid, AD.gid AS gid, adminIp, CO.sid ban_server, RemovedOn, RemovedBy, RemoveType row_type,
-		SE.ip server_ip, AD.user admin_name, MO.icon as mod_icon,
+		SE.ip server_ip, AD.user admin_name, AD.comment admin_comm, AD.skype admin_skype, AD.vk admin_vk, MO.icon as mod_icon,
 		CAST(MID(CO.authid, 9, 1) AS UNSIGNED) + CAST('76561197960265728' AS UNSIGNED) + CAST(MID(CO.authid, 11, 10) * 2 AS UNSIGNED) AS community_id,
 		(SELECT count(*) FROM ".DB_PREFIX."_comms as BH WHERE (BH.authid = CO.authid AND BH.authid != '' AND BH.authid IS NOT NULL AND BH.type = 1)) as mute_count,
 		(SELECT count(*) FROM ".DB_PREFIX."_comms as BH WHERE (BH.authid = CO.authid AND BH.authid != '' AND BH.authid IS NOT NULL AND BH.type = 2)) as gag_count,
@@ -375,7 +375,7 @@ if(isset($_GET['advSearch']))
 
 		$res = $GLOBALS['db']->Execute(
 			"SELECT CO.bid ban_id, CO.type, CO.authid, CO.name player_name, created ban_created, ends ban_ends, length ban_length, reason ban_reason, CO.ureason unban_reason, CO.aid, AD.gid AS gid, adminIp, CO.sid ban_server, RemovedOn, RemovedBy, RemoveType row_type,
-			SE.ip server_ip, AD.user admin_name, MO.icon as mod_icon,
+			SE.ip server_ip, AD.user admin_name, AD.comment admin_comm, AD.skype admin_skype, AD.vk admin_vk, MO.icon as mod_icon,
 			CAST(MID(CO.authid, 9, 1) AS UNSIGNED) + CAST('76561197960265728' AS UNSIGNED) + CAST(MID(CO.authid, 11, 10) * 2 AS UNSIGNED) AS community_id,
 			(SELECT count(*) FROM ".DB_PREFIX."_comms as BH WHERE (BH.authid = CO.authid AND BH.authid != '' AND BH.authid IS NOT NULL AND BH.type = 1)) as mute_count,
 			(SELECT count(*) FROM ".DB_PREFIX."_comms as BH WHERE (BH.authid = CO.authid AND BH.authid != '' AND BH.authid IS NOT NULL AND BH.type = 2)) as gag_count,
@@ -452,7 +452,15 @@ while (!$res->EOF)
 	if(isset($GLOBALS['config']['banlist.hideadminname']) && $GLOBALS['config']['banlist.hideadminname'] == "1" && !$userbank->is_admin())
 		$data['admin'] = false;
 	else
+	{
 		$data['admin'] = stripslashes($res->fields['admin_name']);
+		$data['admin_comm'] = stripslashes($res->fields['admin_comm']);
+		$data['admin_gid'] = stripslashes($res->fields['gid']);
+		$data['admin_vk'] = stripslashes($res->fields['admin_vk']);
+		$data['admin_authid'] = stripslashes($res->fields['admin_authid']);
+		$data['admin_authid_link'] = CommunityID($data['admin_authid']);
+		$data['admin_skype'] = stripslashes($res->fields['admin_skype']);
+	}
 	$data['reason'] = stripslashes($res->fields['ban_reason']);
 
 	if ($res->fields['ban_length'] > 0)
@@ -777,5 +785,6 @@ $theme->assign('hideadminname', (isset($GLOBALS['config']['banlist.hideadminname
 $theme->assign('general_unban', $userbank->HasAccess(ADMIN_OWNER|ADMIN_UNBAN|ADMIN_UNBAN_OWN_BANS|ADMIN_UNBAN_GROUP_BANS));
 $theme->assign('can_delete', $userbank->HasAccess(ADMIN_DELETE_BAN));
 $theme->assign('view_bans', ($userbank->HasAccess(ADMIN_OWNER|ADMIN_EDIT_ALL_BANS|ADMIN_EDIT_OWN_BANS|ADMIN_EDIT_GROUP_BANS|ADMIN_UNBAN|ADMIN_UNBAN_OWN_BANS|ADMIN_UNBAN_GROUP_BANS|ADMIN_DELETE_BAN)));
+$theme->assign('admininfos', $GLOBALS['config']['config.enableadmininfos']);
 $theme->display('page_comms.tpl');
 ?>
