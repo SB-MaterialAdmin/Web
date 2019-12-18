@@ -458,7 +458,17 @@ while (!$res->EOF)
 		$data['admin_gid'] = stripslashes($res->fields['gid']);
 		$data['admin_vk'] = stripslashes($res->fields['admin_vk']);
 		$data['admin_authid'] = stripslashes($res->fields['admin_authid']);
-		$data['admin_authid_link'] = \CSteamId::factory($data['admin_authid'])->CommunityID;
+
+		// This should fix cases when admin doesn't exists in database.
+		// ... i guess ...
+		try {
+			$data['admin_authid_link'] = \CSteamId::factory($data['admin_authid'])->CommunityID;
+		}
+		catch (InvalidArgumentException $e)
+		{
+			$data['admin_authid_link'] = null;
+		}
+
 		$data['admin_skype'] = stripslashes($res->fields['admin_skype']);
 	}
 	$data['reason'] = stripslashes($res->fields['ban_reason']);

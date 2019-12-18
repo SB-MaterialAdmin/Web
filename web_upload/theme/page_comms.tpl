@@ -278,8 +278,6 @@
 															{/if}
 														</li>
 														{if $ban.admin != "CONSOLE"}
-														{if !empty($ban.admin)}
-														{if $admininfos}
 														<li class="p-b-5"><i class="zmdi zmdi-steam"></i> {if !empty($ban.admin_authid)}{$ban.admin_authid} (<a href="http://steamcommunity.com/profiles/{$ban.admin_authid_link}" target="_blank">Профиль</a>){else}Нет данных...{/if}</li>
 														<li class="p-b-5"><i class="zmdi zmdi-vk"></i> {if !empty($ban.admin_vk)}<a href="https://vk.com/{$ban.admin_vk}" target="_blank">Линк</a>{else}Нет данных...{/if}</li>
 														<li class="p-b-5"><i class="zmdi zmdi-account-box-o" data-toggle="tooltip" data-placement="top" title="" data-original-title="Skype"></i> {if !empty($ban.admin_skype)}{$ban.admin_skype}{else}Нет данных...{/if}</li>
@@ -293,8 +291,6 @@
 																{/if}
 															</address>
 														</li>
-														{/if}
-														{/if}
 														{/if}
 													</ul>
 												</div>
