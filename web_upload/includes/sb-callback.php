@@ -1453,7 +1453,7 @@ function AddAdmin($mask, $srv_mask, $a_name, $a_steam, $a_email, $a_password, $a
     || !validate_steam($a_steam = FriendIDToSteamID($a_steam)))))
     {
       $error++;
-      $objResponse->addAssign("steam.msg", "innerHTML", "Введите действительный Steam ID или Community ID.");
+      $objResponse->addAssign("steam.msg", "innerHTML", "Введите недействительный Steam ID или Community ID.");
       $objResponse->addScript("$('steam.msg').setStyle('display', 'block');");
     }
     else
