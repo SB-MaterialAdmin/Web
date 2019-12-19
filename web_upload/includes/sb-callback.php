@@ -2206,9 +2206,9 @@ function KickPlayer($sid, $name)
       $requri = substr($_SERVER['REQUEST_URI'], 0, strrpos($_SERVER['REQUEST_URI'], ".php")+4);
       
       if(strpos($steam, "[U:") === 0) {
-        $kick = $r->sendCommand("kickid \"".$steam."\" \"Вы были кикнуты с сервера. Перейтидте по адресу http://" . $_SERVER['HTTP_HOST'].$requri." для большей информации.\"");
+        $kick = $r->sendCommand("kickid \"".$steam."\" \"Вы были кикнуты с сервера. Перейдите по адресу http://" . $_SERVER['HTTP_HOST'].$requri." для большей информации.\"");
       } else {
-        $kick = $r->sendCommand("kickid ".$steam." \"Вы были кикнуты с сервера. Перейтидте по адресу http://" . $_SERVER['HTTP_HOST'].$requri." для большей информации.\"");
+        $kick = $r->sendCommand("kickid ".$steam." \"Вы были кикнуты с сервера. Перейдите по адресу http://" . $_SERVER['HTTP_HOST'].$requri." для большей информации.\"");
       }
 
       $log = new CSystemLog("m", "Игрок кикнут", $username . " кикнул игрока '".htmlspecialchars($name)."' (".$steam.") from ".$data['ip'].":".$data['port'].".", true, true);
