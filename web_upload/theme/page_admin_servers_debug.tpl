@@ -8,6 +8,13 @@
 			<h2>Отладка серверов</h2>
 		</div>
 
+		<div class="alert alert-info">
+			<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+			<div class="text-center" id="connection_debug_log">
+				Выводить будем СЮДА
+			</div>
+		</div>
+
 		<div class="card-body card-padding p-b-0" id="">
 			<select class="form-control" id="server" onmouseup="$('where_banned').checked = true">
 				<option label="Web Бан" value="0">Web Бан</option>
