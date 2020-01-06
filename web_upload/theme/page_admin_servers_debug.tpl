@@ -9,7 +9,7 @@
 		</div>
 
 		<div class="alert alert-info">
-			<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+			<button type="button" class="close" aria-hidden="true"></button>
 			<div class="text-center" id="connection_debug_log">
 				Выводить будем СЮДА
 			</div>
