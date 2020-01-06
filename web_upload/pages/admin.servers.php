@@ -100,6 +100,10 @@
 	
 	<div id="1" style="display:none;">
 		<?php $theme->display('page_admin_servers_add.tpl'); ?>
+    </div>
+    
+	<div id="2" style="display:none;">
+		<?php $theme->display('page_admin_servers_debug.tpl'); ?>
 	</div>
 
 </div>
