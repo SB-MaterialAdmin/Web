@@ -44,7 +44,7 @@ $mods    = array();
 /* Request all data */
 $servers = $GLOBALS['db']->GetAll(sprintf('SELECT sid,ip,port,modid FROM `%s_servers` WHERE enabled = 1', DB_PREFIX));
 $mods = $GLOBALS['db']->GetAll(sprintf('SELECT mid,name,icon,modfolder FROM `%s_mods`', DB_PREFIX));
-$admins = $GLOBALS['db']->GetAll(sprintf("SELECT aid,user,authid,srv_group,immunity,expired,vk,skype,comment,gr.server_id srv FROM `%s_admins` INNER JOIN `%s_admins_servers_groups` AS gr ON aid = admin_id", DB_PREFIX, DB_PREFIX));
+$admins = $GLOBALS['db']->GetAll(sprintf("SELECT aid,user,authid,srv_group,immunity,expired,vk,skype,comment,gr.server_id srv FROM `%s_admins` INNER JOIN `%s_admins_servers_groups` AS gr ON aid = admin_id WHERE aid > 0", DB_PREFIX, DB_PREFIX));
 
 foreach ($admins as &$admin)
     $admin['aid'] = (int)$admin['aid'];
