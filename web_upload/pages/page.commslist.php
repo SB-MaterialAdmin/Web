@@ -231,7 +231,7 @@ if (isset($_GET['searchText']))
 
 	$res = $GLOBALS['db']->Execute(
 		"SELECT bid ban_id, CO.type, CO.authid, CO.name player_name, created ban_created, ends ban_ends, length ban_length, reason ban_reason, CO.ureason unban_reason, CO.aid, AD.gid AS gid, adminIp, CO.sid ban_server, RemovedOn, RemovedBy, RemoveType row_type,
-		SE.ip server_ip, AD.user admin_name, AD.comment admin_comm, AD.skype admin_skype, AD.vk admin_vk, MO.icon as mod_icon,
+		SE.ip server_ip, AD.user admin_name, AD.comment admin_comm, AD.skype admin_skype, AD.vk admin_vk, AD.authid admin_authid, AD.gid, MO.icon as mod_icon,
 		CAST(MID(CO.authid, 9, 1) AS UNSIGNED) + CAST('76561197960265728' AS UNSIGNED) + CAST(MID(CO.authid, 11, 10) * 2 AS UNSIGNED) AS community_id,
 		(SELECT count(*) FROM ".DB_PREFIX."_comms as BH WHERE (BH.authid = CO.authid AND BH.authid != '' AND BH.authid IS NOT NULL AND BH.type = 1)) as mute_count,
 		(SELECT count(*) FROM ".DB_PREFIX."_comms as BH WHERE (BH.authid = CO.authid AND BH.authid != '' AND BH.authid IS NOT NULL AND BH.type = 2)) as gag_count,
@@ -253,7 +253,7 @@ elseif(!isset($_GET['advSearch']))
 {
 	$res = $GLOBALS['db']->Execute(
 	"SELECT bid ban_id, CO.type, CO.authid, CO.name player_name, created ban_created, ends ban_ends, length ban_length, reason ban_reason, CO.ureason unban_reason, CO.aid, AD.gid AS gid, adminIp, CO.sid ban_server, RemovedOn, RemovedBy, RemoveType row_type,
-		SE.ip server_ip, AD.user admin_name, AD.comment admin_comm, AD.skype admin_skype, AD.vk admin_vk, MO.icon as mod_icon,
+		SE.ip server_ip, AD.user admin_name, AD.comment admin_comm, AD.skype admin_skype, AD.vk admin_vk, AD.authid admin_authid, AD.gid, MO.icon as mod_icon,
 		CAST(MID(CO.authid, 9, 1) AS UNSIGNED) + CAST('76561197960265728' AS UNSIGNED) + CAST(MID(CO.authid, 11, 10) * 2 AS UNSIGNED) AS community_id,
 		(SELECT count(*) FROM ".DB_PREFIX."_comms as BH WHERE (BH.authid = CO.authid AND BH.authid != '' AND BH.authid IS NOT NULL AND BH.type = 1)) as mute_count,
 		(SELECT count(*) FROM ".DB_PREFIX."_comms as BH WHERE (BH.authid = CO.authid AND BH.authid != '' AND BH.authid IS NOT NULL AND BH.type = 2)) as gag_count,
@@ -375,7 +375,7 @@ if(isset($_GET['advSearch']))
 
 		$res = $GLOBALS['db']->Execute(
 			"SELECT CO.bid ban_id, CO.type, CO.authid, CO.name player_name, created ban_created, ends ban_ends, length ban_length, reason ban_reason, CO.ureason unban_reason, CO.aid, AD.gid AS gid, adminIp, CO.sid ban_server, RemovedOn, RemovedBy, RemoveType row_type,
-			SE.ip server_ip, AD.user admin_name, AD.comment admin_comm, AD.skype admin_skype, AD.vk admin_vk, MO.icon as mod_icon,
+			SE.ip server_ip, AD.user admin_name, AD.comment admin_comm, AD.skype admin_skype, AD.vk admin_vk, AD.authid admin_authid, AD.gid, MO.icon as mod_icon,
 			CAST(MID(CO.authid, 9, 1) AS UNSIGNED) + CAST('76561197960265728' AS UNSIGNED) + CAST(MID(CO.authid, 11, 10) * 2 AS UNSIGNED) AS community_id,
 			(SELECT count(*) FROM ".DB_PREFIX."_comms as BH WHERE (BH.authid = CO.authid AND BH.authid != '' AND BH.authid IS NOT NULL AND BH.type = 1)) as mute_count,
 			(SELECT count(*) FROM ".DB_PREFIX."_comms as BH WHERE (BH.authid = CO.authid AND BH.authid != '' AND BH.authid IS NOT NULL AND BH.type = 2)) as gag_count,
@@ -404,45 +404,45 @@ if (!$res)
 
 $view_comments = false;
 $bans = array();
+function CommunityID($steamid_id){
+	$parts = explode(':', str_replace('STEAM_', '' ,$steamid_id)); 
+	return bcadd(bcadd('76561197960265728', $parts['1']), bcmul($parts['2'], '2')); 
+}
 while (!$res->EOF)
 {
 	$data = array();
 
 	$data['ban_id'] = $res->fields['ban_id'];
-	$data['type'] = $res->fields['type'];
-	$data['c_time'] = $res->fields['c_time'];
 
-	$mute_count = (int)$res->fields['mute_count'];
-	$gag_count = (int)$res->fields['gag_count'];
-	$history_count = $mute_count + $gag_count;
-
-	$delimiter = "";
-
-	// заюзаем иконку страны под отображение TYPE_MUTE or TYPE_GAG
-	switch((int)$data['type'])
+	if(!empty($res->fields['ban_ip']) )
 	{
-		case 1:
-			$data['type_icon'] = '<img src="images/type_v.png" alt="Микрофон" border="0" align="absmiddle" />';
-			$mute_count = $mute_count - 1;
-			break;
-		case 2:
-			$data['type_icon'] = '<img src="images/type_c.png" alt="Чат" border="0" align="absmiddle" />';
-			$gag_count = $gag_count - 1;
-			break;
-		case 3:
-			$data['type_icon'] = '<img src="images/type_silence.png" alt="Микрофон и чат" border=0 align="absmiddle" />';
-			$gag_count -= 1;
-			$mute_count -= 1;
-			break;
-		default:
-			$data['type_icon'] = '<img src="images/country/zz.gif" alt="Неизвестный тип блока" border="0" align="absmiddle" />';
-			break;
+		if(!empty($res->fields['ban_country']) && $res->fields['ban_country'] != ' ')
+		{
+			$data['country'] = '<img src="images/country/' .strtolower($res->fields['ban_country']) . '.gif" alt="' . $res->fields['ban_country'] . '" border="0" align="absmiddle" />';
+	    }
+	    elseif(isset($GLOBALS['config']['banlist.nocountryfetch']) && $GLOBALS['config']['banlist.nocountryfetch'] == "0")
+		{
+			$country = FetchIp($res->fields['ban_ip']);
+			$edit = $GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_bans SET country = ?
+				                            WHERE bid = ?",array($country,$res->fields['ban_id']));
+
+			$data['country'] = '<img src="images/country/' . strtolower($country) . '.gif" alt="' . $country . '" border="0" align="absmiddle" />';
+		}
+		else
+		{
+			$data['country'] = '<img src="images/country/zz.gif" alt="Страна неизвестна" border="0" align="absmiddle" />';
+		}
+	}
+	else
+	{
+		$data['country'] = '<img src="images/country/zz.gif" alt="Страна неизвестна" border="0" align="absmiddle" />';
 	}
 
 	//$data['ban_date'] = SBDate($dateformat,$res->fields['ban_created']);
 	$data['ban_date'] = SBDate($GLOBALS['config']['config.dateformat'],$res->fields['ban_created']);
 	$data['ban_date_info'] = SBDate($GLOBALS['config']['config.dateformat_ver2'],$res->fields['ban_created']);
 	$data['player'] = addslashes($res->fields['player_name']);
+	$data['type'] = $res->fields['type'];
 	$data['steamid'] = $res->fields['authid'];
 	$data['communityid'] = $res->fields['community_id'];
 	$steam2id = $data['steamid'];
@@ -451,46 +451,38 @@ while (!$res->EOF)
 
 	if(isset($GLOBALS['config']['banlist.hideadminname']) && $GLOBALS['config']['banlist.hideadminname'] == "1" && !$userbank->is_admin())
 		$data['admin'] = false;
-	else
-	{
+	else{
 		$data['admin'] = stripslashes($res->fields['admin_name']);
 		$data['admin_comm'] = stripslashes($res->fields['admin_comm']);
 		$data['admin_gid'] = stripslashes($res->fields['gid']);
 		$data['admin_vk'] = stripslashes($res->fields['admin_vk']);
 		$data['admin_authid'] = stripslashes($res->fields['admin_authid']);
-
-		// This should fix cases when admin doesn't exists in database.
-		// ... i guess ...
-		try {
-			$data['admin_authid_link'] = \CSteamId::factory($data['admin_authid'])->CommunityID;
-		}
-		catch (InvalidArgumentException $e)
-		{
-			$data['admin_authid_link'] = null;
-		}
-
+		$data['admin_authid_link'] = CommunityID($data['admin_authid']);
 		$data['admin_skype'] = stripslashes($res->fields['admin_skype']);
 	}
 	$data['reason'] = stripslashes($res->fields['ban_reason']);
 
-	if ($res->fields['ban_length'] > 0)
+	$data['ban_length'] = $res->fields['ban_length'] == 0 ? 'Навсегда' : SecondsToString(intval($res->fields['ban_length']));
+
+// Custom "listtable_1_banned" & "listtable_1_permanent" addition entries
+// Comment the 14 lines below out if they cause issues
+	if ($res->fields['ban_length'] == 0)
 	{
-		$data['ban_length'] = SecondsToString(intval($res->fields['ban_length']));
-		$data['expires'] = SBDate($dateformat,$res->fields['ban_ends']);
-	}
-	else if ($res->fields['ban_length'] == 0)
-	{
-		$data['ban_length'] = 'Навсегда';
-		$data['expires'] = 'Никогда';
+		$data['expires'] = 'never';
+		$data['class'] = "danger c-white";
+		$data['ub_reason'] = "";
+		$data['unbanned'] = false;
 	}
 	else
 	{
-		$data['ban_length'] = 'Сессия';
-		$data['expires'] = 'н/д';
+		$data['expires'] = SBDate($dateformat,$res->fields['ban_ends']);
+		$data['class'] = "";
+		$data['ub_reason'] = "";
+		$data['unbanned'] = false;
 	}
+// End custom entries
 
-	// Что за тип разбана - D? Я такой не видел, но оставлю так и быть.. for feature use...
-	if($res->fields['row_type'] == 'D' || $res->fields['row_type'] == 'U' || $res->fields['row_type'] == 'E' || ($res->fields['ban_length'] && $res->fields['ban_ends'] < $data['c_time']))
+	if($res->fields['row_type'] == 'D' || $res->fields['row_type'] == 'U' || $res->fields['row_type'] == 'E' || ($res->fields['ban_length'] && $res->fields['ban_ends'] < time()))
 	{
 		$data['unbanned'] = true;
 		$data['class'] = "success c-white";
@@ -498,28 +490,18 @@ while (!$res->EOF)
 		if($res->fields['row_type'] == "D")
 			$data['ub_reason'] = "Удален";
 		elseif($res->fields['row_type'] == "U")
-			$data['ub_reason'] = "Снят";
+			$data['ub_reason'] = "Разбанен";
 		else{
 			$data['ub_reason'] = "Истек";
 			$data['class'] = "active";
 		}
-		
+
 		$data['ureason'] = stripslashes($res->fields['unban_reason']);
 
 		$removedby = $GLOBALS['db']->GetRow("SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = '".$res->fields['RemovedBy']."'");
         $data['removedby'] = "";
         if(isset($removedby[0]))
             $data['removedby'] = $removedby[0];
-	}
-	else if($data['ban_length'] == 'Навсегда')
-	{
-		$data['class'] = "listtable_1_permanent";
-	}
-	else
-	{
-		$data['unbanned'] = false;
-		$data['class'] = "listtable_1_banned";
-		$data['ub_reason'] = "";
 	}
 
 	$data['layer_id'] = 'layer_'.$res->fields['ban_id'];
