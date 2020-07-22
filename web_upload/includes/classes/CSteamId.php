@@ -64,8 +64,10 @@ class CSteamId {
     }
     if (preg_match('/^https?:\/\/steamcommunity\.com\/id\/([\w\d-_]{1,})\/?$/', $sid, $matches, PREG_OFFSET_CAPTURE))
     {
-      $url = sprintf('https://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/?key=%s&vanityurl=%s', STEAM_API_KEY, $matches[1][0]);
-      $response = @json_decode(@file_get_contents($url), true);
+      $client = \HTTP::client();
+      $response = $client->setUrl('https://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/')
+        ->setBody(sprintf('key=%s&vanityurl=%s', STEAM_API_KEY, $matches[1][0]))->send()->JSON(true);
+
       if ($response['response']['success'] == 1) return self::ResolveToAccountID($response['response']['steamid']);
     }
 
