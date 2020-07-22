@@ -68,8 +68,7 @@
 				</div>
 			</div>
 			{/if}
-			{if $access_bans}
-			<!-- todo: указать верную проверку -->
+			{if $access_comms}
 			<div class="col-sm-4">
 				<div class="card">
 					<div class="card-body card-padding bgm-indigo c-white">
@@ -83,8 +82,7 @@
 				</div>
 			</div>
 			{/if}
-			{if $access_groups}
-			<!-- todo: указать верную проверку -->
+			{if $access_menu}
 			<div class="col-sm-4">
 				<div class="card">
 					<div class="card-body card-padding bgm-cyan c-white">
