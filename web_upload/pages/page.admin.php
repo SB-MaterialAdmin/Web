@@ -42,9 +42,11 @@ $demsi = getDirectorySize(SB_DEMOS);
 $theme->assign('access_admins', 	$userbank->HasAccess(ADMIN_OWNER|ADMIN_LIST_ADMINS|ADMIN_ADD_ADMINS|ADMIN_EDIT_ADMINS|ADMIN_DELETE_ADMINS));
 $theme->assign('access_servers', 	$userbank->HasAccess(ADMIN_OWNER|ADMIN_LIST_SERVERS|ADMIN_ADD_SERVER|ADMIN_EDIT_SERVERS|ADMIN_DELETE_SERVERS));
 $theme->assign('access_bans', 		$userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_BAN|ADMIN_EDIT_OWN_BANS|ADMIN_EDIT_GROUP_BANS|ADMIN_EDIT_ALL_BANS|ADMIN_BAN_PROTESTS|ADMIN_BAN_SUBMISSIONS));
-$theme->assign('access_groups', 	$userbank->HasAccess( ADMIN_OWNER|ADMIN_LIST_GROUPS|ADMIN_ADD_GROUP|ADMIN_EDIT_GROUPS|ADMIN_DELETE_GROUPS ));
+$theme->assign('access_groups', 	$userbank->HasAccess(ADMIN_OWNER|ADMIN_LIST_GROUPS|ADMIN_ADD_GROUP|ADMIN_EDIT_GROUPS|ADMIN_DELETE_GROUPS));
 $theme->assign('access_settings', 	$userbank->HasAccess(ADMIN_OWNER|ADMIN_WEB_SETTINGS));
-$theme->assign('access_mods', 		$userbank->HasAccess(ADMIN_OWNER|ADMIN_LIST_MODS|ADMIN_ADD_MODS|ADMIN_EDIT_MODS|ADMIN_DELETE_MODS ));
+$theme->assign('access_mods', 		$userbank->HasAccess(ADMIN_OWNER|ADMIN_LIST_MODS|ADMIN_ADD_MODS|ADMIN_EDIT_MODS|ADMIN_DELETE_MODS));
+$theme->assign('access_menu',       $userbank->HasAccess(ADMIN_OWNER));
+$theme->assign('access_comms',      $userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_BAN|ADMIN_EDIT_OWN_BANS|ADMIN_EDIT_ALL_BANS));
 
 $theme->assign('sb_svn', defined('SB_GIT'));
 
