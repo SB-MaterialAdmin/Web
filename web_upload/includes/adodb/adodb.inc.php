@@ -1151,7 +1151,8 @@ if (!defined('_ADODB_LAYER')) {
 				foreach($inputarr as $arr) {
 					$sql = ''; $i = 0;
 					//Use each() instead of foreach to reduce memory usage -mikefedyk
-					while(list(, $v) = each($arr)) {
+                    //Use foreach() cause each() deprecated in php 7.2 - iteelion
+					foreach($arr as $v){
 						$sql .= $sqlarr[$i];
 						// from Ron Baldwin <ron.baldwin#sourceprose.com>
 						// Only quote string types

@@ -3490,7 +3490,7 @@ function GetGroups($friendid)
     $xml = simplexml_load_string($raw); // parse xml
     $result = $xml->xpath('/profile/groups/group'); // go to the group nodes
     $i = 0;
-    while(list( , $node) = each($result)) {
+    foreach($result as $node){
       // Steam only provides the details of the first 3 groups of a players profile. We need to fetch the individual groups seperately to get the correct information.
       if(empty($node->groupName)) {
         $memberlistxml = file_get_contents("http://steamcommunity.com/gid/".$node->groupID64."/memberslistxml/?xml=1");
