@@ -413,29 +413,34 @@ while (!$res->EOF)
 	$data = array();
 
 	$data['ban_id'] = $res->fields['ban_id'];
+	$data['type'] = $res->fields['type'];
+	$data['c_time'] = $res->fields['c_time'];
 
-	if(!empty($res->fields['ban_ip']) )
-	{
-		if(!empty($res->fields['ban_country']) && $res->fields['ban_country'] != ' ')
-		{
-			$data['country'] = '<img src="images/country/' .strtolower($res->fields['ban_country']) . '.gif" alt="' . $res->fields['ban_country'] . '" border="0" align="absmiddle" />';
-	    }
-	    elseif(isset($GLOBALS['config']['banlist.nocountryfetch']) && $GLOBALS['config']['banlist.nocountryfetch'] == "0")
-		{
-			$country = FetchIp($res->fields['ban_ip']);
-			$edit = $GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_bans SET country = ?
-				                            WHERE bid = ?",array($country,$res->fields['ban_id']));
+	$mute_count = (int)$res->fields['mute_count'];
+	$gag_count = (int)$res->fields['gag_count'];
+	$history_count = $mute_count + $gag_count;
 
-			$data['country'] = '<img src="images/country/' . strtolower($country) . '.gif" alt="' . $country . '" border="0" align="absmiddle" />';
-		}
-		else
-		{
-			$data['country'] = '<img src="images/country/zz.gif" alt="Страна неизвестна" border="0" align="absmiddle" />';
-		}
-	}
-	else
+	$delimiter = "";
+
+	// заюзаем иконку страны под отображение TYPE_MUTE or TYPE_GAG
+	switch((int)$data['type'])
 	{
-		$data['country'] = '<img src="images/country/zz.gif" alt="Страна неизвестна" border="0" align="absmiddle" />';
+		case 1:
+			$data['type_icon'] = '<img src="images/type_v.png" alt="Микрофон" border="0" align="absmiddle" />';
+			$mute_count = $mute_count - 1;
+			break;
+		case 2:
+			$data['type_icon'] = '<img src="images/type_c.png" alt="Чат" border="0" align="absmiddle" />';
+			$gag_count = $gag_count - 1;
+			break;
+		case 3:
+			$data['type_icon'] = '<img src="images/type_silence.png" alt="Микрофон и чат" border=0 align="absmiddle" />';
+			$gag_count -= 1;
+			$mute_count -= 1;
+			break;
+		default:
+			$data['type_icon'] = '<img src="images/country/zz.gif" alt="Неизвестный тип блока" border="0" align="absmiddle" />';
+			break;
 	}
 
 	//$data['ban_date'] = SBDate($dateformat,$res->fields['ban_created']);
