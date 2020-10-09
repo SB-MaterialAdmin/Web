@@ -36,6 +36,23 @@ if (version_compare(PHP_VERSION, '5.5') == -1) {
 if (!file_exists('../data/db.php')) {
   define('IN_SB', true);
   include('../data/config.php');
+
+  $configuration = [
+    'dsn' => sprintf('mysql:dbname=%s;host=%s;charset=UTF8;port=%d', urlencode(DB_NAME), urlencode(DB_HOST), DB_PORT),
+    'user' => DB_USER,
+    'pass' => DB_PASS,
+    'prefix' => DB_PREFIX . '_',
+    'options' => [
+      \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION
+    ]
+  ];
+
+  // replacers for exported configuration constants for readability.
+  $search = [\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION];
+  $replace = ['\PDO::ATTR_ERRMODE', '\PDO::ERRMODE_EXCEPTION'];
+
+  $exportedConfiguration = str_replace($search, $replace, var_export($configuration));
+
   $config  = "<?php\n";
   $config .= "if (!defined('IN_SB')) exit();\n\n";
 
@@ -43,28 +60,24 @@ if (!file_exists('../data/db.php')) {
   $config .= " * This file contains all database configurations for\n";
   $config .= " * using in SourceBans in new DB Framework.\n";
   $config .= " */\n";
-  $config .= "\DatabaseManager::CreateConfig('SourceBans', [\n";
-  $config .= "  'dsn'     => 'mysql:dbname=" . DB_NAME . ";host=" . DB_HOST . ";charset=UTF8;port=" . DB_PORT . "',\n";
-  $config .= "  'user'    => '" . DB_USER . "',\n";
-  $config .= "  'pass'    => '" . DB_PASS . "',\n";
-  $config .= "  'prefix'  => '" . DB_PREFIX . "_',\n";
-  $config .= "  'options' => [\n";
-  $config .= "    \\PDO::ATTR_ERRMODE  => \\PDO::ERRMODE_EXCEPTION\n";
-  $config .= "  ]\n";
-  $config .= "]);";
+  $config .= "\DatabaseManager::CreateConfig('SourceBans', {$exportedConfiguration});";
 
   if (!is_writable('../data/')) {
     $config = htmlspecialchars($config);
 
     Header("Content-Type: text/html; charset=UTF8");
-    echo('<html><body>');
-    echo('<p>Не удаётся записать конфигурационный файл для фреймворка работы с БД.</p>');
-    echo('<p>Пожалуйста, скопируйте и вставьте следующий текст в <em>data/db.php</em> для продолжения работы апдейтера:</p>');
-    echo("<pre>$config</pre>");
-    echo('<p>Этот текст автоматически пропадёт, когда файл будет создан и записан.</p>');
-    echo('<script>setTimeout(function() { location.reload(); }, 5000);</script>');
-    echo('</body></html>');
-
+    ?>
+<!DOCTYPE HTML>
+<html>
+  <body>
+    <p>Не удаётся записать конфигурационный файл для фреймворка работы с БД.</p>
+    <p>Пожалуйста, скопируйте и вставьте следующий текст в <em>data/db.php</em> для продолжения работы апдейтера:</p>
+    <pre><?= $config ?></pre>
+    <p>Этот текст автоматически пропадёт, когда файл будет создан и записан.</p>
+    <script>setTimeout(location.reload(), 5000);</script>
+  </body>
+</html>
+    <?php
     exit();
   }
 
