@@ -5,14 +5,14 @@ global $theme;
 require_once(INCLUDES_PATH . "/smarty/plugins/function.help_icon.php");
 
 // Регистрация функций
-$theme->register_function("display_material_checkbox", "materialdesign_checkbox");
-$theme->register_function("display_material_input", "materialdesign_input");
-$theme->register_function("display_header", "materialdesign_cardheader");
-$theme->register_function("display_alert", "materialdesign_alert");
-$theme->register_block("render_material_body", "materialdesign_body");
+$theme->registerPlugin('function', "display_material_checkbox", "materialdesign_checkbox", true);
+$theme->registerPlugin('function', "display_material_input", "materialdesign_input", true);
+$theme->registerPlugin('function', "display_header", "materialdesign_cardheader", true);
+$theme->registerPlugin('function', "display_alert", "materialdesign_alert", true);
+$theme->registerPlugin('block', "render_material_body", "materialdesign_body");
 
 // Создание каллбэков функций
-function materialdesign_checkbox($params, &$smarty) {
+function materialdesign_checkbox($params, Smarty_Internal_Template $template) {
     if (!isset($params["name"]) || !isset($params["help_title"]) || !isset($params["help_text"]))
         return "";
 
@@ -27,7 +27,7 @@ function materialdesign_checkbox($params, &$smarty) {
     return $str;
 }
 
-function materialdesign_input($params, &$smarty) {
+function materialdesign_input($params, Smarty_Internal_Template $template) {
     if (!isset($params["name"]) || !isset($params["help_title"]) || !isset($params["help_text"]))
         return "";
 
@@ -45,7 +45,7 @@ function materialdesign_input($params, &$smarty) {
     return $str;
 }
 
-function materialdesign_cardheader($params, &$smarty) {
+function materialdesign_cardheader($params, Smarty_Internal_Template $template) {
     if (!isset($params['title']))
         return "";
 
@@ -56,11 +56,11 @@ function materialdesign_cardheader($params, &$smarty) {
     return $str;
 }
 
-function materialdesign_alert($params, &$smarty) {
+function materialdesign_alert($params, Smarty_Internal_Template $template) {
     return sprintf('<div class="alert alert-info" role="alert">%s</div>', $params['text']);
 }
 
-function materialdesign_body($params, $content, &$smarty) {
+function materialdesign_body($params, $content, Smarty_Internal_Template $template) {
     $out = '<div class="card-body';
     if ($params['padding'])
         $out .= " card-padding";

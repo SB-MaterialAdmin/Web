@@ -18,7 +18,7 @@
  * @param Smarty
  * @return string
  */
-function smarty_function_sb_button($params, &$smarty) //$text, $click, $class, $id="", $submit=false
+function smarty_function_sb_button($params, Smarty_Internal_Template $template) //$text, $click, $class, $id="", $submit=false
 {
 	$text = isset($params['text'])?$params['text']:"";
 	$click = isset($params['onclick'])?$params['onclick']:"";

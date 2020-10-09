@@ -43,15 +43,12 @@ if (!file_exists('../data/db.php')) {
     'pass' => DB_PASS,
     'prefix' => DB_PREFIX . '_',
     'options' => [
-      \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION
+      \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION // TODO: move this to another mechanism
     ]
   ];
 
-  // replacers for exported configuration constants for readability.
-  $search = [\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION];
-  $replace = ['\PDO::ATTR_ERRMODE', '\PDO::ERRMODE_EXCEPTION'];
-
-  $exportedConfiguration = str_replace($search, $replace, var_export($configuration));
+  // Here we placed in some time
+  $exportedConfiguration = var_export($configuration, true);
 
   $config  = "<?php\n";
   $config .= "if (!defined('IN_SB')) exit();\n\n";
@@ -60,7 +57,7 @@ if (!file_exists('../data/db.php')) {
   $config .= " * This file contains all database configurations for\n";
   $config .= " * using in SourceBans in new DB Framework.\n";
   $config .= " */\n";
-  $config .= "\DatabaseManager::CreateConfig('SourceBans', {$exportedConfiguration});";
+  $config .= "\DatabaseManager::CreateConfig('SourceBans', $exportedConfiguration);";
 
   if (!is_writable('../data/')) {
     $config = htmlspecialchars($config);

@@ -27,7 +27,7 @@ class ExceptionHandler {
       $type     = isset($data['type'])  ? $data['type']  : '';
 
       $args     = [];
-      foreach ($data['args'] as $arg) {
+      foreach ($data['args'] ?? [] as $arg) {
         if (is_object($arg))
           $args[] = get_class($arg);
         else

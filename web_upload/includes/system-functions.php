@@ -1688,3 +1688,18 @@ function resolveSteamURL($url) {
 
   return NULL;
 }
+
+function ini_append($name, $value, $prepend = false)
+{
+	$newValue = @ini_get($name);
+	if (!$prepend)
+	{
+		$newValue = $newValue . $value;
+	}
+	else
+	{
+		$newValue = $value . $newValue;
+	}
+
+	return @ini_set($name, $newValue);
+}

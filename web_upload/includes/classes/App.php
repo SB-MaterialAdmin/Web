@@ -40,15 +40,19 @@ class App {
     {
         if (!self::$templater)
         {
-            require(INCLUDES_PATH . '/smarty/Smarty.class.php');
+            require(INCLUDES_PATH . '/smarty/bootstrap.php');
 
             $templater = new Smarty();
-            $templater->error_reporting   = E_ALL ^ E_NOTICE;
-            $templater->use_sub_dirs      = false;
-            $templater->compile_id        = "TCache";
-            $templater->caching           = false;
-            $templater->template_dir      = 'sb://theme/';
-            $templater->compile_dir       = SB_THEME_COMPILE;
+            $templater->setErrorReporting(E_ALL ^ E_NOTICE);
+            $templater->setUseSubDirs(false);
+            $templater->setCachingType(Smarty::CACHING_LIFETIME_SAVED);
+            $templater->setTemplateDir(SB_THEME);
+            $templater->setCompileDir(SB_THEME_COMPILE);
+            $templater->compile_id = $_SERVER['SERVER_NAME'];
+
+            // This required for Smarty 3.
+            $templater->default_resource_type = 'sb__wrapper';
+            $templater->registerResource('sb__wrapper', new \SmartyTemplateWrapper('sb://theme'));
 
             $templater->assign('SITE_ADDRESS',  SB_WP_URL);
             $templater->assign('SBConfig',      ReplaceArrayKeyNames(self::options(), '.', '_'));

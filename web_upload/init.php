@@ -26,11 +26,16 @@
 // *************************************************************************
 
 // ---------------------------------------------------
+// Setup current directory as working
+// ---------------------------------------------------
+chdir(__DIR__);
+
+// ---------------------------------------------------
 // Disable error output
 // ---------------------------------------------------
 ini_set('display_startup_errors', 0);
-ini_set('display_errors', 0);
-error_reporting(0);
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 
 // ---------------------------------------------------
 //  Directories
@@ -143,7 +148,7 @@ define('SB_SALT', 'SourceBans');
 // ---------------------------------------------------
 //  Setup PHP
 // ---------------------------------------------------
-ini_set('include_path', '.:/php/includes:' . INCLUDES_PATH .'/adodb');
+ini_append('include_path', '.:' . INCLUDES_PATH .'/adodb:', false);
 ini_set('date.timezone', 'GMT');
 
 if(defined("SB_MEM"))
