@@ -90,7 +90,7 @@ if (!file_exists('../data/db.php')) {
  set_time_limit(0);
 
  include "../init.php";
- $theme->clear_compiled_tpl();
+ $theme->clearCompiledTemplate();
 
  define('IS_AJAX',   isset($_GET['updater_ajax_call']));
 

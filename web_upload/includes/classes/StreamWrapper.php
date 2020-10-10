@@ -72,7 +72,12 @@ class StreamWrapper {
     {
         return stat($this->resolveToRealPath($path));
     }
-    
+
+    public function stream_stat()
+    {
+        return fstat($this->stream);
+    }
+
     protected function resolveToRealPath($path)
     {
         $url = parse_url($path);
