@@ -30,7 +30,7 @@ include_once '../init.php';
 if(!$userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_BAN))
 {
 	echo "No Access";
-	die();
+	exit();
 }
 require_once(INCLUDES_PATH . '/xajax.inc.php');
 $xajax = new xajax();
@@ -138,7 +138,7 @@ function BlockPlayer($check, $sid, $num, $type, $length) {
 }
 $servers = $GLOBALS['db']->Execute("SELECT ip, port, rcon FROM ".DB_PREFIX."_servers WHERE enabled = 1 ORDER BY modid, sid;");
 $theme->assign('total', $servers->RecordCount());
-$serverlinks = array();
+$serverlinks = [];
 $num = 0;
 while(!$servers->EOF) {
 	$info = array();
