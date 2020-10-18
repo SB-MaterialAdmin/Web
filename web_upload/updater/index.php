@@ -106,14 +106,14 @@ if (!file_exists('../data/db.php')) {
 	$theme->assign('setup', $setup);
 	$theme->assign('progress', "");
 	$theme->display('updater.tpl');
-	die();
+	exit();
  }
  $setup .= "<br />Обновление до версии: <b>" . $updater->getLatestPackageVersion() . "</b>";
  
  $progress = $updater->doUpdates();
  
  if (IS_AJAX)
-	die(json_encode(['result' => true]));
+	exit(json_encode(['result' => true]));
  $theme->assign('setup', $setup);
  $theme->assign('progress', $progress);
  $theme->display('updater.tpl');
