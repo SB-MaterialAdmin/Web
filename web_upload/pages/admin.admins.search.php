@@ -29,7 +29,7 @@ global $userbank, $theme;
 
 //serverlist
 $server_list = $GLOBALS['db']->Execute("SELECT sid, ip, port FROM `" . DB_PREFIX . "_servers` WHERE enabled = 1");
-$servers = array();
+$servers = [];
 $serverscript = "<script type=\"text/javascript\">";
 while (!$server_list->EOF)
 {
@@ -45,7 +45,7 @@ $serverscript .= "</script>";
 
 //webgrouplist
 $webgroup_list = $GLOBALS['db']->Execute("SELECT gid, name FROM ". DB_PREFIX ."_groups WHERE type = '1'");
-$webgroups = array();
+$webgroups = [];
 while (!$webgroup_list->EOF)
 {
 	$data = array();
@@ -58,7 +58,7 @@ while (!$webgroup_list->EOF)
 
 //serveradmingrouplist
 $srvadmgroup_list = $GLOBALS['db']->Execute("SELECT name FROM ". DB_PREFIX ."_srvgroups ORDER BY name ASC");
-$srvadmgroups = array();
+$srvadmgroups = [];
 while (!$srvadmgroup_list->EOF)
 {
 	$data = array();
@@ -70,7 +70,7 @@ while (!$srvadmgroup_list->EOF)
 
 //servergroup
 $srvgroup_list = $GLOBALS['db']->Execute("SELECT gid, name FROM " . DB_PREFIX . "_groups WHERE type = '3'");
-$srvgroups = array();
+$srvgroups = [];
 while (!$srvgroup_list->EOF)
 {
 	$data = array();
@@ -113,7 +113,7 @@ $webflag[] = array("name" => "Просмотр МОДов", "flag"=>"ADMIN_LIST_
 $webflag[] = array("name" => "Добавление МОДов", "flag"=>"ADMIN_ADD_MODS");
 $webflag[] = array("name" => "Редактирование МОДов", "flag"=>"ADMIN_EDIT_MODS");
 $webflag[] = array("name" => "Удаление МОДов", "flag"=>"ADMIN_DELETE_MODS");
-$webflags = array();
+$webflags = [];
 foreach($webflag AS $flag)
 {
 	$data['name'] = $flag["name"];
@@ -144,7 +144,7 @@ $serverflag[] = array("name" => "[q] Дополнительный флаг 3", "
 $serverflag[] = array("name" => "[r] Дополнительный флаг 4", "flag" => "SM_CUSTOM4");
 $serverflag[] = array("name" => "[s] Дополнительный флаг 5", "flag" => "SM_CUSTOM5");
 $serverflag[] = array("name" => "[t] Дополнительный флаг 6", "flag" => "SM_CUSTOM6");
-$serverflags = array();
+$serverflags = [];
 foreach($serverflag AS $flag)
 {
 	$data['name'] = $flag["name"];
@@ -153,9 +153,12 @@ foreach($serverflag AS $flag)
 	array_push($serverflags, $data);
 }
 
-if($_GET['showexpiredadmins'] == 'true') {
+if($_GET['showexpiredadmins'] == 'true') 
+{
 	$plus_adm = "1";
-}else {
+}
+else 
+{
 	$plus_adm = "";
 }
 
