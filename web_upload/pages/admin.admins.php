@@ -41,7 +41,7 @@ $AdminsEnd = intval($AdminsStart+$AdminsPerPage);
 if ($AdminsEnd > $admin_count) $AdminsEnd = $admin_count;
 
 // List Page
-$admin_list = array();
+$admin_list = [];
 foreach($admins AS $admin)
 {
 	$admin['immunity'] = $userbank->GetProperty("srv_immunity", $admin['aid']);
@@ -141,20 +141,29 @@ if ($AdminsEnd < $admin_count)
 	$next = CreateLinkR('<i class="zmdi zmdi-chevron-right"></i>',"index.php?p=admin&c=admins&page=" .($page+1).$advSearchString);
 }
 else
-	$next = "";
-
+{
+        $next = "";
+}
+	
 //=================[ Start Layout ]==================================
 //$admin_nav = 'displaying&nbsp;'.$AdminsStart.'&nbsp;-&nbsp;'.$AdminsEnd.'&nbsp;of&nbsp;'.$admin_count.'&nbsp;results';
 
 $pages = ceil($admin_count/$AdminsPerPage);
-if($pages > 1) {
+if($pages > 1) 
+{
 	if (isset($_GET['showexpiredadmins']))
+        {
 		$admin_nav_p = ' / Страницы: <select class="form-control" onchange="window.location=\'index.php?p=admin&c=admins&showexpiredadmins=true&page=\' + $(\'PageChanger\').value;" style="display: inline-block;width: 40px;" id="PageChanger">';
+        }
 	else
+        {
 		$admin_nav_p = ' / Страницы: <select class="form-control" onchange="changePage(this,\'A\',\''.$_GET['advSearch'].'\',\''.$_GET['advType'].'\');" style="display: inline-block;width: 40px;">';
-	
-	for($i=1;$i<=$pages;$i++) {
-		if($i==$_GET["page"]) {
+	}
+
+	for($i=1;$i<=$pages;$i++) 
+        {
+		if($i==$_GET["page"]) 
+                {
 			$admin_nav_p .= '<option value="' . $i . '" selected="selected">' . $i . '</option>';
 			continue;
 		}
@@ -176,12 +185,15 @@ if (strlen($next) > 0)
 
 $admin_nav .= '</ul>&nbsp;';
 
-if(isset($_GET["showexpiredadmins"]) && $_GET["showexpiredadmins"] == "true") {
+if(isset($_GET["showexpiredadmins"]) && $_GET["showexpiredadmins"] == "true") 
+{
 	$btn_icon = "zmdi-alarm";
 	$btn_helpa = 'data-trigger="hover" data-toggle="tooltip" data-placement="top" data-original-title="Показать действующих администраторов" title=""';
 	$btn_href = "index.php?p=admin&c=admins";
 	$btn_rem = '<button type="button" onclick="removeExpiredAdmins()" class="btn bgm-bluegray btn-block waves-effect">Удалить всех истёкших админов</button>';
-} else{
+} 
+else
+{
 	$btn_icon = "zmdi-timer-off";
 	$btn_helpa = 'data-trigger="hover" data-toggle="tooltip" data-placement="top" data-original-title="Показать истекших администраторов" title=""';
 	$btn_href = "index.php?p=admin&c=admins&showexpiredadmins=true";
@@ -189,7 +201,7 @@ if(isset($_GET["showexpiredadmins"]) && $_GET["showexpiredadmins"] == "true") {
 }
 
 $res = $GLOBALS['db']->Execute("SELECT aid FROM `".DB_PREFIX."_admins` WHERE `support` = '1'");
-$checked = array();
+$checked = [];
 while (!$res->EOF)
 {
     $chek_in = array();
