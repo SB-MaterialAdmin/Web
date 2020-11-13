@@ -1324,9 +1324,9 @@ function AddAdmin_pay($mask, $srv_mask, $a_name, $a_steam, $a_email, $a_password
       $web_gruop_sql = "0";
     }
     $server_admin_group = $GLOBALS['db']->GetOne("SELECT `group_srv` FROM ".DB_PREFIX."_vay4er WHERE `value` = '".$a_code."'");
-    if($server_admin_group == ""){
-      $web_gruop_sql = "";
-    }
+    //if($server_admin_group == ""){
+    //  $web_gruop_sql = "";
+    //}
     $aid = $userbank->AddAdmin($a_name, $a_steam, $a_password, $a_email, $web_gruop_sql, $mask, $server_admin_group, $srv_mask, $immunity, $a_serverpass, $pay_days_sql, $skype, '', $vk);
     setcookie("aid", $aid, time()+LOGIN_COOKIE_LIFETIME);
     setcookie("password", $GLOBALS['db']->GetOne("SELECT `password` FROM `".DB_PREFIX."_admins` WHERE `aid` = '".$aid."'"), time()+LOGIN_COOKIE_LIFETIME);
