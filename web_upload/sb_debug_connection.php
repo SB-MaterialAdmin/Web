@@ -74,9 +74,18 @@ else {
                 printf('[-] Ответ получен, но веб-сервер заблокирован. Удалите блокировку с сервера (removeip %s), и повторите попытку.%s', $_SERVER['SERVER_ADDR'], PHP_EOL);
                 $isBanned = true;
             } else {
-                $packet = substr($packet, 6);
-                $hostname = substr($packet, 0, strpos($packet, "\0"));
-                echo '[+] Ответ получен! Сервер: ' . $hostname . PHP_EOL;
+                $isChallenge = (substr($packet, 4, 1) !== 'I');
+                if ($isChallenge)
+                {
+                    echo '[+] Ответ получен!';
+                }
+                else
+                {
+                    $packet = substr($packet, 6);
+                    $hostname = substr($packet, 0, strpos($packet, "\0"));
+                    echo '[+] Ответ получен! Сервер: ' . $hostname;
+                }
+                echo PHP_EOL;
             }
         }
     }
@@ -128,4 +137,5 @@ else
     }
     fclose($sock);
 }
-?>
+
+echo(PHP_EOL);
