@@ -1,6 +1,6 @@
 <?php
 	/**
-	 * @author Pavel Djundik <sourcequery@xpaw.me>
+	 * @author Pavel Djundik
 	 *
 	 * @link https://xpaw.me
 	 * @link https://github.com/xPaw/PHP-Source-Query
@@ -29,13 +29,12 @@
 	{
 		/**
 		 * Points to socket class
-		 * 
-		 * @var Socket
 		 */
 		private $Socket;
 		
+		/** @var resource */
 		private $RconSocket;
-		private $RconRequestId;
+		private $RconRequestId = 0;
 		
 		public function __construct( $Socket )
 		{
@@ -146,10 +145,10 @@
 			// See https://developer.valvesoftware.com/wiki/Source_RCON_Protocol#Multiple-packet_Responses
 			if( StrLen( $Data ) >= 4000 )
 			{
+				$this->Write( SourceQuery::SERVERDATA_RESPONSE_VALUE );
+				
 				do
-				{
-					$this->Write( SourceQuery::SERVERDATA_RESPONSE_VALUE );
-					
+				{	
 					$Buffer = $this->Read( );
 					
 					$Buffer->GetLong( ); // RequestID
