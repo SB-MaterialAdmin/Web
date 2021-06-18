@@ -1,0 +1,14 @@
+body {
+        background-repeat: repeat-x;
+        color: #444;
+        font-family: Verdana, Arial, Tahoma, Trebuchet MS, Sans-Serif, Georgia, Courier, Times New Roman, Serif;
+        font-size: 11px;
+        line-height: 135%;
+        margin: 5px;
+        padding: 1px;
+        margin: auto;
+}
+.button-Submit {
+        background-color: #e9e9e9;
+        font-weight: bold;
+}

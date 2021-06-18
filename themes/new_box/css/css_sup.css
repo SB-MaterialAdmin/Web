@@ -1,0 +1,76 @@
+/*.test_rus {
+	font-family: Candara;
+	font-size: 15px;
+}
+
+.test_rus_p {
+	font-family: Candara;
+	font-size: 16px;
+	font-weight: normal;
+}*/
+
+
+/** ======= Context Menu Styles ======= **/
+
+div.contextmenu {
+	position: absolute;
+	top: 0;
+	left: 0;
+	font-family: Verdana, Arial, Tahoma, Trebuchet MS, Sans-Serif, Georgia, Courier, Times New Roman, Serif;
+	background-color: #eaeaea;
+	border: 1px solid #dddddd;
+	border-left: 5px solid #dddddd;
+}
+div.contextmenu a {
+	display: block;
+	text-decoration: none;
+	cursor: default;
+	outline: none;
+	font-size: 11px;
+}
+div.contextmenu .separator {
+	height: 1px;
+	padding: 0;
+	overflow: hidden;
+}
+
+.contextmenu {
+	width: 12em;
+	/*background: #F4F5EB;*/
+	border-top: 1px solid #ddd;
+	/*border-left: 1px solid #ddd;*/
+	border-right: 1px solid #666;
+	border-bottom: 1px solid #666;
+	padding: 2px 0;
+}
+.contextmenu a {
+	color: #555;
+	padding: 4px 15px;
+	margin: 0 2px;
+}
+.contextmenu a:hover {
+	background-color: #F4F5EB;
+}
+.contextmenu a.disabled {
+	color: #bbb;
+}
+.contextmenu a.disabled:hover {
+	background: #F4F5EB;
+	color: #bbb;
+}
+.contextmenu .separator {
+	border-bottom: 1px solid #fff;
+	background: #999;
+	margin: 4px 4px;
+}
+.contextmenu .head {
+ font-size: 12px;
+ background-color: #DFE3E9;
+ padding-top: 4px;
+ padding-right: 5px;
+ padding-bottom: 3px;
+ padding-left: 5px;
+ color: #fff;
+ background-image: url(../images/detail_head.gif);
+}
+/** ======= Context Menu Styles ======= **/

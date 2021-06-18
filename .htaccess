@@ -1,0 +1,11 @@
+# Block download TPL files for Apache and HTTPD servers
+<FilesMatch "\.([[Tt][Pp][Ll])\.?">
+   Order allow,deny
+   Deny from all
+</FilesMatch>
+
+# Block opening compiled TPL files for Apache and HTTPD servers
+<FilesMatch "\.([Tt][Pp][Ll].[Pp][Hh][Pp])\.?">
+   Order allow,deny
+   Deny from all
+</FilesMatch>

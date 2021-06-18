@@ -1,0 +1,5 @@
+{
+    "require": {
+        "xpaw/steamid": "^2.0"
+    }
+}
