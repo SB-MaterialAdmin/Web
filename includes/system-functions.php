@@ -194,10 +194,8 @@ function BuildPageTabs()
 	if ($userbank->is_admin())
 		AddTab("<i class='zmdi zmdi-star zmdi-hc-fw'></i> Админ-Панель", "index.php?p=admin", "Панель для администраторов. Управление серверами, администраторами, настройками.");
 
-		include INCLUDES_PATH . "/CTabsMenu.php";
-
 		// BUILD THE SUB-MENU's FOR ADMIN PAGES
-		$submenu = new CTabsMenu();
+		$submenu = new \SourceBans\Core\CTabsMenu();
 		if($userbank->HasAccess(ADMIN_OWNER|ADMIN_LIST_ADMINS|ADMIN_ADD_ADMINS|ADMIN_EDIT_ADMINS|ADMIN_DELETE_ADMINS))
 			$submenu->addMenuItem("Администраторы", 0,"", "index.php?p=admin&amp;c=admins", true);
 		if(($userbank->HasAccess(ADMIN_OWNER)) && ($GLOBALS['config']['page.vay4er'] == "1"))
@@ -665,27 +663,6 @@ function SecondsToString($sec, $textual=true)
 	}
 }
 
-// unused, as loading too slowly.
-function CreateHostnameCache()
-{
-	require_once INCLUDES_PATH.'/CServerControl.php';
-	$res = $GLOBALS['db']->Execute("SELECT sid, ip, port FROM ".DB_PREFIX."_servers ORDER BY sid");
-	$servers = array();
-	while (!$res->EOF)
-	{
-		$info = array();
-		$sinfo = new CServerControl($res->fields[1],$res->fields[2]);
-		$sinfo->Connect($res->fields[1], $res->fields[2]);
-		$info = $sinfo->GetInfo();
-		if(!empty($info['HostName']))
-			$servers[$res->fields[0]] = $info['HostName'];
-		else
-			$servers[$res->fields[0]] = $res->fields[1].":".$res->fields[2];
-		$res->MoveNext();
-	}
-	return($servers);
-}
-
 function FetchIp($ip)
 {
 	$ip = sprintf('%u', ip2long($ip));
@@ -931,7 +908,6 @@ function check_email($email) {
 // check, if one steamid is online on one specific server
 function checkSinglePlayer($sid, $steamid)
 {
-	require_once(INCLUDES_PATH.'/CServerControl.php');
 	$serv = $GLOBALS['db']->GetRow("SELECT ip, port, rcon FROM ".DB_PREFIX."_servers WHERE sid = '".$sid."';");
 	if(empty($serv['rcon'])) {
 		return false;
@@ -941,7 +917,7 @@ function checkSinglePlayer($sid, $steamid)
 		return false;
 	}
 	
-	$r = new CServerControl();
+	$r = new \SourceBans\Core\CServerControl();
 	$r->Connect($serv['ip'], $serv['port']);
 	
 	if(!$r->AuthRcon($serv['rcon'])) {
@@ -972,7 +948,6 @@ function checkSinglePlayer($sid, $steamid)
 //returns array('STEAM_ID_1' => array('name' => $name, 'steam' => $steam, 'ip' => $ip, 'time' => $time, 'ping' => $ping), 'STEAM_ID_2' => array()....)
 function checkMultiplePlayers($sid, $steamids)
 {
-	require_once(INCLUDES_PATH.'/CServerControl.php');
 	$serv = $GLOBALS['db']->GetRow("SELECT ip, port, rcon FROM ".DB_PREFIX."_servers WHERE sid = '".$sid."';");
 	if(empty($serv['rcon'])) {
 		return false;
@@ -982,7 +957,7 @@ function checkMultiplePlayers($sid, $steamids)
 		return false;
 	}
 	
-	$r = new CServerControl();
+	$r = new \SourceBans\Core\CServerControl();
 	$r->Connect($serv['ip'], $serv['port']);
 	
 	if(!$r->AuthRcon($serv['rcon'])) {
@@ -1129,7 +1104,6 @@ function GetCommunityName($steamid)
 
 function SendRconSilent($rcon, $sid)
 {
-	require_once(INCLUDES_PATH.'/CServerControl.php');
 	$serv = $GLOBALS['db']->GetRow("SELECT ip, port, rcon FROM ".DB_PREFIX."_servers WHERE sid = '".$sid."';");
 	if(empty($serv['rcon'])) {
 		return false;
@@ -1139,7 +1113,7 @@ function SendRconSilent($rcon, $sid)
 		return false;
 	}
 	
-	$r = new CServerControl($serv['ip'], $serv['port'], $serv['rcon']);
+	$r = new \SourceBans\Core\CServerControl($serv['ip'], $serv['port'], $serv['rcon']);
 	$r->Connect($serv['ip'], $serv['port']);
 	
 	if(!$r->AuthRcon($serv['rcon'])) {
@@ -1308,7 +1282,7 @@ function smtpmail($mail_to, $subject, $message, $headers='') {
     
     $SEND .=  $message."\r\n";
     if (!$socket = @fsockopen($GLOBALS['config']['smtp.host'], $GLOBALS['config']['smtp.port'], $errno, $errstr, 5)) {
-        new CSystemLog("e", "SMTP Mailing Error", sprintf("[%d] %s", $errno, $errstr));
+        new \SourceBans\Core\CSystemLog("e", "SMTP Mailing Error", sprintf("[%d] %s", $errno, $errstr));
         return false;
     }
 
@@ -1316,56 +1290,56 @@ function smtpmail($mail_to, $subject, $message, $headers='') {
 
     @fputs($socket, "HELO " . $GLOBALS['config']['smtp.host'] . "\r\n");
     if (!server_parse($socket, "250", __LINE__)) {
-        new CSystemLog("e", "SMTP Mailing Error", "Не удаётся отправить HELO");
+        new \SourceBans\Core\CSystemLog("e", "SMTP Mailing Error", "Не удаётся отправить HELO");
         fclose($socket);
         return false;
     }
 
     @fputs($socket, "AUTH LOGIN\r\n");
     if (!server_parse($socket, "334", __LINE__)) {
-        new CSystemLog("e", "SMTP Mailing Error", "Не удаётся найти ответ на запрос авторизации клиента.");
+        new \SourceBans\Core\CSystemLog("e", "SMTP Mailing Error", "Не удаётся найти ответ на запрос авторизации клиента.");
         fclose($socket);
         return false;
     }
 
     @fputs($socket, base64_encode($GLOBALS['config']['smtp.username']) . "\r\n");
     if (!server_parse($socket, "334", __LINE__)) {
-        new CSystemLog("e", "SMTP Mailing Error", "Логин пользователя не был принят сервером.");
+        new \SourceBans\Core\CSystemLog("e", "SMTP Mailing Error", "Логин пользователя не был принят сервером.");
         fclose($socket);
         return false;
     }
 
     @fputs($socket, base64_encode($GLOBALS['config']['smtp.password']) . "\r\n");
     if (!server_parse($socket, "235", __LINE__)) {
-        new CSystemLog("e", "SMTP Mailing Error", "Пароль не был принят сервером как верный.");
+        new \SourceBans\Core\CSystemLog("e", "SMTP Mailing Error", "Пароль не был принят сервером как верный.");
         fclose($socket);
         return false;
     }
 
     @fputs($socket, "MAIL FROM: <".$GLOBALS['config']['smtp.username'].">\r\n");
     if (!server_parse($socket, "250", __LINE__)) {
-        new CSystemLog("e", "SMTP Mailing Error", "Не удаётся отправить команду.");
+        new \SourceBans\Core\CSystemLog("e", "SMTP Mailing Error", "Не удаётся отправить команду.");
         fclose($socket);
         return false;
     }
 
     @fputs($socket, "RCPT TO: <" . $mail_to . ">\r\n");
     if (!server_parse($socket, "250", __LINE__)) {
-        new CSystemLog("e", "SMTP Mailing Error", "Не удаётся отправить команду.");
+        new \SourceBans\Core\CSystemLog("e", "SMTP Mailing Error", "Не удаётся отправить команду.");
         fclose($socket);
         return false;
     }
 
     @fputs($socket, "DATA\r\n");
     if (!server_parse($socket, "354", __LINE__)) {
-        new CSystemLog("e", "SMTP Mailing Error", "Не удаётся отправить команду.");
+        new \SourceBans\Core\CSystemLog("e", "SMTP Mailing Error", "Не удаётся отправить команду.");
         fclose($socket);
         return false;
     }
 
     @fputs($socket, $SEND."\r\n.\r\n");
     if (!server_parse($socket, "250", __LINE__)) {
-        new CSystemLog("e", "SMTP Mailing Error", "Не удаётся отправить письмо на удалённый сервер.");
+        new \SourceBans\Core\CSystemLog("e", "SMTP Mailing Error", "Не удаётся отправить письмо на удалённый сервер.");
         fclose($socket);
         return false;
     }
@@ -1404,7 +1378,7 @@ function decompress_tar($path, $output) {
         $phar->extractTo($output);
         return true;
     } catch (PharException $e) {
-        new CSystemLog("e", "PHP Exception", $e->getMessage());
+        new \SourceBans\Core\CSystemLog("e", "PHP Exception", $e->getMessage());
         return false;
     }
 }

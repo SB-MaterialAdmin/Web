@@ -244,7 +244,7 @@ if(isset($_POST['name']))
 		}
 		
 		if($_POST['banlength'] != $lengthrev->fields['length'])
-			$log = new CSystemLog("m", "Срок бана изменен", "Срок бана (" . $lengthrev->fields['authid'] . ") был обновлен, раньше: ".$lengthrev->fields['length'].", сейчас: ".$_POST['banlength']);
+			$log = new \SourceBans\Core\CSystemLog("m", "Срок бана изменен", "Срок бана (" . $lengthrev->fields['authid'] . ") был обновлен, раньше: ".$lengthrev->fields['length'].", сейчас: ".$_POST['banlength']);
 		echo "<script>setTimeout(\"ShowBox('Бан обновлен', 'Бан был успешно обновлен', 'green', 'index.php?p=banlist".$pagelink."', false, 5000)\", 1000);</script>";
 	}
 }

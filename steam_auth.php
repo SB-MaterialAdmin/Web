@@ -1,7 +1,7 @@
 <?PHP
+
 require_once('init.php');
-require_once(sprintf('%s/LightOpenID.php', INCLUDES_PATH));
-require_once(sprintf('%s/SteamOpenID.php', INCLUDES_PATH));
+require 'vendor/autoload.php';
 
 if (defined('DEVELOPER_MODE')) {
     ini_set('error_reporting', E_ALL);
@@ -31,7 +31,8 @@ function CommunityIDToSteamID($communityid) {
 $Site = SB_WP_URL;
 $Site = str_replace(array('https', 'http', '://'), '', $Site);
 
-$AuthResult = SteamAuthorize($Site);
+$instance = new \SourceBans\Auth\Steam();
+$AuthResult = $instance->handle($Site);
 if (!$AuthResult)
     RedirectToSite(); // Something error. User cancelled authentication?
 else if (strpos($AuthResult, 'steamcommunity') !== false)

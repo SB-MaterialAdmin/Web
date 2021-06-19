@@ -39,7 +39,7 @@ if(isset($_GET['validation'],$_GET['email']) && !empty($_GET['email']) && !empty
 	if ($tryHack) {
 		CreateRedBox("Ошибка", "Была зафиксирована попытка взлома системы через некорректно построенный запрос. Данная попытка была записана в системный лог.");
 		require(TEMPLATES_PATH . "/footer.php");
-		$log = new CSystemLog("e", "Попытка взлома", "Произошла попытка взлома системы с использованием некорректно построенного запроса SQL.");
+		$log = new \SourceBans\Core\CSystemLog("e", "Попытка взлома", "Произошла попытка взлома системы с использованием некорректно построенного запроса SQL.");
 		exit();
 	}
 	
@@ -50,7 +50,7 @@ if(isset($_GET['validation'],$_GET['email']) && !empty($_GET['email']) && !empty
 		echo '<div class="alert alert-danger" role="alert" id="msg-red"><h4>Ошибка!</h4><span class="p-l-10">Произошла неизвестная ошибка.</span></div>';
 	
 		require(TEMPLATES_PATH . "/footer.php");
-		$log = new CSystemLog("w", "Попытка взлома", "Попытка сброса пароля с использованием: " . $_SERVER['HTTP_HOST']);
+		$log = new \SourceBans\Core\CSystemLog("w", "Попытка взлома", "Попытка сброса пароля с использованием: " . $_SERVER['HTTP_HOST']);
 		exit();
 	}
 

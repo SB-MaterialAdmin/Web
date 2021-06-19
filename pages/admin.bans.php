@@ -77,7 +77,7 @@ if(isset($_POST['action']) && $_POST['action'] == "importBans")
 		}
 	}
 	if($bancnt > 0)
-		$log = new CSystemLog("m", "Баны импортированы", "$bancnt Бан(ы) импортированы");
+		$log = new \SourceBans\Core\CSystemLog("m", "Баны импортированы", "$bancnt Бан(ы) импортированы");
 
 	echo "<script>setTimeout(\"ShowBox('Импорт банов', '$bancnt бан".($bancnt!=1?"s have":" был")." импортирован.', 'green', '', false, 5000)\", 800);</script>";
 }

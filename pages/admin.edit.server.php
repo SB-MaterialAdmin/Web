@@ -43,7 +43,7 @@ $_GET['id'] = (int)$_GET['id'];
 $server = $GLOBALS['db']->GetRow("SELECT * FROM ".DB_PREFIX."_servers WHERE sid = {$_GET['id']}");
 if(!$server)
 {
-	$log = new CSystemLog("e", "Получение данных сервера не удалось", "Не удается найти данные для сервера с идентификатором '".$_GET['id']."'");
+	$log = new \SourceBans\Core\CSystemLog("e", "Получение данных сервера не удалось", "Не удается найти данные для сервера с идентификатором '".$_GET['id']."'");
 	echo '<div id="msg-red" >
 	<i><img src="./images/warning.png" alt="Warning" /></i>
 	<b>Ошибка</b>

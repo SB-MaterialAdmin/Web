@@ -25,12 +25,14 @@
 //
 // *************************************************************************
 
+require 'vendor/autoload.php';
+
 global $userbank, $theme;
 
 if(!defined("IN_SB")){echo "Ошибка доступа!";die();}
 if($userbank->GetAid() == -1){echo "Вы не должны быть здесь ><";die();}
 		
-$groupsTabMenu = new CTabsMenu();
+$groupsTabMenu = new \SourceBans\Core\CTabsMenu();
 $groupsTabMenu->addMenuItem("Информация", 0);
 $allow_change_infos = $GLOBALS['config']['config.changeadmininfos'];
 if($allow_change_infos)

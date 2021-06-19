@@ -25,6 +25,8 @@
 //
 // *************************************************************************
 
+require 'vendor/autoload.php';
+
 global $userbank;
 
 if(!isset($_GET['c']))
@@ -41,7 +43,7 @@ else
 		if(!isset($_GET['o']))
 		{
 			// ====================[ ADMIN SIDE MENU START ] ===================
-			$groupsTabMenu = new CTabsMenu();
+			$groupsTabMenu = new \SourceBans\Core\CTabsMenu();
 			if($userbank->HasAccess(ADMIN_OWNER|ADMIN_LIST_GROUPS ) )
 				$groupsTabMenu->addMenuItem("Список групп", 0);
 			if($userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_GROUP ) )
@@ -54,7 +56,7 @@ else
 		}
 		elseif($_GET['o'] == 'edit')
 		{
-			$groupsTabMenu = new CTabsMenu();
+			$groupsTabMenu = new \SourceBans\Core\CTabsMenu();
 			$groupsTabMenu->addMenuItem("Назад",0, "", "javascript:history.go(-1);", true);
 			$groupsTabMenu->outputMenu();
 			
@@ -69,7 +71,7 @@ else
 		if(!isset($_GET['o']))
 		{	
 			// ====================[ ADMIN SIDE MENU START ] ===================
-			$adminTabMenu = new CTabsMenu();
+			$adminTabMenu = new \SourceBans\Core\CTabsMenu();
 			if($userbank->HasAccess(ADMIN_OWNER|ADMIN_LIST_ADMINS ) )
 				$adminTabMenu->addMenuItem("Список администраторов", 0);		
 			if($userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_ADMINS ) )
@@ -197,7 +199,7 @@ else
 		}
 		elseif($_GET['o'] == 'editgroup' || $_GET['o'] == 'editdetails' || $_GET['o'] == 'editpermissions' || $_GET['o'] == 'editservers')
 		{
-			$adminTabMenu = new CTabsMenu();
+			$adminTabMenu = new \SourceBans\Core\CTabsMenu();
 			$adminTabMenu->addMenuItem("Назад", 0,"", "javascript:history.go(-1);", true);
 			$adminTabMenu->outputMenu();
 		
@@ -222,7 +224,7 @@ else
 				RewritePageTitle("Редактировать доступ к серверам");
 			}
 		} elseif ($_GET['o'] == 'warnings' && $GLOBALS['config']['admin.warns'] == "1") {
-			$tabs = new CTabsMenu();
+			$tabs = new \SourceBans\Core\CTabsMenu();
 			$tabs->addMenuItem("Назад", -1,"", "javascript:history.go(-1);", true);
 			$tabs->outputMenu();
 			include(TEMPLATES_PATH . '/admin.admins.warnings.php');
@@ -237,7 +239,7 @@ else
 		if(!isset($_GET['o']))
 		{
 			// ====================[ ADMIN SIDE MENU START ] ===================
-			$serverTabMenu = new CTabsMenu();
+			$serverTabMenu = new \SourceBans\Core\CTabsMenu();
 			if($userbank->HasAccess( ADMIN_OWNER|ADMIN_LIST_SERVERS ) )
 				$serverTabMenu->addMenuItem("Список серверов",0);	
 			if($userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_SERVER ) )
@@ -250,7 +252,7 @@ else
 		}
 		elseif($_GET['o'] == 'edit')
 		{
-			$serverTabMenu = new CTabsMenu();
+			$serverTabMenu = new \SourceBans\Core\CTabsMenu();
 			$serverTabMenu->addMenuItem("Назад", 0,"", "javascript:history.go(-1);", true);
 			$serverTabMenu->outputMenu();		
 			
@@ -259,7 +261,7 @@ else
 		}
 		elseif($_GET['o'] == 'rcon')
 		{
-			$serverTabMenu = new CTabsMenu();
+			$serverTabMenu = new \SourceBans\Core\CTabsMenu();
 			$serverTabMenu->addMenuItem("Назад", 0,"", "javascript:history.go(-1);", true);
 			$serverTabMenu->outputMenu();
 						
@@ -268,7 +270,7 @@ else
 		}
 		elseif($_GET['o'] == 'dbsetup')
 		{
-			$serverTabMenu = new CTabsMenu();
+			$serverTabMenu = new \SourceBans\Core\CTabsMenu();
 			$serverTabMenu->addMenuItem("Назад", 0,"", "javascript:history.go(-1);", true);
 			$serverTabMenu->outputMenu();
 						
@@ -277,7 +279,7 @@ else
 		}
 		elseif($_GET['o'] == 'admincheck')
 		{
-			$serverTabMenu = new CTabsMenu();
+			$serverTabMenu = new \SourceBans\Core\CTabsMenu();
 			$serverTabMenu->addMenuItem("Назад", 0,"", "javascript:history.go(-1);", true);
 			$serverTabMenu->outputMenu();
 						
@@ -293,7 +295,7 @@ else
 		if(!isset($_GET['o']))
 		{
 			// ====================[ ADMIN SIDE MENU START ] ===================
-			$banTabMenu = new CTabsMenu();
+			$banTabMenu = new \SourceBans\Core\CTabsMenu();
 			if($userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_BAN ) ) {
 				$banTabMenu->addMenuItem("Добавить бан",0);
 				if($GLOBALS['config']['config.enablegroupbanning']==1)
@@ -320,7 +322,7 @@ else
 		}
 		elseif($_GET['o'] == 'edit')
 		{
-			$banTabMenu = new CTabsMenu();
+			$banTabMenu = new \SourceBans\Core\CTabsMenu();
 			$banTabMenu->addMenuItem("Назад", 0,"", "javascript:history.go(-1);", true);
 			$banTabMenu->outputMenu();			
 			
@@ -329,7 +331,7 @@ else
 		}
 		elseif($_GET['o'] == 'email')
 		{
-			$banTabMenu = new CTabsMenu();
+			$banTabMenu = new \SourceBans\Core\CTabsMenu();
 			$banTabMenu->addMenuItem("Назад", 0, "", "javascript:history.go(-1);", true);
 			$banTabMenu->outputMenu();					
 			
@@ -345,7 +347,7 @@ else
 		if(!isset($_GET['o']))
 		{
 			// ====================[ ADMIN SIDE MENU START ] ===================
-			$banTabMenu = new CTabsMenu();
+			$banTabMenu = new \SourceBans\Core\CTabsMenu();
 			if($userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_BAN ) ) {
 				$banTabMenu->addMenuItem("Добавить блокировку", 0);
 			}
@@ -364,7 +366,7 @@ else
 		}
 		elseif($_GET['o'] == 'edit')
 		{
-			$banTabMenu = new CTabsMenu();
+			$banTabMenu = new \SourceBans\Core\CTabsMenu();
 			$banTabMenu->addMenuItem("Назад", 0,"", "javascript:history.go(-1);", true);
 			$banTabMenu->outputMenu();			
 			
@@ -379,7 +381,7 @@ else
 		if(!isset($_GET['o']))
 		{
 			// ====================[ ADMIN SIDE MENU START ] ===================
-			$modTabMenu = new CTabsMenu();
+			$modTabMenu = new \SourceBans\Core\CTabsMenu();
 			if($userbank->HasAccess( ADMIN_OWNER|ADMIN_LIST_MODS ) )
 				$modTabMenu->addMenuItem("Список МОДов",0);
 			if($userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_MODS ) ) {
@@ -397,7 +399,7 @@ else
 		}
 		elseif($_GET['o'] == 'edit')
 		{
-			$modTabMenu = new CTabsMenu();
+			$modTabMenu = new \SourceBans\Core\CTabsMenu();
 			$modTabMenu->addMenuItem("Назад",0, "", "javascript:history.go(-1);", true);
 			$modTabMenu->outputMenu();					
 			
@@ -415,7 +417,7 @@ else
 	{
 		CheckAdminAccess( ADMIN_OWNER|ADMIN_WEB_SETTINGS );	
 		// ====================[ ADMIN SIDE MENU START ] ===================
-			$settingsTabMenu = new CTabsMenu();
+			$settingsTabMenu = new \SourceBans\Core\CTabsMenu();
 			if($userbank->HasAccess(ADMIN_OWNER|ADMIN_WEB_SETTINGS ) )
 			{
 				$settingsTabMenu->addMenuItem("Главные настройки",0);
@@ -434,7 +436,7 @@ else
 	{
 		CheckAdminAccess( ADMIN_OWNER );	
 		// ====================[ ADMIN SIDE MENU START ] ===================
-			$settingsTabMenu = new CTabsMenu();
+			$settingsTabMenu = new \SourceBans\Core\CTabsMenu();
 			if($userbank->HasAccess(ADMIN_OWNER))
 			{
 				$settingsTabMenu->addMenuItem("Список",0);
@@ -453,7 +455,7 @@ else
 		CheckAdminAccess( ADMIN_OWNER );	
 		if($_GET['o'] == 'edit')
 		{
-			$banTabMenu = new CTabsMenu();
+			$banTabMenu = new \SourceBans\Core\CTabsMenu();
 			$banTabMenu->addMenuItem("Назад", 0,"", "javascript:history.go(-1);", true);
 			$banTabMenu->outputMenu();			
 			
@@ -461,7 +463,7 @@ else
 			RewritePageTitle("Редактирование меню");
 		}else{
 		// ====================[ ADMIN SIDE MENU START ] ===================
-			$settingsTabMenu = new CTabsMenu();
+			$settingsTabMenu = new \SourceBans\Core\CTabsMenu();
 			if($userbank->HasAccess(ADMIN_OWNER))
 			{
 				$settingsTabMenu->addMenuItem("Список",0);

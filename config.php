@@ -20,6 +20,6 @@ define('DB_PORT','3306');							// The SQL port (Default: 3306)
 define('STEAMAPIKEY','');				// Steam API Key for Shizz
 define('SB_WP_URL','http://sourcebans.local');       				//URL of SourceBans Site
 
-//define('DEVELOPER_MODE', true);			// Use if you want to show debugmessages
+define('DEVELOPER_MODE', true);			// Use if you want to show debugmessages
 //define('SB_MEM', '128M'); 				// Override php memory limit, if isn't enough (Banlist is just a blank page)
 ?>

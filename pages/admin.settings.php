@@ -29,7 +29,7 @@ if(!defined("IN_SB")){echo "Ошибка доступа!";die();}
 	global $userbank, $theme;
 	
 	//Log stuff
-	$logs = new CSystemLog();
+	$logs = new \SourceBans\Core\CSystemLog();
 	$page = 1;
 	if (isset($_GET['page']) && $_GET['page'] > 0)
 		$page = intval($_GET['page']);
@@ -42,7 +42,7 @@ if(!defined("IN_SB")){echo "Ошибка доступа!";die();}
 		}
         else
         {
-            $log = new CSystemLog("w", "Попытка взлома", $userbank->GetProperty('user') . " пытался очистить лог, не имея на это прав.");
+            $log = new \SourceBans\Core\CSystemLog("w", "Попытка взлома", $userbank->GetProperty('user') . " пытался очистить лог, не имея на это прав.");
         }
 	}
 	

@@ -117,7 +117,7 @@ if (isset($_GET['a']) && $_GET['a'] == "unban" && isset($_GET['id']))
 		if($res){
 			if(!isset($_GET['bulk']))
 				echo "<script>setTimeout('ShowBox(\"Игрок разбанен\", \"<b>".StripQuotes($row['name'])."</b> (<b>" . ($row['type']==0?$row['authid']:$row['ip']) . "</b>) был разбанен.<br><br><font color=\'green\' class=\'f-15\'><b>Переадресация...</b></font>\", \"green\", \"index.php?p=banlist$pagelink\", false);', 1350);</script>";
-			$log = new CSystemLog("m", "Игрок разбанен", "'".StripQuotes($row['name'])."' (" . ($row['type']==0?$row['authid']:$row['ip']) . ") был разбанен");
+			$log = new \SourceBans\Core\CSystemLog("m", "Игрок разбанен", "'".StripQuotes($row['name'])."' (" . ($row['type']==0?$row['authid']:$row['ip']) . ") был разбанен");
 			$ucount++;
 		}else{
 			if(!isset($_GET['bulk']))
@@ -172,7 +172,7 @@ else if(isset($_GET['a']) && $_GET['a'] == "delete")
 		if($res){
 			if(!isset($_GET['bulk']))
 				echo "<script>setTimeout('ShowBox(\"Бан удален\", \"Бан игрока <b>".StripQuotes($steam['name'])."</b> (<b>".($steam['type']==0?$steam['authid']:$steam['ip'])."</b>) был удален из SourceBans<br><br><font color=\'green\' class=\'f-15\'><b>Переадресация...</b></font>\", \"green\", \"index.php?p=banlist$pagelink\", false);', 1350);</script>";
-			$log = new CSystemLog("m", "Бан удален", "Бан ".StripQuotes($steam['name'])."' (" . ($steam['type']==0?$steam['authid']:$steam['ip']) . ") был удален.");
+			$log = new \SourceBans\Core\CSystemLog("m", "Бан удален", "Бан ".StripQuotes($steam['name'])."' (" . ($steam['type']==0?$steam['authid']:$steam['ip']) . ") был удален.");
 			$dcount++;
 		}else{
 			if(!isset($_GET['bulk']))

@@ -25,7 +25,7 @@
 //
 // *************************************************************************
 
-
+require 'vendor/autoload.php';
 require_once('xajax.inc.php');
 include_once('system-functions.php');
 include_once('user-functions.php');
@@ -99,11 +99,11 @@ function AddSupport($aid)
     if(!$userbank->is_logged_in())
 	{
 		$objResponse->redirect("index.php?p=login&m=no_access", 0);
-		$log = new CSystemLog("w", "Ошибка доступа", $username . " пытается назначить администратора ".$userbank->GetProperty('user', $aid)." в Support-List, не имея на это прав.");
+		$log = new \SourceBans\Core\CSystemLog("w", "Ошибка доступа", $username . " пытается назначить администратора ".$userbank->GetProperty('user', $aid)." в Support-List, не имея на это прав.");
 		return $objResponse;
 	}elseif(!$userbank->HasAccess(ADMIN_OWNER)){
 		$objResponse->addScript('ShowBox("Ошибка!", "У Вас недостаточно прав для выполнения этой операции!", "red", "index.php");');
-		$log = new CSystemLog("w", "Ошибка доступа", $username . " пытался назначить администратора в Support-List, не имея на это прав.");
+		$log = new \SourceBans\Core\CSystemLog("w", "Ошибка доступа", $username . " пытался назначить администратора в Support-List, не имея на это прав.");
 		return $objResponse;
 	}
 	
@@ -130,16 +130,16 @@ function removeExpiredAdmins()
 	if(!$userbank->HasAccess(ADMIN_OWNER|ADMIN_DELETE_ADMINS))
 	{
 		$objResponse->addScript('ShowBox("Ошибка!", "У Вас недостаточно прав для выполнения этой операции!.", "red", "index.php?p=admin&c=admins");');
-		$log = new CSystemLog("w", "Ошибка доступа", $username . " пытался удалить истёкших админов, не имея на это прав.");
+		$log = new \SourceBans\Core\CSystemLog("w", "Ошибка доступа", $username . " пытался удалить истёкших админов, не имея на это прав.");
 		return $objResponse;
 	}
 	if($GLOBALS['db']->Execute("DELETE FROM `".DB_PREFIX."_admins` WHERE `expired` < ".time()." AND `expired` <> 0")) {
 		$objResponse->addScript('ShowBox("Успешно!", "Все истёкшие админки удалены.", "green", "index.php?p=admin&c=admins");');
-		$log = new CSystemLog("m", "Удаление админов", $username . " удалил всех истёкших админов.");
+		$log = new \SourceBans\Core\CSystemLog("m", "Удаление админов", $username . " удалил всех истёкших админов.");
 	}
 	else {
 		$objResponse->addScript('ShowBox("Ошибка!", "Ошибка в удалении истёкших админок. <br /> Смотрите в системный лог для подробной информации.", "red", "index.php?p=admin&c=admins");');
-		$log = new CSystemLog("w", "Удаление админов", "Ошибка удаления истёкших админок.");
+		$log = new \SourceBans\Core\CSystemLog("w", "Удаление админов", "Ошибка удаления истёкших админок.");
 	}
 	
 	return $objResponse;
@@ -225,7 +225,7 @@ function CheckSrvPassword($aid, $srv_pass)
     if(!$userbank->is_logged_in() || $aid != $userbank->GetAid())
 	{
 		$objResponse->redirect("index.php?p=login&m=no_access", 0);
-		$log = new CSystemLog("w", "Ошибка доступа", $username . " пытается проверить пароль сервера ".$userbank->GetProperty('user', $aid).", не имея на это прав.");
+		$log = new \SourceBans\Core\CSystemLog("w", "Ошибка доступа", $username . " пытается проверить пароль сервера ".$userbank->GetProperty('user', $aid).", не имея на это прав.");
 		return $objResponse;
 	}
 	$res = $GLOBALS['db']->Execute("SELECT `srv_password` FROM `".DB_PREFIX."_admins` WHERE `aid` = '".$aid."'");
@@ -252,7 +252,7 @@ function ChangeSrvPassword($aid, $srv_pass)
     if(!$userbank->is_logged_in() || $aid != $userbank->GetAid())
 	{
 		$objResponse->redirect("index.php?p=login&m=no_access", 0);
-		$log = new CSystemLog("w", "Ошибка доступа", $username . " пытается изменить пароль сервера ".$userbank->GetProperty('user', $aid).", не имея на это прав.");
+		$log = new \SourceBans\Core\CSystemLog("w", "Ошибка доступа", $username . " пытается изменить пароль сервера ".$userbank->GetProperty('user', $aid).", не имея на это прав.");
 		return $objResponse;
 	}
     
@@ -261,7 +261,7 @@ function ChangeSrvPassword($aid, $srv_pass)
 	else
 		$GLOBALS['db']->Execute("UPDATE `".DB_PREFIX."_admins` SET `srv_password` = ? WHERE `aid` = ?", array($srv_pass, $aid));
 	$objResponse->addScript("ShowBox('Пароль сервера изменён', 'Пароль сервера был успешно изменён.', 'green', 'index.php?p=account', true);");
-	$log = new CSystemLog("m", "Изменён пароль сервера", "Пароль сменил администратор (".$aid.")");
+	$log = new \SourceBans\Core\CSystemLog("m", "Изменён пароль сервера", "Пароль сменил администратор (".$aid.")");
 	return $objResponse;
 }
 
@@ -274,7 +274,7 @@ function ChangeEmail($aid, $email, $password)
     if(!$userbank->is_logged_in() || $aid != $userbank->GetAid())
 	{
 		$objResponse->redirect("index.php?p=login&m=no_access", 0);
-		$log = new CSystemLog("w", "Ошибка доступа", $username . " пытался сменить e-mail ".$userbank->GetProperty('user', $aid).", не имея на это прав.");
+		$log = new \SourceBans\Core\CSystemLog("w", "Ошибка доступа", $username . " пытался сменить e-mail ".$userbank->GetProperty('user', $aid).", не имея на это прав.");
 		return $objResponse;
 	}
     
@@ -301,7 +301,7 @@ function ChangeEmail($aid, $email, $password)
 
 	$GLOBALS['db']->Execute("UPDATE `".DB_PREFIX."_admins` SET `email` = ? WHERE `aid` = ?", array($email, $aid));
 	$objResponse->addScript("ShowBox('E-mail изменён', 'Ваш e-mail адрес успешно изменён.', 'green', 'index.php?p=account', true);");
-	$log = new CSystemLog("m", "E-mail изменён", "E-mail изменил админ (".$aid.")");
+	$log = new \SourceBans\Core\CSystemLog("m", "E-mail изменён", "E-mail изменил админ (".$aid.")");
 	return $objResponse;
 }
 
@@ -312,7 +312,7 @@ function AddGroup($name, $type, $bitmask, $srvflags)
 	if(!$userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_GROUP))
 	{
 		$objResponse->redirect("index.php?p=login&m=no_access", 0);
-		$log = new CSystemLog("w", "Ошибка доступа", $username . " попытался добавить группу, не имея на это прав.");
+		$log = new \SourceBans\Core\CSystemLog("w", "Ошибка доступа", $username . " попытался добавить группу, не имея на это прав.");
 		return $objResponse;
 	}
 
@@ -380,7 +380,7 @@ function AddGroup($name, $type, $bitmask, $srvflags)
 		$query1 = $GLOBALS['db']->Execute("INSERT INTO `" . DB_PREFIX . "_groups` (`gid`, `type`, `name`, `flags`) VALUES (". ($query['next_gid']+1) .", '3', ?, '0')", array($name));
 	}
 
-	$log = new CSystemLog("m", "Группа создана", "Новая группа ($name) успешно создана");
+	$log = new \SourceBans\Core\CSystemLog("m", "Группа создана", "Новая группа ($name) успешно создана");
     $objResponse->addScript("ShowBox('Группа создана', 'Группа была успешно создана.', 'green', 'index.php?p=admin&c=groups', true);");
     $objResponse->addScript("TabToReload();");
 	return $objResponse;
@@ -393,7 +393,7 @@ function RemoveGroup($gid, $type)
 	if(!$userbank->HasAccess(ADMIN_OWNER|ADMIN_DELETE_GROUPS))
 	{
 		$objResponse->redirect("index.php?p=login&m=no_access", 0);
-		$log = new CSystemLog("w", "Ошибка доступа", $username . " попытался удалить группу, не имея на это прав.");
+		$log = new \SourceBans\Core\CSystemLog("w", "Ошибка доступа", $username . " попытался удалить группу, не имея на это прав.");
 		return $objResponse;
 	}
 
@@ -434,7 +434,7 @@ function RemoveGroup($gid, $type)
 			$objResponse->addScript("ShowRehashBox('".implode(",", $allservers)."', 'Группа удалена', 'Выбранная группа была успешно удалена из базы данных', 'green', 'index.php?p=admin&c=groups', true);");
 		else
 			$objResponse->addScript("ShowBox('Группа удалена', 'Выбранная группа была успешно удалена из базы данных', 'green', 'index.php?p=admin&c=groups', true);");
-		$log = new CSystemLog("m", "Группа удалена", "Группа (" . $gid . ") удалена");
+		$log = new \SourceBans\Core\CSystemLog("m", "Группа удалена", "Группа (" . $gid . ") удалена");
 	}
 	else
 		$objResponse->addScript("ShowBox('Ошибка', 'Не получилось удалить группу из базы данных. Смотрите системный лог для дополнительной информации', 'red', 'index.php?p=admin&c=groups', true);");
@@ -449,7 +449,7 @@ function RemoveSubmission($sid, $archiv)
 	if(!$userbank->HasAccess(ADMIN_OWNER|ADMIN_BAN_SUBMISSIONS))
 	{
 		$objResponse->redirect("index.php?p=login&m=no_access", 0);
-		$log = new CSystemLog("w", "Ошибка доступа", $username . " пытался удалить предложение бана, не имея на это прав.");
+		$log = new \SourceBans\Core\CSystemLog("w", "Ошибка доступа", $username . " пытался удалить предложение бана, не имея на это прав.");
 		return $objResponse;
 	}
 	$sid = (int)$sid;
@@ -464,7 +464,7 @@ function RemoveSubmission($sid, $archiv)
 		if($query1)
 		{
 			$objResponse->addScript("ShowBox('Заявка отправлена в архив', 'Выбранная заявка была перемещена в архив!', 'green', 'index.php?p=admin&c=bans', true);");
-			$log = new CSystemLog("m", "Заявка отправлена в архив", "Заявка (" . $sid . ") была перемещена в архив");
+			$log = new \SourceBans\Core\CSystemLog("m", "Заявка отправлена в архив", "Заявка (" . $sid . ") была перемещена в архив");
 		}
 		else
 			$objResponse->addScript("ShowBox('Ошибка', 'Не получилось переместить заявку. Смотрите системный лог для дополнительной информации', 'red', 'index.php?p=admin&c=bans', true);");
@@ -480,7 +480,7 @@ function RemoveSubmission($sid, $archiv)
 		if($query1)
 		{
 			$objResponse->addScript("ShowBox('Заявка удалена', 'Выбранная заявка была удалена из базы данных', 'green', 'index.php?p=admin&c=bans', true);");
-			$log = new CSystemLog("m", "Заявка удалена", "Заявка (" . $sid . ") была удалена");
+			$log = new \SourceBans\Core\CSystemLog("m", "Заявка удалена", "Заявка (" . $sid . ") была удалена");
 		}
 		else
 			$objResponse->addScript("ShowBox('Ошибка', 'Не получилось удалить заявку. Смотрите системный лог для дополнительной информации', 'red', 'index.php?p=admin&c=bans', true);");
@@ -495,7 +495,7 @@ function RemoveSubmission($sid, $archiv)
 		if($query1)
 		{
 			$objResponse->addScript("ShowBox('Заявка восстановлена', 'Выбранная заявка была восстановлена из архива!', 'green', 'index.php?p=admin&c=bans', true);");
-			$log = new CSystemLog("m", "Заявка восстановлена", "Заявка (" . $sid . ") была восстановлена из архива");
+			$log = new \SourceBans\Core\CSystemLog("m", "Заявка восстановлена", "Заявка (" . $sid . ") была восстановлена из архива");
 		}
 		else
 			$objResponse->addScript("ShowBox('Ошибка', 'Не получилось восстановить заявку. Смотрите системный лог для дополнительной информации', 'red', 'index.php?p=admin&c=bans', true);");
@@ -510,7 +510,7 @@ function RemoveProtest($pid, $archiv)
 	if(!$userbank->HasAccess(ADMIN_OWNER|ADMIN_BAN_PROTESTS))
 	{
 		$objResponse->redirect("index.php?p=login&m=no_access", 0);
-		$log = new CSystemLog("w", "Ошибка доступа", $username . " пытался удалить протест, не имея на это прав.");
+		$log = new \SourceBans\Core\CSystemLog("w", "Ошибка доступа", $username . " пытался удалить протест, не имея на это прав.");
 		return $objResponse;
 	}
 	$pid = (int)$pid;
@@ -525,7 +525,7 @@ function RemoveProtest($pid, $archiv)
 		if($query1)
 		{
 			$objResponse->addScript("ShowBox('Протест удалён', 'Выбранный протест был удалён из базы данных', 'green', 'index.php?p=admin&c=bans', true);");
-			$log = new CSystemLog("m", "Протест удалён", "Протест (" . $pid . ") был удалён");
+			$log = new \SourceBans\Core\CSystemLog("m", "Протест удалён", "Протест (" . $pid . ") был удалён");
 		}
 		else
 			$objResponse->addScript("ShowBox('Ошибка', 'Не получилось удалить протест. Смотрите системный лог для дополнительной информации', 'red', 'index.php?p=admin&c=bans', true);");
@@ -539,7 +539,7 @@ function RemoveProtest($pid, $archiv)
 		if($query1)
 		{
 			$objResponse->addScript("ShowBox('Протест отправлен в архив', 'Выбранный протест был отправлен в архив.', 'green', 'index.php?p=admin&c=bans', true);");
-			$log = new CSystemLog("m", "Протест в архиве", "Протест (" . $pid . ") был отправлен в архив.");
+			$log = new \SourceBans\Core\CSystemLog("m", "Протест в архиве", "Протест (" . $pid . ") был отправлен в архив.");
 		}
 		else
 			$objResponse->addScript("ShowBox('Ошибка', 'Не получилось отправить в архив протест. Смотрите системный лог для дополнительной информации', 'red', 'index.php?p=admin&c=bans', true);");
@@ -553,7 +553,7 @@ function RemoveProtest($pid, $archiv)
 		if($query1)
 		{
 			$objResponse->addScript("ShowBox('Протест восстановлен', 'Выбранный протест был успешно восстановлен из архива.', 'green', 'index.php?p=admin&c=bans', true);");
-			$log = new CSystemLog("m", "Протест восстановлен", "Протест (" . $pid . ") был восстановлен из архива.");
+			$log = new \SourceBans\Core\CSystemLog("m", "Протест восстановлен", "Протест (" . $pid . ") был восстановлен из архива.");
 		}
 		else
 			$objResponse->addScript("ShowBox('Ошибка', 'Не получилось восстановить протест из архива. Смотрите системный лог для дополнительной информации', 'red', 'index.php?p=admin&c=bans', true);");
@@ -568,7 +568,7 @@ function RemoveServer($sid)
 	if(!$userbank->HasAccess(ADMIN_OWNER|ADMIN_DELETE_SERVERS))
 	{
 		$objResponse->redirect("index.php?p=login&m=no_access", 0);
-		$log = new CSystemLog("w", "Ошибка доступа", $username . " пытался удалить сервер, не имея на это прав.");
+		$log = new \SourceBans\Core\CSystemLog("w", "Ошибка доступа", $username . " пытался удалить сервер, не имея на это прав.");
 		return $objResponse;
 	}
 	$sid = (int)$sid;
@@ -585,7 +585,7 @@ function RemoveServer($sid)
 	if($query1)
 	{
 		$objResponse->addScript("ShowBox('Сервер удалён', 'Выбранный сервер был успешно удалён из базы данных', 'green', 'index.php?p=admin&c=servers', true);");
-		$log = new CSystemLog("m", "Сервер удалён", "Сервер ((" . $servinfo['ip'] . ":" . $servinfo['port'] . ") был удалён");
+		$log = new \SourceBans\Core\CSystemLog("m", "Сервер удалён", "Сервер ((" . $servinfo['ip'] . ":" . $servinfo['port'] . ") был удалён");
 	}
 	else
 		$objResponse->addScript("ShowBox('Ошибка', 'Не получилось удалить сервер. Смотрите системный лог для дополнительной информации', 'red', 'index.php?p=admin&c=servers', true);");
@@ -599,7 +599,7 @@ function RemoveMod($mid)
 	if(!$userbank->HasAccess(ADMIN_OWNER|ADMIN_DELETE_MODS))
 	{
 		$objResponse->redirect("index.php?p=login&m=no_access", 0);
-		$log = new CSystemLog("w", "Ошибка доступа", $username . " пытался удалить мод, не имея на это прав.");
+		$log = new \SourceBans\Core\CSystemLog("w", "Ошибка доступа", $username . " пытался удалить мод, не имея на это прав.");
 		return $objResponse;
 	}
 	$mid = (int)$mid;
@@ -613,7 +613,7 @@ function RemoveMod($mid)
 	if($query1)
 	{
 		$objResponse->addScript("ShowBox('МОД удалён', 'Выбранный МОД был удалён из базы данных', 'green', 'index.php?p=admin&c=mods', true);");
-		$log = new CSystemLog("m", "МОД удалён", "МОД (" . $modicon['name'] . ") был удалён");
+		$log = new \SourceBans\Core\CSystemLog("m", "МОД удалён", "МОД (" . $modicon['name'] . ") был удалён");
 	}
 	else
 		$objResponse->addScript("ShowBox('Ошибка', 'Не получилось удалить МОД. Смотрите системный лог для дополнительной информации', 'red', 'index.php?p=admin&c=mods', true);");
@@ -627,7 +627,7 @@ function RemoveAdmin($aid)
 	if(!$userbank->HasAccess(ADMIN_OWNER|ADMIN_DELETE_ADMINS))
 	{
 		$objResponse->redirect("index.php?p=login&m=no_access", 0);
-		$log = new CSystemLog("w", "Ошибка доступа", $username . " пытался удалить админа, не имея на это прав.");
+		$log = new \SourceBans\Core\CSystemLog("w", "Ошибка доступа", $username . " пытался удалить админа, не имея на это прав.");
 		return $objResponse;
 	}
 	$aid = (int)$aid;
@@ -670,7 +670,7 @@ function RemoveAdmin($aid)
 			$objResponse->addScript("ShowRehashBox('".implode(",", $allservers)."', 'Админ удалён', 'Выбранный админ был удалён из базы данных', 'green', 'index.php?p=admin&c=admins', true);");
 		else
 			$objResponse->addScript("ShowBox('Админ удалён', 'Выбранный админ был удалён из базы данных', 'green', 'index.php?p=admin&c=admins', true);");
-		$log = new CSystemLog("m", "Админ удалён", "Админ (" . $gid['user'] . ") был удалён");
+		$log = new \SourceBans\Core\CSystemLog("m", "Админ удалён", "Админ (" . $gid['user'] . ") был удалён");
 	}
 	else
 		$objResponse->addScript("ShowBox('Ошибка', 'Не получилось удалить админа. Смотрите системный лог для дополнительной информации', 'red', 'index.php?p=admin&c=admins', true);");
@@ -684,7 +684,7 @@ function AddServer($ip, $port, $rcon, $rcon2, $mod, $enabled, $group, $group_nam
 	if(!$userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_SERVER))
 	{
 		$objResponse->redirect("index.php?p=login&m=no_access", 0);
-		$log = new CSystemLog("w", "Ошибка доступа", $username . " пытался добавить сервер, не имея на это прав.");
+		$log = new \SourceBans\Core\CSystemLog("w", "Ошибка доступа", $username . " пытался добавить сервер, не имея на это прав.");
 		return $objResponse;
 	}
 	$ip = RemoveCode($ip);
@@ -798,7 +798,7 @@ function AddServer($ip, $port, $rcon, $rcon2, $mod, $enabled, $group, $group_nam
 
 	$objResponse->addScript("ShowBox('Сервер добавлен', 'Выш сервер был успешно создан.', 'green', 'index.php?p=admin&c=servers');");
     $objResponse->addScript("TabToReload();");
-    $log = new CSystemLog("m", "Сервер добавлен", "Сервер (" . $ip . ":" . $port . ") добавлен");
+    $log = new \SourceBans\Core\CSystemLog("m", "Сервер добавлен", "Сервер (" . $ip . ":" . $port . ") добавлен");
 	return $objResponse;
 }
 
@@ -894,7 +894,7 @@ function AddServerGroupName()
 	if(!$userbank->HasAccess(ADMIN_OWNER|ADMIN_EDIT_GROUPS))
 	{
 		$objResponse->redirect("index.php?p=login&m=no_access", 0);
-		$log = new CSystemLog("w", "Ошибка доступа", $username . " пытался изменить имя группы, не имея на это прав.");
+		$log = new \SourceBans\Core\CSystemLog("w", "Ошибка доступа", $username . " пытался изменить имя группы, не имея на это прав.");
 		return $objResponse;
 	}
 	$inject = '<td valign="top"><div class="rowdesc">' . HelpIcon("Имя группы серверов", "Введите имя новой группы.") . 'Имя группы </div></td>';
@@ -940,7 +940,7 @@ function AddAdmin_pay($mask, $srv_mask, $a_name, $a_steam, $a_email, $a_password
 	$qwe = $GLOBALS['db']->GetOne("SELECT `activ` FROM `" . DB_PREFIX . "_vay4er` WHERE `value` = '".$a_code."'");
 	if($qwe == "0" || $qwe != "1"){
 		$objResponse->addScript("ShowBox('Активация', 'Ваш ваучер уже был успешно активирован! Повторная активация - невозможна. Переадресация...', 'red', 'index.php', false);");
-		$log = new CSystemLog("w", "Ваучер", $a_name . " пытался активировать ваучер повторно.");
+		$log = new \SourceBans\Core\CSystemLog("w", "Ваучер", $a_name . " пытался активировать ваучер повторно.");
 		return $objResponse;
 		exit();
 	}
@@ -1345,7 +1345,7 @@ function AddAdmin_pay($mask, $srv_mask, $a_name, $a_steam, $a_email, $a_password
 		} else
 			$objResponse->addScript("ShowBox('Активация', 'Ваш ваучер был успешно активирован! Администратор (" . $a_name . ") был успешно добавлен! Его ключ был:".$a_code."', 'green', 'index.php');TabToReload();");
 		
-		$log = new CSystemLog("m", "Ваучер", "Ваучер ".$a_code." был успешно активирован! Администратор (" . $a_name . ") был успешно добавлен!");
+		$log = new \SourceBans\Core\CSystemLog("m", "Ваучер", "Ваучер ".$a_code." был успешно активирован! Администратор (" . $a_name . ") был успешно добавлен!");
 		return $objResponse;
 	}
 	else
@@ -1362,7 +1362,7 @@ function AddAdmin($mask, $srv_mask, $a_name, $a_steam, $a_email, $a_password, $a
 	if(!$userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_ADMINS))
 	{
 		$objResponse->redirect("index.php?p=login&m=no_access", 0);
-		$log = new CSystemLog("w", "Ошибка доступа", $username . " пытался добавить админа, не имея на то прав.");
+		$log = new \SourceBans\Core\CSystemLog("w", "Ошибка доступа", $username . " пытался добавить админа, не имея на то прав.");
 		return $objResponse;
 	}
 	$vk = str_replace(array("http://","https://","/","vk.com"), "", $vk);
@@ -1791,7 +1791,7 @@ function AddAdmin($mask, $srv_mask, $a_name, $a_steam, $a_email, $a_password, $a
 		} else
 			$objResponse->addScript("ShowBox('Админ добавлен', 'Админ успешно добавлен', 'green', 'index.php?p=admin&c=admins');TabToReload();");
 		
-		$log = new CSystemLog("m", "Админ добавлен", "Админ (" . $a_name . ") добавлен");
+		$log = new \SourceBans\Core\CSystemLog("m", "Админ добавлен", "Админ (" . $a_name . ") добавлен");
 		return $objResponse;
 	}
 	else
@@ -1804,7 +1804,6 @@ function ServerHostPlayers($sid, $type="servers", $obId="", $tplsid="", $open=""
 {
 	$objResponse = new xajaxResponse();
 	global $userbank;
-	require INCLUDES_PATH.'/CServerControl.php';
 	
 	$sid = (int)$sid;
 
@@ -1813,7 +1812,7 @@ function ServerHostPlayers($sid, $type="servers", $obId="", $tplsid="", $open=""
 	if(empty($res[1]) || empty($res[2]))
 		return $objResponse;
 	$info = array();
-	$sinfo = new CServerControl();
+	$sinfo = new \SourceBans\Core\CServerControl();
 	$sinfo->Connect($res[1], $res[2]);
 	$info = $sinfo->GetInfo();
 	if($type == "servers") {
@@ -2019,7 +2018,6 @@ function ServerHostProperty($sid, $obId, $obProp, $trunchostname)
 {
     $objResponse = new xajaxResponse();
 	global $userbank;
-	require INCLUDES_PATH.'/CServerControl.php';
 	
 	$sid = (int)$sid;
     $obId = htmlspecialchars($obId);
@@ -2031,7 +2029,7 @@ function ServerHostProperty($sid, $obId, $obProp, $trunchostname)
 		return $objResponse;
 	$info = array();
 	
-	$sinfo = new CServerControl();
+	$sinfo = new \SourceBans\Core\CServerControl();
 	$sinfo->Connect($res[0], $res[1]);
 	$info = $sinfo->GetInfo();
     
@@ -2046,8 +2044,6 @@ function ServerHostProperty($sid, $obId, $obProp, $trunchostname)
 function ServerHostPlayers_list($sid, $type="servers", $obId="")
 {
 	$objResponse = new xajaxResponse();
-	require INCLUDES_PATH.'/CServerControl.php';
-
 	$sids = explode(";", $sid, -1);
 	if(count($sids) < 1)
 		return $objResponse;
@@ -2061,7 +2057,7 @@ function ServerHostPlayers_list($sid, $type="servers", $obId="")
 		if(empty($res[1]) || empty($res[2]))
 			return $objResponse;
 		$info = array();
-		$sinfo = new CServerControl();
+		$sinfo = new \SourceBans\Core\CServerControl();
 		$sinfo->Connect($res[1], $res[2]);
 		$info = $sinfo->GetInfo();
 
@@ -2088,7 +2084,6 @@ function ServerHostPlayers_list($sid, $type="servers", $obId="")
 function ServerPlayers($sid)
 {
 	$objResponse = new xajaxResponse();
-	require INCLUDES_PATH.'/CServerControl.php';
 
 	$sid = (int)$sid;
 
@@ -2099,7 +2094,7 @@ function ServerPlayers($sid)
 		return $objResponse;
 	}
 	$info = array();
-	$sinfo = new CServerControl();
+	$sinfo = new \SourceBans\Core\CServerControl();
 	$sinfo->Connect($res[1], $res[2]);
 	$info = $sinfo->GetPlayers();
 
@@ -2130,11 +2125,10 @@ function KickPlayer($sid, $name)
 	if(!$userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_BAN))
 	{
 		$objResponse->redirect("index.php?p=login&m=no_access", 0);
-		$log = new CSystemLog("w", "Ошибка доступа", $username . " пытался кикнуть ".htmlspecialchars($name).", не имея на это прав.");
+		$log = new \SourceBans\Core\CSystemLog("w", "Ошибка доступа", $username . " пытался кикнуть ".htmlspecialchars($name).", не имея на это прав.");
 		return $objResponse;
 	}
 
-	require INCLUDES_PATH.'/CServerControl.php';
 	//get the server data
 	$data = $GLOBALS['db']->GetRow("SELECT ip, port, rcon FROM ".DB_PREFIX."_servers WHERE sid = '".$sid."';");
 	if(empty($data['rcon'])) {
@@ -2142,7 +2136,7 @@ function KickPlayer($sid, $name)
 		return $objResponse;
 	}
 	
-	$r = new CServerControl();
+	$r = new \SourceBans\Core\CServerControl();
 	$r->Connect($data['ip'], $data['port']);
 
 	if(!$r->AuthRcon($data['rcon']))
@@ -2190,7 +2184,7 @@ function KickPlayer($sid, $name)
 				$kick = $r->sendCommand("kickid ".$steam." \"Вы были кикнуты с сервера. Перейтидте по адресу http://" . $_SERVER['HTTP_HOST'].$requri." для большей информации.\"");
 			}
 
-			$log = new CSystemLog("m", "Игрок кикнут", $username . " кикнул игрока '".htmlspecialchars($name)."' (".$steam.") from ".$data['ip'].":".$data['port'].".", true, true);
+			$log = new \SourceBans\Core\CSystemLog("m", "Игрок кикнут", $username . " кикнул игрока '".htmlspecialchars($name)."' (".$steam.") from ".$data['ip'].":".$data['port'].".", true, true);
 			$objResponse->addScript("ShowBox('Игрок кикнут', 'Игрок \'".addslashes(htmlspecialchars($name))."\' был кикнут с сервера.', 'green', 'index.php?p=servers', 1500);$('dialog-control').setStyle('display', 'none');");
 		} else {
 			$objResponse->addScript("ShowBox('Ошибка', 'Невозможно кикнуть ".addslashes(htmlspecialchars($name)).". У него иммунитет!', 'red', '', true);");
@@ -2208,7 +2202,7 @@ function AddBan($nickname, $type, $steam, $ip, $length, $dfile, $dname, $reason,
 	if(!$userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_BAN))
 	{
 		$objResponse->redirect("index.php?p=login&m=no_access", 0);
-		$log = new CSystemLog("w", "Ошибка доступа", $username . " пытался добавить бан, не имея на то прав.");
+		$log = new \SourceBans\Core\CSystemLog("w", "Ошибка доступа", $username . " пытался добавить бан, не имея на то прав.");
 		return $objResponse;
 	}
 	
@@ -2347,7 +2341,7 @@ function AddBan($nickname, $type, $steam, $ip, $length, $dfile, $dname, $reason,
 		$objResponse->addScript("ShowBox('Бан добавлен', 'Бан успешно добавлен', 'green', 'index.php?p=admin&c=bans');");
 
 	$objResponse->addScript("TabToReload();");
-	$log = new CSystemLog("m", "Бан добавлен", "Бан против (" . ((int)$type==0?$steam:$ip) . ") был добавлен, причина: $reason, срок: $length", true, $kickit);
+	$log = new \SourceBans\Core\CSystemLog("m", "Бан добавлен", "Бан против (" . ((int)$type==0?$steam:$ip) . ") был добавлен, причина: $reason, срок: $length", true, $kickit);
 	return $objResponse;
 }
 
@@ -2473,7 +2467,7 @@ function ChangeAdminsInfos($aid, $vk, $skype)
 	if($aid != $userbank->aid && !$userbank->is_logged_in())
 	{
 		$objResponse->redirect("index.php?p=login&m=no_access", 0);
-		$log = new CSystemLog("w", "Ошибка доступа", $_SERVER["REMOTE_ADDR"] . " пытался сменить vk или skype, не имея на это прав.");
+		$log = new \SourceBans\Core\CSystemLog("w", "Ошибка доступа", $_SERVER["REMOTE_ADDR"] . " пытался сменить vk или skype, не имея на это прав.");
 		return $objResponse;
 	}
 
@@ -2484,7 +2478,7 @@ function ChangeAdminsInfos($aid, $vk, $skype)
 	$GLOBALS['db']->Execute("UPDATE `".DB_PREFIX."_admins` SET `vk` = '".$vk."', `skype` = '".$skype."' WHERE `aid` = ?", array((int)$aid));
 	$admname = $GLOBALS['db']->GetRow("SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = ?", array((int)$aid));
 	$objResponse->addScript("ShowBox('Информация', 'Ваши данные были успешно обновлены!', 'green', 'index.php?p=account');");
-	$log = new CSystemLog("m", "Данные связи изменены", "У адмнистратора ".$admname['user']." успешно были изменены данные на (vk: ".$vk.", skype: ".$skype.")");
+	$log = new \SourceBans\Core\CSystemLog("m", "Данные связи изменены", "У адмнистратора ".$admname['user']." успешно были изменены данные на (vk: ".$vk.", skype: ".$skype.")");
 	return $objResponse;
 }
 function ChangePassword($aid, $pass)
@@ -2496,7 +2490,7 @@ function ChangePassword($aid, $pass)
 	if($aid != $userbank->aid && !$userbank->HasAccess(ADMIN_OWNER|ADMIN_EDIT_ADMINS))
 	{
 		$objResponse->redirect("index.php?p=login&m=no_access", 0);
-		$log = new CSystemLog("w", "Ошибка доступа", $_SERVER["REMOTE_ADDR"] . " пытался сменить пароль, не имея на это прав.");
+		$log = new \SourceBans\Core\CSystemLog("w", "Ошибка доступа", $_SERVER["REMOTE_ADDR"] . " пытался сменить пароль, не имея на это прав.");
 		return $objResponse;
 	}
 
@@ -2504,7 +2498,7 @@ function ChangePassword($aid, $pass)
 	$admname = $GLOBALS['db']->GetRow("SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = ?", array((int)$aid));
 	$objResponse->addAlert("Пароль успешно изменен");
 	$objResponse->addRedirect("index.php?p=login", 0);
-	$log = new CSystemLog("m", "Пароль изменен", "Пароль сменен админом (".$admname['user'].")");
+	$log = new \SourceBans\Core\CSystemLog("m", "Пароль изменен", "Пароль сменен админом (".$admname['user'].")");
 	return $objResponse;
 }
 
@@ -2515,7 +2509,7 @@ function AddMod($name, $folder, $icon, $steam_universe, $enabled)
 	if(!$userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_MODS))
 	{
 		$objResponse->redirect("index.php?p=login&m=no_access", 0);
-		$log = new CSystemLog("w", "Ошибка доступа", $username . " пытался добавить МОД, не имея на это прав.");
+		$log = new \SourceBans\Core\CSystemLog("w", "Ошибка доступа", $username . " пытался добавить МОД, не имея на это прав.");
 		return $objResponse;
 	}
 	$name = htmlspecialchars(strip_tags($name));//don't want to addslashes because execute will automatically do it
@@ -2537,7 +2531,7 @@ function AddMod($name, $folder, $icon, $steam_universe, $enabled)
 
 	$objResponse->addScript("ShowBox('Мод добавлен', 'Игровой МОД успешно добавлен', 'green', 'index.php?p=admin&c=mods');");
 	$objResponse->addScript("TabToReload();");
-	$log = new CSystemLog("m", "МОД добавлен", "МОД ($name) был добавлен");
+	$log = new \SourceBans\Core\CSystemLog("m", "МОД добавлен", "МОД ($name) был добавлен");
 	return $objResponse;
 }
 
@@ -2553,14 +2547,14 @@ function EditAdminPerms($aid, $web_flags, $srv_flags)
 	if(!$userbank->HasAccess(ADMIN_OWNER|ADMIN_EDIT_ADMINS))
 	{
 		$objResponse->redirect("index.php?p=login&m=no_access", 0);
-		$log = new CSystemLog("w", "Ошибка доступа", $username . " пытался изменить разрешения админа, не имея на это прав.");
+		$log = new \SourceBans\Core\CSystemLog("w", "Ошибка доступа", $username . " пытался изменить разрешения админа, не имея на это прав.");
 		return $objResponse;
 	}
 
 	if(!$userbank->HasAccess(ADMIN_OWNER) && (int)$web_flags & ADMIN_OWNER )
 	{
 			$objResponse->redirect("index.php?p=login&m=no_access", 0);
-			$log = new CSystemLog("w", "Ошибка доступа", $username . " пытался сменить разрешения главного админа, не имея на это прав.");
+			$log = new \SourceBans\Core\CSystemLog("w", "Ошибка доступа", $username . " пытался сменить разрешения главного админа, не имея на это прав.");
 			return $objResponse;
 	}
 
@@ -2606,7 +2600,7 @@ function EditAdminPerms($aid, $web_flags, $srv_flags)
 	} else
 		$objResponse->addScript("ShowBox('Разрешения обновлены', 'Разрешения пользователя успешно обновлены', 'green', 'index.php?p=admin&c=admins');TabToReload();");
 	$admname = $GLOBALS['db']->GetRow("SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = ?", array((int)$aid));
-    $log = new CSystemLog("m", "Разрешения обновлены", "Разрешения обновлены для (".$admname['user'].")");
+    $log = new \SourceBans\Core\CSystemLog("m", "Разрешения обновлены", "Разрешения обновлены для (".$admname['user'].")");
 	return $objResponse;
 }
 
@@ -2617,14 +2611,14 @@ function EditGroup($gid, $web_flags, $srv_flags, $type, $name, $overrides, $newO
 	if(!$userbank->HasAccess(ADMIN_OWNER|ADMIN_EDIT_GROUPS))
 	{
 		$objResponse->redirect("index.php?p=login&m=no_access", 0);
-		$log = new CSystemLog("w", "Ошибка доступа", $username . " пытался редактировать детали группы, не имея на это прав.");
+		$log = new \SourceBans\Core\CSystemLog("w", "Ошибка доступа", $username . " пытался редактировать детали группы, не имея на это прав.");
 		return $objResponse;
 	}
 	
 	if(empty($name))
 	{
 		$objResponse->redirect("index.php?p=login&m=no_access", 0);
-		$log = new CSystemLog("w", "Ошибка доступа", $username . " пытался удалить название группы. У группы должно быть название.");
+		$log = new \SourceBans\Core\CSystemLog("w", "Ошибка доступа", $username . " пытался удалить название группы. У группы должно быть название.");
 		return $objResponse;
 	}
 	
@@ -2717,12 +2711,12 @@ function EditGroup($gid, $web_flags, $srv_flags, $type, $name, $overrides, $newO
 			$objResponse->addScript("ShowRehashBox('".implode(",", $allservers)."', 'Группа обновлена', 'Группа успешно обновлена', 'green', 'index.php?p=admin&c=groups');TabToReload();");
 		} else
 			$objResponse->addScript("ShowBox('Группа обновлена', 'Группа успешно обновлена', 'green', 'index.php?p=admin&c=groups');TabToReload();");
-		$log = new CSystemLog("m", "Группа обновлена", "Группа ($name) была обновлена");
+		$log = new \SourceBans\Core\CSystemLog("m", "Группа обновлена", "Группа ($name) была обновлена");
 		return $objResponse;
 	}
 
 	$objResponse->addScript("ShowBox('Группа обновлена', 'Группа успешно обновлена', 'green', 'index.php?p=admin&c=groups');TabToReload();");
-	$log = new CSystemLog("m", "Группа обновлена", "Группа ($name) обновлена");
+	$log = new \SourceBans\Core\CSystemLog("m", "Группа обновлена", "Группа ($name) обновлена");
 	return $objResponse;
 }
 
@@ -2734,7 +2728,7 @@ function SendRcon($sid, $command, $output)
 	if(!$userbank->HasAccess(SM_RCON . SM_ROOT))
 	{
 		$objResponse->redirect("index.php?p=login&m=no_access", 0);
-		$log = new CSystemLog("w", "Ошибка доступа", $username . " пытался отправить РКОН команду, не имея на это прав.");
+		$log = new \SourceBans\Core\CSystemLog("w", "Ошибка доступа", $username . " пытался отправить РКОН команду, не имея на это прав.");
 		return $objResponse;
 	}
 	if(empty($command))
@@ -2773,9 +2767,8 @@ function SendRcon($sid, $command, $output)
 		return $objResponse;
 	}
     @fclose($test);
-	include(INCLUDES_PATH . "/CServerControl.php");
 	
-	$r = new CServerControl();
+	$r = new \SourceBans\Core\CServerControl();
 	$r->Connect($rcon['ip'], $rcon['port']);
 	
 	if(!$r->AuthRcon($rcon['rcon']))
@@ -2810,7 +2803,7 @@ function SendRcon($sid, $command, $output)
 	}
 	$objResponse->addAppend("rcon_con", "innerHTML", $textAppend);
 	$objResponse->addScript("scroll.toBottom(); $('cmd').value=''; $('cmd').disabled=''; $('rcon_btn').disabled=''");
-	$log = new CSystemLog("m", "РКОН отправлен", "РКОН был отправлен на сервер (".$rcon['ip'].":".$rcon['port']."). Команда: $command", true, true);
+	$log = new \SourceBans\Core\CSystemLog("m", "РКОН отправлен", "РКОН был отправлен на сервер (".$rcon['ip'].":".$rcon['port']."). Команда: $command", true, true);
 	return $objResponse;
 }
 
@@ -2825,7 +2818,7 @@ function SendMail($subject, $message, $type, $id)
     if(!$userbank->HasAccess(ADMIN_OWNER|ADMIN_BAN_PROTESTS|ADMIN_BAN_SUBMISSIONS))
 	{
 		$objResponse->redirect("index.php?p=login&m=no_access", 0);
-		$log = new CSystemLog("w", "Ошибка доступа", $username . " пытался отправить e-mail, не имея на это прав.");
+		$log = new \SourceBans\Core\CSystemLog("w", "Ошибка доступа", $username . " пытался отправить e-mail, не имея на это прав.");
 		return $objResponse;
 	}
 	
@@ -2860,7 +2853,7 @@ function SendMail($subject, $message, $type, $id)
 	if($m)
 	{
 		$objResponse->addScript("ShowBox('E-mail отправлен', 'E-mail успешно отправлен пользователю.', 'green', 'index.php?p=admin&c=bans');");
-		$log = new CSystemLog("m", "E-mail отправлен", $username . " отправил e-mail на ".htmlspecialchars($email).".<br />Тема: '[SourceBans] " . htmlspecialchars($subject) . "'<br />Сообщение: '" . nl2br(htmlspecialchars($message)) . "'");
+		$log = new \SourceBans\Core\CSystemLog("m", "E-mail отправлен", $username . " отправил e-mail на ".htmlspecialchars($email).".<br />Тема: '[SourceBans] " . htmlspecialchars($subject) . "'<br />Сообщение: '" . nl2br(htmlspecialchars($message)) . "'");
 	}
 	else
 		$objResponse->addScript("ShowBox('Ошибка', 'Не удалось отправить e-mail пользователю.', 'red', '');");
@@ -2903,7 +2896,7 @@ function AddComment($bid, $ctype, $ctext, $page)
 	if(!$userbank->is_admin())
 	{
 		$objResponse->redirect("index.php?p=login&m=no_access", 0);
-		$log = new CSystemLog("w", "Ошибка доступа", $username . " пытался добавить комментарий, не имея на это прав.");
+		$log = new \SourceBans\Core\CSystemLog("w", "Ошибка доступа", $username . " пытался добавить комментарий, не имея на это прав.");
 		return $objResponse;
 	}
 	
@@ -2938,7 +2931,7 @@ function AddComment($bid, $ctype, $ctext, $page)
 
 	$objResponse->addScript("ShowBox('Комментарий добавлен', 'Комментарий успешно опубликован', 'green', 'index.php$redir');");
 	$objResponse->addScript("TabToReload();");
-	$log = new CSystemLog("m", "Комментарий добавлен", $username." добавил комментарий к бану №".$bid);
+	$log = new \SourceBans\Core\CSystemLog("m", "Комментарий добавлен", $username." добавил комментарий к бану №".$bid);
 	return $objResponse;
 }
 
@@ -2949,7 +2942,7 @@ function EditComment($cid, $ctype, $ctext, $page)
 	if(!$userbank->is_admin())
 	{
 		$objResponse->redirect("index.php?p=login&m=no_access", 0);
-		$log = new CSystemLog("w", "Ошибка доступа", $username . " пытался редактировать комментарий, не имея на это прав.");
+		$log = new \SourceBans\Core\CSystemLog("w", "Ошибка доступа", $username . " пытался редактировать комментарий, не имея на это прав.");
 		return $objResponse;
 	}
 
@@ -2983,7 +2976,7 @@ function EditComment($cid, $ctype, $ctext, $page)
 
 	$objResponse->addScript("ShowBox('Комментарий отредактирован', 'Комментарий №".$cid." успешно отредактирован', 'green', 'index.php$redir');");
 	$objResponse->addScript("TabToReload();");
-	$log = new CSystemLog("m", "Комментарий отредактирован", $username." отредактировал комментарий №".$cid);
+	$log = new \SourceBans\Core\CSystemLog("m", "Комментарий отредактирован", $username." отредактировал комментарий №".$cid);
 	return $objResponse;
 }
 
@@ -2994,7 +2987,7 @@ function RemoveComment($cid, $ctype, $page)
 	if (!$userbank->HasAccess(ADMIN_OWNER))
 	{
 		$objResponse->redirect("index.php?p=login&m=no_access", 0);
-		$log = new CSystemLog("w", "Ошибка доступа", $username . " пытался удалить комментарий, не имея на это прав.");
+		$log = new \SourceBans\Core\CSystemLog("w", "Ошибка доступа", $username . " пытался удалить комментарий, не имея на это прав.");
 		return $objResponse;
 	}
 
@@ -3016,7 +3009,7 @@ function RemoveComment($cid, $ctype, $page)
 	if($res)
 	{
 		$objResponse->addScript("ShowBox('Комментарий удалён', 'Комментарий был успешно удалён из базы данных', 'green', 'index.php$redir', true);");
-		$log = new CSystemLog("m", "Комментарий удален", $username." удалил комментарий №".$cid);
+		$log = new \SourceBans\Core\CSystemLog("m", "Комментарий удален", $username." удалил комментарий №".$cid);
 	}
 	else
 		$objResponse->addScript("ShowBox('Ошибка', 'Ошибка удаления комментария из базы данных. Смотрите лог для дополнительной информации', 'red', 'index.php$redir', true);");
@@ -3029,7 +3022,7 @@ function Maintenance($type) {
     $objResponse = new xajaxResponse();
     if (!$userbank->HasAccess(ADMIN_OWNER|ADMIN_WEB_SETTINGS)) {
         ShowBox_ajx("Ошибка", "Вы не имеете прав для выполнения данного действия!", "red", "", true, $objResponse);
-        new CSystemLog("w", "Ошибка доступа", $usernake . " пытался произвести операцию по обслуживанию системы, не имея на это прав.");
+        new \SourceBans\Core\CSystemLog("w", "Ошибка доступа", $usernake . " пытался произвести операцию по обслуживанию системы, не имея на это прав.");
         return $objResponse;
     }
     
@@ -3199,9 +3192,8 @@ function RehashAdmins_pay($server, $do=0, $card)
 			return $objResponse;
 		}
 
-		require INCLUDES_PATH.'/CServerControl.php';
 		
-		$r = new CServerControl();
+		$r = new \SourceBans\Core\CServerControl();
 		$r->Connect($serv['ip'], $serv['port']);
 		
 		if(!$r->AuthRcon($serv['rcon']))
@@ -3243,7 +3235,7 @@ function RehashAdmins($server, $do=0)
 	if (!$userbank->HasAccess(ADMIN_OWNER|ADMIN_EDIT_ADMINS|ADMIN_EDIT_GROUPS|ADMIN_ADD_ADMINS))
 	{
 		$objResponse->redirect("index.php?p=login&m=no_access", 0);
-		$log = new CSystemLog("w", "Ошибка доступа", $username . " пытался обновить админов, не имея на это прав.");
+		$log = new \SourceBans\Core\CSystemLog("w", "Ошибка доступа", $username . " пытался обновить админов, не имея на это прав.");
 		return $objResponse;
 	}
 	$servers = explode(",",$server);
@@ -3272,10 +3264,8 @@ function RehashAdmins($server, $do=0)
 			}
 			return $objResponse;
 		}
-
-		require INCLUDES_PATH.'/CServerControl.php';
 		
-		$r = new CServerControl();
+		$r = new \SourceBans\Core\CServerControl();
 		$r->Connect($serv['ip'], $serv['port']);
 		
 		if(!$r->AuthRcon($serv['rcon']))
@@ -3318,7 +3308,7 @@ function GroupBan($groupuri, $isgrpurl="no", $queue="no", $reason="", $last="")
     if(!$userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_BAN))
 	{
 		$objResponse->redirect("index.php?p=login&m=no_access", 0);
-		$log = new CSystemLog("w", "Ошибка доступа", $username . " пытался забанить группу '".htmlspecialchars(addslashes(trim($groupuri)))."', не имея на это прав.");
+		$log = new \SourceBans\Core\CSystemLog("w", "Ошибка доступа", $username . " пытался забанить группу '".htmlspecialchars(addslashes(trim($groupuri)))."', не имея на это прав.");
 		return $objResponse;
 	}
 	if($isgrpurl=="yes")
@@ -3357,7 +3347,7 @@ function BanMemberOfGroup($grpurl, $queue, $reason, $last)
 	if(!$userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_BAN))
 	{
 		$objResponse->redirect("index.php?p=login&m=no_access", 0);
-		$log = new CSystemLog("w", "Ошибка доступа", $username . " пытался забанить группу '".$grpurl."', не имея на это прав.");
+		$log = new \SourceBans\Core\CSystemLog("w", "Ошибка доступа", $username . " пытался забанить группу '".$grpurl."', не имея на это прав.");
 		return $objResponse;
 	}
 	$bans = $GLOBALS['db']->GetAll("SELECT CAST(MID(authid, 9, 1) AS UNSIGNED) + CAST('76561197960265728' AS UNSIGNED) + CAST(MID(authid, 11, 10) * 2 AS UNSIGNED) AS community_id FROM ".DB_PREFIX."_bans WHERE RemoveType IS NULL;");
@@ -3451,7 +3441,7 @@ function BanMemberOfGroup($grpurl, $queue, $reason, $last)
 		$objResponse->addScript("ShowBox('Группа забанена', 'Забанено ".($total-$bannedbefore-$error)." из ".$total." участников группы \'".$grpurl."\'.<br>".$bannedbefore." были забанены ранее.<br>".$error." ошибок.', 'green', '', true);");
 		$objResponse->addScript("$('dialog-control').setStyle('display', 'block');");
 	}
-	$log = new CSystemLog("m", "Группа забанена", "Забанено ".($total-$bannedbefore-$error)." из ".$total." участников группы \'".$grpurl."\'.<br>".$bannedbefore." были забанены ранее.<br>".$error." ошибок.");
+	$log = new \SourceBans\Core\CSystemLog("m", "Группа забанена", "Забанено ".($total-$bannedbefore-$error)." из ".$total." участников группы \'".$grpurl."\'.<br>".$bannedbefore." были забанены ранее.<br>".$error." ошибок.");
 	return $objResponse;
 }
 
@@ -3465,7 +3455,7 @@ function GetGroups($friendid)
 	if(!$userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_BAN))
 	{
 		$objResponse->redirect("index.php?p=login&m=no_access", 0);
-		$log = new CSystemLog("w", "Ошибка доступа", $username . " пытался получить список групп '".$friendid."', не имея на это прав.");
+		$log = new \SourceBans\Core\CSystemLog("w", "Ошибка доступа", $username . " пытался получить список групп '".$friendid."', не имея на это прав.");
 		return $objResponse;
 	}
 	// check if we're getting redirected, if so there is $result["Location"] (the player uses custom id)  else just use the friendid. !We can't get the xml with the friendid url if the player has a custom one!
@@ -3544,7 +3534,7 @@ function BanFriends($friendid, $name)
 	if(!$userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_BAN))
 	{
 		$objResponse->redirect("index.php?p=login&m=no_access", 0);
-		$log = new CSystemLog("w", "Ошибка доступа", $username . " пытался забанить друга '".RemoveCode($friendid)."', не имея на это прав.");
+		$log = new \SourceBans\Core\CSystemLog("w", "Ошибка доступа", $username . " пытался забанить друга '".RemoveCode($friendid)."', не имея на это прав.");
 		return $objResponse;
 	}
 	$bans = $GLOBALS['db']->GetAll("SELECT CAST(MID(authid, 9, 1) AS UNSIGNED) + CAST('76561197960265728' AS UNSIGNED) + CAST(MID(authid, 11, 10) * 2 AS UNSIGNED) AS community_id FROM ".DB_PREFIX."_bans WHERE RemoveType IS NULL;");
@@ -3622,7 +3612,7 @@ function BanFriends($friendid, $name)
 	}
 	$objResponse->addScript("ShowBox('Дрзья были забанены', 'Забанено ".($total-$bannedbefore-$error)." из ".$total." друзей у \'".htmlspecialchars($name)."\'.<br>".$bannedbefore." были забанены до этого.<br>".$error." ошибок.', 'green', 'index.php?p=banlist', true);");
 	$objResponse->addScript("$('dialog-control').setStyle('display', 'block');");
-	$log = new CSystemLog("m", "Друзья забанены", "Забанено ".($total-$bannedbefore-$error)." из ".$total." друзей у \'".htmlspecialchars($name)."\'.<br>".$bannedbefore." были забанены до этого.<br>".$error." ошибок.");
+	$log = new \SourceBans\Core\CSystemLog("m", "Друзья забанены", "Забанено ".($total-$bannedbefore-$error)." из ".$total." друзей у \'".htmlspecialchars($name)."\'.<br>".$bannedbefore." были забанены до этого.<br>".$error." ошибок.");
 	return $objResponse;
 }
 
@@ -3633,12 +3623,11 @@ function ViewCommunityProfile($sid, $name)
 	if(!$userbank->is_admin())
 	{
 		$objResponse->redirect("index.php?p=login&m=no_access", 0);
-		$log = new CSystemLog("w", "Ошибка доступа", $username . " пытался посмотреть профиль '".htmlspecialchars($name)."', не имея на это прав.");
+		$log = new \SourceBans\Core\CSystemLog("w", "Ошибка доступа", $username . " пытался посмотреть профиль '".htmlspecialchars($name)."', не имея на это прав.");
 		return $objResponse;
 	}
 	$sid = (int)$sid;
-  
-	require INCLUDES_PATH.'/CServerControl.php';
+
 	//get the server data
 	$data = $GLOBALS['db']->GetRow("SELECT ip, port, rcon FROM ".DB_PREFIX."_servers WHERE sid = '".$sid."';");
 	if(empty($data['rcon'])) {
@@ -3646,7 +3635,7 @@ function ViewCommunityProfile($sid, $name)
 		return $objResponse;
 	}
 	
-	$r = new CServerControl();
+	$r = new \SourceBans\Core\CServerControl();
 	$r->Connect($data['ip'], $data['port']);
 
 	if(!$r->AuthRcon($data['rcon']))
@@ -3690,11 +3679,10 @@ function SendMessage($sid, $name, $message)
 	if(!$userbank->is_admin())
 	{
 		$objResponse->redirect("index.php?p=login&m=no_access", 0);
-		$log = new CSystemLog("w", "Ошибка доступа", $username . " пытался отправить сообщение '".addslashes(htmlspecialchars($name))."' (\"".RemoveCode($message)."\"), не имея на это прав.");
+		$log = new \SourceBans\Core\CSystemLog("w", "Ошибка доступа", $username . " пытался отправить сообщение '".addslashes(htmlspecialchars($name))."' (\"".RemoveCode($message)."\"), не имея на это прав.");
 		return $objResponse;
 	}
 	$sid = (int)$sid;
-	require INCLUDES_PATH.'/CServerControl.php';
 	//get the server data
 	$data = $GLOBALS['db']->GetRow("SELECT ip, port, rcon FROM ".DB_PREFIX."_servers WHERE sid = '".$sid."';");
 	if(empty($data['rcon'])) {
@@ -3702,7 +3690,7 @@ function SendMessage($sid, $name, $message)
 		return $objResponse;
 	}
 	
-	$r = new CServerControl();
+	$r = new \SourceBans\Core\CServerControl();
 	$r->Connect($data['ip'], $data['port']);
 	
 	if(!$r->AuthRcon($data['rcon']))
@@ -3712,7 +3700,7 @@ function SendMessage($sid, $name, $message)
 		return $objResponse;
 	}
 	$ret = $r->SendCommand('sm_psay "'.$name.'" "'.addslashes($message).'"');
-	new CSystemLog("m", "Сообщение отправлено", "Данное сообщение было отправлено " . addslashes(htmlspecialchars($name)) . " on server " . $data['ip'] . ":" . $data['port'] . ": " . RemoveCode($message));
+	new \SourceBans\Core\CSystemLog("m", "Сообщение отправлено", "Данное сообщение было отправлено " . addslashes(htmlspecialchars($name)) . " on server " . $data['ip'] . ":" . $data['port'] . ": " . RemoveCode($message));
 	$objResponse->addScript("ShowBox('Сообщение отправлено', 'Сообщение для игрока \'".addslashes(htmlspecialchars($name))."\' успешно отправлено!', 'green', '', true);$('dialog-control').setStyle('display', 'none');");
 	return $objResponse;
 }
@@ -3723,7 +3711,7 @@ function AddBlock($nickname, $type, $steam, $length, $reason)
 	if(!$userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_BAN))
 	{
 		$objResponse->redirect("index.php?p=login&m=no_access", 0);
-		$log = new CSystemLog("w", "Ошибка доступа", $username . " пытался добавить блокировку, не имея на это прав.");
+		$log = new \SourceBans\Core\CSystemLog("w", "Ошибка доступа", $username . " пытался добавить блокировку, не имея на это прав.");
 		return $objResponse;
 	}
 	
@@ -3828,7 +3816,7 @@ function AddBlock($nickname, $type, $steam, $length, $reason)
 
 	$objResponse->addScript("ShowBlockBox('".$steam."', '".(int)$type."', '".(int)$len."');");
 	$objResponse->addScript("TabToReload();");
-	$log = new CSystemLog("m", "Блок добавлен", "Блок (" . $steam . ") был добавлен, причина: $reason, срок: $length", true, $kickit);
+	$log = new \SourceBans\Core\CSystemLog("m", "Блок добавлен", "Блок (" . $steam . ") был добавлен, причина: $reason, срок: $length", true, $kickit);
 	return $objResponse;
 }
 
@@ -3879,7 +3867,7 @@ function PastePlayerData($sid, $name) {
 
     if (!$userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_BAN)) {
         $objResponse->redirect("index.php?p=login&m=no_access", 0);
-        $log = new CSystemLog("w", "Ошибка доступа", $username . " пытался получить данные об игроке для добавления бана/блока , не имея на это прав.");
+        $log = new \SourceBans\Core\CSystemLog("w", "Ошибка доступа", $username . " пытался получить данные об игроке для добавления бана/блока , не имея на это прав.");
         return $objResponse;
     }
     
@@ -3892,9 +3880,8 @@ function PastePlayerData($sid, $name) {
         $objResponse->addScript("ShowBox('Ошибка', 'Нет РКОН пароля сервера <b>".$data['ip'].":".$data['port']."</b>! Получение данных об игроке невозможно!', 'red', '', true);");
         return $objResponse;
     }
-    
-    require(INCLUDES_PATH . '/CServerControl.php');
-    $CSInstance = new CServerControl();
+
+    $CSInstance = new \SourceBans\Core\CServerControl();
     $CSInstance->Connect($data['ip'], $data['port']);
     if (!$CSInstance->AuthRcon($data['rcon'])) {
         $GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_servers SET rcon = '' WHERE sid = ?;", array($sid));
@@ -3925,7 +3912,7 @@ function AddWarning($id, $days, $reason) {
 	$objResponse = new xajaxResponse();
 	if (!$userbank->HasAccess(ADMIN_OWNER|ADMIN_DELETE_ADMINS) || $userbank->GetProperty("srv_immunity", $admin['id']) > $userbank->GetProperty("srv_immunity")) {
 		ShowBox_ajx("Ошибка", "Отказано в доступе.", "red", "", true, $objResponse);
-		new CSystemLog("w", "Попытка несанцкионированного доступа", "Администратор пытался выдать предупреждение, не имея на это прав.");
+		new \SourceBans\Core\CSystemLog("w", "Попытка несанцкионированного доступа", "Администратор пытался выдать предупреждение, не имея на это прав.");
 		return $objResponse;
 	}
 	
@@ -3937,11 +3924,11 @@ function AddWarning($id, $days, $reason) {
 	$removedAccess = false;
 
 	$GLOBALS['db']->Execute("INSERT INTO `" . DB_PREFIX . "_warns` (`arecipient`, `afrom`, `expires`, `reason`) VALUES(" . (int) $id . ", " . (int) $userbank->GetAid() . ", " . (time() + (86400 * (int) $days)) . ", " . $GLOBALS['db']->qstr($reason) . ");");
-	new CSystemLog("m", "Предупреждение выдано", "Администратор выдал предупреждение Администратору " . $userbank->getProperty('user', $id));
+	new \SourceBans\Core\CSystemLog("m", "Предупреждение выдано", "Администратор выдал предупреждение Администратору " . $userbank->getProperty('user', $id));
 
 	if ($GLOBALS['db']->GetOne("SELECT COUNT(*) FROM `" . DB_PREFIX . "_warns` WHERE `arecipient` = " . (int) $id) >= (int) $GLOBALS['config']['admin.warns.max']) {
 		$GLOBALS['db']->Execute("UPDATE `" . DB_PREFIX . "_admins` SET `expired` = 1 WHERE `aid` = " . (int) $id . ";");
-		new CSystemLog("m", "Аккаунт администратора деактивирован", "По причине превышения лимита максимально активных предупреждений, Администратор " . $userbank->getProperty('user', $id) . " отстраняется от Должности.");
+		new \SourceBans\Core\CSystemLog("m", "Аккаунт администратора деактивирован", "По причине превышения лимита максимально активных предупреждений, Администратор " . $userbank->getProperty('user', $id) . " отстраняется от Должности.");
 		$removedAccess = true;
 	}
 	$msg = "Предупреждение с причиной \"<em>".$reason."</em>\" выдано сроком на ".$days." дней.";
@@ -3958,13 +3945,13 @@ function RemoveWarning($warningId) {
     $objResponse = new xajaxResponse();
     if (!$userbank->HasAccess(ADMIN_OWNER|ADMIN_DELETE_ADMINS)) {
         ShowBox_ajx("Ошибка", "Отказано в доступе.", "red", "", true, $objResponse);
-        new CSystemLog("w", "Попытка несанцкионированного доступа", "Администратор пытался снять предупреждение, не имея на это прав.");
+        new \SourceBans\Core\CSystemLog("w", "Попытка несанцкионированного доступа", "Администратор пытался снять предупреждение, не имея на это прав.");
         return $objResponse;
     }
 
     if ((int) $GLOBALS['db']->GetOne("SELECT COUNT(*) FROM `" . DB_PREFIX . "_warns` WHERE `expires` > " . time() . " AND `id` = ". (int) $warningId) == 1) {
         ShowBox_ajx("Успех", "Предупреждение снято", "green", "", true, $objResponse);
-        new CSystemLog("m", "Предупреждение снято", "Администратор снял предупреждение Администратору " . $userbank->getProperty('user', $GLOBALS['db']->GetOne("SELECT `arecipient` FROM `" . DB_PREFIX . "_warns` WHERE `id` = " . (int) $warningId)) . " с идентификатором " . $warningId);
+        new \SourceBans\Core\CSystemLog("m", "Предупреждение снято", "Администратор снял предупреждение Администратору " . $userbank->getProperty('user', $GLOBALS['db']->GetOne("SELECT `arecipient` FROM `" . DB_PREFIX . "_warns` WHERE `id` = " . (int) $warningId)) . " с идентификатором " . $warningId);
         $GLOBALS['db']->Execute("UPDATE `" . DB_PREFIX . "_warns` SET `expires` = -1 WHERE `id` = " . (int) $warningId);
     } else
         ShowBox_ajx("Ошибка", "Действущее предупреждение с идентификатором " . $warningId . " не найдено. Может быть, оно уже истекло?", "red", "", true, $objResponse);

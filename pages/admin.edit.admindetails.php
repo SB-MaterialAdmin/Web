@@ -25,6 +25,8 @@
 //
 // *************************************************************************
 
+require 'vendor/autoload.php';
+
 if(!defined("IN_SB")){echo "Ошибка доступа!";die();}
 global $userbank, $theme;
 
@@ -42,7 +44,7 @@ $_GET['id'] = (int)$_GET['id'];
 
 if(!$userbank->GetProperty("user", $_GET['id']))
 {
-	$log = new CSystemLog("e", "Получение данных администратора не удалось", "Не могу найти данные для администратора с идентификатором '".$_GET['id']."'");
+	$log = new \SourceBans\Core\CSystemLog("e", "Получение данных администратора не удалось", "Не могу найти данные для администратора с идентификатором '".$_GET['id']."'");
 	echo '<div id="msg-red" >
 	<i><img src="./images/warning.png" alt="Warning" /></i>
 	<b>Ошибка</b>
@@ -58,7 +60,7 @@ if(!$userbank->HasAccess(ADMIN_OWNER))
 {
 	if(!$userbank->HasAccess(ADMIN_EDIT_ADMINS) || ($userbank->HasAccess(ADMIN_OWNER, $_GET['id']) && $_GET['id'] != $userbank->GetAid()))
 	{
-		$log = new CSystemLog("w", "Попытка взлома", $userbank->GetProperty("user") . " пытался редактировать детали ".$userbank->GetProperty('user', $_GET['id']).", не имея на это прав.");
+		$log = new \SourceBans\Core\CSystemLog("w", "Попытка взлома", $userbank->GetProperty("user") . " пытался редактировать детали ".$userbank->GetProperty('user', $_GET['id']).", не имея на это прав.");
 		echo '<div id="msg-red" >
 		<i><img src="./images/warning.png" alt="Внимание" /></i>
 		<b>Ошибка</b>
@@ -360,7 +362,7 @@ if(isset($_POST['adminname']))
 		}
 		
 		$admname = $GLOBALS['db']->GetRow("SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = ?", array((int)$_GET['id']));
-		$log = new CSystemLog("m", "Обновление данных администратора", "Админ (" . $admname['user'] . ") изменил детали администратора");
+		$log = new \SourceBans\Core\CSystemLog("m", "Обновление данных администратора", "Админ (" . $admname['user'] . ") изменил детали администратора");
 		if($ownpwchanged)
 			echo '<script>setTimeout(\'ShowBox("Обновление данных", "Обновление данных администратора...", "green", "index.php?p=admin&c=admins", true);TabToReload();\', 1200);</script>';
 		else if(isset($rehashing))

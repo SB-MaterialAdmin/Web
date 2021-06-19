@@ -33,6 +33,8 @@
  *
  ***************************************************************************/
 
+require 'vendor/autoload.php';
+
 if(!defined("IN_SB")){echo "Ошибка доступа!";die();}
 
 global $userbank, $theme;
@@ -66,7 +68,7 @@ foreach ($games as &$game) {
 }
 
 /* Display */
-$tabs = new CTabsMenu();
+$tabs = new \SourceBans\Core\CTabsMenu();
 $tabs->addMenuItem("Назад",0,"","index.php?p=admin&c=mods", true);
 $tabs->outputMenu();
 

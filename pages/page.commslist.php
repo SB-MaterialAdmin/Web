@@ -96,7 +96,7 @@ if (isset($_GET['a']) && $_GET['a'] == "ungag" && isset($_GET['id']))
 
 	if($res){
 		echo "<script>setTimeout('ShowBox(\"Включение чата\", \"Игроку <b>".StripQuotes($row['name'])."</b> (<b>" . $row['authid'] . "</b>) был включен чат.<br><br><font color=\'green\' class=\'f-15\'><b>Переадресация...</b></font>\", \"green\", \"index.php?p=commslist$pagelink\", false);', 1350);</script>";
-		$log = new CSystemLog("m", "Игроку включен чат", "'".StripQuotes($row['name'])."' (" . $row['authid'] . ") has been ungagged");
+		$log = new \SourceBans\Core\CSystemLog("m", "Игроку включен чат", "'".StripQuotes($row['name'])."' (" . $row['authid'] . ") has been ungagged");
 	}else{
 		echo "<script>setTimeout('ShowBox(\"Чат не включен\", \"Возникла ошибка включения чата игроку <b>".StripQuotes($row['name'])."</b><br><br><font color=\'green\' class=\'f-15\'><b>Переадресация...</b></font>\", \"red\", \"index.php?p=commsist$pagelink\", false);', 1350);</script>";
 	}
@@ -142,7 +142,7 @@ else if(isset($_GET['a']) && $_GET['a'] == "unmute" && isset($_GET['id']))
 
 	if($res){
 		echo "<script>setTimeout('ShowBox(\"Включение микрофона\", \"Игроку <b>".StripQuotes($row['name'])."</b> <b>(" . $row['authid'] . ")</b> был включен микрофон.<br><br><font color=\'green\' class=\'f-15\'><b>Переадресация...</b></font>\", \"green\", \"index.php?p=commslist$pagelink\", false);', 1350);</script>";
-		$log = new CSystemLog("m", "Игроку влючен микро", "'".StripQuotes($row['name'])."' (" . $row['authid'] . ") has been unmuted");
+		$log = new \SourceBans\Core\CSystemLog("m", "Игроку влючен микро", "'".StripQuotes($row['name'])."' (" . $row['authid'] . ") has been unmuted");
 	}else{
 		echo "<script>setTimeout('ShowBox(\"Микрофон не включен\", \"Возникла ошибка включения микрофона <b>".StripQuotes($row['name'])."</b><br><br><font color=\'green\' class=\'f-15\'><b>Переадресация...</b></font>\", \"red\", \"index.php?p=commsist$pagelink\", false);', 1350);</script>";
 	}
@@ -194,7 +194,7 @@ else if(isset($_GET['a']) && $_GET['a'] == "delete")
 	if($res)
 	{
 		echo "<script>setTimeout('ShowBox(\"Блокировка удалена\", \"Блокировка игрока <b>" .StripQuotes($steam['name']). "</b> (<b>".$steam['authid']."</b>) была удалена из SourceBans. <br><br> <font color=\'green\' class=\'f-15\'><b>Переадресация...</b></font>\", \"green\", \"index.php?p=commslist$pagelink\", false);', 1350);</script>";
-		$log = new CSystemLog("m", "Блокировка удалена", "Блокировка игрока '".StripQuotes($steam['name'])."' (" . $steam['authid'] . ") была удалена.");
+		$log = new \SourceBans\Core\CSystemLog("m", "Блокировка удалена", "Блокировка игрока '".StripQuotes($steam['name'])."' (" . $steam['authid'] . ") была удалена.");
 	}else{
 		echo "<script>setTimeout('ShowBox(\"Блокировка НЕ удалена\", \"Блокировка игрока <b>".StripQuotes($steam['name'])."</b> не удалена из-за ошибки. <br><br><font color=\'green\' class=\'f-15\'><b>Переадресация...</b></font>\", \"red\", \"index.php?p=commslist$pagelink\", false);', 1350);</script>";
 	}

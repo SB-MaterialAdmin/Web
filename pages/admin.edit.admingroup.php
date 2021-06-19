@@ -25,6 +25,8 @@
 //
 // *************************************************************************
 
+require 'vendor/autoload.php';
+
 if(!defined("IN_SB")){echo "Ошибка доступа!";die();} 
 global $userbank, $theme;
 
@@ -42,7 +44,7 @@ if(!isset($_GET['id']))
 $_GET['id'] = (int)$_GET['id'];
 if(!$userbank->HasAccess(ADMIN_OWNER|ADMIN_EDIT_ADMINS))
 {
-	$log = new CSystemLog("w", "Попытка взлома", $userbank->GetProperty("user") . " пытался изменить группу админу ".$userbank->GetProperty('user', $_GET['id']).". не имея на это прав.");
+	$log = new \SourceBans\Core\CSystemLog("w", "Попытка взлома", $userbank->GetProperty("user") . " пытался изменить группу админу ".$userbank->GetProperty('user', $_GET['id']).". не имея на это прав.");
 	echo '<div id="msg-red" >
 	<i><img src="./images/warning.png" alt="Внимание" /></i>
 	<b>Ошибка</b>
@@ -54,7 +56,7 @@ if(!$userbank->HasAccess(ADMIN_OWNER|ADMIN_EDIT_ADMINS))
 
 if(!$userbank->GetProperty("user", $_GET['id']))
 {
-	$log = new CSystemLog("e", "Получение данных администратора не удалось", "Не могу найти данные для администратора с идентификатором '".$_GET['id']."'");
+	$log = new \SourceBans\Core\CSystemLog("e", "Получение данных администратора не удалось", "Не могу найти данные для администратора с идентификатором '".$_GET['id']."'");
 	echo '<div id="msg-red" >
 	<i><img src="./images/warning.png" alt="Warning" /></i>
 	<b>Ошибка</b>
@@ -135,7 +137,7 @@ if(isset($_POST['wg']) || isset($_GET['wg']) || isset($_GET['sg']))
 			echo '<script>setTimeout(\'ShowBox("Администратор обновлен", "Детали админа были успешно обновлены", "green", "index.php?p=admin&c=admins");TabToReload();\', 1350);</script>';
 		
 		$admname = $GLOBALS['db']->GetRow("SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = ?", array((int)$_GET['id']));
-		$log = new CSystemLog("m", "Группа админа обновлена", "Группа админа (" . $admname['user'] . ") была обновлена");
+		$log = new \SourceBans\Core\CSystemLog("m", "Группа админа обновлена", "Группа админа (" . $admname['user'] . ") была обновлена");
 	}
 }
 

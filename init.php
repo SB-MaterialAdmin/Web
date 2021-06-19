@@ -1,4 +1,7 @@
 <?php
+
+require 'vendor/autoload.php';
+
 // *************************************************************************
 //  This file is part of SourceBans++.
 //
@@ -45,9 +48,6 @@ define('IN_SB', true);
 define('SB_AID', isset($_COOKIE['aid'])?$_COOKIE['aid']:null);
 define('XAJAX_REQUEST_URI', './index.php');
 
-include_once(INCLUDES_PATH . "/CSystemLog.php");
-include_once(INCLUDES_PATH . "/CUserManager.php");
-include_once(INCLUDES_PATH . "/CUI.php");
 include_once("themes/new_box/theme.conf.php");
 // ---------------------------------------------------
 //  Fix some $_SERVER vars
@@ -98,7 +98,7 @@ if(!defined("DEVELOPER_MODE") && !defined("IS_UPDATE") && file_exists(ROOT."/upd
 
 if(!defined('SB_VERSION')){
 	define('SB_VERSION', '1.5.4.7');
-	define('MA_BRANCH', 'master');
+	define('MA_BRANCH', 'php8');
 }
 define('LOGIN_COOKIE_LIFETIME', (60*60*24*7)*2);
 define('COOKIE_PATH', '/');
@@ -109,7 +109,6 @@ define('SB_SALT', 'SourceBans');
 // ---------------------------------------------------
 //  Setup PHP
 // ---------------------------------------------------
-ini_set('include_path', '.:/php/includes:' . INCLUDES_PATH .'/adodb');
 ini_set('date.timezone', 'GMT');
 
 if(defined("SB_MEM"))
@@ -122,10 +121,8 @@ error_reporting(E_ALL ^ E_NOTICE);
 // ---------------------------------------------------
 //  Setup our DB
 // ---------------------------------------------------
-include_once(INCLUDES_PATH . "/adodb/adodb.inc.php");
-include_once(INCLUDES_PATH . "/adodb/adodb-errorhandler.inc.php");
 $GLOBALS['db'] = ADONewConnection("mysqli://".DB_USER.':'.DB_PASS.'@'.DB_HOST.':'.DB_PORT.'/'.DB_NAME);
-$GLOBALS['log'] = new CSystemLog();
+$GLOBALS['log'] = new \SourceBans\Core\CSystemLog();
 
 if( !is_object($GLOBALS['db']) )
 				die();
@@ -141,8 +138,7 @@ if($debug->fields['value']=="1") {
 // ---------------------------------------------------
 //  Setup our custom error handler
 // ---------------------------------------------------
-require_once(INCLUDES_PATH . '/CErrorHandler.php');
-$GLOBALS['error_manager'] = new CErrorHandler();
+$GLOBALS['error_manager'] = new \SourceBans\Core\CErrorHandler();
 
 // ---------------------------------------------------
 //  Some defs
@@ -313,5 +309,5 @@ if (!defined('IS_UPDATE') && isset($_COOKIE['aid']))
 if (!defined('IS_UPDATE') && isset($_COOKIE['password']))
     $p = $_COOKIE['password'];
 
-$userbank = new CUserManager($l, $p);
+$userbank = new \SourceBans\Core\CUserManager($l, $p);
 ?>

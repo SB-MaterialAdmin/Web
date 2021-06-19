@@ -25,6 +25,8 @@
 //
 // *************************************************************************
 
+require 'vendor/autoload.php';
+
 if(!defined("IN_SB")){echo "Ошибка доступа!";die();} 
 global $userbank;
 
@@ -43,7 +45,7 @@ $admin = $GLOBALS['db']->GetRow("SELECT * FROM ".DB_PREFIX."_admins WHERE aid = 
 
 if(!$userbank->GetProperty("user", $_GET['id']))
 {
-	$log = new CSystemLog("e", "Получение данных администратора не удалось", "Не могу найти данные для администратора с идентификатором '".$_GET['id']."'");
+	$log = new \SourceBans\Core\CSystemLog("e", "Получение данных администратора не удалось", "Не могу найти данные для администратора с идентификатором '".$_GET['id']."'");
 	echo '<div id="msg-red" >
 	<i><img src="./images/warning.png" alt="Внимание" /></i>
 	<b>Ошибка</b>
@@ -56,7 +58,7 @@ if(!$userbank->GetProperty("user", $_GET['id']))
 $_GET['id'] = (int)$_GET['id'];
 if(!$userbank->HasAccess(ADMIN_OWNER|ADMIN_EDIT_ADMINS))
 {
-	$log = new CSystemLog("w", "Попытка взлома", $userbank->GetProperty("user") . " пытался редактировать разрешения ".$userbank->GetProperty('user', $_GET['id'])." , не имея на это прав.");
+	$log = new \SourceBans\Core\CSystemLog("w", "Попытка взлома", $userbank->GetProperty("user") . " пытался редактировать разрешения ".$userbank->GetProperty('user', $_GET['id'])." , не имея на это прав.");
 	echo '<div id="msg-red" >
 	<i><img src="./images/warning.png" alt="Внимание" /></i>
 	<b>Ошибка</b>

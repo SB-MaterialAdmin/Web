@@ -132,7 +132,7 @@ ob_start();
 require_once(INCLUDES_PATH . "/theme_framework.php");
 
 global $ui;
-$ui = new CUI();
+$ui = new \SourceBans\Core\CUI();
 BuildPageHeader();
 BuildPageTabs();
 BuildSubMenu();

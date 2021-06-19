@@ -1,7 +1,11 @@
 {
     "require": {
         "xpaw/steamid": "^2.0",
-        "xpaw/php-source-query-class": "^2.1"
+        "xpaw/php-source-query-class": "^2.1",
+        "iignatov/lightopenid": "^1.0",
+        "smarty/smarty": "^2.6.31",
+        "adodb/adodb-php": "^5.20.12",
+        "ext-gd": "*"
     },
     "autoload": {
         "psr-4": {

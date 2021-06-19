@@ -47,7 +47,7 @@ function LoadServers($check) {
     if(!$userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_BAN))
     {
         $objResponse->redirect("index.php?p=login&m=no_access", 0);
-        $log = new CSystemLog("w", "Попытка взлома", $username . " пытался использовать кик, не имея на это прав.");
+        $log = new \SourceBans\Core\CSystemLog("w", "Попытка взлома", $username . " пытался использовать кик, не имея на это прав.");
         return $objResponse;
     }
     $id = 0;
@@ -77,7 +77,7 @@ function KickPlayer($check, $sid, $num) {
     if(!$userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_BAN))
     {
         $objResponse->redirect("index.php?p=login&m=no_access", 0);
-        $log = new CSystemLog("w", "Попытка взлома", $username . " пытался обработать кик игрока, не имея на это прав.");
+        $log = new \SourceBans\Core\CSystemLog("w", "Попытка взлома", $username . " пытался обработать кик игрока, не имея на это прав.");
         return $objResponse;
     }
     
@@ -87,9 +87,8 @@ function KickPlayer($check, $sid, $num) {
     //test if server is online
     if($test = @fsockopen($sdata['ip'], $sdata['port'], $errno, $errstr, 2)) {
         @fclose($test);
-        require_once(INCLUDES_PATH . "/CServerControl.php");
         
-        $r = new CServerControl();
+        $r = new \SourceBans\Core\CServerControl();
         $r->Connect($sdata['ip'], $sdata['port']);
 
         if(!$r->AuthRcon($sdata['rcon'])) {

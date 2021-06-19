@@ -149,7 +149,7 @@ if(isset($_POST['name']))
 		
 		
 		if($_POST['banlength'] != $lengthrev->fields['length'])
-			$log = new CSystemLog("m", "Блокировка отредактирована", "Блокировка для (" . $lengthrev->fields['authid'] . ") была обновлена, раньше: срок ".$lengthrev->fields['length'].", тип ".$lengthrev->fields['type']."; сейчас: срок ".$_POST['banlength']." тип ".$_POST->fields['type']);
+			$log = new \SourceBans\Core\CSystemLog("m", "Блокировка отредактирована", "Блокировка для (" . $lengthrev->fields['authid'] . ") была обновлена, раньше: срок ".$lengthrev->fields['length'].", тип ".$lengthrev->fields['type']."; сейчас: срок ".$_POST['banlength']." тип ".$_POST->fields['type']);
 		echo '<script>ShowBox("Блокировка обновлена", "Блокировка успешно обновлена", "green", "index.php?p=commslist'.$pagelink.'");</script>';
 	}
 }

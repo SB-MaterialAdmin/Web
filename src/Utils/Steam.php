@@ -16,12 +16,18 @@ class Steam
     protected $id;
 
     /**
+     * @var SteamID
+     */
+    protected $instance;
+
+    /**
      * Steam constructor.
      * @param $id
      */
     public function __construct($id)
     {
         $this->id = $id;
+        $this->instance = new SteamID($this->id);
     }
 
     /**
@@ -31,8 +37,23 @@ class Steam
     {
         try
         {
-            $instance = new SteamID($this->id);
-            return $instance->ConvertToUInt64();
+            return $this->instance->ConvertToUInt64();
+        }
+        catch (\InvalidArgumentException $e)
+        {
+
+            return false;
+        }
+    }
+
+    /**
+     * @return false|string
+     */
+    public function communityIdToSteamId2()
+    {
+        try
+        {
+            return $this->instance->RenderSteam2();
         }
         catch (\InvalidArgumentException $e)
         {

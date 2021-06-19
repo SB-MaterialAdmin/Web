@@ -25,6 +25,8 @@
 //
 // *************************************************************************
 
+require 'vendor/autoload.php';
+
 include_once '../init.php';
 
 if(!$userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_BAN))
@@ -47,7 +49,7 @@ function LoadServers2($check, $type, $length) {
 	if(!$userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_BAN))
 	{
 		$objResponse->redirect("index.php?p=login&m=no_access", 0);
-		$log = new CSystemLog("w", "Попытка взлома", $username . " пытался использовать блокировку, не имея на это прав.");
+		$log = new \SourceBans\Core\CSystemLog("w", "Попытка взлома", $username . " пытался использовать блокировку, не имея на это прав.");
 		return $objResponse;
 	}
 	$id = 0;
@@ -78,7 +80,7 @@ function BlockPlayer($check, $sid, $num, $type, $length) {
 	if(!$userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_BAN))
 	{
 		$objResponse->redirect("index.php?p=login&m=no_access", 0);
-		$log = new CSystemLog("w", "Попытка взлома", $username . " пытался обработать блокировку игрока, не имея на это прав.");
+		$log = new \SourceBans\Core\CSystemLog("w", "Попытка взлома", $username . " пытался обработать блокировку игрока, не имея на это прав.");
 		return $objResponse;
 	}
 	
@@ -88,9 +90,8 @@ function BlockPlayer($check, $sid, $num, $type, $length) {
 	//test if server is online
 	if($test = @fsockopen($sdata['ip'], $sdata['port'], $errno, $errstr, 2)) {
 		@fclose($test);
-		require_once(INCLUDES_PATH . "/CServerControl.php");
 		
-		$r = new CServerControl();
+		$r = new \SourceBans\Core\CServerControl();
 		$r->Connect($sdata['ip'], $sdata['port']);
 
 		if(!$r->AuthRcon($sdata['rcon'])) {

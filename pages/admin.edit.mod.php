@@ -25,6 +25,8 @@
 //
 // *************************************************************************
 
+require 'vendor/autoload.php';
+
 if(!defined("IN_SB")){echo "Ошибка доступа!";die();} 
 global $theme, $userbank;
 if(!isset($_GET['id']))
@@ -34,7 +36,7 @@ if(!isset($_GET['id']))
 }
 if(!$userbank->HasAccess(ADMIN_OWNER|ADMIN_EDIT_MODS))
 {
-	$log = new CSystemLog("w", "Попытка взлома", $userbank->GetProperty("user") . " пытался изменить МОД, не имея на это прав.");
+	$log = new \SourceBans\Core\CSystemLog("w", "Попытка взлома", $userbank->GetProperty("user") . " пытался изменить МОД, не имея на это прав.");
 	echo '<div id="msg-red" >
 	<i><img src="./images/warning.png" alt="Внимание" /></i>
 	<b>Ошибка</b>

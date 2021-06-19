@@ -25,6 +25,8 @@
 //
 // *************************************************************************
 
+require 'vendor/autoload.php';
+
 global $userbank, $ui, $theme;
 if(!defined("IN_SB")){echo "Ошибка доступа!";die();}
 if($GLOBALS['config']['config.enablesubmit']!="1")
@@ -33,8 +35,7 @@ if($GLOBALS['config']['config.enablesubmit']!="1")
 	PageDie();
 }
 
-require_once(INCLUDES_PATH.'/CServerControl.php');
-$sinfo = new CServerControl();
+$sinfo = new \SourceBans\Core\CServerControl();
 
 if (!isset($_POST['subban']) || $_POST['subban'] != 1)
 {

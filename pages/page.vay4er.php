@@ -19,7 +19,7 @@ if(isset($_POST['pay_v4']) && !empty($_POST['pay_v4']))
 		echo '<div class="alert alert-danger" role="alert" id="msg-red"><h4>Ошибка!</h4><span class="p-l-10">Произошла неизвестная ошибка.</span></div>';
 	
 		require(TEMPLATES_PATH . "/footer.php");
-		$log = new CSystemLog("w", "Попытка взлома", "Попытка активации ваучера с использованием: " . $_SERVER['HTTP_HOST']);
+		$log = new \SourceBans\Core\CSystemLog("w", "Попытка взлома", "Попытка активации ваучера с использованием: " . $_SERVER['HTTP_HOST']);
 		exit();
 	}
 	

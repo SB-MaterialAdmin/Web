@@ -1,4 +1,7 @@
-<?php 
+<?php
+
+require 'vendor/autoload.php';
+
 // *************************************************************************
 //  This file is part of SourceBans++.
 //
@@ -40,7 +43,7 @@ if(!isset($_GET['id']))
 
 if(!$userbank->GetProperty("user", $_GET['id']))
 {
-	$log = new CSystemLog("e", "Получение данных администратора не удалось", "Не могу найти данные для администратора с идентификатором '".$_GET['id']."'");
+	$log = new \SourceBans\Core\CSystemLog("e", "Получение данных администратора не удалось", "Не могу найти данные для администратора с идентификатором '".$_GET['id']."'");
 	echo '<div id="msg-red" >
 	<i><img src="./images/warning.png" alt="Warning" /></i>
 	<b>Ошибка</b>
@@ -53,7 +56,7 @@ if(!$userbank->GetProperty("user", $_GET['id']))
 $aid = (int)$_GET['id'];
 if(!$userbank->HasAccess(ADMIN_OWNER|ADMIN_EDIT_ADMINS))
 {
-	$log = new CSystemLog("w", "Попытка взлома", $userbank->GetProperty("user") . " пытался изменить доступ к серверу админа ".$userbank->GetProperty('user', $_GET['id']).", не имея на это прав.");
+	$log = new \SourceBans\Core\CSystemLog("w", "Попытка взлома", $userbank->GetProperty("user") . " пытался изменить доступ к серверу админа ".$userbank->GetProperty('user', $_GET['id']).", не имея на это прав.");
 	echo '<div id="msg-red" >
 	<i><img src="./images/warning.png" alt="Внимание" /></i>
 	<b>Ошибка</b>
@@ -133,7 +136,7 @@ if(isset($_POST['editadminserver']))
 		echo '<script>setTimeout(\'ShowBox("Серверный доступ администратора обновлен", "Серверный доступ администратора был успешно обновлен", "green", "index.php?p=admin&c=admins");TabToReload();\', 1200);</script>';
 	
 	$admname = $GLOBALS['db']->GetRow("SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = ?", array((int)$aid));
-	$log = new CSystemLog("m", "Администратор сервера обновлен", "Серверный доступ администратора (" . $admname['user'] . ") был изменен");
+	$log = new \SourceBans\Core\CSystemLog("m", "Администратор сервера обновлен", "Серверный доступ администратора (" . $admname['user'] . ") был изменен");
 }
 
 

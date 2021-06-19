@@ -31,7 +31,7 @@ global $theme, $userbank;
 
 if (!$userbank->HasAccess(ADMIN_OWNER|ADMIN_EDIT_MODS|ADMIN_ADD_MODS))
 {
-    $log = new CSystemLog("w", "Попытка взлома", $userbank->GetProperty('user') . " пытался загрузить иконку МОДа, не имея на это прав.");
+    $log = new \SourceBans\Core\CSystemLog("w", "Попытка взлома", $userbank->GetProperty('user') . " пытался загрузить иконку МОДа, не имея на это прав.");
 	echo 'У вас нет доступа к этому!';
 	die();
 }
@@ -43,7 +43,7 @@ if(isset($_POST['upload']))
 	{
 		move_uploaded_file($_FILES['icon_file']['tmp_name'],SB_ICONS."/".$_FILES['icon_file']['name']);
 		$message =  "<script>window.opener.icon('" . $_FILES['icon_file']['name'] . "');self.close()</script>";
-        $log = new CSystemLog("m", "Иконка МОДа загружена", "Новая иконка МОДа загружена: ".htmlspecialchars($_FILES['icon_file']['name']));
+        $log = new \SourceBans\Core\CSystemLog("m", "Иконка МОДа загружена", "Новая иконка МОДа загружена: ".htmlspecialchars($_FILES['icon_file']['name']));
 	}
 	else 
 	{
