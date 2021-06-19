@@ -1181,15 +1181,8 @@ function strip_31_ascii($string)
 }
 
 function GetCommunityIDFromSteamID2($sid) {
-	try {
-		$steamId = new SteamID($sid);
-		$steamId->ConvertToUInt64();
-
-		return $steamId;
-	}
-	catch (InvalidArgumentException $e) {
-		return false;
-	}
+	$instance = new \SourceBans\Utils\Steam($sid);
+	return $instance->steamId2ToCommunity();
 }
 
 function GetUserAvatar($sid = -1) {

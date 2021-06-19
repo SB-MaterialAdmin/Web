@@ -243,7 +243,7 @@ define('SB_BANS_PER_PAGE', $GLOBALS['config']['banlist.bansperpage']);
 define('MIN_PASS_LENGTH', $GLOBALS['config']['config.password.minlength']);
 $dateformat = !empty($GLOBALS['config']['config.dateformat'])?$GLOBALS['config']['config.dateformat']:"m-d-y H:i";
 
-if(version_compare(PHP_VERSION, "5") != -1)
+if(version_compare(PHP_VERSION, "5") != 1)
 {
     $offset = (empty($GLOBALS['config']['config.timezone'])?0:$GLOBALS['config']['config.timezone'])*3600;
     date_default_timezone_set("GMT");

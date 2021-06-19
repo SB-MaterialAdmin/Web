@@ -1,4 +1,7 @@
 <?php
+
+require 'vendor/autoload.php';
+
 // *************************************************************************
 //  This file is part of SourceBans++.
 //

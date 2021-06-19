@@ -1,4 +1,5 @@
 <?php
+
 // *************************************************************************
 //  This file is part of SourceBans++.
 //
@@ -24,6 +25,8 @@
 //   Page: <http://www.sourcebans.net/> - <https://github.com/GameConnect/sourcebansv1>
 //
 // *************************************************************************
+
+require 'vendor/autoload.php';
 
 global $theme;
 if(!defined("IN_SB")){echo "Ошибка доступа!";die();}
@@ -416,8 +419,8 @@ if (!$res)
 $view_comments = false;
 $bans = array();
 function CommunityID($steamid_id){
-	$parts = explode(':', str_replace('STEAM_', '' ,$steamid_id)); 
-	return bcadd(bcadd('76561197960265728', $parts['1']), bcmul($parts['2'], '2')); 
+	$steamInstance = new \SourceBans\Utils\Steam($steamid_id);
+	return $steamInstance->steamId2ToCommunity();
 }
 while (!$res->EOF)
 {

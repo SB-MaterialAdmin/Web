@@ -702,10 +702,10 @@ class xajax
 			for ($i = 0; $i < sizeof($aArgs); $i++)
 			{
 				// If magic quotes is on, then we need to strip the slashes from the args
-				if (get_magic_quotes_gpc() == 1 && is_string($aArgs[$i])) {
-				
+				/*if (get_magic_quotes_gpc() == 1 && is_string($aArgs[$i]))
+				{
 					$aArgs[$i] = stripslashes($aArgs[$i]);
-				}
+				}*/
 				if (stristr($aArgs[$i],"<xjxobj>") != false)
 				{
 					$aArgs[$i] = $this->_xmlToArray("xjxobj",$aArgs[$i]);	
@@ -1231,7 +1231,7 @@ class xajax
 			}
 			// If magic quotes is on, then we need to strip the slashes from the
 			// array values because of the parse_str pass which adds slashes
-			if (get_magic_quotes_gpc() == 1) {
+			/*if (get_magic_quotes_gpc() == 1) {
 				$newArray = array();
 				foreach ($aArray as $sKey => $sValue) {
 					if (is_string($sValue))
@@ -1240,7 +1240,7 @@ class xajax
 						$newArray[$sKey] = $sValue;
 				}
 				$aArray = $newArray;
-			}
+			}*/
 		}
 		
 		return $aArray;

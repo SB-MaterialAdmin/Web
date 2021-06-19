@@ -357,10 +357,6 @@ function validate_steam($steam)
 	return preg_match(STEAM_FORMAT, $steam) ? true : false;
 }
 
-function validate_email($email)
-{
-	return preg_match(EMAIL_FORMAT, $email) ? true : false;
-}
 function validate_ip($ip)
 {
 	return preg_match(IP_FORMAT, $ip) ? true : false;

@@ -1,4 +1,7 @@
 <?php
+
+require 'vendor/autoload.php';
+
 if(!defined("IN_SB")){echo "YОшибка доступа!";die();}
 
 error_reporting(E_ALL & ~E_DEPRECATED);

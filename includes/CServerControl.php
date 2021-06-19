@@ -40,7 +40,7 @@ if (!defined('IN_SB')) {echo("You should not be here. Only follow links!");die()
  * исключения при фэйлах, а просто вернёт FALSE.
  * Не трогать.
  **/
-require INCLUDES_PATH . '/SourceQuery/bootstrap.php';
+require 'vendor/autoload.php';
 use xPaw\SourceQuery\SourceQuery;
 
 class CServerControl {

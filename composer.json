@@ -1,5 +1,11 @@
 {
     "require": {
-        "xpaw/steamid": "^2.0"
+        "xpaw/steamid": "^2.0",
+        "xpaw/php-source-query-class": "^2.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "SourceBans\\": "src"
+        }
     }
 }
