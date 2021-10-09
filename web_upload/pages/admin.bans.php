@@ -47,7 +47,7 @@ if(isset($_POST['action']) && $_POST['action'] == "importBans")
 					$bancnt++;
 					$pre = $GLOBALS['db']->Prepare("INSERT INTO ".DB_PREFIX."_bans(created,authid,ip,name,ends,length,reason,aid,adminIp,type) VALUES
 						(UNIX_TIMESTAMP(),?,?,?,(UNIX_TIMESTAMP() + ?),?,?,?,?,?)");
-					$GLOBALS['db']->Execute($pre, array("", $line[2], "Импортированный бан", 0, 0, "Импорт из banned_ip.cfg", $_COOKIE['aid'], $_SERVER['REMOTE_ADDR'], 1));
+					$GLOBALS['db']->Execute($pre, array("", $line[2], "Импортированный бан", 0, 0, "Импорт из banned_ip.cfg", \UserManager::getMyId(), $_SERVER['REMOTE_ADDR'], 1));
 				}
 			} else { // if its an banned_user.cfg
 				if (!validate_steam($line[2])) {
@@ -68,7 +68,7 @@ if(isset($_POST['action']) && $_POST['action'] == "importBans")
 					$bancnt++;
 					$pre = $GLOBALS['db']->Prepare("INSERT INTO ".DB_PREFIX."_bans(created,authid,ip,name,ends,length,reason,aid,adminIp,type) VALUES
 						(UNIX_TIMESTAMP(),?,?,?,(UNIX_TIMESTAMP() + ?),?,?,?,?,?)");
-					$GLOBALS['db']->Execute($pre, array($steam, "", $pname, 0, 0, "Импорт из banned_user.cfg", $_COOKIE['aid'], $_SERVER['REMOTE_ADDR'], 0));
+					$GLOBALS['db']->Execute($pre, array($steam, "", $pname, 0, 0, "Импорт из banned_user.cfg", \UserManager::getMyId(), $_SERVER['REMOTE_ADDR'], 0));
 				}
 			}
 		}
