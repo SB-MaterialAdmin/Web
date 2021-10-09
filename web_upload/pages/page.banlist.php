@@ -243,8 +243,7 @@ $searchlink = "&searchText=".$_GET["searchText"];
 }
 elseif(!isset($_GET['advSearch']))
 {
-	$res = $GLOBALS['db']->Execute(
-	"SELECT bid ban_id, BA.type, BA.ip ban_ip, BA.authid, BA.name player_name, created ban_created, ends ban_ends, length ban_length, reason ban_reason, BA.ureason unban_reason, BA.aid, AD.gid AS gid, adminIp, BA.sid ban_server, country ban_country, RemovedOn, RemovedBy, RemoveType row_type,
+	$query = "SELECT bid ban_id, BA.type, BA.ip ban_ip, BA.authid, BA.name player_name, created ban_created, ends ban_ends, length ban_length, reason ban_reason, BA.ureason unban_reason, BA.aid, AD.gid AS gid, adminIp, BA.sid ban_server, country ban_country, RemovedOn, RemovedBy, RemoveType row_type,
 			SE.ip server_ip, AD.user admin_name, AD.comment admin_comm, AD.skype admin_skype, AD.vk admin_vk, AD.authid admin_authid, AD.gid, MO.icon as mod_icon,
 			CAST(MID(BA.authid, 9, 1) AS UNSIGNED) + CAST('76561197960265728' AS UNSIGNED) + CAST(MID(BA.authid, 11, 10) * 2 AS UNSIGNED) AS community_id,
 			(SELECT count(*) FROM ".DB_PREFIX."_demos as DM WHERE (DM.demtype='B' or DM.demtype='U') and DM.demid = BA.bid) as demo_count,
@@ -255,8 +254,9 @@ elseif(!isset($_GET['advSearch']))
   LEFT JOIN ".DB_PREFIX."_admins AS AD ON BA.aid = AD.aid
   ".$hideinactiven."
    ORDER BY created DESC
-   LIMIT ?,?",
-	array(intval($BansStart),intval($BansPerPage)));
+   LIMIT ?,?";
+	
+	$res = $GLOBALS['db']->Execute($query, [intval($BansStart),intval($BansPerPage)]);
 
 	$res_count = $GLOBALS['db']->Execute("SELECT count(bid) FROM ".DB_PREFIX."_bans".$hideinactiven);
 	$searchlink = "";
@@ -510,10 +510,10 @@ while (!$res->EOF)
 
 		$data['ureason'] = stripslashes($res->fields['unban_reason']);
 
-		$removedby = $GLOBALS['db']->GetRow("SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = '".$res->fields['RemovedBy']."'");
+		$removedby = \UserManager::getInstance()->GetUserArray($res->fields['RemovedBy']);
         $data['removedby'] = "";
-        if(isset($removedby[0]))
-            $data['removedby'] = $removedby[0];
+        if($removedby != 0)
+            $data['removedby'] = $removedby['user'];
 	}
 // Don't need this stuff.
 // Uncomment below if the modifications above cause issues
@@ -525,6 +525,8 @@ while (!$res->EOF)
 //	}
 
 	$data['layer_id'] = 'layer_'.$res->fields['ban_id'];
+
+	// TODO: очко-место. Генерирует дополнительный запрос на бан (N+1). Избавиться.
 	if($data['type'] == "0")
 		$alrdybnd = $GLOBALS['db']->Execute("SELECT count(bid) as count FROM `".DB_PREFIX."_bans` WHERE authid = '".$data['steamid']."' AND (length = 0 OR ends > UNIX_TIMESTAMP()) AND RemovedBy IS NULL AND type = '0';");
 	else
@@ -584,14 +586,15 @@ while (!$res->EOF)
 	}
 	else
 	{
-		$demtype = $GLOBALS['db']->GetRow("SELECT demtype FROM `".DB_PREFIX."_demos` WHERE demid = '".$data['ban_id']."'");
+		// TODO: какая-то дичь тут. Зачем-то две ссылки, одна "Демо", другая "Демка". Разобраться.
 		$data['demo_available'] = true;
-		$data['demo_quick'] = CreateLinkR('Демо',"getdemo.php?type=".$demtype['demtype']."&id=".$data['ban_id']);
-		$data['demo_link'] = CreateLinkR('Демка',"getdemo.php?type=".$demtype['demtype']."&id=".$data['ban_id']);
+		$data['demo_quick'] = CreateLinkR('Демо',"getdemo.php?id=".$data['ban_id']);
+		$data['demo_link'] = CreateLinkR('Демка',"getdemo.php?id=".$data['ban_id']);
 	}
 
 	$data['server_id'] = $res->fields['ban_server'];
 
+	// TODO: очко-место. Генерирует дополнительный запрос на бан (N+1). Избавиться.
 	$banlog = $GLOBALS['db']->GetAll("SELECT bl.time, bl.name, s.ip, s.port FROM `".DB_PREFIX."_banlog` AS bl LEFT JOIN `".DB_PREFIX."_servers` AS s ON s.sid = bl.sid WHERE bid = '".$data['ban_id']."'");
 	$data['blockcount'] = sizeof($banlog);
 	$logstring = "";
