@@ -1,4 +1,5 @@
 <?php
+
 require_once('init.php');
 
 if (\App::options()->demoEnabled == false)
@@ -11,16 +12,11 @@ if (\App::options()->demoEnabled == false)
 }
 
 $id   = filterInput(INPUT_GET, 'id',    FILTER_SANITIZE_NUMBER_INT);
-$type = filterInput(INPUT_GET, 'type',  FILTER_SANITIZE_STRING);
-if(is_null($id) || is_null($type))
-    die('No id or type parameter.');
-
-if(strcasecmp($type, 'U') != 0 && strcasecmp($type, 'B') != 0 && strcasecmp($type, 'S') != 0)
-    die('Bad type');
+if(is_null($id))
+    die('No id parameter.');
 
 $DB = \DatabaseManager::GetConnection();
-$DB->Prepare('SELECT `filename`, `origname` FROM `{{prefix}}demos` WHERE `demtype` = :type AND `demid` = :id;');
-$DB->BindData('type', $type);
+$DB->Prepare('SELECT `filename`, `origname`, `demtype` FROM `{{prefix}}demos` WHERE `demid` = :id;');
 $DB->BindData('id',   $id);
 
 $Result = $DB->Finish();
@@ -30,6 +26,10 @@ if (!$Demo)
   die('Demo not found.');
 
 $path = SB_DEMOS . '/' . $Demo['filename'];
+$type = $Demo['demtype'];
+
+if(strcasecmp($type, 'U') != 0 && strcasecmp($type, 'B') != 0 && strcasecmp($type, 'S') != 0)
+    die('Bad type');
 
 if ($type != 'U' && (!in_array($Demo['filename'], scandir(SB_DEMOS)) || !file_exists($path)))
   die('File not found.');
