@@ -22,7 +22,7 @@ jobs:
         run: composer install --prefer-dist --no-progress --no-dev
 
       - name: Attach artifact to job
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2
         with:
           name: ${{ github.ref_name }}-${{ github.sha }}
-          path: .
+          path: ./
