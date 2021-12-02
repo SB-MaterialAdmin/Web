@@ -64,3 +64,5 @@ web_upload/data/db.php
 # except blank files
 !.blank
 
+# Managed by Composer
+/web_upload/vendor/

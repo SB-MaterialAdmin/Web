@@ -16,7 +16,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with SourceBans++. If not, see <http://www.gnu.org/licenses/>.
 //
-//  This file is based off work covered by the following copyright(s):  
+//  This file is based off work covered by the following copyright(s):
 //
 //   SourceBans 1.4.11
 //   Copyright (C) 2007-2015 SourceBans Team - Part of GameConnect
@@ -63,6 +63,8 @@ include_once(INCLUDES_PATH . "/system-functions.php");
 // Init new framework
 // ---------------------------------------------------
 include_once(INCLUDES_PATH . '/classes/Autoloader.php');
+require_once('./vendor/autoload.php');
+
 \Autoloader::RegisterPath(INCLUDES_PATH . '/classes');
 \Autoloader::RegisterPath(INCLUDES_PATH . '/cron');
 
@@ -86,11 +88,11 @@ try {
 //  Fix some $_SERVER vars
 // ---------------------------------------------------
 // Fix for IIS, which doesn't set REQUEST_URI
-if(!isset($_SERVER['REQUEST_URI']) || trim($_SERVER['REQUEST_URI']) == '') 
+if(!isset($_SERVER['REQUEST_URI']) || trim($_SERVER['REQUEST_URI']) == '')
 { $_SERVER['REQUEST_URI'] = $_SERVER['SCRIPT_NAME'];
-    if (isset($_SERVER['QUERY_STRING']) && !empty($_SERVER['QUERY_STRING'])) 
-    { $_SERVER['REQUEST_URI'] .= '?' . $_SERVER['QUERY_STRING']; } 
-} 
+    if (isset($_SERVER['QUERY_STRING']) && !empty($_SERVER['QUERY_STRING']))
+    { $_SERVER['REQUEST_URI'] .= '?' . $_SERVER['QUERY_STRING']; }
+}
 // Fix for Dreamhost and other PHP as CGI hosts
 if(strstr($_SERVER['SCRIPT_NAME'], 'php.cgi')) unset($_SERVER['PATH_INFO']);
 if(trim($_SERVER['PHP_SELF']) == '') $_SERVER['PHP_SELF'] = preg_replace("/(\?.*)?$/",'', $_SERVER["REQUEST_URI"]);
@@ -143,7 +145,6 @@ define('SB_SALT', 'SourceBans');
 // ---------------------------------------------------
 //  Setup PHP
 // ---------------------------------------------------
-ini_set('include_path', '.:/php/includes:' . INCLUDES_PATH .'/adodb');
 ini_set('date.timezone', 'GMT');
 
 if(defined("SB_MEM"))
@@ -152,15 +153,12 @@ if(defined("SB_MEM"))
 // ---------------------------------------------------
 //  Setup our DB
 // ---------------------------------------------------
-include_once(INCLUDES_PATH . "/adodb/adodb.inc.php");
-include_once(INCLUDES_PATH . "/adodb/adodb-errorhandler.inc.php");
-
 $GLOBALS['db'] = ADONewConnection("mysqli://".DB_USER.':'.DB_PASS.'@'.DB_HOST.':'.DB_PORT.'/'.DB_NAME);
 $GLOBALS['log'] = new CSystemLog();
 
 if( !is_object($GLOBALS['db']) )
 				die();
-				
+
 $mysql_server_info = $GLOBALS['db']->ServerInfo();
 $GLOBALS['db_version'] = $mysql_server_info['version'];
 
