@@ -24,5 +24,5 @@ jobs:
       - name: Attach artifact to job
         uses: actions/upload-artifact@v1
         with:
-          name: ${GITHUB_REF/refs\/tags\///}-${GITHUB_SHA::7}.tar.gz
+          name: ${{ github.ref_name }}-${{ github.sha }}
           path: .
