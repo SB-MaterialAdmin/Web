@@ -2,7 +2,7 @@
     "name": "sb-materialadmin/web-legacy",
     "description": "Legacy SourceBans Material Admin web-panel",
     "type": "project",
-    "license": "CC-NC-SA-3.0",
+    "license": "CC-BY-NC-SA-3.0",
     "authors": [
         {
             "name": "Kruzya",
