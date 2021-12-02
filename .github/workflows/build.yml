@@ -1,0 +1,28 @@
+name: Build archive
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: Build archive
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Cache Composer packages
+        id: composer-cache
+        uses: actions/cache@v2
+        with:
+          path: web_upload/vendor
+          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress --no-dev
+
+      - name: Attach artifact to job
+        uses: actions/upload-artifact@v1
+        with:
+          name: ${GITHUB_REF/refs\/tags\///}-${GITHUB_SHA::7}.tar.gz
+          path: .
