@@ -40,8 +40,6 @@ class App {
     {
         if (!self::$templater)
         {
-            require(INCLUDES_PATH . '/smarty/Smarty.class.php');
-
             $templater = new Smarty();
             $templater->error_reporting   = E_ALL ^ E_NOTICE;
             $templater->use_sub_dirs      = false;

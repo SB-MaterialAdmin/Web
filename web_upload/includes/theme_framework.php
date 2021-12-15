@@ -1,14 +1,13 @@
 <?php
 global $theme;
 
-// Подгрузка самого нужного плагина
-require_once(INCLUDES_PATH . "/smarty/plugins/function.help_icon.php");
-
 // Регистрация функций
 $theme->register_function("display_material_checkbox", "materialdesign_checkbox");
 $theme->register_function("display_material_input", "materialdesign_input");
 $theme->register_function("display_header", "materialdesign_cardheader");
 $theme->register_function("display_alert", "materialdesign_alert");
+$theme->register_function('sb_button', 'smarty_function_sb_button');;
+$theme->register_function('help_icon', 'smarty_function_help_icon');
 $theme->register_block("render_material_body", "materialdesign_body");
 
 // Создание каллбэков функций
@@ -69,4 +68,28 @@ function materialdesign_body($params, $content, &$smarty) {
     $out .= '">'.$content."</div>";
     
     return $out;
+}
+
+function smarty_function_sb_button($params, &$smarty) //$text, $click, $class, $id="", $submit=false
+{
+    $text = isset($params['text'])?$params['text']:"";
+    $click = isset($params['onclick'])?$params['onclick']:"";
+    $class = isset($params['class'])?$params['class']:"";
+    $id = isset($params['id'])?$params['id']:"";
+    $icon = isset($params['icon'])?$params['icon']:"";
+    $submit = isset($params['submit'])?$params['submit']:"";
+
+    $type = $submit ? "submit" : "button";
+    //$button = "<input type='$type' onclick=\"$click\" name='$id' class='btn $class' onmouseover='ButtonOver(\"$id\")' onmouseout='ButtonOver(\"$id\")' id='$id' value='$text' />";
+    $button = "<button type='$type' onclick=\"$click\" name='$id' class='btn $class waves-effect' onmouseover='ButtonOver(\"$id\")' onmouseout='ButtonOver(\"$id\")' id='$id' value='$text' />$icon$text</button>";
+    return $button;
+}
+
+function smarty_function_help_icon($params, &$smarty)
+{
+    $style = isset($params['style'])?$params['style']:"";
+    //return '<img border="0" align="absbottom" src="images/help.png" class="tip" title="' .  $params['title'] . ' :: ' .  $params['message'] . '">&nbsp;&nbsp;';
+    return '<img border="0" align="absbottom" src="images/help.png" style="float:left;'.$style.'" data-trigger="hover" data-toggle="popover" data-placement="top" data-content="' .  $params['message'] . '" title="" data-original-title="' .  $params['title'] . '">&nbsp;&nbsp;';
+    //oder
+    //return '<i class="zmdi zmdi-pin-help zmdi-hc-fw" data-trigger="hover" data-toggle="popover" data-placement="right" data-content="' .  $params['message'] . '" title="" data-original-title="' .  $params['title'] . '"></i>';
 }

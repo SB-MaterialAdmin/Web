@@ -27,10 +27,6 @@
 
 	define('IN_SB', true);
 	require_once("../config.php");
-	
-	include_once("../includes/adodb/adodb.inc.php");
-	include_once("../includes/adodb/adodb-errorhandler.inc.php");
-	
 
 	function convertAmxbans($fromdsn,$todsn,$fromprefix,$toprefix)
 	{

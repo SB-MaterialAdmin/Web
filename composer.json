@@ -11,7 +11,10 @@
     ],
     "minimum-stability": "dev",
     "require": {
-        "adodb/adodb-php": "^5.20"
+        "php": "~7.1",
+        "adodb/adodb-php": "^5.20",
+        "smarty/smarty": "~2.6",
+        "symfony/routing": "5.4.x-dev"
     },
     "config": {
         "vendor-dir": "web_upload/vendor"

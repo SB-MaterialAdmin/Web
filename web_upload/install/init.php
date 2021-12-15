@@ -36,6 +36,8 @@ define('INCLUDES_PATH', ROOT . 'includes');
 define('IN_SB', true);
 define('IN_INSTALL', true);
 
+include(ROOT . '/../vendor/autoload.php');
+
 // ---------------------------------------------------
 //  Fix some $_SERVER vars
 // ---------------------------------------------------

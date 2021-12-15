@@ -63,7 +63,7 @@ include_once(INCLUDES_PATH . "/system-functions.php");
 // Init new framework
 // ---------------------------------------------------
 include_once(INCLUDES_PATH . '/classes/Autoloader.php');
-require_once('./vendor/autoload.php');
+require_once(ROOT . '/vendor/autoload.php');
 
 \Autoloader::RegisterPath(INCLUDES_PATH . '/classes');
 \Autoloader::RegisterPath(INCLUDES_PATH . '/cron');
@@ -97,35 +97,12 @@ if(!isset($_SERVER['REQUEST_URI']) || trim($_SERVER['REQUEST_URI']) == '')
 if(strstr($_SERVER['SCRIPT_NAME'], 'php.cgi')) unset($_SERVER['PATH_INFO']);
 if(trim($_SERVER['PHP_SELF']) == '') $_SERVER['PHP_SELF'] = preg_replace("/(\?.*)?$/",'', $_SERVER["REQUEST_URI"]);
 
-// ---------------------------------------------------
-//  Are we installed?
-// ---------------------------------------------------
-$cfg_path = '';
-if(!FindConfig($cfg_path) || !include_once($cfg_path)) {
-	// No were not
-	if($_SERVER['HTTP_HOST'] != "localhost")
-	{
-		echo($GLOBALS['translator']->retrieve("init::not_installed"));
-		die();
-	}
-}
-if(!defined("DEVELOPER_MODE") && !defined("IS_UPDATE") && file_exists(ROOT."/install"))
+/// --------------------------------------------------
+/// Load configuration file
+/// --------------------------------------------------
+if (!FindConfig($cfg_path) || !include_once($cfg_path))
 {
-	if($_SERVER['HTTP_HOST'] != "localhost")
-	{
-		echo($GLOBALS['translator']->retrieve("init::security_direxists"));
-		die();
-	}
-}
-
-if(!defined("DEVELOPER_MODE") && !defined("IS_UPDATE") && file_exists(ROOT."/updater"))
-{
-	if($_SERVER['HTTP_HOST'] != "localhost")
-	{
-		echo($GLOBALS['translator']->retrieve("init::redirect_updater"));
-		echo("<script>setTimeout(function() { window.location.replace('./updater'); }, 2000);</script>");
-		die();
-	}
+    die('No configuration file detected');
 }
 
 // ---------------------------------------------------
@@ -157,7 +134,7 @@ $GLOBALS['db'] = ADONewConnection("mysqli://".DB_USER.':'.DB_PASS.'@'.DB_HOST.':
 $GLOBALS['log'] = new CSystemLog();
 
 if( !is_object($GLOBALS['db']) )
-				die();
+	die(json_encode(error_get_last()));
 
 $mysql_server_info = $GLOBALS['db']->ServerInfo();
 $GLOBALS['db_version'] = $mysql_server_info['version'];

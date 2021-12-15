@@ -54,11 +54,7 @@ $theme->assign('steam_allowed', ($at != 1));
 $theme->assign('login_allowed', ($at != 2));
 // === Authorization by type -  END  ===
 
-$theme->left_delimiter = "-{";
-$theme->right_delimiter = "}-";
 $theme->display('page_login.tpl');
-$theme->left_delimiter = "{";
-$theme->right_delimiter = "}";
 ?>
 </div>
 </div>

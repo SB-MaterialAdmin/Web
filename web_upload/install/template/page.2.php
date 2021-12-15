@@ -8,8 +8,6 @@
 		}
 		else
 		{
-			require(ROOT . "../includes/adodb/adodb.inc.php");
-			include_once(ROOT . "../includes/adodb/adodb-errorhandler.inc.php");
 			$server = "mysqli://" . $_POST['username'] . ":" . $_POST['password'] . "@" . $_POST['server'] . ":" . $_POST['port'] . "/" . $_POST['database'];
 			$db = ADONewConnection($server);
 			if(!$db) {
