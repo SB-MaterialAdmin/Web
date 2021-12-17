@@ -80,32 +80,67 @@ class CSystemLog {
 	function WriteLogEntries()
 	{
 		$this->log_list = array_unique($this->log_list);
-		foreach($this->log_list as $logentry)
-		{
-			if(!$logentry['query'])
+
+		foreach($this->log_list as $logentry) {
+			if (!$logentry['query']) {
 				$logentry['query'] = "N/A";
-			if(isset($GLOBALS['db']))
-			{
-				$sm_log_entry = $GLOBALS['db']->Prepare("INSERT INTO ".DB_PREFIX."_log(type,title,message, function, query, aid, host, created)
-						VALUES (?,?,?,?,?,?,?,?)");
-				$GLOBALS['db']->Execute($sm_log_entry,array($logentry['type'], $logentry['title'], $logentry['msg'], (string)$logentry['parent_function'],$logentry['query'], $logentry['aid'], $logentry['host'], $logentry['created']));
+			}
+
+			if (isset($GLOBALS['db'])) {
+				$sm_log_entry = $GLOBALS['db']->Prepare(
+					"INSERT INTO
+						`" . DB_PREFIX . "_log` (`type`, `title`, `message`, `function`, `query`, `aid`, `host`, `created`)
+					VALUES
+						(?, ?, ?, ?, ?, ?, ?, ?);"
+				);
+
+				$query_array = array (
+					$logentry['type'],
+					$logentry['title'],
+					$logentry['msg'],
+					(string)$logentry['parent_function'],
+					$logentry['query'],
+					$logentry['aid'],
+					$logentry['host'],
+					$logentry['created']
+				);
+
+				$GLOBALS['db']->Execute($sm_log_entry, $query_array);
 			}
 		}
+
 		unset($this->log_list);
 	}
-	
+
 	function WriteLog()
 	{
-		if(!$this->query)
+		if (!$this->query) {
 			$this->query = "N/A";
-		if(isset($GLOBALS['db']))
-		{
-			$sm_log_entry = $GLOBALS['db']->Prepare("INSERT INTO ".DB_PREFIX."_log(type,title,message, function, query, aid, host, created)
-						VALUES (?,?,?,?,?,?,?,?)");
-			$GLOBALS['db']->Execute($sm_log_entry,array($this->type, $this->title, $this->msg, (string)$this->parent_function,$this->query, $this->aid, $this->host, $this->created));
+		}
+
+		if (isset($GLOBALS['db'])) {
+			$sm_log_entry = $GLOBALS['db']->Prepare(
+				"INSERT INTO
+					`" . DB_PREFIX . "_log` (`type`, `title`, `message`, `function`, `query`, `aid`, `host`, `created`)
+				VALUES
+					(?, ?, ?, ?, ?, ?, ?, ?);"
+			);
+
+			$query_array = array (
+				$this->type,
+				$this->title,
+				$this->msg,
+				(string)$this->parent_function,
+				$this->query,
+				$this->aid,
+				$this->host,
+				$this->created
+			);
+
+			$GLOBALS['db']->Execute($sm_log_entry, $query_array);
 		}
 	}
-	
+
 	function _getCaller()
 	{
 		$bt = debug_backtrace();
