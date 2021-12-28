@@ -17,6 +17,9 @@
         "symfony/routing": "5.4.x-dev"
     },
     "config": {
-        "vendor-dir": "web_upload/vendor"
+        "vendor-dir": "web_upload/vendor",
+        "platform": {
+            "php": "7.1"
+        }
     }
 }
