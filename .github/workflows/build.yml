@@ -19,7 +19,7 @@ jobs:
             ${{ runner.os }}-php-
 
       - name: Install dependencies
-        run: composer install --prefer-dist --no-progress --no-dev
+        run: composer install --prefer-dist --ignore-platform-reqs --no-progress --no-dev
 
       - name: Attach artifact to job
         uses: actions/upload-artifact@v2

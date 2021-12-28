@@ -72,31 +72,6 @@ stream_wrapper_register('sb', 'StreamWrapper');
 
 include_once(USER_DATA . '/db.php');
 
-// ---------------------------------------------------
-//  Init translator
-// ---------------------------------------------------
-require_once(INCLUDES_PATH . "/KruzyaExceptions.php");
-require_once(INCLUDES_PATH . "/Language.php");
-try {
-    $GLOBALS['translator'] = new Kruzya\Generic\Language(USER_DATA . "langs/");
-} catch (Exception $e) {
-    // nope.
-    die("Can't initialize multi-language system. Try request again later.");
-}
-
-// ---------------------------------------------------
-//  Fix some $_SERVER vars
-// ---------------------------------------------------
-// Fix for IIS, which doesn't set REQUEST_URI
-if(!isset($_SERVER['REQUEST_URI']) || trim($_SERVER['REQUEST_URI']) == '')
-{ $_SERVER['REQUEST_URI'] = $_SERVER['SCRIPT_NAME'];
-    if (isset($_SERVER['QUERY_STRING']) && !empty($_SERVER['QUERY_STRING']))
-    { $_SERVER['REQUEST_URI'] .= '?' . $_SERVER['QUERY_STRING']; }
-}
-// Fix for Dreamhost and other PHP as CGI hosts
-if(strstr($_SERVER['SCRIPT_NAME'], 'php.cgi')) unset($_SERVER['PATH_INFO']);
-if(trim($_SERVER['PHP_SELF']) == '') $_SERVER['PHP_SELF'] = preg_replace("/(\?.*)?$/",'', $_SERVER["REQUEST_URI"]);
-
 /// --------------------------------------------------
 /// Load configuration file
 /// --------------------------------------------------
@@ -273,9 +248,6 @@ $FlagsStatement->EndData();
 // Setup our templater
 // ---------------------------------------------------
 global $theme, $userbank;
-
-if(!@is_writable(SB_THEME_COMPILE))
-    die($GLOBALS['translator']->retrieve("init::themec_not_writable", ["cache_path" => SB_THEME_COMPILE]));
 
 $theme = \App::templater(); // by compability reasons
 
