@@ -183,12 +183,20 @@ function BuildPageTabs()
 {
 	global $userbank;
 
+	$bIsAdmin = $userbank->is_admin();
+
 	// NEW MENU, V2.0
 	$items = $GLOBALS['db']->GetAll(sprintf("SELECT * FROM `%s_menu` WHERE `enabled` = 1 ORDER BY `priority` DESC", DB_PREFIX));
-	foreach ($items as &$item)
-		AddTab($item['text'], $item['url'], $item['description'], ($item['newtab']=="1"));
+	
+	foreach ($items as &$item) {
+		if ($item['onlyadmin'] && !$bIsAdmin) {
+			continue;
+		}
 
-	if ($userbank->is_admin())
+		AddTab($item['text'], $item['url'], $item['description'], ($item['newtab']=="1"));
+	}
+
+	if ($bIsAdmin)
 		AddTab("<i class='zmdi zmdi-star zmdi-hc-fw'></i> Админ-Панель", "index.php?p=admin", "Панель для администраторов. Управление серверами, администраторами, настройками.");
 
 		include INCLUDES_PATH . "/CTabsMenu.php";

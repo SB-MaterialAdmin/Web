@@ -25,6 +25,7 @@
 						`description` = :description,
 						`url` = :url,
 						`enabled` = :enabled,
+						`onlyadmin` = :onlyadmin,
 						`priority` = :priority
 					WHERE
 						`id` = :id'
@@ -36,6 +37,7 @@
 					'description'		=> $_POST['des_link'],
 					'url'				=> $_POST['url_link'],
 					'enabled'			=> $on_act,
+					'onlyadmin'			=> ($_POST['only_admin'] == 'on') ? 1 : 0,
 					'priority'			=> $_POST['priora_link']
 				]);
 
@@ -65,5 +67,6 @@
 
 			echo "<script>$('on_link').checked = " . (int)$list_menu['enabled'] . ";</script>";
 			echo "<script>$('onNewTab').checked = " . (int)$list_menu['newtab'] . "</script>";
+			echo "<script>$('only_admin').checked = " . (int)$list_menu['onlyadmin'] . "</script>";
 		}
 	}

@@ -58,9 +58,9 @@
 
 				$insert_menu_sql = " 
 					INSERT INTO `" . DB_PREFIX . "_menu` 
-						(`text`, `description`, `url`, `system`, `enabled`, `priority`, `newtab`) 
+						(`text`, `description`, `url`, `system`, `enabled`, `onlyadmin`, `priority`, `newtab`) 
 					VALUES 
-						(?, ?, ?, 0, ?, ?, ?);
+						(?, ?, ?, 0, ?, ?, ?, ?);
 				";
 
 				$prepaire_array = array (
@@ -68,6 +68,7 @@
 					$_POST['des_link'],
 					$_POST['url_link'],
 					$on_act,
+					($_POST['only_admin'] == "on") ? "1" : "0",
 					$_POST['priora_link'],
 					($_POST['onNewTab'] == "on") ? "1" : "0"
 				);
