@@ -142,7 +142,8 @@ function BuildContHeader()
 function AddTab($title, $url, $desc, $newtab=false, $active=false)
 {
 	global $tabs;
-	$tab_arr = array(	);
+
+	$tab_arr = array( );
 	$tab_arr[0] = "Главная";
 	$tab_arr[1] = "Серверы";
 	$tab_arr[2] = "Список банов";
@@ -187,7 +188,7 @@ function BuildPageTabs()
 
 	// NEW MENU, V2.0
 	$items = $GLOBALS['db']->GetAll(sprintf("SELECT * FROM `%s_menu` WHERE `enabled` = 1 ORDER BY `priority` DESC", DB_PREFIX));
-	
+
 	foreach ($items as &$item) {
 		if ($item['onlyadmin'] && !$bIsAdmin) {
 			continue;
@@ -196,32 +197,52 @@ function BuildPageTabs()
 		AddTab($item['text'], $item['url'], $item['description'], ($item['newtab']=="1"));
 	}
 
-	if ($bIsAdmin)
+	if ($bIsAdmin) {
 		AddTab("<i class='zmdi zmdi-star zmdi-hc-fw'></i> Админ-Панель", "index.php?p=admin", "Панель для администраторов. Управление серверами, администраторами, настройками.");
+	}
 
-		include INCLUDES_PATH . "/CTabsMenu.php";
+	include INCLUDES_PATH . "/CTabsMenu.php";
 
-		// BUILD THE SUB-MENU's FOR ADMIN PAGES
-		$submenu = new CTabsMenu();
-		if($userbank->HasAccess(ADMIN_OWNER|ADMIN_LIST_ADMINS|ADMIN_ADD_ADMINS|ADMIN_EDIT_ADMINS|ADMIN_DELETE_ADMINS))
-			$submenu->addMenuItem("Администраторы", 0,"", "index.php?p=admin&amp;c=admins", true);
-		if(($userbank->HasAccess(ADMIN_OWNER)) && ($GLOBALS['config']['page.vay4er'] == "1"))
-			$submenu->addMenuItem("Ваучеры", 0,"", "index.php?p=admin&amp;c=pay_card", true);
-		if($userbank->HasAccess(ADMIN_OWNER|ADMIN_LIST_SERVERS|ADMIN_ADD_SERVER|ADMIN_EDIT_SERVERS|ADMIN_DELETE_SERVERS))
-			$submenu->addMenuItem("Серверы", 0,"", "index.php?p=admin&amp;c=servers", true);
-		if($userbank->HasAccess( ADMIN_OWNER|ADMIN_ADD_BAN|ADMIN_EDIT_OWN_BANS|ADMIN_EDIT_GROUP_BANS|ADMIN_EDIT_ALL_BANS|ADMIN_BAN_PROTESTS|ADMIN_BAN_SUBMISSIONS))
-			$submenu->addMenuItem("Баны", 0,"", "index.php?p=admin&amp;c=bans", true);
-		if($userbank->HasAccess( ADMIN_OWNER|ADMIN_ADD_BAN|ADMIN_EDIT_OWN_BANS|ADMIN_EDIT_ALL_BANS))
-			$submenu->addMenuItem("Муты и гаги", 0,"", "index.php?p=admin&amp;c=comms", true);
-		if($userbank->HasAccess(ADMIN_OWNER|ADMIN_LIST_GROUPS|ADMIN_ADD_GROUP|ADMIN_EDIT_GROUPS|ADMIN_DELETE_GROUPS))
-			$submenu->addMenuItem("Группы", 0,"", "index.php?p=admin&amp;c=groups", true);
-		if($userbank->HasAccess(ADMIN_OWNER|ADMIN_WEB_SETTINGS))
-			$submenu->addMenuItem("Настройки", 0,"", "index.php?p=admin&amp;c=settings", true);
-		if($userbank->HasAccess(ADMIN_OWNER))
-			$submenu->addMenuItem("Меню", 0,"", "index.php?p=admin&amp;c=menu", true);
-		if($userbank->HasAccess( ADMIN_OWNER|ADMIN_LIST_MODS|ADMIN_ADD_MODS|ADMIN_EDIT_MODS|ADMIN_DELETE_MODS))
-			$submenu->addMenuItem("Моды", 0,"", "?p=admin&amp;c=mods", true);
-		SubMenu( $submenu->getMenuArray() );
+	// BUILD THE SUB-MENU's FOR ADMIN PAGES
+	$submenu = new CTabsMenu();
+
+	if ($userbank->HasAccess(ADMIN_OWNER|ADMIN_LIST_ADMINS|ADMIN_ADD_ADMINS|ADMIN_EDIT_ADMINS|ADMIN_DELETE_ADMINS)) {
+		$submenu->addMenuItem("Администраторы", 0,"", "index.php?p=admin&amp;c=admins", true);
+	}
+
+	if (($userbank->HasAccess(ADMIN_OWNER)) && ($GLOBALS['config']['page.vay4er'] == "1")) {
+		$submenu->addMenuItem("Ваучеры", 0,"", "index.php?p=admin&amp;c=pay_card", true);
+	}
+
+	if ($userbank->HasAccess(ADMIN_OWNER|ADMIN_LIST_SERVERS|ADMIN_ADD_SERVER|ADMIN_EDIT_SERVERS|ADMIN_DELETE_SERVERS)) {
+		$submenu->addMenuItem("Серверы", 0,"", "index.php?p=admin&amp;c=servers", true);
+	}
+
+	if ($userbank->HasAccess( ADMIN_OWNER|ADMIN_ADD_BAN|ADMIN_EDIT_OWN_BANS|ADMIN_EDIT_GROUP_BANS|ADMIN_EDIT_ALL_BANS|ADMIN_BAN_PROTESTS|ADMIN_BAN_SUBMISSIONS)) {
+		$submenu->addMenuItem("Баны", 0,"", "index.php?p=admin&amp;c=bans", true);
+	}
+
+	if ($userbank->HasAccess( ADMIN_OWNER|ADMIN_ADD_BAN|ADMIN_EDIT_OWN_BANS|ADMIN_EDIT_ALL_BANS)) {
+		$submenu->addMenuItem("Муты и гаги", 0,"", "index.php?p=admin&amp;c=comms", true);
+	}
+
+	if ($userbank->HasAccess(ADMIN_OWNER|ADMIN_LIST_GROUPS|ADMIN_ADD_GROUP|ADMIN_EDIT_GROUPS|ADMIN_DELETE_GROUPS)) {
+		$submenu->addMenuItem("Группы", 0,"", "index.php?p=admin&amp;c=groups", true);
+	}
+
+	if ($userbank->HasAccess(ADMIN_OWNER|ADMIN_WEB_SETTINGS)) {
+		$submenu->addMenuItem("Настройки", 0,"", "index.php?p=admin&amp;c=settings", true);
+	}
+
+	if ($userbank->HasAccess(ADMIN_OWNER)) {
+		$submenu->addMenuItem("Меню", 0,"", "index.php?p=admin&amp;c=menu", true);
+	}
+
+	if ($userbank->HasAccess( ADMIN_OWNER|ADMIN_LIST_MODS|ADMIN_ADD_MODS|ADMIN_EDIT_MODS|ADMIN_DELETE_MODS)) {
+		$submenu->addMenuItem("Моды", 0,"", "?p=admin&amp;c=mods", true);
+	}
+
+	SubMenu($submenu->getMenuArray());
 }
 
 /**
