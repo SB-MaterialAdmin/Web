@@ -24,10 +24,10 @@
 				} else {
 					AddScriptWithReload(sprintf("setTimeout(function() { %s; }, 1350);", generateMsgBoxJS("Ошибка", "Системную ссылку удалить невозможно!", "red", "", true)), "index.php?p=admin&c=menu");
 				}
-			} elseif (($_GET['o'] == "on") and !empty($_GET['o'])){
+			} elseif (($_GET['o'] == "on") and !empty($_GET['o'])) {
 				$check_sys = $GLOBALS['db']->GetOne("SELECT enabled FROM `" . DB_PREFIX . "_menu` WHERE id = '".(int)$_GET['id']."'");
 
-				if ($check_sys == "0"){
+				if ($check_sys == "0") {
 					$gg_check_sys = $GLOBALS['db']->Execute("UPDATE `" . DB_PREFIX . "_menu` SET `enabled` = '1' WHERE id = '".(int)$_GET['id']."'");
 
 					if ($gg_check_sys) {
@@ -55,11 +55,11 @@
 			if ($_POST['Link'] == "add") {
 				$on_act = (isset($_POST['on_link']) && $_POST['on_link'] == "on" ? 1 : 0);
 
-				$insert_menu_sql = "
+				$insert_menu_sql = " 
 					INSERT INTO `" . DB_PREFIX . "_menu` 
-						(`text`, `description`, `url`, `system`, `enabled`, `priority`, `newtab`) 
+						(`text`, `description`, `url`, `system`, `enabled`, `onlyadmin`, `priority`, `newtab`) 
 					VALUES 
-						(?, ?, ?, '0', ?, ?, ?);
+						(?, ?, ?, '0', ?, ?, ?, ?);
 				";
 
 				$prepaire_array = array (
@@ -67,6 +67,7 @@
 					$_POST['des_link'],
 					$_POST['url_link'],
 					$on_act,
+					($_POST['onNewTab2'] == "on") ? "1" : "0",
 					$_POST['priora_link'],
 					($_POST['onNewTab'] == "on") ? "1" : "0"
 				);

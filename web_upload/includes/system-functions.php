@@ -185,8 +185,14 @@ function BuildPageTabs()
 
 	// NEW MENU, V2.0
 	$items = $GLOBALS['db']->GetAll(sprintf("SELECT * FROM `%s_menu` WHERE `enabled` = 1 ORDER BY `priority` DESC", DB_PREFIX));
-	foreach ($items as &$item)
+
+	foreach ($items as &$item) {
+		if ($item['onlyadmin'] && !$userbank->is_admin()) {
+			continue;
+		}
+
 		AddTab($item['text'], $item['url'], $item['description'], ($item['newtab']=="1"));
+	}
 
 	if ($userbank->is_admin())
 		AddTab("<i class='zmdi zmdi-star zmdi-hc-fw'></i> Админ-Панель", "index.php?p=admin", "Панель для администраторов. Управление серверами, администраторами, настройками.");

@@ -56,7 +56,7 @@
 					</div>
 				</div>
 				{display_material_checkbox name="onNewTab" help_title="Открывать в новой вкладке" help_text="При щелчке по пункту в меню, он будет открываться в новой вкладке браузера, если здесь установлена галочка."}
-				
+				{display_material_checkbox name="onNewTab2" help_title="Только для админа" help_text="При включении пункт в меню будет отображатся только администраторам."}
 			</div>
 			<div class="card-body card-padding text-center">
 				{sb_button text="Сохранить" icon="<i class='zmdi zmdi-check-all'></i>" class="bgm-green btn-icon-text" submit=true}

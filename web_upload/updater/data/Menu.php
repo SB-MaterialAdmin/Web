@@ -9,6 +9,7 @@
 			`url` varchar(300) NOT NULL, \
 			`system` tinyint(1) NOT NULL, \
 			`enabled` tinyint(1) NOT NULL, \
+			`onlyadmin` tinyint(1) NOT NULL DEFAULT '0', \
 			`priority` int(11) NOT NULL, PRIMARY KEY (`id`) \
 		) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=8;
 	";
