@@ -1,6 +1,7 @@
 <?php
-if(!defined("IN_SB")){echo "Ошибка доступа!";die();}
-global $userbank, $theme;
+	if(!defined("IN_SB")){echo "Ошибка доступа!";die();}
+
+	global $userbank, $theme;
 
 	if(!$userbank->HasAccess(ADMIN_OWNER))
 		CreateRedBox("Доступ запрещен!", "У вас нету доступных привилегий на просмотр данной страницы.");
@@ -42,7 +43,7 @@ global $userbank, $theme;
 				AddScriptWithReload(sprintf("setTimeout(function() { %s; }, 1350);", generateMsgBoxJS("Успех!", sprintf("Ссылка была успешно создана%s!", ($_POST[$on_act]==1)?" и добавлена в меню":""), "green", "", true)), "index.php?p=admin&c=menu");
 			}
 		}
-		
+
 		$list_menus = $GLOBALS['db']->GetAll("SELECT * FROM ".DB_PREFIX."_menu ORDER BY `priority` DESC");
 		$theme->assign('list', $list_menus);
 		$theme->assign('test', $test);
