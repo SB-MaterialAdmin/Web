@@ -1,35 +1,42 @@
 <?php
-	if(!defined("IN_SB")){echo "Ошибка доступа!";die();}
+	if (!defined("IN_SB")) {
+		echo "Ошибка доступа!";
+		die();
+	}
 
-	global $userbank, $theme;
+	global $userbank;
+	global $theme;
 
 	$DB = \DatabaseManager::GetConnection();
 
-	if(!$userbank->HasAccess(ADMIN_OWNER))
+	if (!$userbank->HasAccess(ADMIN_OWNER)) {
 		CreateRedBox("Доступ запрещен!", "У вас нету доступных привилегий на просмотр данной страницы.");
-	else {
-		if(isset($_POST['Link'])) { 
-			if ($_POST['Link'] == "edit"){
+	} else {
+		if (isset($_POST['Link'])) {
+			if ($_POST['Link'] == "edit") {
 				// insert.
 				$on_act = (isset($_POST['on_link']) && $_POST['on_link'] == "on" ? 1 : 0);
 
-				$DB->Prepare('UPDATE
-					`{{prefix}}menu`
-				SET
-					`text` = :text,
-					`description` = :description,
-					`url` = :url,
-					`enabled` = :enabled,
-					`priority` = :priority
-				WHERE
-					`id` = :id');
+				$DB->Prepare('
+					UPDATE
+						`{{prefix}}menu`
+					SET
+						`text` = :text,
+						`description` = :description,
+						`url` = :url,
+						`enabled` = :enabled,
+						`priority` = :priority
+					WHERE
+						`id` = :id'
+				);
+
 				$DB->BindMultipleData([
-					'id'					=> $_GET['id'],
+					'id'				=> $_GET['id'],
 					'text'				=> $_POST['names_link'],
-					'description' => $_POST['des_link'],
-					'url'				 => $_POST['url_link'],
-					'enabled'		 => $on_act,
-					'priority'		=> $_POST['priora_link']
+					'description'		=> $_POST['des_link'],
+					'url'				=> $_POST['url_link'],
+					'enabled'			=> $on_act,
+					'priority'			=> $_POST['priora_link']
 				]);
 
 				$DB->Finish();
@@ -55,7 +62,8 @@
 			$theme->left_delimiter = "{";
 			$theme->right_delimiter = "}";
 			$theme->display('page_admin_menu_edit.tpl');
-			echo "<script>$('on_link').checked = ".(int)$list_menu['enabled'].";</script>";
-			echo "<script>$('onNewTab').checked = ".(int)$list_menu['newtab']."</script>";
+
+			echo "<script>$('on_link').checked = " . (int)$list_menu['enabled'] . ";</script>";
+			echo "<script>$('onNewTab').checked = " . (int)$list_menu['newtab'] . "</script>";
 		}
 	}
