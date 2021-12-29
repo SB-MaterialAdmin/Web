@@ -16,25 +16,28 @@
 				// insert.
 				$on_act = (isset($_POST['on_link']) && $_POST['on_link'] == "on" ? 1 : 0);
 
-				$DB->Prepare('UPDATE
-					`{{prefix}}menu`
-				SET
-					`text` = :text,
-					`description` = :description,
-					`url` = :url,
-					`enabled` = :enabled,
-					`priority` = :priority
-				WHERE
-					`id` = :id');
+				$DB->Prepare('
+					UPDATE
+						`{{prefix}}menu`
+					SET
+						`text` = :text,
+						`description` = :description,
+						`url` = :url,
+						`enabled` = :enabled,
+						`priority` = :priority
+					WHERE
+						`id` = :id'
+				);
 
 				$DB->BindMultipleData([
-					'id'					=> $_GET['id'],
+					'id'				=> $_GET['id'],
 					'text'				=> $_POST['names_link'],
-					'description' => $_POST['des_link'],
-					'url'				 => $_POST['url_link'],
-					'enabled'		 => $on_act,
-					'priority'		=> $_POST['priora_link']
+					'description'		=> $_POST['des_link'],
+					'url'				=> $_POST['url_link'],
+					'enabled'			=> $on_act,
+					'priority'			=> $_POST['priora_link']
 				]);
+
 				$DB->Finish();
 
 				PushScriptToExecuteAfterLoadPage(sprintf("setTimeout(function() { %s; }, 1350);", generateMsgBoxJS("Успех!", "Ссылка успешно сохранена!", "green", "", true)));
@@ -58,7 +61,8 @@
 			$theme->left_delimiter = "{";
 			$theme->right_delimiter = "}";
 			$theme->display('page_admin_menu_edit.tpl');
-			echo "<script>$('on_link').checked = ".(int)$list_menu['enabled'].";</script>";
-			echo "<script>$('onNewTab').checked = ".(int)$list_menu['newtab']."</script>";
+
+			echo "<script>$('on_link').checked = " . (int)$list_menu['enabled'] . ";</script>";
+			echo "<script>$('onNewTab').checked = " . (int)$list_menu['newtab'] . "</script>";
 		}
 	}
