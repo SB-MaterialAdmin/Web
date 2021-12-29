@@ -1,6 +1,6 @@
 <?php
-if(!defined("IN_SB")){echo "Ошибка доступа!";die();}
-global $userbank, $theme;
+	if(!defined("IN_SB")){echo "Ошибка доступа!";die();}
+	global $userbank, $theme;
 
 	if(!$userbank->HasAccess(ADMIN_OWNER))
 		CreateRedBox("Доступ запрещен!", "У вас нету доступных привилегий на просмотр данной страницы.");
