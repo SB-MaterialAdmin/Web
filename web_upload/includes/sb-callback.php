@@ -1029,7 +1029,7 @@ function AddAdmin_pay($mask, $srv_mask, $a_name, $a_steam, $a_email, $a_password
     {
       try
       {
-        $a_steam = \CSteamID::factory($a_steam)->v2;
+        $a_steam = \CSteamId::factory($a_steam)->v2;
       }
       catch (\Exception $e)
       {
@@ -1460,7 +1460,7 @@ function AddAdmin($mask, $srv_mask, $a_name, $a_steam, $a_email, $a_password, $a
     {
       try
       {
-        $a_steam = \CSteamID::factory($a_steam)->v2;
+        $a_steam = \CSteamId::factory($a_steam)->v2;
       }
       catch (\Exception $e)
       {
@@ -2262,7 +2262,7 @@ function AddBan($nickname, $type, $steam, $ip, $length, $dfile, $dname, $reason,
     {
       try
       {
-        $steam = \CSteamID::factory($steam)->v2;
+        $steam = \CSteamId::factory($steam)->v2;
       }
       catch (\Exception $e)
       {
@@ -3769,7 +3769,7 @@ function AddBlock($nickname, $type, $steam, $length, $reason)
     {
       try
       {
-        $steam = \CSteamID::factory($steam)->v2;
+        $steam = \CSteamId::factory($steam)->v2;
       }
       catch (\Exception $e)
       {
