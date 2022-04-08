@@ -302,17 +302,31 @@ global $theme, $userbank;
 if(!@is_writable(SB_THEME_COMPILE))
     die($GLOBALS['translator']->retrieve("init::themec_not_writable", ["cache_path" => SB_THEME_COMPILE]));
 
-$theme = \App::templater(); // by compability reasons
+$theme = \App::templater(); // by compatibility reasons
 
 // ---------------------------------------------------
 // Start our session manager.
 // ---------------------------------------------------
-\SessionManager::startSession(\SessionManager::getSessionName());
+
+// PHP has strange bugs with this, so we set cookie manually later.
+ini_set('session.use_cookies', false);
+
+// Parameters for session can be defined via `config.php`.
+$expires = constant('SB_SESSION_EXPIRES') ?: 86400;
+$path = constant('SB_SESSION_PATH') ?: '/';
+$domain = parse_url(constant('SB_WP_URL'), PHP_URL_HOST) ?: $_SERVER['SERVER_NAME'];
+$secureOnly = (strtolower(parse_url(constant('SB_WP_URL'), PHP_URL_SCHEME)) == 'https')
+    || $_SERVER['HTTPS'] == 'on' || $_SERVER['SERVER_PORT'] === 443;
+
+\SessionManager::setupParameters(\SessionManager::getSessionName($domain),
+    $expires, $path, $domain, $secureOnly);
+\SessionManager::startSession();
 
 // ---------------------------------------------------
 // Setup our user manager
 // ---------------------------------------------------
-$aid   = filterInput(INPUT_SESSION, 'admin_id',    FILTER_VALIDATE_INT);
+$aid   = $_SESSION['admin_id'] ?: -1;
+$hash  = $_SESSION['admin_hash'] ?: '';
 
-\UserManager::init($aid);
+\UserManager::init($aid, $hash);
 $userbank = \UserManager::getInstance(); // for old code.

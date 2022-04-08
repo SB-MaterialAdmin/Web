@@ -37,10 +37,13 @@ class CUserManager
    * @param $password the current user's password
    * @return noreturn.
    */
-  function __construct($aid)
+  function __construct($aid, $password)
   {
     if ($aid != -1)
-      $this->GetUserArray($aid);
+    {
+      $data = $this->GetUserArray($aid);
+      if ($password != $data['password']) return;
+    }
     $this->aid = $aid;
   }
   
