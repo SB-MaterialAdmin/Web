@@ -38,7 +38,7 @@ $methods = array(
   'admin' => array(
     'AddMod', 'RemoveMod', 'AddGroup', 'RemoveGroup', 'RemoveAdmin',
     'RemoveSubmission', 'RemoveServer', 'UpdateGroupPermissions',
-    'UpdateAdminPermissions', 'AddAdmin', 'SetupEditServer',
+    'UpdateAdminPermissions', 'AddAdmin',
     'AddServerGroupName', 'AddServer', 'AddBan', 'RehashAdmins',
     'EditGroup', 'RemoveProtest', 'SendRcon', 'EditAdminPerms',
     'AddComment', 'EditComment', 'RemoveComment', 'PrepareReban',
@@ -2452,34 +2452,6 @@ function PrepareReban($bid)
     $objResponse->addScript("demo('" . $demo['filename'] . "', '" . $demo['origname'] . "');");
   }
   $objResponse->addScript("SwapPane(0);");
-  return $objResponse;
-}
-
-function SetupEditServer($sid)
-{
-  $objResponse = new xajaxResponse();
-  $sid = (int)$sid;
-  $server = $GLOBALS['db']->GetRow("SELECT * FROM ".DB_PREFIX."_servers WHERE sid = $sid");
-
-  // clear any old stuff
-  $objResponse->addScript("$('address').value = ''");
-  $objResponse->addScript("$('port').value = ''");
-  $objResponse->addScript("$('rcon').value = ''");
-  $objResponse->addScript("$('rcon2').value = ''");
-  $objResponse->addScript("$('mod').value = '0'");
-  $objResponse->addScript("$('serverg').value = '0'");
-
-
-  // add new stuff
-  $objResponse->addScript("$('address').value = '" . $server['ip']. "'");
-  $objResponse->addScript("$('port').value =  '" . $server['port']. "'");
-  $objResponse->addScript("$('rcon').value =  '" . $server['rcon']. "'");
-  $objResponse->addScript("$('rcon2').value =  '" . $server['rcon']. "'");
-  $objResponse->addScript("$('mod').value =  " . $server['modid']);
-  $objResponse->addScript("$('serverg').value =  " . $server['gid']);
-
-  $objResponse->addScript("$('insert_type').value =  " . $server['sid']);
-  $objResponse->addScript("SwapPane(1);");
   return $objResponse;
 }
 
