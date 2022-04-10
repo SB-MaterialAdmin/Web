@@ -511,7 +511,7 @@ while (!$res->EOF)
 		$data['ureason'] = stripslashes($res->fields['unban_reason']);
 
 		$removedby = \UserManager::getInstance()->GetUserArray($res->fields['RemovedBy']);
-        $data['removedby'] = "";
+        $data['removedby'] = \App::options()['nulladmin.name'];
         if($removedby != 0)
             $data['removedby'] = $removedby['user'];
 	}
