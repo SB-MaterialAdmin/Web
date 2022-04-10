@@ -105,5 +105,5 @@ function highlight_links_block($params, $content, &$smarty, &$repeat)
 
 function highlight_links_fn($params, &$smarty)
 {
-    return preg_replace('/\w{1,}:\/\/\S{1,}/g', '<a href="${0}">${0}</a>', $params['content']);
+    return preg_replace('/\w{1,}:\/\/\S{1,}/', '<a href="${0}">${0}</a>', $params['content']);
 }
