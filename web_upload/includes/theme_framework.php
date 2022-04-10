@@ -9,7 +9,10 @@ $theme->register_function("display_material_checkbox", "materialdesign_checkbox"
 $theme->register_function("display_material_input", "materialdesign_input");
 $theme->register_function("display_header", "materialdesign_cardheader");
 $theme->register_function("display_alert", "materialdesign_alert");
+$theme->register_function('steamid_format', 'steamid_format');
 $theme->register_block("render_material_body", "materialdesign_body");
+$theme->register_block('highlight_links', 'highlight_links_block');
+$theme->register_block('highlight_links', 'highlight_links_fn');
 
 // Создание каллбэков функций
 function materialdesign_checkbox($params, &$smarty) {
@@ -69,4 +72,38 @@ function materialdesign_body($params, $content, &$smarty) {
     $out .= '">'.$content."</div>";
     
     return $out;
+}
+
+function steamid_format($params, &$smarty)
+{
+    $format = $params['format'] ?: 'v2';
+    $steamId = $params['steamid'] ?: 'STEAM_ID_CONSOLE';
+    $gameId = $params['gameid'] ?: 0;
+    $fallback = $params['fallback'] ?: '';
+
+    if (!in_array($format, ['v2', 'v3', 'CommunityID', 'AccountID']))
+    {
+        trigger_error('Unknown SteamID format: ' . $format);
+        return $fallback;
+    }
+
+    try
+    {
+        $steamId = CSteamId::factory($steamId, $gameId);
+        return $steamId->{$format};
+    }
+    catch (\Exception $e)
+    {
+        return $fallback;
+    }
+}
+
+function highlight_links_block($params, $content, &$smarty, &$repeat)
+{
+    return highlight_links_fn(['content' => $content], $smarty);
+}
+
+function highlight_links_fn($params, &$smarty)
+{
+    return preg_replace('/\w{1,}:\/\/\S{1,}/g', '<a href="${1}">${1}</a>', $params['content']);
 }
