@@ -12,7 +12,7 @@ $theme->register_function("display_alert", "materialdesign_alert");
 $theme->register_function('steamid_format', 'steamid_format');
 $theme->register_block("render_material_body", "materialdesign_body");
 $theme->register_block('highlight_links', 'highlight_links_block');
-$theme->register_block('highlight_links', 'highlight_links_fn');
+$theme->register_function('highlight_links', 'highlight_links_fn');
 
 // Создание каллбэков функций
 function materialdesign_checkbox($params, &$smarty) {
@@ -105,5 +105,5 @@ function highlight_links_block($params, $content, &$smarty, &$repeat)
 
 function highlight_links_fn($params, &$smarty)
 {
-    return preg_replace('/\w{1,}:\/\/\S{1,}/g', '<a href="${1}">${1}</a>', $params['content']);
+    return preg_replace('/\w{1,}:\/\/\S{1,}/g', '<a href="${0}">${0}</a>', $params['content']);
 }
