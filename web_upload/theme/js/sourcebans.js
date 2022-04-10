@@ -36,6 +36,7 @@ var ADMIN_LIST_SERVERS = 	(1<<4);
 var ADMIN_ADD_SERVER = 		(1<<5);
 var ADMIN_EDIT_SERVERS = 	(1<<6);
 var ADMIN_DELETE_SERVERS = 	(1<<7);
+var ADMIN_ISSUE_WARNS_ADMINS = (1<<9);
 
 var ADMIN_ADD_BAN = 		(1<<8);
 var ADMIN_EDIT_OWN_BANS = 	(1<<10);
@@ -575,6 +576,8 @@ function BoxToMask()
 			Mask |= ADMIN_EDIT_SERVERS;
 		if(document.getElementById('p12').checked)
 			Mask |= ADMIN_DELETE_SERVERS;
+		if(document.getElementById('p15').checked)
+			Mask |= ADMIN_ISSUE_WARNS_ADMINS;
 			
 		if(document.getElementById('p14').checked)
 			Mask |= ADMIN_ADD_BAN;

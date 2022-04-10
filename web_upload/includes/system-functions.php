@@ -393,6 +393,8 @@ function BitToString($mask, $masktype=0, $head=true)
 			$string .= "<li> Редактировать администратора</li>";
 		if(($mask & ADMIN_DELETE_ADMINS) !=0 || ($mask & ADMIN_OWNER) !=0)
 			$string .= "<li> Удалить администратора</li>";
+        if(($mask & ADMIN_ISSUE_WARNS_ADMINS) !=0 || ($mask & ADMIN_OWNER) != 0)
+            $string .= "<li> Выдать предупреждение администратору</li>";
 
 		if(($mask & ADMIN_LIST_SERVERS) !=0 || ($mask & ADMIN_OWNER) !=0)
 			$string .= "<li> Список серверов</li>";
