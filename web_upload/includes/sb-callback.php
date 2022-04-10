@@ -3911,13 +3911,14 @@ function AddWarning($id, $days, $reason) {
   global $userbank;
 
   $objResponse = new xajaxResponse();
-  if (!$userbank->HasAccess(ADMIN_OWNER|ADMIN_DELETE_ADMINS) || $userbank->GetProperty("srv_immunity", $admin['id']) > $userbank->GetProperty("srv_immunity")) {
+  if (!$userbank->HasAccess(ADMIN_OWNER|ADMIN_ISSUE_WARNS_ADMINS) || $userbank->GetProperty("srv_immunity", $id) > $userbank->GetProperty("srv_immunity")) {
     ShowBox_ajx("Ошибка", "Отказано в доступе.", "red", "", true, $objResponse);
     new CSystemLog("w", "Попытка несанцкионированного доступа", "Администратор пытался выдать предупреждение, не имея на это прав.");
     return $objResponse;
   }
   
-  if ((int) $days <= 0) {
+  if ((int) $days <= 0)
+  {
         ShowBox_ajx("Ошибка", "Пожалуйста, введите число дней более нуля.", "red", "", true, $objResponse);
         return $objResponse;
   }
@@ -3927,7 +3928,7 @@ function AddWarning($id, $days, $reason) {
   $GLOBALS['db']->Execute("INSERT INTO `" . DB_PREFIX . "_warns` (`arecipient`, `afrom`, `expires`, `reason`) VALUES(" . (int) $id . ", " . (int) $userbank->GetAid() . ", " . (time() + (86400 * (int) $days)) . ", " . $GLOBALS['db']->qstr($reason) . ");");
   new CSystemLog("m", "Предупреждение выдано", "Администратор выдал предупреждение Администратору " . $userbank->getProperty('user', $id));
 
-  if ($GLOBALS['db']->GetOne("SELECT COUNT(*) FROM `" . DB_PREFIX . "_warns` WHERE `arecipient` = " . (int) $id) >= (int) $GLOBALS['config']['admin.warns.max']) {
+  if ($GLOBALS['db']->GetOne("SELECT COUNT(*) FROM `" . DB_PREFIX . "_warns` WHERE `arecipient` = " . (int) $id . ' AND `expires` > ' . time()) >= (int) $GLOBALS['config']['admin.warns.max']) {
     $GLOBALS['db']->Execute("UPDATE `" . DB_PREFIX . "_admins` SET `expired` = 1 WHERE `aid` = " . (int) $id . ";");
     new CSystemLog("m", "Аккаунт администратора деактивирован", "По причине превышения лимита максимально активных предупреждений, Администратор " . $userbank->getProperty('user', $id) . " отстраняется от Должности.");
     $removedAccess = true;
@@ -3944,7 +3945,8 @@ function RemoveWarning($warningId) {
     global $userbank;
 
     $objResponse = new xajaxResponse();
-    if (!$userbank->HasAccess(ADMIN_OWNER|ADMIN_DELETE_ADMINS)) {
+    if (!$userbank->HasAccess(ADMIN_OWNER|ADMIN_ISSUE_WARNS_ADMINS))
+    {
         ShowBox_ajx("Ошибка", "Отказано в доступе.", "red", "", true, $objResponse);
         new CSystemLog("w", "Попытка несанцкионированного доступа", "Администратор пытался снять предупреждение, не имея на это прав.");
         return $objResponse;

@@ -67,7 +67,7 @@ else
 	 // ###################[ Admins ]##################################################################
 	{
 		// Make sure they are allowed here oO
-		CheckAdminAccess( ADMIN_OWNER|ADMIN_LIST_ADMINS|ADMIN_ADD_ADMINS|ADMIN_EDIT_ADMINS|ADMIN_DELETE_ADMINS );
+		CheckAdminAccess( ADMIN_OWNER|ADMIN_LIST_ADMINS|ADMIN_ADD_ADMINS|ADMIN_EDIT_ADMINS|ADMIN_DELETE_ADMINS|ADMIN_ISSUE_WARNS_ADMINS);
 		if(!isset($_GET['o']))
 		{	
 			// ====================[ ADMIN SIDE MENU START ] ===================
@@ -223,7 +223,9 @@ else
 				include TEMPLATES_PATH . "/admin.edit.adminservers.php";
 				RewritePageTitle("Редактировать доступ к серверам");
 			}
-		} elseif ($_GET['o'] == 'warnings' && $GLOBALS['config']['admin.warns'] == "1") {
+		}
+		elseif ($_GET['o'] == 'warnings' && $GLOBALS['config']['admin.warns'] == "1" && $userbank->HasAccess(ADMIN_ISSUE_WARNS_ADMINS|ADMIN_OWNER))
+		{
 			$tabs = new CTabsMenu();
 			$tabs->addMenuItem("Назад", -1,"", "javascript:history.go(-1);", true);
 			$tabs->outputMenu();
