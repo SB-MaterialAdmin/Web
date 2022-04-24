@@ -40,7 +40,7 @@ class SessionManager
 
                 $_SESSION = [
                     'user_agent' => hash('sha256', $_SERVER['HTTP_USER_AGENT']),
-                    'expires' => time() + $expires
+                    'expires' => time() + self::$expires
                 ];
             } else if ((rand(1, 100) <= 10) && !isset($_POST['xajax']))
             {
@@ -87,6 +87,7 @@ class SessionManager
 
         session_regenerate_id(false);
         $newSession = session_id();
+        self::setCookie();
 
         self::closeWrite();
         session_id($newSession);

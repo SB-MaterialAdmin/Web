@@ -57,9 +57,10 @@ class UserManager {
     // using old algo.
     if ($Data['password'] == sha1(sha1('SourceBans' . $password))) {
       // rehash user with new algo.
+      $Data['password'] = password_hash($password, PASSWORD_DEFAULT);
       $DB->Prepare('UPDATE `{{prefix}}admins` SET `password` = :password WHERE `aid` = :id');
       $DB->BindMultipleData([
-        'password'  => password_hash($password, PASSWORD_DEFAULT),
+        'password'  => $Data['password'],
         'id'        => $Data['aid']
       ]);
       $DB->Finish();
@@ -102,6 +103,7 @@ class UserManager {
 
     $_SESSION['admin_id'] = intval($UserData['aid']);
     $_SESSION['admin_hash'] = $UserData['password'];
+    \session_write_close();
     return true;
   }
 
