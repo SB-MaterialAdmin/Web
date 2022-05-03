@@ -313,8 +313,8 @@ $theme = \App::templater(); // by compatibility reasons
 ini_set('session.use_cookies', false);
 
 // Parameters for session can be defined via `config.php`.
-$expires = constant('SB_SESSION_EXPIRES') ?: 86400;
-$path = constant('SB_SESSION_PATH') ?: '/';
+$expires = defined('SB_SESSION_EXPIRES') ? constant('SB_SESSION_EXPIRES') : 86400;
+$path = defined('SB_SESSION_PATH') ? constant('SB_SESSION_PATH') : '/';
 $domain = parse_url(constant('SB_WP_URL'), PHP_URL_HOST) ?: $_SERVER['SERVER_NAME'];
 $secureOnly = (strtolower(parse_url(constant('SB_WP_URL'), PHP_URL_SCHEME)) == 'https')
     || $_SERVER['HTTPS'] == 'on' || $_SERVER['SERVER_PORT'] === 443;

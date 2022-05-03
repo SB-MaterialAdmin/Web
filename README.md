@@ -1,5 +1,5 @@
 <h1 align="center">
-    <img src="http://s09.radikal.ru/i182/1610/5f/e56ed82e77f8t.jpg" height="25%" width="25%"/>
+    <img src="https://i.imgur.com/4i41LiS.png" />
     <br/>
     SourceBans Material Admin
     <br/>
@@ -24,3 +24,4 @@
 * [[ G-44.RU ] :: Bans](http://bans.g-44.ru/)
 * [gmode.ru - SourceBans](https://gmode.ru/sourcebans/)
 * [Игровой проект :: L4D-Zone.RU - Комплекс игровых серверов](https://l4d-zone.ru/)
+* [Сообщество игровых серверов NetZONA.org](https://netzona.org/sourcebans/)

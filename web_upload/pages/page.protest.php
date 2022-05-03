@@ -53,9 +53,6 @@ else
 	$errors = "";
 	$BanId = -1;
 
-	if(get_magic_quotes_gpc())
-		$UnbanReason = stripslashes($UnbanReason);
-
 	if($Type == 0 && !validate_steam($SteamID))
 	{
 		$errors .= '* Введите действительный STEAM ID.<br>';
