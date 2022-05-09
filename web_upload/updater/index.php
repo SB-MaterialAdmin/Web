@@ -35,7 +35,8 @@ if (version_compare(PHP_VERSION, '5.5') == -1) {
 
 if (!file_exists('../data/db.php')) {
   define('IN_SB', true);
-  include('../data/config.php');
+  if (file_exists('../config.php')) include('../config.php');
+  if (file_exists('../data/config.php')) include('../data/config.php');
   $config  = "<?php\n";
   $config .= "if (!defined('IN_SB')) exit();\n\n";
 
@@ -69,9 +70,6 @@ if (!file_exists('../data/db.php')) {
   }
 
   file_put_contents('../data/db.php', $config);
-  Header("Content-Type: text/html; charset=UTF8");
-  echo('<script>setTimeout(location.reload, 500);</script>');
-  exit();
 }
 
  define('IS_UPDATE', true);
@@ -79,7 +77,7 @@ if (!file_exists('../data/db.php')) {
  ignore_user_abort(true);
  set_time_limit(0);
 
- include "../init.php";
+ include("../init.php");
  $theme->clear_compiled_tpl();
 
  define('IS_AJAX',   isset($_GET['updater_ajax_call']));
