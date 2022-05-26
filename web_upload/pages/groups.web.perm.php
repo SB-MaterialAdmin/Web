@@ -1,6 +1,7 @@
 <?php 
 if(!defined("IN_SB")){echo "Ошибка доступа!";die();}
-?>			
+
+?>
 
 <div class="table-responsive">
    <table cellspacing="0" cellpadding="0" class="table">
@@ -74,6 +75,17 @@ if(!defined("IN_SB")){echo "Ошибка доступа!";die();}
                   </label>	
                </div>                	
             </td>
+         </tr>
+         <tr>
+             <td width="80%">Выдача предупреждений админам</td>
+             <td width="20%">
+                 <div class="checkbox">
+                     <label for="p15">
+                         <input type="checkbox" name="p15" id="p15" hidden="hidden" />
+                         <i class="input-helper"></i>
+                     </label>
+                 </div>
+             </td>
          </tr>
          <tr class="main">
             <td width="80%">Управление серверами</td>

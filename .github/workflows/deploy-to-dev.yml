@@ -1,0 +1,26 @@
+name: Deploy to dev server
+
+on:
+  push:
+    branches: [ stable-dev ]
+
+jobs:
+  pack-and-upload:
+    runs-on: ubuntu-latest
+
+    env:
+      DEPLOY_SECRET: ${{ secrets.DEPLOY_SECRET }}
+      DEPLOY_URL: ${{ secrets.DEPLOY_URL }}
+      ARCHIVE_NAME: distro.zip
+
+    name: "Update test web installation"
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Pack files
+        run: |
+          zip -r ${ARCHIVE_NAME} *
+
+      - name: Deploy
+        run: |
+          curl -X POST -F "key=${DEPLOY_SECRET}" -F "archive=@./${ARCHIVE_NAME}" "${DEPLOY_URL}"

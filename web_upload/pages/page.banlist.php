@@ -417,10 +417,7 @@ if (!$res)
 
 $view_comments = false;
 $bans = array();
-function CommunityID($steamid_id){
-	$parts = explode(':', str_replace('STEAM_', '' ,$steamid_id)); 
-	return bcadd(bcadd('76561197960265728', $parts['1']), bcmul($parts['2'], '2')); 
-}
+
 while (!$res->EOF)
 {
 	$data = array();
@@ -470,7 +467,6 @@ while (!$res->EOF)
 		$data['admin_gid'] = stripslashes($res->fields['gid']);
 		$data['admin_vk'] = stripslashes($res->fields['admin_vk']);
 		$data['admin_authid'] = stripslashes($res->fields['admin_authid']);
-		$data['admin_authid_link'] = CommunityID($data['admin_authid']);
 		$data['admin_skype'] = stripslashes($res->fields['admin_skype']);
 	}
 	$data['reason'] = stripslashes($res->fields['ban_reason']);
@@ -511,7 +507,7 @@ while (!$res->EOF)
 		$data['ureason'] = stripslashes($res->fields['unban_reason']);
 
 		$removedby = \UserManager::getInstance()->GetUserArray($res->fields['RemovedBy']);
-        $data['removedby'] = "";
+        $data['removedby'] = \App::options()['nulladmin.name'];
         if($removedby != 0)
             $data['removedby'] = $removedby['user'];
 	}
@@ -537,8 +533,6 @@ while (!$res->EOF)
 		$data['reban_link'] = false;
 	$data['blockcomm_link'] = CreateLinkR('Заглушить',"index.php?p=admin&c=comms".$pagelink."&blockfromban=".$res->fields['ban_id']."&key=".$_SESSION['banlist_postkey']."#^0");
 	$data['details_link'] = CreateLinkR('Кликни','getdemo.php?type=B&id='.$res->fields['ban_id']);
-	$data['groups_link'] = CreateLinkR('Показать группы',"index.php?p=admin&c=bans&fid=".$data['communityid']."#^4");
-	$data['friend_ban_link'] = CreateLinkR('Забанить друзей', '#', '', '_self', false, "BanFriendsProcess('".$data['communityid']."','".StripQuotes($data['player'])."');return false;");
 	$data['edit_link'] = CreateLinkR('Редактировать',"index.php?p=admin&c=bans&o=edit".$pagelink."&id=".$res->fields['ban_id']."&key=".$_SESSION['banlist_postkey']);
 
 	$data['unban_link'] = CreateLinkR('Разбанить',"#","", "_self", false, "UnbanBan('".$res->fields['ban_id']."', '".$_SESSION['banlist_postkey']."', '".$pagelink."', '".StripQuotes($data['player'])."', 1, false);return false;");

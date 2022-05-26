@@ -38,7 +38,7 @@ $methods = array(
   'admin' => array(
     'AddMod', 'RemoveMod', 'AddGroup', 'RemoveGroup', 'RemoveAdmin',
     'RemoveSubmission', 'RemoveServer', 'UpdateGroupPermissions',
-    'UpdateAdminPermissions', 'AddAdmin', 'SetupEditServer',
+    'UpdateAdminPermissions', 'AddAdmin',
     'AddServerGroupName', 'AddServer', 'AddBan', 'RehashAdmins',
     'EditGroup', 'RemoveProtest', 'SendRcon', 'EditAdminPerms',
     'AddComment', 'EditComment', 'RemoveComment', 'PrepareReban',
@@ -1029,7 +1029,7 @@ function AddAdmin_pay($mask, $srv_mask, $a_name, $a_steam, $a_email, $a_password
     {
       try
       {
-        $a_steam = \CSteamID::factory($a_steam)->v2;
+        $a_steam = \CSteamId::factory($a_steam)->v2;
       }
       catch (\Exception $e)
       {
@@ -1460,7 +1460,7 @@ function AddAdmin($mask, $srv_mask, $a_name, $a_steam, $a_email, $a_password, $a
     {
       try
       {
-        $a_steam = \CSteamID::factory($a_steam)->v2;
+        $a_steam = \CSteamId::factory($a_steam)->v2;
       }
       catch (\Exception $e)
       {
@@ -2262,7 +2262,7 @@ function AddBan($nickname, $type, $steam, $ip, $length, $dfile, $dname, $reason,
     {
       try
       {
-        $steam = \CSteamID::factory($steam)->v2;
+        $steam = \CSteamId::factory($steam)->v2;
       }
       catch (\Exception $e)
       {
@@ -2452,34 +2452,6 @@ function PrepareReban($bid)
     $objResponse->addScript("demo('" . $demo['filename'] . "', '" . $demo['origname'] . "');");
   }
   $objResponse->addScript("SwapPane(0);");
-  return $objResponse;
-}
-
-function SetupEditServer($sid)
-{
-  $objResponse = new xajaxResponse();
-  $sid = (int)$sid;
-  $server = $GLOBALS['db']->GetRow("SELECT * FROM ".DB_PREFIX."_servers WHERE sid = $sid");
-
-  // clear any old stuff
-  $objResponse->addScript("$('address').value = ''");
-  $objResponse->addScript("$('port').value = ''");
-  $objResponse->addScript("$('rcon').value = ''");
-  $objResponse->addScript("$('rcon2').value = ''");
-  $objResponse->addScript("$('mod').value = '0'");
-  $objResponse->addScript("$('serverg').value = '0'");
-
-
-  // add new stuff
-  $objResponse->addScript("$('address').value = '" . $server['ip']. "'");
-  $objResponse->addScript("$('port').value =  '" . $server['port']. "'");
-  $objResponse->addScript("$('rcon').value =  '" . $server['rcon']. "'");
-  $objResponse->addScript("$('rcon2').value =  '" . $server['rcon']. "'");
-  $objResponse->addScript("$('mod').value =  " . $server['modid']);
-  $objResponse->addScript("$('serverg').value =  " . $server['gid']);
-
-  $objResponse->addScript("$('insert_type').value =  " . $server['sid']);
-  $objResponse->addScript("SwapPane(1);");
   return $objResponse;
 }
 
@@ -3039,7 +3011,7 @@ function Maintenance($type) {
     $objResponse = new xajaxResponse();
     if (!$userbank->HasAccess(ADMIN_OWNER|ADMIN_WEB_SETTINGS)) {
         ShowBox_ajx("Ошибка", "Вы не имеете прав для выполнения данного действия!", "red", "", true, $objResponse);
-        new CSystemLog("w", "Ошибка доступа", $usernake . " пытался произвести операцию по обслуживанию системы, не имея на это прав.");
+        new CSystemLog("w", "Ошибка доступа", $username . " пытался произвести операцию по обслуживанию системы, не имея на это прав.");
         return $objResponse;
     }
     
@@ -3104,22 +3076,7 @@ function Maintenance($type) {
             ShowBox_ajx("Успех", "Операция обновлений стран в кеше завершена.", "green", "", true, $objResponse);
             break;
         }
-        
-        case "updatecountries": {
-            if (!function_exists("zlib_decode")) {
-                ShowBox_ajx("Ошибка", "Невозможно произвести обновление GeoIP базы: недоступна функция <em>gzuncompress</em>.", "red", "", true, $objResponse);
-                return $objResponse;
-            }
-            
-            $CountryFile = INCLUDES_PATH . '/IpToCountry.csv';
-            if (@is_writable($CountryFile)) {
-                file_put_contents($CountryFile, zlib_decode(file_get_contents("http://software77.net/geo-ip/?DL=1&x=Download")));
-                ShowBox_ajx("Успех", "Файл GeoIP базы обновлён.", "green", "", true, $objResponse);
-            } else
-                ShowBox_ajx("Ошибка", "Невозможно произвести обновление GeoIP базы: запись в файл <em>/includes/IpToCountry.csv</em> запрещена. Установите права <b>777</b> на файл <em>/includes/IpToCountry.csv</em>", "red", "", true, $objResponse);
-            break;
-        }
-        
+
         case "warningsexpired": {
             $GLOBALS['db']->Execute(sprintf("DELETE FROM `%s_warns` WHERE `expires` < %d", DB_PREFIX, time()));
             ShowBox_ajx("Успех", "Все истёкшие и снятые предупреждения были успешно удалены.", "green", "", true, $objResponse);
@@ -3157,14 +3114,14 @@ function Maintenance($type) {
             $GLOBALS['db']->Execute(sprintf("TRUNCATE `%s_submissions`;", DB_PREFIX));
             ShowBox_ajx("Успех", "Предложения бана (репорты) успешно удалены.", "green", "", true, $objResponse);
             break;
-    }
+        }
 
-    case "vouchers": {
-      $GLOBALS['db']->Execute(sprintf("DELETE FROM `%s_vay4er` WHERE `activ` != 1", DB_PREFIX));
-      ShowBox_ajx("Успех", "Все использованные ваучеры успешно удалены.", "green", "", true, $objResponse);
-      break;
-    }
-        
+        case "vouchers": {
+            $GLOBALS['db']->Execute(sprintf("DELETE FROM `%s_vay4er` WHERE `activ` != 1", DB_PREFIX));
+            ShowBox_ajx("Успех", "Все использованные ваучеры успешно удалены.", "green", "", true, $objResponse);
+            break;
+        }
+
         default: {
             ShowBox_ajx("Ошибка", "Неизвестная операция", "red", "", true, $objResponse);
             break;
@@ -3769,7 +3726,7 @@ function AddBlock($nickname, $type, $steam, $length, $reason)
     {
       try
       {
-        $steam = \CSteamID::factory($steam)->v2;
+        $steam = \CSteamId::factory($steam)->v2;
       }
       catch (\Exception $e)
       {
@@ -3954,13 +3911,14 @@ function AddWarning($id, $days, $reason) {
   global $userbank;
 
   $objResponse = new xajaxResponse();
-  if (!$userbank->HasAccess(ADMIN_OWNER|ADMIN_DELETE_ADMINS) || $userbank->GetProperty("srv_immunity", $admin['id']) > $userbank->GetProperty("srv_immunity")) {
+  if (!$userbank->HasAccess(ADMIN_OWNER|ADMIN_ISSUE_WARNS_ADMINS) || $userbank->GetProperty("srv_immunity", $id) > $userbank->GetProperty("srv_immunity")) {
     ShowBox_ajx("Ошибка", "Отказано в доступе.", "red", "", true, $objResponse);
     new CSystemLog("w", "Попытка несанцкионированного доступа", "Администратор пытался выдать предупреждение, не имея на это прав.");
     return $objResponse;
   }
   
-  if ((int) $days <= 0) {
+  if ((int) $days <= 0)
+  {
         ShowBox_ajx("Ошибка", "Пожалуйста, введите число дней более нуля.", "red", "", true, $objResponse);
         return $objResponse;
   }
@@ -3970,7 +3928,7 @@ function AddWarning($id, $days, $reason) {
   $GLOBALS['db']->Execute("INSERT INTO `" . DB_PREFIX . "_warns` (`arecipient`, `afrom`, `expires`, `reason`) VALUES(" . (int) $id . ", " . (int) $userbank->GetAid() . ", " . (time() + (86400 * (int) $days)) . ", " . $GLOBALS['db']->qstr($reason) . ");");
   new CSystemLog("m", "Предупреждение выдано", "Администратор выдал предупреждение Администратору " . $userbank->getProperty('user', $id));
 
-  if ($GLOBALS['db']->GetOne("SELECT COUNT(*) FROM `" . DB_PREFIX . "_warns` WHERE `arecipient` = " . (int) $id) >= (int) $GLOBALS['config']['admin.warns.max']) {
+  if ($GLOBALS['db']->GetOne("SELECT COUNT(*) FROM `" . DB_PREFIX . "_warns` WHERE `arecipient` = " . (int) $id . ' AND `expires` > ' . time()) >= (int) $GLOBALS['config']['admin.warns.max']) {
     $GLOBALS['db']->Execute("UPDATE `" . DB_PREFIX . "_admins` SET `expired` = 1 WHERE `aid` = " . (int) $id . ";");
     new CSystemLog("m", "Аккаунт администратора деактивирован", "По причине превышения лимита максимально активных предупреждений, Администратор " . $userbank->getProperty('user', $id) . " отстраняется от Должности.");
     $removedAccess = true;
@@ -3987,7 +3945,8 @@ function RemoveWarning($warningId) {
     global $userbank;
 
     $objResponse = new xajaxResponse();
-    if (!$userbank->HasAccess(ADMIN_OWNER|ADMIN_DELETE_ADMINS)) {
+    if (!$userbank->HasAccess(ADMIN_OWNER|ADMIN_ISSUE_WARNS_ADMINS))
+    {
         ShowBox_ajx("Ошибка", "Отказано в доступе.", "red", "", true, $objResponse);
         new CSystemLog("w", "Попытка несанцкионированного доступа", "Администратор пытался снять предупреждение, не имея на это прав.");
         return $objResponse;

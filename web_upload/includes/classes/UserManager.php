@@ -3,14 +3,16 @@ class UserManager {
   private static $instance = NULL;
   private static $aid = -1;
 
-  public static function init($aid) {
+  public static function init($aid, $hash = '') {
     if (self::$instance !== NULL)
       return;
 
     if (is_int($aid))
       self::$aid = $aid;
 
-    self::$instance = new CUserManager(self::$aid);
+    self::$instance = new CUserManager(self::$aid, $hash);
+    self::$aid = self::$instance->aid;
+
     if (self::$aid != -1) {
       self::updateEntity('lastvisit', time()); // update visiting time
     }
@@ -55,9 +57,10 @@ class UserManager {
     // using old algo.
     if ($Data['password'] == sha1(sha1('SourceBans' . $password))) {
       // rehash user with new algo.
+      $Data['password'] = password_hash($password, PASSWORD_DEFAULT);
       $DB->Prepare('UPDATE `{{prefix}}admins` SET `password` = :password WHERE `aid` = :id');
       $DB->BindMultipleData([
-        'password'  => password_hash($password, PASSWORD_DEFAULT),
+        'password'  => $Data['password'],
         'id'        => $Data['aid']
       ]);
       $DB->Finish();
@@ -73,7 +76,7 @@ class UserManager {
       throw new \LogicException('Invalid SteamID object passed.');
 
     $DB = \DatabaseManager::GetConnection();
-    $DB->Prepare('SELECT `aid`, `expired` FROM `{{prefix}}admins` WHERE `authid` LIKE :auth');
+    $DB->Prepare('SELECT `aid`, `password`, `expired` FROM `{{prefix}}admins` WHERE `authid` LIKE :auth');
     $DB->BindData('auth', '%' . str_replace('STEAM_0:', '', $steamId->v2));
 
     $Result = $DB->Finish();
@@ -98,7 +101,9 @@ class UserManager {
       return false;
     }
 
-    $_SESSION['admin_id'] = $UserData['aid'];
+    $_SESSION['admin_id'] = intval($UserData['aid']);
+    $_SESSION['admin_hash'] = $UserData['password'];
+    \session_write_close();
     return true;
   }
 

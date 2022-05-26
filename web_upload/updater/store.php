@@ -47,7 +47,7 @@ return [
 	515 => "Theme_CFG.php",
 	516 => "Warnings.php",
 	517 => "Warnings_fixes.php",
-	518 => "518.php",
+	518	=> "518.php",
 	519 => "519.php",
 	520 => '520.php',
 	521 => '521.php',
@@ -57,5 +57,6 @@ return [
 	525 => '525.php', // reset default TZ
 	526 => '526.php', // demo enable feature
 	527 => '527.php', // add indexes for sb_bans table
-	528 => '528.php', // displaying items in the menu only for admins.
+	528 => '528.php', // fixed issue when first Voucher numbers are 0 and they losted
+	529 => '529.php', // displaying items in the menu only for admins.
 ];

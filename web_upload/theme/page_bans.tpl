@@ -171,6 +171,10 @@
 								</ul>
 							</div>
 							<div class="card-body card-padding">
+								{capture assign="banned_v2"}{steamid_format steamid=$ban.steamid format="v2" fallback="SteamID игрока не указан."}{/capture}
+								{capture assign="banned_v3"}{steamid_format steamid=$ban.steamid format="v3" fallback="SteamID игрока не указан."}{/capture}
+								{capture assign="banned_community"}{steamid_format steamid=$ban.steamid format="CommunityID"}{/capture}
+
 								<div class="form-group col-sm-7" style="font-size: 14px;">
 									<div class="form-group col-sm-12 m-b-5">
 										<label class="col-sm-4 control-label"><i class="zmdi zmdi-circle-o text-left"></i>  Игрок</label>
@@ -182,51 +186,45 @@
 											{/if}
 										</div>
 									</div>
-									<div class="form-group col-sm-12 m-b-5">
-										<label class="col-sm-4 control-label"><i class="zmdi zmdi-circle-o text-left"></i> Steam ID</label>
-										<div class="col-sm-8">
-											{if empty($ban.steamid)}
-											<i>Steam ID игрока не указан.</i>
-											{else}
-											{$ban.steamid}
-											{/if}
+									{if !empty($banned_community)}
+										<div class="form-group col-sm-12 m-b-5">
+											<label class="col-sm-4 control-label"><i class="zmdi zmdi-circle-o text-left"></i> Steam ID</label>
+											<div class="col-sm-8">
+												{$banned_v2}
+											</div>
 										</div>
-									</div>
-									<div class="form-group col-sm-12 m-b-5">
-										<label class="col-sm-4 control-label"><i class="zmdi zmdi-circle-o text-left"></i> Steam3 ID</label>
-										<div class="col-sm-8">
-											{if empty($ban.steamid)}
-											<i>Steam3 ID игрока не указан.</i>
-											{else}
-											<a href="http://steamcommunity.com/profiles/{$ban.steamid3}" target="_blank">{$ban.steamid3}</a>
-											{/if}
+										<div class="form-group col-sm-12 m-b-5">
+											<label class="col-sm-4 control-label"><i class="zmdi zmdi-circle-o text-left"></i> Steam3 ID</label>
+											<div class="col-sm-8">
+												<a href="http://steamcommunity.com/profiles/{$banned_community}" target="_blank">{$banned_v3}</a>
+											</div>
 										</div>
-									</div>
-									{if $ban.type == 0}
-									<div class="form-group col-sm-12 m-b-5">
-										<label class="col-sm-4 control-label"><i class="zmdi zmdi-circle-o text-left"></i> Steam Community</label>
-										<div class="col-sm-8">
-											<a href="http://steamcommunity.com/profiles/{$ban.communityid}" target="_blank">{$ban.communityid}</a>
-										</div>
-									</div>
-									{/if}
-									{if $ban.vacshow}
-									<div class="form-group col-sm-12 m-b-5">
-										<label class="col-sm-4 control-label"><i class="zmdi zmdi-circle-o text-left"></i> VAC-бан</label>
-										<div class="col-sm-8">
-											<strong id="vacban_{$ban.ban_id}">Загружается...</strong>
-										</div>
-									</div>
+										{if $ban.type == 0}
+											<div class="form-group col-sm-12 m-b-5">
+												<label class="col-sm-4 control-label"><i class="zmdi zmdi-circle-o text-left"></i> Steam Community</label>
+												<div class="col-sm-8">
+													<a href="http://steamcommunity.com/profiles/{$ban.communityid}" target="_blank">{$ban.communityid}</a>
+												</div>
+											</div>
+										{/if}
+										{if $ban.vacshow}
+											<div class="form-group col-sm-12 m-b-5">
+												<label class="col-sm-4 control-label"><i class="zmdi zmdi-circle-o text-left"></i> VAC-бан</label>
+												<div class="col-sm-8">
+													<strong id="vacban_{$ban.ban_id}">Загружается...</strong>
+												</div>
+											</div>
+										{/if}
 									{/if}
 									{if !$hideplayerips}
-									{if $ban.ip != "none"}
-									<div class="form-group col-sm-12 m-b-5">
-										<label class="col-sm-4 control-label"><i class="zmdi zmdi-circle-o text-left"></i> IP адрес</label>
-										<div class="col-sm-8">
-											<a href="https://whatismyipaddress.com/ip/{$ban.ip}" target="_blank" title="Просмотреть детали об IP-адресе">{$ban.country_icon}{$ban.ip}</a>
-										</div>
-									</div>
-									{/if}
+										{if $ban.ip != "none"}
+											<div class="form-group col-sm-12 m-b-5">
+												<label class="col-sm-4 control-label"><i class="zmdi zmdi-circle-o text-left"></i> IP адрес</label>
+												<div class="col-sm-8">
+													<a href="https://whatismyipaddress.com/ip/{$ban.ip}" target="_blank" title="Просмотреть детали об IP-адресе">{$ban.country_icon}{$ban.ip}</a>
+												</div>
+											</div>
+										{/if}
 									{/if}
 									<div class="form-group col-sm-12 m-b-5">
 										<label class="col-sm-4 control-label"><i class="zmdi zmdi-circle-o text-left"></i> Был выдан</label>
@@ -244,11 +242,13 @@
 									<div class="form-group col-sm-12 m-b-5">
 										<label class="col-sm-4 control-label"><i class="zmdi zmdi-circle-o text-left"></i> Причина разбана</label>
 										<div class="col-sm-8">
-											{if $ban.ureason == ""}
-											<i>Причина разбана не указана.</i>
-											{else}
-											{$ban.ureason}
-											{/if}
+											{highlight_links}
+												{if $ban.ureason == ""}
+												<i>Причина разбана не указана.</i>
+												{else}
+												{$ban.ureason}
+												{/if}
+											{/highlight_links}
 										</div>
 									</div>
 									<div class="form-group col-sm-12 m-b-5">
@@ -275,23 +275,11 @@
 									<div class="form-group col-sm-12 m-b-5">
 										<label class="col-sm-4 control-label"><i class="zmdi zmdi-circle-o text-left"></i> Причина бана</label>
 										<div class="col-sm-8">
-											{$ban.reason|escape:'html'}
+											{highlight_links}
+												{$ban.reason|escape:'html'}
+											{/highlight_links}
 										</div>
 									</div>
-										<!--
-										{if !$hideadminname}
-											<div class="form-group col-sm-12 m-b-5">
-												<label class="col-sm-4 control-label"><i class="zmdi zmdi-circle-o text-left"></i> Забанен админом</label>
-												<div class="col-sm-8">
-													{if !empty($ban.admin)}
-														{$ban.admin|escape:'html'}
-													{else}
-														<i>Администратор снят.</i>
-													{/if}
-												</div>
-											</div>
-										{/if}
-									-->
 									<div class="form-group col-sm-12 m-b-5">
 										<label class="col-sm-4 control-label"><i class="zmdi zmdi-circle-o text-left"></i> Сервер</label>
 										<div class="col-sm-8" id="ban_server_{$ban.ban_id}">
@@ -370,7 +358,7 @@
 												{if $ban.admin != "CONSOLE"}
 												{if !empty($ban.admin)}
 												{if $admininfos}
-												<li class="p-b-5"><i class="zmdi zmdi-steam"></i> {if !empty($ban.admin_authid)}{$ban.admin_authid} (<a href="http://steamcommunity.com/profiles/{$ban.admin_authid_link}" target="_blank">Профиль</a>){else}Нет данных...{/if}</li>
+												<li class="p-b-5"><i class="zmdi zmdi-steam"></i> {if !empty($ban.admin_authid)}{$ban.admin_authid} (<a href="http://steamcommunity.com/profiles/{steamid_format steamid=$ban.admin_authid format="CommunityID"}" target="_blank">Профиль</a>){else}Нет данных...{/if}</li>
 												<li class="p-b-5"><i class="zmdi zmdi-vk"></i> {if !empty($ban.admin_vk)}<a href="https://vk.com/{$ban.admin_vk}" target="_blank">Линк</a>{else}Нет данных...{/if}</li>
 												<li class="p-b-5"><i class="zmdi zmdi-account-box-o" data-toggle="tooltip" data-placement="top" title="" data-original-title="Skype"></i> {if !empty($ban.admin_skype)}{$ban.admin_skype}{else}Нет данных...{/if}</li>
 												<li class="p-b-5">
@@ -448,29 +436,6 @@
 					</td>
 				</tr>
 				<!-- ###############[ End Sliding Panel ]################## -->
-				<!-- 
-				<div class="modal fade" id="mod_{$ban.admin_gid}_mod" tabindex="-1" role="dialog" aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h4 class="modal-title"><b>{$ban.admin}</b></h4>
-                                        </div>
-                                        <div class="modal-body f-15">
-                                            <p>Доступный список данных администратора:</p>
-											<p>
-												<ul class="clist clist-angle">
-													{if !empty($ban.admin_skype)}<li>Skype: {$ban.admin_skype}</li>{/if}
-													{if !empty($ban.admin_vk)}<li>VK: <a href="https://vk.com/{$ban.admin_vk}">Линк</a></li>{/if}
-												</ul>
-											</p>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-link" data-dismiss="modal">Закрыть</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        -->
                         {/foreach}
                     </tbody>
                 </table>

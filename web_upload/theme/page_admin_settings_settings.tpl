@@ -91,7 +91,6 @@
 							<option value="banlogclean">Очистить историю заблокированных соединений</option>
 							<option value="warningsexpired">Удалить истёкшие Предупреждения</option>
 							<option value="rehashcountries">Обновить кеш стран в банлисте</option>
-							<option value="updatecountries">Обновить файл GeoIP</option>
 							<option value="optimizebd">Произвести оптимизацию БД</option>
 							<option value="avatarupdate">Пересобрать кеш аватарок</option>
 							<option value="vouchers">Удалить все использованные ваучеры</option>

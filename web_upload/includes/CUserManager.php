@@ -37,10 +37,13 @@ class CUserManager
    * @param $password the current user's password
    * @return noreturn.
    */
-  function __construct($aid)
+  function __construct($aid, $password)
   {
     if ($aid != -1)
-      $this->GetUserArray($aid);
+    {
+      $data = $this->GetUserArray($aid);
+      if ($password != $data['password']) return;
+    }
     $this->aid = $aid;
   }
   
@@ -76,33 +79,7 @@ class CUserManager
     if(!$res)  
       return 0;  // ohnoes some type of db error
     
-    $user = array();  
-    //$user['user'] = stripslashes($res[0]);
-    $user['aid'] = $aid; //immediately obvious
-    $user['user'] = $res['user'];
-    $user['authid'] = $res['authid'];  
-    $user['password'] = $res['password'];
-    $user['gid'] = $res['gid'];
-    $user['email'] = $res['email'];
-    $user['validate'] = $res['validate'];
-    $user['extraflags'] = (intval($res['extraflags']) | intval($res['wgflags']));
-
-    if(intval($res['admimmunity']) > intval($res['sgimmunity']))
-      $user['srv_immunity'] = intval($res['admimmunity']);
-    else 
-      $user['srv_immunity'] = intval($res['sgimmunity']);
-
-    $user['srv_password'] = $res['srv_password'];
-    $user['srv_groups'] = $res['srv_group'];
-    $user['srv_flags'] = $res['srv_flags'] . $res['sgflags'];
-    $user['group_name'] = $res['wgname'];
-    $user['lastvisit'] = $res['lastvisit'];
-    $user['expired'] = $res['expired'];
-    $user['skype'] = $res['skype'];
-    $user['comment'] = $res['comment'];
-    $user['vk'] = $res['vk'];
-    $this->admins[$aid] = $user;
-    return $user;
+    return $this->setupUser($aid, $res);
   }
 
   
@@ -241,9 +218,14 @@ class CUserManager
   
   function GetAllAdmins()
   {
-    $res = $GLOBALS['db']->GetAll("SELECT aid FROM " . DB_PREFIX . "_admins");
+    $res = $GLOBALS['db']->GetAll("SELECT adm.aid aid, adm.user user, adm.authid authid, adm.password password, adm.gid gid, adm.email email, adm.validate validate, adm.extraflags extraflags, 
+                     adm.immunity admimmunity,sg.immunity sgimmunity, adm.srv_password srv_password, adm.srv_group srv_group, adm.srv_flags srv_flags,sg.flags sgflags,
+                     wg.flags wgflags, wg.name wgname, adm.lastvisit lastvisit, adm.expired expired, adm.skype skype, adm.comment comment, adm.vk vk
+                     FROM " . DB_PREFIX . "_admins AS adm
+                     LEFT JOIN " . DB_PREFIX . "_groups AS wg ON adm.gid = wg.gid
+                     LEFT JOIN " . DB_PREFIX . "_srvgroups AS sg ON adm.srv_group = sg.name");
     foreach($res AS $admin)
-      $this->GetUserArray($admin['aid']);
+      $this->setupUser($admin['aid'], $admin);
     return $this->admins;
   }
   
@@ -270,5 +252,36 @@ class CUserManager
     $GLOBALS['db']->Execute($add_admin,array($name, $steam, $this->encrypt_password($password), $web_group, $email, $web_flags, $immunity, $srv_group, $srv_flags, $srv_password, $period, $skype, $comment, $vk));
     return ($add_admin) ? (int)$GLOBALS['db']->Insert_ID() : -1;
   }
+
+  function setupUser($aid, $res)
+  {
+    $user = array();
+    //$user['user'] = stripslashes($res[0]);
+    $user['aid'] = $aid; //immediately obvious
+    $user['user'] = $res['user'];
+    $user['authid'] = $res['authid'];
+    $user['password'] = $res['password'];
+    $user['gid'] = $res['gid'];
+    $user['email'] = $res['email'];
+    $user['validate'] = $res['validate'];
+    $user['extraflags'] = (intval($res['extraflags']) | intval($res['wgflags']));
+
+    if(intval($res['admimmunity']) > intval($res['sgimmunity']))
+      $user['srv_immunity'] = intval($res['admimmunity']);
+    else
+      $user['srv_immunity'] = intval($res['sgimmunity']);
+
+    $user['srv_password'] = $res['srv_password'];
+    $user['srv_groups'] = $res['srv_group'];
+    $user['srv_flags'] = $res['srv_flags'] . $res['sgflags'];
+    $user['group_name'] = $res['wgname'];
+    $user['lastvisit'] = $res['lastvisit'];
+    $user['expired'] = $res['expired'];
+    $user['skype'] = $res['skype'];
+    $user['comment'] = $res['comment'];
+    $user['vk'] = $res['vk'];
+    $this->admins[$aid] = $user;
+
+    return $user;
+  }
 }
-?>

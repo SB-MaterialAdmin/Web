@@ -212,7 +212,7 @@ echo '<div id="0" style="display:none;">';
 	$theme->assign('btn_rem', $btn_rem);
 	$theme->assign('btn_href', $btn_href);
 	$theme->assign('btn_icon', $btn_icon);
-	$theme->assign('allow_warnings', ($GLOBALS['config']['admin.warns'] == "1"));
+	$theme->assign('allow_warnings', ($GLOBALS['config']['admin.warns'] == "1" && $userbank->HasAccess(ADMIN_ISSUE_WARNS_ADMINS|ADMIN_OWNER)));
 	$theme->assign('maxWarnings', $GLOBALS['config']['admin.warns.max']);
 	$theme->display('page_admin_admins_list.tpl');
 echo '</div>';

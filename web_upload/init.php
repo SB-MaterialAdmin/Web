@@ -185,44 +185,45 @@ define('STATUS_PARSE', '/# +([0-9 ]+) +"(.+)" +(STEAM_[0-9]:[0-9]:[0-9]+|\[U:[0-
 define('IP_FORMAT', '/\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b/');
 
 // Web admin-flags
-define('ADMIN_LIST_ADMINS', 	(1<<0));
-define('ADMIN_ADD_ADMINS', 		(1<<1));
-define('ADMIN_EDIT_ADMINS', 	(1<<2));
-define('ADMIN_DELETE_ADMINS', 	(1<<3));
+define('ADMIN_LIST_ADMINS', 	    (1<<0));
+define('ADMIN_ADD_ADMINS', 		    (1<<1));
+define('ADMIN_EDIT_ADMINS', 	    (1<<2));
+define('ADMIN_DELETE_ADMINS', 	    (1<<3));
+define('ADMIN_ISSUE_WARNS_ADMINS',  (1<<9));
 
-define('ADMIN_LIST_SERVERS', 	(1<<4));
-define('ADMIN_ADD_SERVER', 		(1<<5));
-define('ADMIN_EDIT_SERVERS', 	(1<<6));
-define('ADMIN_DELETE_SERVERS', 	(1<<7));
+define('ADMIN_LIST_SERVERS', 	    (1<<4));
+define('ADMIN_ADD_SERVER', 		    (1<<5));
+define('ADMIN_EDIT_SERVERS', 	    (1<<6));
+define('ADMIN_DELETE_SERVERS', 	    (1<<7));
 
-define('ADMIN_ADD_BAN', 		(1<<8));
-define('ADMIN_EDIT_OWN_BANS', 	(1<<10));
-define('ADMIN_EDIT_GROUP_BANS', (1<<11));
-define('ADMIN_EDIT_ALL_BANS', 	(1<<12));
-define('ADMIN_BAN_PROTESTS', 	(1<<13));
-define('ADMIN_BAN_SUBMISSIONS', (1<<14));
-define('ADMIN_DELETE_BAN',		(1<<25));
-define('ADMIN_UNBAN', 			(1<<26));
-define('ADMIN_BAN_IMPORT',		(1<<27));
-define('ADMIN_UNBAN_OWN_BANS',	(1<<30));
-define('ADMIN_UNBAN_GROUP_BANS',(1<<31));
+define('ADMIN_ADD_BAN', 		    (1<<8));
+define('ADMIN_EDIT_OWN_BANS', 	    (1<<10));
+define('ADMIN_EDIT_GROUP_BANS',     (1<<11));
+define('ADMIN_EDIT_ALL_BANS', 	    (1<<12));
+define('ADMIN_BAN_PROTESTS', 	    (1<<13));
+define('ADMIN_BAN_SUBMISSIONS',     (1<<14));
+define('ADMIN_DELETE_BAN',		    (1<<25));
+define('ADMIN_UNBAN', 			    (1<<26));
+define('ADMIN_BAN_IMPORT',		    (1<<27));
+define('ADMIN_UNBAN_OWN_BANS',	    (1<<30));
+define('ADMIN_UNBAN_GROUP_BANS',    (1<<31));
 
-define('ADMIN_LIST_GROUPS', 	(1<<15));
-define('ADMIN_ADD_GROUP', 		(1<<16));
-define('ADMIN_EDIT_GROUPS', 	(1<<17));
-define('ADMIN_DELETE_GROUPS', 	(1<<18));
+define('ADMIN_LIST_GROUPS', 	    (1<<15));
+define('ADMIN_ADD_GROUP', 		    (1<<16));
+define('ADMIN_EDIT_GROUPS', 	    (1<<17));
+define('ADMIN_DELETE_GROUPS', 	    (1<<18));
 
-define('ADMIN_WEB_SETTINGS', 	(1<<19));
+define('ADMIN_WEB_SETTINGS', 	    (1<<19));
 
-define('ADMIN_LIST_MODS', 		(1<<20));
-define('ADMIN_ADD_MODS', 		(1<<21));
-define('ADMIN_EDIT_MODS', 		(1<<22));
-define('ADMIN_DELETE_MODS', 	(1<<23));
+define('ADMIN_LIST_MODS', 		    (1<<20));
+define('ADMIN_ADD_MODS', 		    (1<<21));
+define('ADMIN_EDIT_MODS', 		    (1<<22));
+define('ADMIN_DELETE_MODS', 	    (1<<23));
 
-define('ADMIN_NOTIFY_SUB',	(1<<28));
-define('ADMIN_NOTIFY_PROTEST',	(1<<29));
+define('ADMIN_NOTIFY_SUB',	        (1<<28));
+define('ADMIN_NOTIFY_PROTEST',	    (1<<29));
 
-define('ADMIN_OWNER', 			(1<<24));
+define('ADMIN_OWNER', 			    (1<<24));
 
 // Server admin-flags
 define('SM_RESERVED_SLOT', 		"a");
@@ -302,17 +303,31 @@ global $theme, $userbank;
 if(!@is_writable(SB_THEME_COMPILE))
     die($GLOBALS['translator']->retrieve("init::themec_not_writable", ["cache_path" => SB_THEME_COMPILE]));
 
-$theme = \App::templater(); // by compability reasons
+$theme = \App::templater(); // by compatibility reasons
 
 // ---------------------------------------------------
 // Start our session manager.
 // ---------------------------------------------------
-\SessionManager::startSession(\SessionManager::getSessionName());
+
+// PHP has strange bugs with this, so we set cookie manually later.
+ini_set('session.use_cookies', false);
+
+// Parameters for session can be defined via `config.php`.
+$expires = constant('SB_SESSION_EXPIRES') ?: 86400;
+$path = constant('SB_SESSION_PATH') ?: '/';
+$domain = parse_url(constant('SB_WP_URL'), PHP_URL_HOST) ?: $_SERVER['SERVER_NAME'];
+$secureOnly = (strtolower(parse_url(constant('SB_WP_URL'), PHP_URL_SCHEME)) == 'https')
+    || $_SERVER['HTTPS'] == 'on' || $_SERVER['SERVER_PORT'] === 443;
+
+\SessionManager::setupParameters(\SessionManager::getSessionName($domain),
+    $expires, $path, $domain, $secureOnly);
+\SessionManager::startSession();
 
 // ---------------------------------------------------
 // Setup our user manager
 // ---------------------------------------------------
-$aid   = filterInput(INPUT_SESSION, 'admin_id',    FILTER_VALIDATE_INT);
+$aid   = $_SESSION['admin_id'] ?: -1;
+$hash  = $_SESSION['admin_hash'] ?: '';
 
-\UserManager::init($aid);
+\UserManager::init($aid, $hash);
 $userbank = \UserManager::getInstance(); // for old code.
