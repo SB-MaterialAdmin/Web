@@ -58,4 +58,5 @@ return [
   526 =>  '526.php', // demo enable feature
   527 =>  '527.php', // add indexes for sb_bans table
   528 =>  '528.php', // fixed issue when first Voucher numbers are 0 and they losted
+  529 =>  '529.php', // moving config cause new DB framework
 ];

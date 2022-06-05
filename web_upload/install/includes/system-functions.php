@@ -203,7 +203,7 @@ function CreateLink($title, $url, $tooltip="", $target="_self", $wide=false)
  * @param string $target The new links target
  * @return URL
  */
-function CreateLinkR($title, $url, $tooltip="", $target="_self", $wide=false, $onclick)
+function CreateLinkR($title, $url, $tooltip="", $target="_self", $wide=false, $onclick="#")
 {
 	if($wide)
 		$class = "perm";

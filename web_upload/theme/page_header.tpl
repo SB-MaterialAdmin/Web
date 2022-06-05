@@ -27,7 +27,6 @@
 <link href="theme/css/css_sup.css" rel="stylesheet" />
 <link href="theme/css/custom.css" rel="stylesheet" />
 
-{$tiny_mce_js}
 {$xajax_functions}
 
 </head>
