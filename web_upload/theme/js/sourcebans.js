@@ -1770,7 +1770,7 @@ function RemoveBlock(id, key, page, name, confirm)
 function UnGag(id, key, page, name, popup)
 {
 	if(popup==1) {
-		ShowBox('Причина включения чата', '<b>Пожалуйста оставьте короткий комментарий , почему вы хотите включить чат игроку '+"\'"+ name +"\'"+'!</b><br><textarea rows="3" cols="40" name="ureason" id="ureason" style="overflow:auto;"></textarea><br><div id="ureason.msg" class="badentry"></div>', 'blue', '', true);
+		ShowBox('Причина включения чата', '<b>Пожалуйста оставьте короткий комментарий , почему вы хотите включить чат игроку '+"\'"+ name +"\'"+'!</b><br><textarea rows="3" cols="40" name="ureason" id="inputWarning2" style="overflow:auto;"></textarea><br><div id="ureason.msg" class="badentry"></div>', 'blue', '', true);
 		$('dialog-control').setHTML('<input type="button" onclick="UnGag(\''+id+'\', \''+key+'\', \''+page+'\', \''+addslashes(name.replace(/\'/g,'\\\''))+'\', \'0\''+');" name="uban" class="btn btn-lg btn-primary waves-effect" onmouseover="ButtonOver(\'uban\')" onmouseout="ButtonOver(\'uban\')" id="uban" value="Вкл. чат" />');
 	} else if(popup==0) {
 		if(page != "")
@@ -1793,7 +1793,7 @@ function UnGag(id, key, page, name, popup)
 function UnMute(id, key, page, name, popup)
 {
 	if(popup==1) {
-		ShowBox('Причина включения микрофона', '<b>Пожалуйста оставьте короткий комментарий , почему вы хотите включить микрофон игроку '+"\'"+ name +"\'"+'!</b><br><textarea rows="3" cols="40" name="ureason" id="ureason" style="overflow:auto;"></textarea><br><div id="ureason.msg" class="badentry"></div>', 'blue', '', true);
+		ShowBox('Причина включения микрофона', '<b>Пожалуйста оставьте короткий комментарий , почему вы хотите включить микрофон игроку '+"\'"+ name +"\'"+'!</b><br><textarea rows="3" cols="40" name="ureason" id="inputWarning2" style="overflow:auto;"></textarea><br><div id="ureason.msg" class="badentry"></div>', 'blue', '', true);
 		$('dialog-control').setHTML('<input type="button" onclick="UnMute(\''+id+'\', \''+key+'\', \''+page+'\', \''+addslashes(name.replace(/\'/g,'\\\''))+'\', \'0\''+');" name="uban" class="btn btn-lg btn-primary waves-effect" onmouseover="ButtonOver(\'uban\')" onmouseout="ButtonOver(\'uban\')" id="uban" value="Вкл. микро" />');
 	} else if(popup==0) {
 		if(page != "")
