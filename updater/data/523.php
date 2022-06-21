@@ -1,6 +1,5 @@
 <?php
 $DB = \DatabaseManager::GetConnection();
-$DB->BeginTxn();
 
 // CRON Manager update
 $DB->Query('CREATE TABLE IF NOT EXISTS `{{prefix}}cron` (`id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, `enabled` tinyint(1) NOT NULL DEFAULT "0", `name` varchar(256) NOT NULL, `class` varchar(256) NOT NULL, `function` varchar(256) NOT NULL, `data` text, `frequency` int(11) NOT NULL, `lastexec` int(11) NOT NULL DEFAULT "0", PRIMARY KEY (`id`)) ENGINE=MyISAM DEFAULT CHARSET=utf8;');
@@ -35,5 +34,3 @@ $DB->Query('CREATE TABLE IF NOT EXISTS `{{prefix}}cron` (`id` int(10) UNSIGNED N
   ->setClass('SBCronJob')->setFunction('UpdateAvatarCache')
   ->setData([])->setFrequency(86400)
   ->save();
-
-$DB->EndTxn();
