@@ -53,14 +53,13 @@ public_html
 htdocs
 
 # Temporary SB files
-web_upload/data/gc/*
-web_upload/data/theme/*
-web_upload/data/theme_c/*
+data/gc/*
+data/theme/*
+data/theme_c/*
 
 # Configuration files
-web_upload/data/config.php
-web_upload/data/db.php
+data/config.php
+data/db.php
 
 # except blank files
 !.blank
-
