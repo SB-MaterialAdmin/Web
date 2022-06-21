@@ -8,7 +8,9 @@ class cURL extends AbstractClient {
 
   protected function runRequest() {
     $curl = curl_init();
-    if (!is_resource($curl))
+
+    // PHP 8.0+ returns a CurlHandle object
+    if (!is_resource($curl) && !(is_object($curl) && get_class($curl) === 'CurlHandle'))
       throw new \Exception('Cannot initialize cURL client.');
 
     if ($this->_method == 'GET') {
