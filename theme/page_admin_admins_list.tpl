@@ -113,12 +113,14 @@
 								</div>
                         
 								<div class="pm-body clearfix" id="accordionRed-one" class="collapse in" role="tabpanel">
-									{if $permission_editadmin}
+									{if $permission_editadmin || $allow_warnings || $permission_deleteadmin}
 										<ul class="tab-nav tn-justified">
-											<li class="bgm-lightblue waves-effect"><a class="c-white" href="index.php?p=admin&c=admins&o=editdetails&id={$admin.aid}">Детали</a></li>
-											<li class="bgm-lightblue waves-effect"><a class="c-white" href="index.php?p=admin&c=admins&o=editpermissions&id={$admin.aid}">Привилегии</a></li>
-											<li class="bgm-lightblue waves-effect"><a class="c-white" href="index.php?p=admin&c=admins&o=editservers&id={$admin.aid}">Сервер</a></li>
-											<li class="bgm-lightblue waves-effect"><a class="c-white" href="index.php?p=admin&c=admins&o=editgroup&id={$admin.aid}">Группа</a></li>
+											{if $permission_editadmin}
+												<li class="bgm-lightblue waves-effect"><a class="c-white" href="index.php?p=admin&c=admins&o=editdetails&id={$admin.aid}">Детали</a></li>
+												<li class="bgm-lightblue waves-effect"><a class="c-white" href="index.php?p=admin&c=admins&o=editpermissions&id={$admin.aid}">Привилегии</a></li>
+												<li class="bgm-lightblue waves-effect"><a class="c-white" href="index.php?p=admin&c=admins&o=editservers&id={$admin.aid}">Сервер</a></li>
+												<li class="bgm-lightblue waves-effect"><a class="c-white" href="index.php?p=admin&c=admins&o=editgroup&id={$admin.aid}">Группа</a></li>
+											{/if}
 											{if $allow_warnings}
 												<li class="btn-warning waves-effect"><a class="c-white" href="index.php?p=admin&c=admins&o=warnings&id={$admin.aid}">Предупреждения ({$admin.warnings} из {$maxWarnings})</a></li>
 											{/if}
