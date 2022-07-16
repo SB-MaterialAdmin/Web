@@ -1663,10 +1663,6 @@ function clearSystemPath($path) {
   return str_replace(ROOT, '/', $path);
 }
 
-function isCsrfEnabled() {
-  return (defined('USE_CSRF') && constant('USE_CSRF') == true);
-}
-
 function resolveSteamURL($url) {
   $url = trim($url, '/');
   if (strpos($url, 'steamcommunity.com/id/') !== FALSE) {

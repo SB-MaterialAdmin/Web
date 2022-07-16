@@ -54,7 +54,7 @@ $methods = array(
     'Plogin', 'ServerHostPlayers', 'ServerHostProperty',
     'ServerHostPlayers_list', 'ServerPlayers', 'LostPassword',
     'RefreshServer', 'AddAdmin_pay', 'RehashAdmins_pay',
-    'CSRF', 'GetVACBan'
+    'GetVACBan'
   )
 );
 
@@ -91,10 +91,6 @@ function GetVACBan($bid) {
     }
   }
   return $xajax;
-}
-
-function CSRF() {
-  return new xajaxResponse();
 }
 
 function InstallMOD($modfolder, $status = 0) {

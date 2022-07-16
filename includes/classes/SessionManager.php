@@ -2,7 +2,6 @@
 
 class SessionManager
 {
-    private static $csrfLifeTime = 300;
     private static $cookieName = '';
     private static $expires = 86400;
     private static $path = '/';
@@ -101,39 +100,6 @@ class SessionManager
             !isset($_SESSION['expires']) ||
             $_SESSION['expires'] >= time()
         );
-    }
-
-    /**
-     * @section CSRF
-     */
-    public static function initCsrf()
-    {
-        $_SESSION['csrf_valid'] = time() + self::$csrfLifeTime;
-        if (isset($_SESSION['csrf']))
-            return;
-
-        $_SESSION['csrf'] = md5($_SESSION['user_agent'] . time());
-    }
-
-    public static function getCsrfToken()
-    {
-        if (!isset($_SESSION['csrf']))
-            self::initCsrf();
-        return $_SESSION['csrf'];
-    }
-
-    public static function checkCsrf($where = INPUT_POST, $name = '__sb_csrf')
-    {
-        if (!isset($_SESSION['csrf']))
-            return false;
-        if ($_SESSION['csrf_valid'] <= time())
-            return false;
-
-        $valid = (trim(self::getCsrfToken()) == trim(filterInput($where, $name)));
-
-        if ($valid)
-            $_SESSION['csrf_valid'] = time() + self::$csrfLifeTime;
-        return $valid;
     }
 
     /**

@@ -34,26 +34,17 @@ if (version_compare(PHP_VERSION, '5.5') == -1) {
 }
 
 // Шесть месяцев назад лишь двое знали, как это работает - я и Бог. Сейчас это знает уже только Бог.
+// Ладно, самое время разгребать, как это работает. Спустя 5 лет.
 include_once 'init.php';
 include_once(INCLUDES_PATH . "/user-functions.php");
 include_once(INCLUDES_PATH . "/system-functions.php");
 include_once(INCLUDES_PATH . "/sb-callback.php");
 
 $DB = \DatabaseManager::GetConnection();
-if (getRequestType() == 1 && isCsrfEnabled()) {
-  $name   = (isset($_POST['xajax']) ? 'csrf'        : '__sb_csrf');
-  $input  = (isset($_POST['xajax']) ? INPUT_SESSION : INPUT_POST);
 
-  $result = \SessionManager::checkCsrf($input, $name);
-
-  if (!$result)
-    exit(); // CSRF validation failed.
-}
-
+/** @var \xajax $xajax */
 $xajax->processRequests();
 
-if (isCsrfEnabled())
-  \SessionManager::initCsrf();
 include_once(INCLUDES_PATH . "/page-builder.php");
 
 
