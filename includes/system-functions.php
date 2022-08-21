@@ -789,7 +789,8 @@ function PruneBans()
   $DB->BindData('adminid', $aid);
   $DB->Finish()->EndData();
 
-  $DB->Query('DELETE FROM `{{prefix}}bans` WHERE `authid` NOT REGEXP "^STEAM_[0-9]:[0-9]:[0-9]"');
+  // Workaround #334: delete only bans by Steam with invalid SteamID.
+  $DB->Query('DELETE FROM `{{prefix}}bans` WHERE `authid` NOT REGEXP "^STEAM_[0-9]:[0-9]:[0-9]" AND `type` = 0');
 }
 
 function PruneComms()
