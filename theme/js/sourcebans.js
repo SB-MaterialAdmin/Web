@@ -1192,71 +1192,47 @@ function ProcessMod()
 }
 function ShowBox(title, msg, color, redir, noclose, timer)
 {
-	/*
-	var jsCde = "closeMsg('" + redir + "');";
-	swal({
-		title: title,
-		html: true,
-		text: msg+"<button name='dialog-close' onclick=\""+jsCde+"\" class='btn ok' onmouseover=\"ButtonOver('dialog-close')\" onmouseout='ButtonOver(\"dialog-close\")' id=\"dialog-close\" value=\"OK\" type=\"button\">value</button>",
-		type: "warning",
-		showCancelButton: true,
-		confirmButtonColor: "#DD6B55",
-		confirmButtonText: "11",
-		closeOnConfirm: false
-		}, function(){
-			localStorage.clear();
-			swal("Done!", "localStorage is cleared", "success");
-		});
-	*/
+	if (!window["swal"])
+	{
+		// Lazy loading: if SWAL is not available, then force timeout.
+		setTimeout(() => ShowBox(title, msg, color, redir, noclose, timer), 50);
+		return;
+	}
+
 	if(color == "red")
 		type = "warning";
 	else if(color == "blue")
 		type = "info";
 	else if(color == "green")
 		type = "success";
-	
-	if (timer){
-		swal({
-			title: "Не ссыш ответить?",   
-			text: "Пасхалка: Вилкой в глаз, или в жо*у раз? :D",   
-			type: type,
-			showConfirmButton: false,
-			timer: timer
-		});
-	}else{
-		if (!noclose){
-			swal({
-				title: "Не ссыш ответить?",   
-				text: "Пасхалка: Вилкой в глаз, или в жо*у раз? :D",   
-				type: type,
-				showConfirmButton: false
-			});
-		}else{
-			swal({
-				title: "Не ссыш ответить?",   
-				text: "Пасхалка: Вилкой в глаз, или в жо*у раз? :D",   
-				type: type,
-				showCancelButton: true,
-				showConfirmButton: false,
-				cancelButtonText: "Закрыть"
-			});
-		}
+
+	const options = {
+		title: "dummy",
+		text: "dummy",
+		type: type,
+		showConfirmButton: false
+	};
+
+	if (timer)
+	{
+		options.timer = timer;
 	}
-	
-	
-	/*swal("Here's a message!", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed lorem erat, tincidunt vitae ipsum et, pellentesque maximus enim. Mauris eleifend ex semper, lobortis purus sed, pharetra felis", type)
-	*/
-	
-		
+	if (noclose)
+	{
+		options.showCancelButton = true;
+		options.cancelButtonText = (typeof noclose == "boolean" && noclose === true) ? "Закрыть" : noclose;
+	}
+
+	swal(options);
 	$('dialog-title').setHTML(title);
 	$('dialog-content-text').setHTML(msg);
 	
 	var jsCde = "closeMsg('" + redir + "');";
 	
 	if(redir)
-		setTimeout("window.location='" + redir + "'",2500);
-	
+		setTimeout(() => window.location=redir,2500);
 }
+
 function closeMsg(redir)
 {
 	if(redir.toString().length > 0 && redir != "undefined")

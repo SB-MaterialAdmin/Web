@@ -41,7 +41,7 @@ if(!isset($_GET['id']) || !is_numeric($_GET['id']))
 }
 
 $res = $GLOBALS['db']->GetRow("
-    				SELECT bid, ba.type, ba.authid, ba.name, created, ends, length, reason, ba.aid, ba.sid, ad.user, ad.gid
+    				SELECT bid, ba.type, ba.authid, ba.name, created, ends, length, reason, ba.aid, ba.sid, ad.user, ad.gid, ba.RemoveType
     				FROM ".DB_PREFIX."_comms AS ba
     				LEFT JOIN ".DB_PREFIX."_admins AS ad ON ba.aid = ad.aid
     				WHERE bid = {$_GET['id']}");
@@ -50,6 +50,12 @@ if (!$userbank->HasAccess(ADMIN_OWNER|ADMIN_EDIT_ALL_BANS)&&(!$userbank->HasAcce
 {
 	echo '<script>ShowBox("Ошибка", "У вас нет доступа к этому!", "red", "index.php?p=admin&c=comms");</script>';
 	PageDie();
+}
+
+if (($res[5] < time() && $res[6] != 0) || $res[12] != null)
+{
+    echo '<script>ShowBox("Ошибка", "У вас нет доступа к этому!", "red", "index.php?p=admin&c=comms");</script>';
+    PageDie();
 }
 
 isset($_GET["page"])?$pagelink = "&page=".$_GET["page"]:$pagelink = "";
