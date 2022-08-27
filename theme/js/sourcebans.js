@@ -480,8 +480,27 @@ function RemoveBan(id, key, page, name, confirm, bulk)
 function UnbanBan(id, key, page, name, popup, bulk)
 {
 	if(popup==1) {
-		ShowBox('Разбан', '<div class="form-group has-warning has-feedback"><label class="control-label f-14" for="inputWarning2">Пожалуйста, напишите краткий комментарий, почему вы собираетесь разбанить '+(bulk=="true"?"этих игроков":"игрока \'"+ name +"\'")+'!</label><div class="fg-line"><input type="text" class="form-control" id="inputWarning2" name="ureason"></div><span class="zmdi zmdi-alert-triangle form-control-feedback"></span><p class="help-block" id="ureason.msg"></p></div>', 'blue', '', true);
+		ShowBox('Разбан', '<div class="form-group has-warning has-feedback"><label class="control-label f-14" for="inputWarning2">Пожалуйста, напишите краткий комментарий, почему вы собираетесь разбанить '+(bulk=="true"?"этих игроков":"игрока \'"+ name +"\'")+'!</label><div class="fg-line"><input type="text" class="form-control" id="inputWarning2" name="ureason"></div><div class="customreasons-container"></div><span class="zmdi zmdi-alert-triangle form-control-feedback"></span><p class="help-block" id="ureason.msg"></p></div>', 'blue', '', true);
 		$('dialog-control').setHTML('<input type="button" onclick="if (UnbanBan(\''+id+'\', \''+key+'\', \''+page+'\', \''+addslashes(name.replace(/\'/g,'\\\''))+'\', \'0\''+(bulk=="true"?", \'true\'":"")+')) document.getElementById(\'uban\').disabled = true;" name="uban" class="btn btn-lg btn-primary waves-effect" id="uban" value="Разбанить" />');
+
+		const jsonText = jQuery('#customreasons-unban').text();
+		if (jsonText.length > 0)
+		{
+			const reasons = JSON.parse(jsonText);
+			const container = jQuery('.customreasons-container');
+
+			reasons.forEach(e => {
+				const reasonElement = jQuery('<a class="customreason" href="#">');
+				reasonElement.text(e);
+				reasonElement.on('click', function ()
+				{
+					jQuery('[name=ureason]').val(e);
+				});
+
+				container.append(reasonElement);
+			});
+		}
+
 	} else if(popup==0) {
 		if(page != "") 
 			var pagelink = page;
@@ -1746,8 +1765,27 @@ function RemoveBlock(id, key, page, name, confirm)
 function UnGag(id, key, page, name, popup)
 {
 	if(popup==1) {
-		ShowBox('Причина включения чата', '<b>Пожалуйста оставьте короткий комментарий , почему вы хотите включить чат игроку '+"\'"+ name +"\'"+'!</b><br><textarea rows="3" cols="40" name="ureason" id="inputWarning2" style="overflow:auto;"></textarea><br><div id="ureason.msg" class="badentry"></div>', 'blue', '', true);
+		ShowBox('Причина включения чата', '<b>Пожалуйста оставьте короткий комментарий , почему вы хотите включить чат игроку '+"\'"+ name +"\'"+'!</b><br><textarea rows="3" cols="40" name="ureason" id="inputWarning2" style="overflow:auto;"></textarea><br><div class="customreasons-container"></div><div id="ureason.msg" class="badentry"></div>', 'blue', '', true);
 		$('dialog-control').setHTML('<input type="button" onclick="UnGag(\''+id+'\', \''+key+'\', \''+page+'\', \''+addslashes(name.replace(/\'/g,'\\\''))+'\', \'0\''+');" name="uban" class="btn btn-lg btn-primary waves-effect" onmouseover="ButtonOver(\'uban\')" onmouseout="ButtonOver(\'uban\')" id="uban" value="Вкл. чат" />');
+
+		const jsonText = jQuery('#customreasons-remove-comms').text();
+		if (jsonText.length > 0)
+		{
+			const reasons = JSON.parse(jsonText);
+			const container = jQuery('.customreasons-container');
+
+			reasons.forEach(e => {
+				const reasonElement = jQuery('<a class="customreason" href="#">');
+				reasonElement.text(e);
+				reasonElement.on('click', function ()
+				{
+					jQuery('[name=ureason]').val(e);
+				});
+
+				container.append(reasonElement);
+			});
+		}
+
 	} else if(popup==0) {
 		if(page != "")
 			var pagelink = page;
@@ -1769,8 +1807,27 @@ function UnGag(id, key, page, name, popup)
 function UnMute(id, key, page, name, popup)
 {
 	if(popup==1) {
-		ShowBox('Причина включения микрофона', '<b>Пожалуйста оставьте короткий комментарий , почему вы хотите включить микрофон игроку '+"\'"+ name +"\'"+'!</b><br><textarea rows="3" cols="40" name="ureason" id="inputWarning2" style="overflow:auto;"></textarea><br><div id="ureason.msg" class="badentry"></div>', 'blue', '', true);
+		ShowBox('Причина включения микрофона', '<b>Пожалуйста оставьте короткий комментарий, почему вы хотите включить микрофон игроку '+"\'"+ name +"\'"+'!</b><br><textarea rows="3" cols="40" name="ureason" id="inputWarning2" style="overflow:auto;"></textarea><br><div class="customreasons-container"></div><div id="ureason.msg" class="badentry"></div>', 'blue', '', true);
 		$('dialog-control').setHTML('<input type="button" onclick="UnMute(\''+id+'\', \''+key+'\', \''+page+'\', \''+addslashes(name.replace(/\'/g,'\\\''))+'\', \'0\''+');" name="uban" class="btn btn-lg btn-primary waves-effect" onmouseover="ButtonOver(\'uban\')" onmouseout="ButtonOver(\'uban\')" id="uban" value="Вкл. микро" />');
+
+		const jsonText = jQuery('#customreasons-remove-comms').text();
+		if (jsonText.length > 0)
+		{
+			const reasons = JSON.parse(jsonText);
+			const container = jQuery('.customreasons-container');
+
+			reasons.forEach(e => {
+				const reasonElement = jQuery('<a class="customreason" href="#">');
+				reasonElement.text(e);
+				reasonElement.on('click', function ()
+				{
+					jQuery('[name=ureason]').val(e);
+				});
+
+				container.append(reasonElement);
+			});
+		}
+
 	} else if(popup==0) {
 		if(page != "")
 			var pagelink = page;

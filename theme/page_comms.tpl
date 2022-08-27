@@ -381,6 +381,9 @@
 	</div>
 </div>
 
+	{assign var="reasons" value=$SBConfig.remove_comms___customreasons}
+	<script type="application/json" id="customreasons-remove-comms">{$reasons|unserialize|@json_encode}</script>
+
 {literal}
 <script type="text/javascript">window.addEvent('domready', function(){	
 InitAccordion('tr.opener', 'div.opener', 'content');

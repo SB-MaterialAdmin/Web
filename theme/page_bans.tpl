@@ -468,6 +468,9 @@
             {/if}
         </div>
 
+		{assign var="reasons" value=$SBConfig.unban___customreasons}
+		<script type="application/json" id="customreasons-unban">{$reasons|unserialize|@json_encode}</script>
+
         {literal}
         <script type="text/javascript">window.addEvent('domready', function(){	
         	InitAccordion('tr.opener', 'div.opener', 'content');

@@ -1,0 +1,5 @@
+/** Custom reasons */
+.customreasons-container .customreason:not(:last-child):after {
+    content: ', ';
+    color: black;
+}

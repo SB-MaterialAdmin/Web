@@ -265,24 +265,83 @@
 						<div id="banlist_hideplayerips.msg"></div>
 					</div>
 				</div>
-				<div class="form-group m-b-5">
-					<label for="banlist_bansperpage" class="col-sm-3 control-label">{help_icon title="Свои причины бана" message="Введите свои причины банов."} Свои причины бана <a href="javascript:void(0)" onclick="MoreFields();" data-toggle="tooltip" data-placement="top" title="" data-original-title="Добавить поле" class="f-16 p-l-5"><i class="zmdi zmdi-plus-circle"></i></a></label>
+				<div class="form-group m-b-5 customreasons_container" data-field-name="bans_customreason">
+					<label for="banlist_bansperpage" class="col-sm-3 control-label">{help_icon title="Свои причины бана" message="Введите свои причины банов."} Свои причины бана <a href="javascript:void(0)" onclick="MoreFields(this);" data-toggle="tooltip" data-placement="top" title="" data-original-title="Добавить поле" class="f-16 p-l-5"><i class="zmdi zmdi-plus-circle"></i></a></label>
 					<div class="col-sm-9">
 						{foreach from="$bans_customreason" item="creason"}
 							<div class="fg-line">
 								<input type="text" TABINDEX=1 class="form-control" placeholder="Введите данные" name="bans_customreason[]" id="bans_customreason[]" value="{$creason}" />
 							</div>
 						{/foreach}
+
 						<div class="fg-line">
 							<input type="text" TABINDEX=1 class="form-control" placeholder="Введите данные" name="bans_customreason[]" id="bans_customreason[]" />
 						</div>
 						<div class="fg-line">
 							<input type="text" TABINDEX=1 class="form-control" placeholder="Введите данные" name="bans_customreason[]" id="bans_customreason[]" />
 						</div>
-						<div id="custom.reasons" name="custom.reasons">
-						
-						</div>
+
+						<div class="addcontainer"></div>
+
 						<div id="bans_customreason.msg"></div>
+					</div>
+				</div>
+
+				<div class="form-group m-b-5 customreasons_container" data-field-name="comms_customreason">
+					<label for="banlist_bansperpage" class="col-sm-3 control-label">{help_icon title="Свои причины мута" message="Введите свои причины мутов."} Свои причины мута <a href="javascript:void(0)" onclick="MoreFields(this);" data-toggle="tooltip" data-placement="top" title="" data-original-title="Добавить поле" class="f-16 p-l-5"><i class="zmdi zmdi-plus-circle"></i></a></label>
+					<div class="col-sm-9">
+						{foreach from="$comms_customreason" item="creason"}
+							<div class="fg-line">
+								<input type="text" TABINDEX=1 class="form-control" placeholder="Введите данные" name="comms_customreason[]" id="comms_customreason[]" value="{$creason}" />
+							</div>
+						{/foreach}
+
+						<div class="fg-line">
+							<input type="text" TABINDEX=1 class="form-control" placeholder="Введите данные" name="comms_customreason[]" id="comms_customreason[]" />
+						</div>
+						<div class="fg-line">
+							<input type="text" TABINDEX=1 class="form-control" placeholder="Введите данные" name="comms_customreason[]" id="comms_customreason[]" />
+						</div>
+
+						<div class="addcontainer"></div>
+					</div>
+				</div>
+
+				<div class="form-group m-b-5 customreasons_container" data-field-name="unban_customreason">
+					<label for="banlist_bansperpage" class="col-sm-3 control-label">{help_icon title="Свои причины разбана" message="Введите свои причины разбанов."} Свои причины разбана <a href="javascript:void(0)" onclick="MoreFields(this);" data-toggle="tooltip" data-placement="top" title="" data-original-title="Добавить поле" class="f-16 p-l-5"><i class="zmdi zmdi-plus-circle"></i></a></label>
+					<div class="col-sm-9">
+						{foreach from="$unban_customreason" item="creason"}
+							<div class="fg-line">
+								<input type="text" TABINDEX=1 class="form-control" placeholder="Введите данные" name="unban_customreason[]" id="unban_customreason[]" value="{$creason}" />
+							</div>
+						{/foreach}
+
+						<div class="fg-line">
+							<input type="text" TABINDEX=1 class="form-control" placeholder="Введите данные" name="unban_customreason[]" id="unban_customreason[]" />
+						</div>
+						<div class="fg-line">
+							<input type="text" TABINDEX=1 class="form-control" placeholder="Введите данные" name="unban_customreason[]" id="unban_customreason[]" />
+						</div>
+						<div class="addcontainer"></div>
+					</div>
+				</div>
+
+				<div class="form-group m-b-5 customreasons_container" data-field-name="remove_comms_customreason">
+					<label for="banlist_bansperpage" class="col-sm-3 control-label">{help_icon title="Свои причины размута" message="Введите свои причины размутов."} Свои причины размута <a href="javascript:void(0)" onclick="MoreFields(this);" data-toggle="tooltip" data-placement="top" title="" data-original-title="Добавить поле" class="f-16 p-l-5"><i class="zmdi zmdi-plus-circle"></i></a></label>
+					<div class="col-sm-9">
+						{foreach from="$remove_comms_customreason" item="creason"}
+							<div class="fg-line">
+								<input type="text" TABINDEX=1 class="form-control" placeholder="Введите данные" name="remove_comms_customreason[]" id="remove_comms_customreason[]" value="{$creason}" />
+							</div>
+						{/foreach}
+
+						<div class="fg-line">
+							<input type="text" TABINDEX=1 class="form-control" placeholder="Введите данные" name="remove_comms_customreason[]" id="remove_comms_customreason[]" />
+						</div>
+						<div class="fg-line">
+							<input type="text" TABINDEX=1 class="form-control" placeholder="Введите данные" name="remove_comms_customreason[]" id="remove_comms_customreason[]" />
+						</div>
+						<div class="addcontainer"></div>
 					</div>
 				</div>
 				
