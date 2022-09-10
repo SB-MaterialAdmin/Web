@@ -185,8 +185,7 @@ if(isset($_POST['name']))
 			}
 		}
 	}
-	
-	$_POST['name'] = RemoveCode($_POST['name']);
+
 	$_POST['ip'] = preg_replace('#[^\d\.]#', '', $_POST['ip']);//strip ip of all but numbers and dots
 	$_POST['dname'] = RemoveCode($_POST['dname']);
 	$reason = RemoveCode(trim($_POST['listReason'] == "other"?$_POST['txtReason']:$_POST['listReason']));

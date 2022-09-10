@@ -2296,7 +2296,6 @@ function AddBan($nickname, $type, $steam, $ip, $length, $dfile, $dname, $reason,
   if($error > 0)
     return $objResponse;
 
-  $nickname = RemoveCode($nickname);
   $ip = preg_replace('#[^\d\.]#', '', $ip);//strip ip of all but numbers and dots
   $dname = RemoveCode($dname);
   $reason = RemoveCode($reason);

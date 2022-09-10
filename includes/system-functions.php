@@ -1175,7 +1175,7 @@ function GetCommunityIDFromSteamID2($sid) {
 
 function GetUserAvatar($sid = -1) {
   global $userbank;
-    
+
   static $avatarCache = null;
   if (!$avatarCache) {
     $query = $GLOBALS['db']->Execute(sprintf("SELECT * FROM `%s_avatars`", DB_PREFIX));
