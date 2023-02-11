@@ -138,33 +138,41 @@
 
 										<ul class="dropdown-menu dropdown-menu-right">
 											{if $view_bans}
-											{if $ban.unbanned && $ban.reban_link != false}
-											<li>{$ban.reban_link}</li>
-											{/if}
-											<li>{$ban.blockcomm_link}</li>
-											{if $ban.demo_available}
-											<li>{$ban.demo_link}</li>
-											{/if}
-											<li>{$ban.addcomment}</li>
-											{if $ban.type == 0}
-											{if $groupban}
-											<li>{$ban.groups_link}</li>
-											{/if}
-											{if $friendsban}
-											<li>{$ban.friend_ban_link}</li>
-											{/if}
-											{/if}
-											{if ($ban.view_edit && !$ban.unbanned)} 
-											<li>{$ban.edit_link}</li>
-											{/if}
-											{if ($ban.unbanned == false && $ban.view_unban)}
-											<li>{$ban.unban_link}</li>
-											{/if}
-											{if $ban.view_delete}
-											<li>{$ban.delete_link}</li>
-											{/if}
+												{if $ban.unbanned && $ban.reban_link != false}
+													<li>{$ban.reban_link}</li>
+												{/if}
+
+												<li>{$ban.blockcomm_link}</li>
+
+												{if $ban.demo_available}
+													<li>{$ban.demo_link}</li>
+												{/if}
+
+												{* <li>{$ban.addcomment}</li> *}
+
+												{if $ban.type == 0}
+													{if $groupban}
+														<li>{$ban.groups_link}</li>
+													{/if}
+
+													{if $friendsban}
+														<li>{$ban.friend_ban_link}</li>
+													{/if}
+												{/if}
+
+												{if ($ban.view_edit && !$ban.unbanned)}
+													<li>{$ban.edit_link}</li>
+												{/if}
+
+												{if ($ban.unbanned == false && $ban.view_unban)}
+													<li>{$ban.unban_link}</li>
+												{/if}
+
+												{if $ban.view_delete}
+													<li>{$ban.delete_link}</li>
+												{/if}
 											{else}
-											<li>{$ban.demo_link}</li>
+												<li>{$ban.demo_link}</li>
 											{/if}
 										</ul>
 									</li>
