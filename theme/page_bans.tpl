@@ -101,7 +101,7 @@
 							<i class="zmdi zmdi-videocam"></i>
 						</div>
 						{/if}
-						{if $view_comments && $ban.commentdata != "Нет" && $ban.commentdata|@count > 0}
+						{if $view_comments && isset($ban.commentdata) && is_array($ban.commentdata) && $ban.commentdata|@count > 0}
 						<div style="float:right;padding-right: 5px;">
 							{$ban.commentdata|@count} <img src="theme/img/comm.png" alt="Comments" title="Комментарии" style="height:14px;width:14px;" />
 						</div>
@@ -381,7 +381,7 @@
 									<!-- COMMENT CODik-->
 									<hr class="m-t-10 m-b-10" />
 									<div class="wall-comment-list">
-										{if $ban.commentdata != "Нет"}
+										{if isset($ban.commentdata) && is_array($ban.commentdata)}
 										<div class="wcl-list">
 											{foreach from=$ban.commentdata item=commenta}
 											<div class="media">
