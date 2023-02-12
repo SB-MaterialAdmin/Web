@@ -174,8 +174,7 @@ else
 
 			if (!empty($_GET['showexpiredadmins']) && $_GET['showexpiredadmins'] == 'true') {
 				$where2 = " AND (ADM.expired < " . time() . " AND ADM.expired <> 0)";
-			}
-			else {
+			} else {
 				$where2 = " AND (ADM.expired > " . time() . " OR ADM.expired = 0)";
 			}
 
