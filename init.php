@@ -326,8 +326,8 @@ $secureOnly = (strtolower(parse_url(constant('SB_WP_URL'), PHP_URL_SCHEME)) == '
 // ---------------------------------------------------
 // Setup our user manager
 // ---------------------------------------------------
-$aid   = $_SESSION['admin_id'] ?: -1;
-$hash  = $_SESSION['admin_hash'] ?: '';
+$aid = (!empty($_SESSION['admin_id'])) ? $_SESSION['admin_id'] : -1;
+$hash = (!empty($_SESSION['admin_hash'])) ? $_SESSION['admin_hash'] : '';
 
 \UserManager::init($aid, $hash);
 $userbank = \UserManager::getInstance(); // for old code.
