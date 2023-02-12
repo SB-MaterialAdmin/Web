@@ -171,12 +171,14 @@ else
 				}
 				$advSearchString = "&advSearch=".$_GET['advSearch']."&advType=".$_GET['advType'];
 			}
-			if($_GET['showexpiredadmins'] == 'true') {
-				$where2 = " AND (ADM.expired < ".time()." AND ADM.expired <> 0)";
+
+			if (!empty($_GET['showexpiredadmins']) && $_GET['showexpiredadmins'] == 'true') {
+				$where2 = " AND (ADM.expired < " . time() . " AND ADM.expired <> 0)";
 			}
 			else {
-				$where2 = " AND (ADM.expired > ".time()." OR ADM.expired = 0)";
+				$where2 = " AND (ADM.expired > " . time() . " OR ADM.expired = 0)";
 			}
+
 			$admins = $GLOBALS['db']->GetAll("SELECT * FROM `" . DB_PREFIX . "_admins` AS ADM".$join." WHERE ADM.aid > 0".$where2."".$where." ORDER BY user LIMIT " . intval(($page-1) * $AdminsPerPage) . "," . intval($AdminsPerPage));
 			// quick fix for the server search showing admins mulitple times.
 			if(isset($_GET['advSearch']) && isset($_GET['advType']) && $_GET['advType'] == 'server') {
