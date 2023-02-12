@@ -252,9 +252,9 @@
 										<div class="col-sm-8">
 											{highlight_links}
 												{if $ban.ureason == ""}
-												<i>Причина разбана не указана.</i>
+													<i>Причина разбана не указана.</i>
 												{else}
-												{$ban.ureason}
+													{$ban.ureason}
 												{/if}
 											{/highlight_links}
 										</div>
