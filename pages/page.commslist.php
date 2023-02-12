@@ -557,10 +557,29 @@ while (!$res->EOF)
 
 	//$data['mod_icon'] = '<img src="images/games/' .$modicon . '" alt="MOD" border="0" align="absmiddle" />&nbsp;' . $data['type_icon'];
 	$data['mod_icon'] = '<img src="images/games/' .$modicon . '" alt="MOD" border="0" align="absmiddle" />&nbsp;';
-	
+
+	switch ((int)$data['type']) {
+		case 1:
+			$data['type_icon'] = '<img src="images/type_v.png" alt="Микрофон" border="0" align="absmiddle" />';
+			$mute_count = $mute_count - 1;
+			break;
+		case 2:
+			$data['type_icon'] = '<img src="images/type_c.png" alt="Чат" border="0" align="absmiddle" />';
+			$gag_count = $gag_count - 1;
+			break;
+		case 3:
+			$data['type_icon'] = '<img src="images/type_silence.png" alt="Микрофон и чат" border=0 align="absmiddle" />';
+			$gag_count -= 1;
+			$mute_count -= 1;
+			break;
+		default:
+			$data['type_icon'] = '<img src="images/country/zz.gif" alt="Неизвестный тип блока" border="0" align="absmiddle" />';
+			break;
+	}
+
 	$data['type_icon_p'] = $data['type_icon'];
 	
-    if($history_count > 1)
+    if ($history_count > 1)
         $data['prevoff_link'] = $history_count . " " . CreateLinkR("(Поиск)","index.php?p=commslist&searchText=" .$data['steamid']. "&Submit");
     else
         $data['prevoff_link'] = "Нет предыдущих блокировок";
