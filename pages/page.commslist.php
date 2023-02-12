@@ -405,10 +405,16 @@ if (!$res)
 $view_comments = false;
 $bans = array();
 
-function CommunityID($steamid_id)
+// The administrator may have already been deleted, or if the server issued a ban,
+// then the STEAM_ID_SERVER string is passed here, we need to check whether we received the SteamId correctly
+function CommunityID($steamid_id) /*: string*/
 {
-	$parts = explode(':', str_replace('STEAM_', '' ,$steamid_id)); 
-	return bcadd(bcadd('76561197960265728', $parts['1']), bcmul($parts['2'], '2')); 
+	$valid_steamid = preg_match("/^(STEAM_[0-1]?)(:([0-1]):(\d{0,9})?)?$/", $steamid_id, $matches);
+	if (!$valid_steamid) {
+		return "";
+	}
+
+	return bcadd(bcadd('76561197960265728', $matches[3]), bcmul($matches[4], '2'));
 }
 
 while (!$res->EOF) {
