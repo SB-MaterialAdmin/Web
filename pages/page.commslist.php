@@ -404,13 +404,20 @@ if (!$res)
 
 $view_comments = false;
 $bans = array();
-function CommunityID($steamid_id){
+
+function CommunityID($steamid_id)
+{
 	$parts = explode(':', str_replace('STEAM_', '' ,$steamid_id)); 
 	return bcadd(bcadd('76561197960265728', $parts['1']), bcmul($parts['2'], '2')); 
 }
-while (!$res->EOF)
-{
+
+while (!$res->EOF) {
 	$data = array();
+	$delimiter = "";
+
+	$mute_count = (int)$res->fields['mute_count'];
+	$gag_count = (int)$res->fields['gag_count'];
+	$history_count = $mute_count + $gag_count;
 
 	$data['ban_id'] = $res->fields['ban_id'];
 
