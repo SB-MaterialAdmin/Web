@@ -517,26 +517,24 @@ while (!$res->EOF) {
             $data['removedby'] = $removedby[0];
 	}
 
-	$data['layer_id'] = 'layer_'.$res->fields['ban_id'];
+	$data['layer_id'] = 'layer_' . $res->fields['ban_id'];
+
 	// Запрос текущего статуса игрока для рисования ссылки на мьют или гаг
 	$alrdybnd = $GLOBALS['db']->Execute("SELECT count(bid) as count FROM `".DB_PREFIX."_comms` WHERE authid = '".$data['steamid']."' AND RemovedBy IS NULL AND type = '".$data['type']."' AND (length = 0 OR ends > UNIX_TIMESTAMP());");
-	if($alrdybnd->fields['count']==0)
-	{
-		switch($data['type'])
-		{
-		case 1:
-			$data['reban_link'] = CreateLinkR('Выдать мут',"index.php?p=admin&c=comms".$pagelink."&rebanid=".$res->fields['ban_id']."&key=".$_SESSION['banlist_postkey']."#^0");
-			break;
-		case 2:
-			$data['reban_link'] = CreateLinkR('Выдать гаг',"index.php?p=admin&c=comms".$pagelink."&rebanid=".$res->fields['ban_id']."&key=".$_SESSION['banlist_postkey']."#^0");
-			break;
-		default:
-			break;
+	$data['reban_link'] = false;
+
+	if ($alrdybnd->fields['count'] == 0) {
+		switch ($data['type']) {
+			case 1:
+				$data['reban_link'] = CreateLinkR('Выдать мут',"index.php?p=admin&c=comms".$pagelink."&rebanid=".$res->fields['ban_id']."&key=".$_SESSION['banlist_postkey']."#^0");
+				break;
+			case 2:
+				$data['reban_link'] = CreateLinkR('Выдать гаг',"index.php?p=admin&c=comms".$pagelink."&rebanid=".$res->fields['ban_id']."&key=".$_SESSION['banlist_postkey']."#^0");
+				break;
+			default:
+				break;
 		}
 	}
-	else
-		$data['reban_link'] = false;
-
 
 	$data['edit_link'] = CreateLinkR('Редактировать',"index.php?p=admin&c=comms&o=edit".$pagelink."&id=".$res->fields['ban_id']."&key=".$_SESSION['banlist_postkey']);
 
