@@ -7,8 +7,8 @@ global $userbank, $theme;
 	else {
 		if(!empty($_GET['o']) and !empty($_GET['id']) and !is_numeric($_GET['id'])){
 			PageDie();
-		}else{
-			if(($_GET['o'] == "del") and !empty($_GET['o'])){
+		}else if(!empty($_GET['o'])) {
+			if($_GET['o'] == "del"){
 					$check_sys = $GLOBALS['db']->GetOne("SELECT system FROM `" . DB_PREFIX . "_menu` WHERE id = '".(int)$_GET['id']."'");
 					if($check_sys != "1"){
 						$gg_check_sys = $GLOBALS['db']->Execute("DELETE FROM `" . DB_PREFIX . "_menu` WHERE id = '".(int)$_GET['id']."'");
@@ -16,7 +16,7 @@ global $userbank, $theme;
 							AddScriptWithReload(sprintf("setTimeout(function() { %s; }, 1350);", generateMsgBoxJS("Успех!", "Ссылка была успешно удалена!", "green", "", true)), "index.php?p=admin&c=menu");
 					}else
 						AddScriptWithReload(sprintf("setTimeout(function() { %s; }, 1350);", generateMsgBoxJS("Ошибка", "Системную ссылку удалить невозможно!", "red", "", true)), "index.php?p=admin&c=menu");
-			}elseif(($_GET['o'] == "on") and !empty($_GET['o'])){
+			}elseif($_GET['o'] == "on"){
 				$check_sys = $GLOBALS['db']->GetOne("SELECT enabled FROM `" . DB_PREFIX . "_menu` WHERE id = '".(int)$_GET['id']."'");
 				if($check_sys == "0"){
 					$gg_check_sys = $GLOBALS['db']->Execute("UPDATE `" . DB_PREFIX . "_menu` SET `enabled` = '1' WHERE id = '".(int)$_GET['id']."'");
@@ -24,7 +24,7 @@ global $userbank, $theme;
 						AddScriptWithReload(sprintf("setTimeout(function() { %s; }, 1350);", generateMsgBoxJS("Успех!", "Ссылка была успешно добавлена в главное меню SourceBans!", "green", "", true)), "index.php?p=admin&c=menu");
 				}else
 					AddScriptWithReload(sprintf("setTimeout(function() { %s; }, 1350);", generateMsgBoxJS("Ошибка", "Данная ссылка уже и так отключена!", "red", "", true)), "index.php?p=admin&c=menu");
-			}elseif(($_GET['o'] == "off") and !empty($_GET['o'])){
+			}elseif($_GET['o'] == "off"){
 				$check_sys = $GLOBALS['db']->GetOne("SELECT enabled FROM `" . DB_PREFIX . "_menu` WHERE id = '".(int)$_GET['id']."'");
 				if($check_sys == "1"){
 					$gg_check_sys = $GLOBALS['db']->Execute("UPDATE `" . DB_PREFIX . "_menu` SET `enabled` = '0' WHERE id = '".(int)$_GET['id']."'");
