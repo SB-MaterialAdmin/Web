@@ -1651,6 +1651,7 @@ function getRequestType() {
 // INPUT_SESSION not yet implemented.
 function filterInput($type, $name, $filter = FILTER_DEFAULT, $options = [])
 {
+	// INPUT_SESSION - not used anywhere
 	/*if ($type == INPUT_SESSION) {
 		return filter_input($type, $name, $filter, $options);
 
