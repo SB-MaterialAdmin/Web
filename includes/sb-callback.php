@@ -3803,9 +3803,9 @@ function AddBlock($nickname, $type, $steam, $length, $reason)
   }
 
   // Check if the new steamid is already banned
- $chk = $GLOBALS['db']->GetRow("SELECT count(bid) AS count FROM ".DB_PREFIX."_comms WHERE authid = ? AND (length = 0 OR ends > UNIX_TIMESTAMP()) AND RemovedBy IS NULL AND ".$typeW, array($steam));
+  $chk = $GLOBALS['db']->GetRow("SELECT count(bid) AS count FROM ".DB_PREFIX."_comms WHERE authid = ? AND (length = 0 OR ends > UNIX_TIMESTAMP()) AND RemovedBy IS NULL AND ".$typeW, array($steam));
   
-  if(intval($chk[0]) > 0 || intval($chk2[0]) > 0 || intval($chk3[0]) > 0)
+  if(intval($chk[0]) > 0)
   {
     $objResponse->addScript("ShowBox('Ошибка', 'SteamID: $steam уже заблокирован.', 'red', '', true);");
     return $objResponse;
