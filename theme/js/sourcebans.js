@@ -1713,7 +1713,7 @@ function OpenNickBox(sid, name, popup)
 		$('dialog-control').setStyle('display', 'none');
 		ShowBox('Change Nick', 'Идет отправка запроса...', 'blue', '', false);
 		$('ingamemsg').readOnly = true;
-		xajax_SendMessage(sid, name, message);
+		xajax_ChangeNick(sid, name, message);
 	}
 }
 
