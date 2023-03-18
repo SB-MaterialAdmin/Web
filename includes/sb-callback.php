@@ -48,7 +48,7 @@ $methods = array(
     'ChangeSrvPassword', 'ChangeEmail', 'SendMail', 'AddBlock',
     'PrepareReblock', 'PrepareBlockFromBan', 'removeExpiredAdmins',
     'AddSupport', 'ChangeAdminsInfos', 'InstallMOD', 'UpdateGroupPermissions',
-    'PastePlayerData', 'AddWarning', 'RemoveWarning'
+    'PastePlayerData', 'AddWarning', 'RemoveWarning', 'ChangeNick'
   ),
   'default' => array(
     'Plogin', 'ServerHostPlayers', 'ServerHostProperty',
@@ -1989,6 +1989,7 @@ function ServerHostPlayers($sid, $type="servers", $obId="", $tplsid="", $open=""
                             <p class=\"m-b-10\"><a href=\"index.php?p=admin&c=bans&action=pasteBan&sid='.$sid.'&pName='.str_replace('"', '\"', $player["Name"]).'\"><button class=\"btn btn-link btn-block\">Бан</button></a></p>\
                             <p class=\"m-b-10\"><a href=\"index.php?p=admin&c=comms&action=pasteBan&sid='.$sid.'&pName='.str_replace('"', '\"', $player["Name"]).'\"><button class=\"btn btn-link btn-block\">Заглушить</button></a></p>\
                             <p class=\"m-b-10\"><button class=\"btn btn-link btn-block\" href=\"#\" data-dismiss=\'modal\' onclick=\"OpenMessageBox('.$sid.', \''.str_replace('"', '\"', $player["Name"]).'\', 1);\">Отправить сообщение</button></p>\
+							<p class=\"m-b-10\"><button class=\"btn btn-link btn-block\" href=\"#\" data-dismiss=\'modal\' onclick=\"OpenNickBox('.$sid.', \''.str_replace('"', '\"', $player["Name"]).'\', 1);\">Изменить ник</button></p>\
                           </div>\
                           <!--<div class=\'modal-footer\'>\
                             <button type=\'button\' class=\'btn btn-link\' data-dismiss=\'modal\'>Отмена</button>\
@@ -3700,6 +3701,40 @@ function SendMessage($sid, $name, $message)
   $objResponse->addScript("ShowBox('Сообщение отправлено', 'Сообщение для игрока \'".addslashes(htmlspecialchars($name))."\' успешно отправлено!', 'green', '', true);$('dialog-control').setStyle('display', 'none');");
   return $objResponse;
 }
+
+function ChangeNick($sid, $name, $message)
+{
+  $objResponse = new xajaxResponse();
+    global $userbank, $username;
+  if(!$userbank->is_admin())
+  {
+    $objResponse->redirect("index.php?p=login&m=no_access", 0);
+    $log = new CSystemLog("w", "Ошибка доступа", $username . " пытался изменить ник '".addslashes(htmlspecialchars($name))."' (\"".RemoveCode($message)."\"), не имея на это прав.");
+    return $objResponse;
+  }
+  $sid = (int)$sid;
+  //get the server data
+  $data = $GLOBALS['db']->GetRow("SELECT ip, port, rcon FROM ".DB_PREFIX."_servers WHERE sid = '".$sid."';");
+  if(empty($data['rcon'])) {
+    $objResponse->addScript("ShowBox('Ошибка', 'Невозможно изменить ник для ".addslashes(htmlspecialchars($name)).". Не задан РКОН пароль!', 'red', '', true);");
+    return $objResponse;
+  }
+  
+  $r = new CServerControl(intval($GLOBALS['config']['gamecache.enabled']) == 1);
+  $r->Connect($data['ip'], $data['port']);
+  
+  if(!$r->AuthRcon($data['rcon']))
+  {
+    $GLOBALS['db']->Execute("UPDATE ".DB_PREFIX."_servers SET rcon = '' WHERE sid = '".$sid."';");
+    $objResponse->addScript("ShowBox('Ошибка', 'Невозможно изменить ник для ".addslashes(htmlspecialchars($name)).". Неверноый РКОН пароль!', 'red', '', true);");
+    return $objResponse;
+  }
+  $ret = $r->SendCommand('sm_rename "'.$name.'" "'.addslashes($message).'"');
+  new CSystemLog("m", "Ник изменен", "Ник был изменен " . addslashes(htmlspecialchars($name)) . " на сервере " . $data['ip'] . ":" . $data['port'] . ": " . RemoveCode($message));
+  $objResponse->addScript("ShowBox('Ник изменен', 'Ник для игрока \'".addslashes(htmlspecialchars($name))."\' успешно изменен!', 'green', '', true);$('dialog-control').setStyle('display', 'none');");
+  return $objResponse;
+}
+
 function AddBlock($nickname, $type, $steam, $length, $reason)
 {
   $objResponse = new xajaxResponse();
@@ -3773,9 +3808,11 @@ function AddBlock($nickname, $type, $steam, $length, $reason)
   }
 
   // Check if the new steamid is already banned
-  $chk = $GLOBALS['db']->GetRow("SELECT count(bid) AS count FROM ".DB_PREFIX."_comms WHERE authid = ? AND (length = 0 OR ends > UNIX_TIMESTAMP()) AND RemovedBy IS NULL AND ".$typeW, array($steam));
+ $chk = $GLOBALS['db']->GetRow("SELECT count(bid) AS count FROM ".DB_PREFIX."_comms WHERE authid = ? AND (length = 0 OR ends > UNIX_TIMESTAMP()) AND RemovedBy IS NULL AND type = 1", array($steam));
+  $chk2 = $GLOBALS['db']->GetRow("SELECT count(bid) AS count FROM ".DB_PREFIX."_comms WHERE authid = ? AND (length = 0 OR ends > UNIX_TIMESTAMP()) AND RemovedBy IS NULL AND type = 2", array($steam));
+  $chk3 = $GLOBALS['db']->GetRow("SELECT count(bid) AS count FROM ".DB_PREFIX."_comms WHERE authid = ? AND (length = 0 OR ends > UNIX_TIMESTAMP()) AND RemovedBy IS NULL AND type = 3", array($steam));
   
-  if(intval($chk[0]) > 0)
+  if(intval($chk[0]) > 0 || intval($chk2[0]) > 0 || intval($chk3[0]) > 0)
   {
     $objResponse->addScript("ShowBox('Ошибка', 'SteamID: $steam уже заблокирован.', 'red', '', true);");
     return $objResponse;
