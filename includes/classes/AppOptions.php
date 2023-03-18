@@ -16,6 +16,7 @@ class AppOptions extends ExtendedObject {
         $this->options = $options;
         $this->changed = [];
     }
+
     /**
      * {@inheritdoc}
      */
@@ -23,6 +24,12 @@ class AppOptions extends ExtendedObject {
     {
         if (!array_key_exists($option, $this->options))
         {
+            if (strpos($option, '___') !== false)
+            {
+                $option = str_replace('___', '.', $option);
+                return $this->get($option);
+            }
+
             return null;
         }
 
@@ -90,5 +97,17 @@ class AppOptions extends ExtendedObject {
         $db = \App::db();
         $db->Prepare($query);
         $db->Finish(true, $data);
+    }
+
+    public function create($optionName, $value)
+    {
+        $query = "
+            INSERT INTO `{{prefix}}settings` (`setting`, `value`)
+            VALUES (?, ?)
+        ";
+
+        $db = \App::db();
+        $db->Prepare($query);
+        $db->Finish(true, [$optionName, $value]);
     }
 }

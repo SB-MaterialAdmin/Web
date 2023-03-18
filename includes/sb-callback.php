@@ -54,7 +54,7 @@ $methods = array(
     'Plogin', 'ServerHostPlayers', 'ServerHostProperty',
     'ServerHostPlayers_list', 'ServerPlayers', 'LostPassword',
     'RefreshServer', 'AddAdmin_pay', 'RehashAdmins_pay',
-    'CSRF', 'GetVACBan'
+    'GetVACBan'
   )
 );
 
@@ -91,10 +91,6 @@ function GetVACBan($bid) {
     }
   }
   return $xajax;
-}
-
-function CSRF() {
-  return new xajaxResponse();
 }
 
 function InstallMOD($modfolder, $status = 0) {
@@ -2301,7 +2297,6 @@ function AddBan($nickname, $type, $steam, $ip, $length, $dfile, $dname, $reason,
   if($error > 0)
     return $objResponse;
 
-  $nickname = RemoveCode($nickname);
   $ip = preg_replace('#[^\d\.]#', '', $ip);//strip ip of all but numbers and dots
   $dname = RemoveCode($dname);
   $reason = RemoveCode($reason);

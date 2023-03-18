@@ -42,7 +42,7 @@ echo '<div id="admin-page-content">';
 	// Add Block
 	echo '<div id="0" style="display:none;">';
 		$theme->assign('permission_addban', $userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_BAN));
-		$theme->assign('customreason', ((isset($GLOBALS['config']['bans.customreasons'])&&$GLOBALS['config']['bans.customreasons']!="")?unserialize($GLOBALS['config']['bans.customreasons']):false));
+		$theme->assign('customreason', ((isset($GLOBALS['config']['comms.customreasons'])&&$GLOBALS['config']['comms.customreasons']!="")?unserialize($GLOBALS['config']['comms.customreasons']):false));
 		$theme->display('page_admin_comms_add.tpl');
 	echo '</div>';
 ?>

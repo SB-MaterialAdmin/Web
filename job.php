@@ -1,4 +1,5 @@
 <?php
+
 include('init.php');
 Header('Content-Type: application/json; charset=UTF8');
 

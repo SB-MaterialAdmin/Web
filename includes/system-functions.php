@@ -789,7 +789,8 @@ function PruneBans()
   $DB->BindData('adminid', $aid);
   $DB->Finish()->EndData();
 
-  $DB->Query('DELETE FROM `{{prefix}}bans` WHERE `authid` NOT REGEXP "^STEAM_[0-9]:[0-9]:[0-9]"');
+  // Workaround #334: delete only bans by Steam with invalid SteamID.
+  $DB->Query('DELETE FROM `{{prefix}}bans` WHERE `authid` NOT REGEXP "^STEAM_[0-9]:[0-9]:[0-9]" AND `type` = 0');
 }
 
 function PruneComms()
@@ -1174,7 +1175,7 @@ function GetCommunityIDFromSteamID2($sid) {
 
 function GetUserAvatar($sid = -1) {
   global $userbank;
-    
+
   static $avatarCache = null;
   if (!$avatarCache) {
     $query = $GLOBALS['db']->Execute(sprintf("SELECT * FROM `%s_avatars`", DB_PREFIX));
@@ -1661,10 +1662,6 @@ function filterInput($type, $name, $filter = FILTER_DEFAULT, $options = []) {
 
 function clearSystemPath($path) {
   return str_replace(ROOT, '/', $path);
-}
-
-function isCsrfEnabled() {
-  return (defined('USE_CSRF') && constant('USE_CSRF') == true);
 }
 
 function resolveSteamURL($url) {

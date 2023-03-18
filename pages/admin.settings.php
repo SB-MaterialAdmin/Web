@@ -26,6 +26,9 @@
 // *************************************************************************
 
 if(!defined("IN_SB")){echo "Ошибка доступа!";die();}
+
+$reasonOptions = ['bans', 'unban', 'comms', 'remove_comms'];
+
 	global $userbank, $theme;
 	
 	//Log stuff
@@ -219,21 +222,37 @@ else
 				
 				$admin_list_en = (isset($_POST['admin_list_t']) && $_POST['admin_list_t'] == "on" ? 1 : 0);
 				$vay4_en = (isset($_POST['vay4_t']) && $_POST['vay4_t'] == "on" ? 1 : 0);
-				
-				$size = sizeof($_POST['bans_customreason']);
-				for($i=0;$i<$size;$i++) {
-					if(empty($_POST['bans_customreason'][$i]))
-						unset($_POST['bans_customreason'][$i]);
-					else
-						$_POST['bans_customreason'][$i] = htmlspecialchars($_POST['bans_customreason'][$i]);
-				}
-				if(sizeof($_POST['bans_customreason'])!=0)
-					$cureason = serialize($_POST['bans_customreason']);
-				else
-					$cureason = "";
+
+                foreach ($reasonOptions as $prefix)
+                {
+                    $fullKeyName = $prefix . '_customreason';
+
+                    $size = sizeof($_POST[$fullKeyName]);
+                    for($i=0;$i<$size;$i++) {
+                        if(empty($_POST[$fullKeyName][$i]))
+                            unset($_POST[$fullKeyName][$i]);
+                        else
+                            $_POST[$fullKeyName][$i] = htmlspecialchars($_POST[$fullKeyName][$i]);
+                    }
+                }
+
+                $reasonValues = [];
+                foreach ($reasonOptions as $prefix)
+                {
+                    $keyName = $prefix . "_customreason";
+                    $value = [];
+
+                    if (sizeof($_POST[$keyName]) != 0)
+                    {
+                        $value = $_POST[$keyName];
+                    }
+
+                    $reasonValues[$prefix] = serialize($value);
+                }
 
 				$tz_string = $_POST['timezoneoffset'];
 
+                // TODO: migrate on AppOptions object
 				$edit = $GLOBALS['db']->Execute("REPLACE INTO ".DB_PREFIX."_settings (`value`, `setting`) VALUES
 												(?, 'template.title'),
 												(?,'template.logo'),
@@ -256,7 +275,11 @@ else
 												(" . (int)$_POST['block_home'] . ", 'config.home.comms'),
 												(".(int)$admin_list_en.", 'page.adminlist'),
 												('".(int)$gendata."', 'page.footer.allow_show_data'),
-												(".(int)$vay4_en.", 'page.vay4er')", array($_POST['template_title'], $_POST['template_logo'], $_POST['config_dateformat'], $_POST['config_dateformat2'], $_POST['dash_intro_text'], $tz_string, $cureason));
+												(".(int)$vay4_en.", 'page.vay4er'),
+												(?, 'unban.customreasons'),
+												(?, 'comms.customreasons'),
+												(?, 'remove_comms.customreasons')", [$_POST['template_title'], $_POST['template_logo'], $_POST['config_dateformat'], $_POST['config_dateformat2'], $_POST['dash_intro_text'], $tz_string, $reasonValues['bans'],
+                                                    $reasonValues['unban'], $reasonValues['comms'], $reasonValues['remove_comms']]);
 				
 				/* SMTP */
 				$GLOBALS['db']->Execute(sprintf("REPLACE INTO `%s_settings` (`value`, `setting`) VALUES
@@ -341,8 +364,18 @@ else
 		$theme->assign('config_time', 			$date_offs);
 		$theme->assign('config_dash_text', 		stripslashes($GLOBALS['config']['dash.intro.text']));
 		$theme->assign('config_bans_per_page',	$GLOBALS['config']['banlist.bansperpage']);
-		
-		$theme->assign('bans_customreason', ((isset($GLOBALS['config']['bans.customreasons'])&&$GLOBALS['config']['bans.customreasons']!="")?unserialize($GLOBALS['config']['bans.customreasons']):array()));
+
+        foreach ($reasonOptions as $prefix)
+        {
+            $optionKey = $prefix . '.customreasons';
+            $themeKey = $prefix . '_customreason';
+
+            $value = ((isset($GLOBALS['config'][$optionKey]) && !empty($GLOBALS['config'][$optionKey]))
+                ? unserialize($GLOBALS['config'][$optionKey]) : []);
+
+            $theme->assign($themeKey, $value);
+        }
+
 		
 		// SMTP Settings
 		$theme->assign('smtp_enabled', ($GLOBALS['config']['smtp.enabled'] == "1"));
@@ -466,7 +499,7 @@ if(ini_get('safe_mode')==1) {
 }
 ?>
 
-function MoreFields()
+function MoreFields(parent)
 {
 	//var t = document.getElementById("custom.reasons");
 	//var tr = t.insertRow("-1");
@@ -477,18 +510,25 @@ function MoreFields()
 	//inp.setAttribute("name","bans_customreason[]");
 	//inp.setAttribute("id","bans_customreason[]");
 	//td.appendChild(inp);
-	
-	var t = document.getElementById("custom.reasons");
+
+    const root = parent.parentElement.parentElement;
+    if (!root.classList.contains('customreasons_container'))
+    {
+        return; // Something went wrong
+    }
+
+    const fieldName = root.dataset.fieldName;
+	var t = root.querySelector('.addcontainer');
 	
 	var div_add = document.createElement("div");
-	div_add.id = "custom.reasons";
 	div_add.className = "fg-line";
+
 	var input_add = document.createElement("input");
 	input_add.className = "form-control";
 	input_add.setAttribute("placeholder","Введите данные");
 	input_add.setAttribute("type","text");
-	input_add.setAttribute("name","bans_customreason[]");
-	input_add.setAttribute("id","bans_customreason[]");
+	input_add.setAttribute("name", fieldName + "[]");
+	input_add.setAttribute("id", fieldName + "[]");
 	div_add.appendChild(input_add);
 	t.appendChild(div_add);
 	

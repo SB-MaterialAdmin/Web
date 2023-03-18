@@ -56,7 +56,7 @@ if(!isset($_GET['id']) || !is_numeric($_GET['id']))
 }
 
 $res = $GLOBALS['db']->GetRow("
-    				SELECT bid, ba.ip, ba.type, ba.authid, ba.name, created, ends, length, reason, ba.aid, ba.sid, ad.user, ad.gid, CONCAT(se.ip,':',se.port), se.sid, mo.icon, dm.origname 
+    				SELECT bid, ba.ip, ba.type, ba.authid, ba.name, created, ends, length, reason, ba.aid, ba.sid, ad.user, ad.gid, CONCAT(se.ip,':',se.port), se.sid, mo.icon, dm.origname, ba.RemoveType 
     				FROM ".DB_PREFIX."_bans AS ba
     				LEFT JOIN ".DB_PREFIX."_admins AS ad ON ba.aid = ad.aid
     				LEFT JOIN ".DB_PREFIX."_servers AS se ON se.sid = ba.sid
@@ -68,6 +68,12 @@ if (!$userbank->HasAccess(ADMIN_OWNER|ADMIN_EDIT_ALL_BANS)&&(!$userbank->HasAcce
 {
 	echo '<script>ShowBox("Ошибка", "Вы не имеете доступ к этому!", "red", "index.php?p=admin&c=bans");</script>';
 	PageDie();
+}
+
+if (($res[6] < time() && $res[7] != 0) || $res[17] != null)
+{
+    echo '<script>ShowBox("Ошибка", "У вас нет доступа к этому!", "red", "index.php?p=admin&c=comms");</script>';
+    PageDie();
 }
 
 isset($_GET["page"])?$pagelink = "&page=".$_GET["page"]:$pagelink = "";
@@ -179,8 +185,7 @@ if(isset($_POST['name']))
 			}
 		}
 	}
-	
-	$_POST['name'] = RemoveCode($_POST['name']);
+
 	$_POST['ip'] = preg_replace('#[^\d\.]#', '', $_POST['ip']);//strip ip of all but numbers and dots
 	$_POST['dname'] = RemoveCode($_POST['dname']);
 	$reason = RemoveCode(trim($_POST['listReason'] == "other"?$_POST['txtReason']:$_POST['listReason']));
