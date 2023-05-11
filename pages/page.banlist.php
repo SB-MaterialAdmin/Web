@@ -632,6 +632,8 @@ while (!$res->EOF)
 				$cdata['commenttxt'] = str_replace("\n", "<br />", $cdata['commenttxt']);
 				// Parse links and wrap them in a <a href=""></a> tag to be easily clickable
 				$cdata['commenttxt'] = preg_replace('@(https?://([-\w\.]+)+(:\d+)?(/([\w/_\.]*(\?\S+)?)?)?)@', '<a href="$1" target="_blank">$1</a>', $cdata['commenttxt']);
+				$cdata['aid'] = $commentres->fields['aid'];
+				$cdata['avatar'] = GetUserAvatar($userbank->GetAdmin($commentres->fields['aid'])['authid']);
 
 				if(!empty($commentres->fields['edittime'])) {
 					$cdata['edittime'] = SBDate($dateformat, $commentres->fields['edittime']);
@@ -761,6 +763,9 @@ if(isset($_GET["comment"])) {
 		$coment['commenttxt'] = str_replace("\n", "<br />", $coment['commenttxt']);
 		// Parse links and wrap them in a <a href=""></a> tag to be easily clickable
 		$coment['commenttxt'] = preg_replace('@(https?://([-\w\.]+)+(:\d+)?(/([\w/_\.]*(\?\S+)?)?)?)@', '<a href="$1" target="_blank">$1</a>', $coment['commenttxt']);
+		$coment['aid'] = $cotherdata->fields['aid'];
+		$coment['avatar'] = GetUserAvatar($userbank->GetAdmin($cotherdata->fields['aid'])['authid']);
+
 		if($cotherdata->fields['editname']!="") {
 			$coment['edittime'] = SBDate($dateformat, $cotherdata->fields['edittime']);
 			$coment['editname'] = $cotherdata->fields['editname'];
@@ -781,6 +786,8 @@ if(isset($_GET["comment"])) {
 }
 $theme->assign('view_comments',$view_comments);
 $theme->assign('comment', (isset($_GET["comment"])&&$view_comments?$_GET["comment"]:false));
+$admlist = $userbank->GetAllAdmins();
+$theme->assign('admlist', $admlist);
 //----------------------------------------
 
 unset($_SESSION['CountryFetchHndl']);
