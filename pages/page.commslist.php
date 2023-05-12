@@ -763,8 +763,6 @@ if(isset($_GET["comment"])) {
 }
 $theme->assign('view_comments',$view_comments);
 $theme->assign('comment', (isset($_GET["comment"])?$_GET["comment"]:false));
-$admlist = $userbank->GetAllAdmins();
-$theme->assign('admlist', $admlist);
 //----------------------------------------
 
 unset($_SESSION['CountryFetchHndl']);
