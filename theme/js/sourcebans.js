@@ -1672,7 +1672,7 @@ function BanFriendsProcess(fid, name)
 function OpenMessageBox(sid, name, popup)
 {
 	if(popup==1) {
-		ShowBox('Отправить сообщение', '<b>Пожалуйста ввеите сообщение, которое вы хотите отправить <br>\''+name+'\'.</b><br>На сервере должен быть включен basechat.smx<br><i>&lt;sm_psay&gt;</i>.<br><textarea rows="3" cols="40" name="ingamemsg" id="ingamemsg" style="overflow:auto;"></textarea><br><div id="ingamemsg.msg" class="badentry"></div>', 'blue', '', true);
+		ShowBox('Отправить сообщение', '<b>Пожалуйста введите сообщение, которое Вы хотите отправить <br>\''+name+'\'.</b><br>На сервере должен быть включен basechat.smx<br><i>&lt;sm_psay&gt;</i>.<br><textarea rows="3" cols="40" name="ingamemsg" id="ingamemsg" style="overflow:auto;"></textarea><br><div id="ingamemsg.msg" class="badentry"></div>', 'blue', '', true);
 		$('dialog-control').setHTML('<input type="button" name="ingmsg" class="btn btn-lg btn-primary waves-effect" onmouseover="ButtonOver(\'ingmsg\')" onmouseout="ButtonOver(\'ingmsg\')" id="ingmsg" value="Отправить" />');
 		$('dialog-control').setStyle('display', 'inline-block');
 		$('ingmsg').addEvent('click', function(){OpenMessageBox(sid, name, 0);});
@@ -1690,6 +1690,30 @@ function OpenMessageBox(sid, name, popup)
 		ShowBox('Send Message', 'Идет отправка запроса...', 'blue', '', false);
 		$('ingamemsg').readOnly = true;
 		xajax_SendMessage(sid, name, message);
+	}
+}
+
+function OpenNickBox(sid, name, popup)
+{
+	if(popup==1) {
+		ShowBox('Изменить ник', '<b>Пожалуйста введите ник, которое Вы хотите изменить для <br>\''+name+'\'.</b><br>На сервере должен быть включен playercommands.smx<br><i>&lt;sm_rename&gt;</i>.<br><textarea rows="3" cols="40" name="ingamemsg" id="ingamemsg" style="overflow:auto;"></textarea><br><div id="ingamemsg.msg" class="badentry"></div>', 'blue', '', true);
+		$('dialog-control').setHTML('<input type="button" name="ingmsg" class="btn btn-lg btn-primary waves-effect" onmouseover="ButtonOver(\'ingmsg\')" onmouseout="ButtonOver(\'ingmsg\')" id="ingmsg" value="Отправить" />');
+		$('dialog-control').setStyle('display', 'inline-block');
+		$('ingmsg').addEvent('click', function(){OpenNickBox(sid, name, 0);});
+	} else if(popup==0) {
+		message = $('ingamemsg').value;
+		if(message == "") {
+			$('ingamemsg.msg').setHTML("Пожалуйста введите ник.");
+			$('ingamemsg.msg').setStyle('display', 'block');
+			return;
+		} else {
+			$('ingamemsg.msg').setHTML('');
+			$('ingamemsg.msg').setStyle('display', 'none');
+		}
+		$('dialog-control').setStyle('display', 'none');
+		ShowBox('Change Nick', 'Идет отправка запроса...', 'blue', '', false);
+		$('ingamemsg').readOnly = true;
+		xajax_ChangeNick(sid, name, message);
 	}
 }
 
