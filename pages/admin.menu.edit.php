@@ -11,25 +11,30 @@ else {
     if ($_POST['Link'] == "edit"){
       // insert.
       $on_act = (isset($_POST['on_link']) && $_POST['on_link'] == "on" ? 1 : 0);
+	  $new_tab = (isset($_POST['onNewTab']) && $_POST['onNewTab'] == "on" ? 1 : 0);
 
-      $DB->Prepare('UPDATE
+	  $DB->Prepare('UPDATE
         `{{prefix}}menu`
       SET
         `text` = :text,
         `description` = :description,
         `url` = :url,
         `enabled` = :enabled,
+        `newtab` = :newtab,
         `priority` = :priority
       WHERE
         `id` = :id');
+
       $DB->BindMultipleData([
         'id'          => $_GET['id'],
         'text'        => $_POST['names_link'],
         'description' => $_POST['des_link'],
         'url'         => $_POST['url_link'],
         'enabled'     => $on_act,
+		'newtab'	  => $new_tab,
         'priority'    => $_POST['priora_link']
       ]);
+
       $DB->Finish();
 
       PushScriptToExecuteAfterLoadPage(sprintf("setTimeout(function() { %s; }, 1350);", generateMsgBoxJS("Успех!", "Ссылка успешно сохранена!", "green", "", true)));
