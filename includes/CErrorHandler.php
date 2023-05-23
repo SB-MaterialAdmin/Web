@@ -66,7 +66,7 @@ class CErrorHandler {
                 $log = new CSystemLog("e", "PHP Error", $msg);
         
                 // SourceBans Fatal Error Handler //
-                self::DrawErrorMessage($msg, $log->parent_function, $title);
+                self::DrawErrorMessage($msg, $log->parent_function);
                 // SourceBans Fatal Error Handler //
 
                 $retValue = false;

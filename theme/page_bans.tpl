@@ -105,7 +105,7 @@
 							<i class="zmdi zmdi-videocam"></i>
 						</div>
 						{/if}
-						{if $view_comments && $ban.commentdata != "Нет" && $ban.commentdata|@count > 0}
+						{if $view_comments && isset($ban.commentdata) && is_array($ban.commentdata) && $ban.commentdata|@count > 0}
 						<div style="float:right;padding-right: 5px;">
 							{$ban.commentdata|@count} <img src="theme/img/comm.png" alt="Comments" title="Комментарии" style="height:14px;width:14px;" />
 						</div>
@@ -142,33 +142,41 @@
 
 										<ul class="dropdown-menu dropdown-menu-right">
 											{if $view_bans}
-											{if $ban.unbanned && $ban.reban_link != false}
-											<li>{$ban.reban_link}</li>
-											{/if}
-											<li>{$ban.blockcomm_link}</li>
-											{if $ban.demo_available}
-											<li>{$ban.demo_link}</li>
-											{/if}
-											<li>{$ban.addcomment}</li>
-											{if $ban.type == 0}
-											{if $groupban}
-											<li>{$ban.groups_link}</li>
-											{/if}
-											{if $friendsban}
-											<li>{$ban.friend_ban_link}</li>
-											{/if}
-											{/if}
-											{if ($ban.view_edit && !$ban.unbanned)} 
-											<li>{$ban.edit_link}</li>
-											{/if}
-											{if ($ban.unbanned == false && $ban.view_unban)}
-											<li>{$ban.unban_link}</li>
-											{/if}
-											{if $ban.view_delete}
-											<li>{$ban.delete_link}</li>
-											{/if}
+												{if $ban.unbanned && $ban.reban_link != false}
+													<li>{$ban.reban_link}</li>
+												{/if}
+
+												<li>{$ban.blockcomm_link}</li>
+
+												{if $ban.demo_available}
+													<li>{$ban.demo_link}</li>
+												{/if}
+
+												{* <li>{$ban.addcomment}</li> *}
+
+												{if $ban.type == 0}
+													{if $groupban}
+														<li>{$ban.groups_link}</li>
+													{/if}
+
+													{if $friendsban}
+														<li>{$ban.friend_ban_link}</li>
+													{/if}
+												{/if}
+
+												{if ($ban.view_edit && !$ban.unbanned)}
+													<li>{$ban.edit_link}</li>
+												{/if}
+
+												{if ($ban.unbanned == false && $ban.view_unban)}
+													<li>{$ban.unban_link}</li>
+												{/if}
+
+												{if $ban.view_delete}
+													<li>{$ban.delete_link}</li>
+												{/if}
 											{else}
-											<li>{$ban.demo_link}</li>
+												<li>{$ban.demo_link}</li>
 											{/if}
 										</ul>
 									</li>
@@ -248,9 +256,9 @@
 										<div class="col-sm-8">
 											{highlight_links}
 												{if $ban.ureason == ""}
-												<i>Причина разбана не указана.</i>
+													<i>Причина разбана не указана.</i>
 												{else}
-												{$ban.ureason}
+													{$ban.ureason}
 												{/if}
 											{/highlight_links}
 										</div>
@@ -385,7 +393,7 @@
 									<!-- COMMENT CODik-->
 									<hr class="m-t-10 m-b-10" />
 									<div class="wall-comment-list">
-										{if $ban.commentdata != "Нет"}
+										{if isset($ban.commentdata) && is_array($ban.commentdata)}
 										<div class="wcl-list">
 											{foreach from=$ban.commentdata item=commenta}
 											<div class="media">

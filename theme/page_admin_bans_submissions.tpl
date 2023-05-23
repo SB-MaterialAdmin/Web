@@ -126,12 +126,18 @@
 <script>InitAccordion('tr.opener3', 'div.opener3', 'mainwrapper');</script>
 {literal}
 <script type="text/javascript">window.addEvent('domready', function(){  
-  InitAccordion('tr.opener', 'div.opener', 'content');
-  {/literal}
-  {if $view_bans}
-  $('tickswitch').value=0;
-  {/if}
-  {literal}
+    InitAccordion('tr.opener', 'div.opener', 'content');
+
+    {/literal}
+        {* This code is used to select several fields in the table for action on them (delete, etc.) *}
+        {* This code is not implemented on this page, apparently it only works in bans *}
+
+        {*
+        {if $view_bans}
+        $('tickswitch').value=0;
+        {/if}
+        *}
+    {literal}
 }); 
 </script>
 {/literal}

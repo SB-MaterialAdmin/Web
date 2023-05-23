@@ -456,6 +456,7 @@ if (!defined('_ADODB_LAYER')) {
 	//
 	// PUBLIC VARS
 	//
+	var $Queries = 0;
 	var $dataProvider = 'native';
 	var $databaseType = '';		/// RDBMS currently in use, eg. odbc, mysql, mssql
 	var $database = '';			/// Name of database to be used.
@@ -1406,6 +1407,7 @@ if (!defined('_ADODB_LAYER')) {
 	 * @return ADORecordSet|bool
 	 */
 	public function Execute($sql, $inputarr = false) {
+		$this->Queries++;
 		if ($this->fnExecute) {
 			$fn = $this->fnExecute;
 			$ret = $fn($this,$sql,$inputarr);

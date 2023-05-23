@@ -147,7 +147,9 @@ else
 //$admin_nav = 'displaying&nbsp;'.$AdminsStart.'&nbsp;-&nbsp;'.$AdminsEnd.'&nbsp;of&nbsp;'.$admin_count.'&nbsp;results';
 
 $pages = ceil($admin_count/$AdminsPerPage);
-if($pages > 1) {
+$admin_nav_p = "";
+
+if ($pages > 1) {
 	if (isset($_GET['showexpiredadmins']))
 		$admin_nav_p = ' / Страницы: <select class="form-control" onchange="window.location=\'index.php?p=admin&c=admins&showexpiredadmins=true&page=\' + $(\'PageChanger\').value;" style="display: inline-block;width: 40px;" id="PageChanger">';
 	else

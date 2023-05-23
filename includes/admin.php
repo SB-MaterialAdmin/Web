@@ -171,12 +171,13 @@ else
 				}
 				$advSearchString = "&advSearch=".$_GET['advSearch']."&advType=".$_GET['advType'];
 			}
-			if($_GET['showexpiredadmins'] == 'true') {
-				$where2 = " AND (ADM.expired < ".time()." AND ADM.expired <> 0)";
+
+			if (!empty($_GET['showexpiredadmins']) && $_GET['showexpiredadmins'] == 'true') {
+				$where2 = " AND (ADM.expired < " . time() . " AND ADM.expired <> 0)";
+			} else {
+				$where2 = " AND (ADM.expired > " . time() . " OR ADM.expired = 0)";
 			}
-			else {
-				$where2 = " AND (ADM.expired > ".time()." OR ADM.expired = 0)";
-			}
+
 			$admins = $GLOBALS['db']->GetAll("SELECT * FROM `" . DB_PREFIX . "_admins` AS ADM".$join." WHERE ADM.aid > 0".$where2."".$where." ORDER BY user LIMIT " . intval(($page-1) * $AdminsPerPage) . "," . intval($AdminsPerPage));
 			// quick fix for the server search showing admins mulitple times.
 			if(isset($_GET['advSearch']) && isset($_GET['advType']) && $_GET['advType'] == 'server') {
@@ -437,19 +438,17 @@ else
 	// ###################[ Settings ]##################################################################
 	{
 		CheckAdminAccess( ADMIN_OWNER );	
-		if($_GET['o'] == 'edit')
-		{
+		if (!empty($_GET['o']) && $_GET['o'] == 'edit') {
 			$banTabMenu = new CTabsMenu();
 			$banTabMenu->addMenuItem("Назад", 0,"", "javascript:history.go(-1);", true);
 			$banTabMenu->outputMenu();			
 			
 			include TEMPLATES_PATH . "/admin.menu.edit.php";
 			RewritePageTitle("Редактирование меню");
-		}else{
+		} else {
 		// ====================[ ADMIN SIDE MENU START ] ===================
 			$settingsTabMenu = new CTabsMenu();
-			if($userbank->HasAccess(ADMIN_OWNER))
-			{
+			if ($userbank->HasAccess(ADMIN_OWNER)) {
 				$settingsTabMenu->addMenuItem("Список",0);
 				$settingsTabMenu->addMenuItem("Добавить",1);
 				$settingsTabMenu->outputMenu();

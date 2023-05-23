@@ -601,27 +601,30 @@ while (!$res->EOF)
 
 	//COMMENT STUFF
 	//-----------------------------------
-	if($userbank->is_admin()) {
+	if ($userbank->is_admin()) {
 		$view_comments = true;
+
 		$commentres = $GLOBALS['db']->Execute("SELECT cid, aid, commenttxt, added, edittime,
 											(SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = C.aid) AS comname,
 											(SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = C.editaid) AS editname
 											FROM `".DB_PREFIX."_comments` AS C
 											WHERE type = 'B' AND bid = '".$data['ban_id']."' ORDER BY added desc");
+		$arr_comments = array();
 
-		if($commentres->RecordCount()>0) {
-			$comment = array();
+		if ($commentres->RecordCount() > 0) {
 			$morecom = 0;
-			while(!$commentres->EOF) {
+
+			while (!$commentres->EOF) {
 				$cdata = array();
-				$cdata['morecom'] = ($morecom==1?true:false);
-				if($commentres->fields['aid'] == $userbank->GetAid() || $userbank->HasAccess(ADMIN_OWNER)) {
+				$cdata['morecom'] = ($morecom == 1 ? true : false);
+
+				if ($commentres->fields['aid'] == $userbank->GetAid() || $userbank->HasAccess(ADMIN_OWNER)) {
 					$cdata['editcomlink'] = "<a href=\"index.php?p=banlist&comment=".$data['ban_id']."&ctype=B&cid=".$commentres->fields['cid'].$pagelink."\"> Редактировать</a>";
-					if($userbank->HasAccess(ADMIN_OWNER)) {
+
+					if ($userbank->HasAccess(ADMIN_OWNER)) {
 						$cdata['delcomlink'] = "<a href=\"#\" target=\"_self\" onclick=\"RemoveComment(".$commentres->fields['cid'].",'B',".(isset($_GET["page"])?$page:-1).");\">Удалить</a>";
 					}
-				}
-				else {
+				} else {
 					$cdata['editcomlink'] = "none";
 					$cdata['delcomlink'] = "none";
 				}
@@ -635,24 +638,23 @@ while (!$res->EOF)
 				$cdata['aid'] = $commentres->fields['aid'];
 				$cdata['avatar'] = GetUserAvatar($userbank->GetAdmin($commentres->fields['aid'])['authid']);
 
-				if(!empty($commentres->fields['edittime'])) {
+				if (!empty($commentres->fields['edittime'])) {
 					$cdata['edittime'] = SBDate($dateformat, $commentres->fields['edittime']);
 					$cdata['editname'] = $commentres->fields['editname'];
-				}
-				else {
+				} else {
 					$cdata['edittime'] = "none";
 					$cdata['editname'] = "none";
 				}
 
 				$morecom = 1;
-				array_push($comment,$cdata);
+				array_push($arr_comments, $cdata);
 				$commentres->MoveNext();
 			}
 		}
-		else
-			$comment = "Нет";
 
-		$data['commentdata'] = $comment;
+		if (count($arr_comments) > 0) {
+			$data['commentdata'] = $arr_comments;
+		}
 	}
 
 
@@ -712,10 +714,11 @@ if (strlen($next) > 0)
 	$ban_nav .= '<li>'.$next.'</li>';
 }
 
-$ban_nav .= '</ul>&nbsp;'; 
-
+$ban_nav .= '</ul>&nbsp;';
 $pages = ceil($BanCount/$BansPerPage);
-if($pages > 1) {
+$ban_nav_p = "";
+
+if ($pages > 1) {
 	$ban_nav_p = ' / Страница: <div class="select" style="display: inline-block;"><select class="form-control" onchange="changePage(this,\'B\',\''.(isset($_GET['advSearch']) ? $_GET['advSearch'] : '').'\',\''.(isset($_GET['advType']) ? $_GET['advType'] : '').'\');" style="display: inline-block;width: 50px;">';
 	for($i=1;$i<=$pages;$i++)
 	{

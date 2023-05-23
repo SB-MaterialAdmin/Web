@@ -17,9 +17,10 @@ class SessionManager
         self::$secureOnly = $isSecure;
 
         session_name(self::$cookieName);
-        $sessionId = $_COOKIE[self::$cookieName] ?: '';
-        if (!empty($sessionId))
-            session_id($sessionId);
+
+		if (!empty($_COOKIE[self::$cookieName])) {
+			session_id($_COOKIE[self::$cookieName]);
+		}
 
         session_id();
     }

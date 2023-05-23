@@ -76,24 +76,20 @@ function materialdesign_body($params, $content, &$smarty) {
 
 function steamid_format($params, &$smarty)
 {
-    $format = $params['format'] ?: 'v2';
-    $steamId = $params['steamid'] ?: 'STEAM_ID_CONSOLE';
-    $gameId = $params['gameid'] ?: 0;
-    $fallback = $params['fallback'] ?: '';
+	$format = (!empty($params['format'])) ? $params['format'] : 'v2';
+	$steamId = (!empty($params['steamid'])) ? $params['steamid'] : 'STEAM_ID_CONSOLE';
+	$gameId = (!empty($params['gameid'])) ? $params['gameid'] : 0;
+	$fallback = (!empty($params['fallback'])) ? $params['fallback'] : '';
 
-    if (!in_array($format, ['v2', 'v3', 'CommunityID', 'AccountID']))
-    {
+    if (!in_array($format, ['v2', 'v3', 'CommunityID', 'AccountID'])) {
         trigger_error('Unknown SteamID format: ' . $format);
         return $fallback;
     }
 
-    try
-    {
+    try {
         $steamId = CSteamId::factory($steamId, $gameId);
         return $steamId->{$format};
-    }
-    catch (\Exception $e)
-    {
+    } catch (\Exception $e) {
         return $fallback;
     }
 }
@@ -105,5 +101,9 @@ function highlight_links_block($params, $content, &$smarty, &$repeat)
 
 function highlight_links_fn($params, &$smarty)
 {
+	if (empty($params['content'])) {
+		return "";
+	}
+
     return preg_replace('/\w{1,}:\/\/\S{1,}/', '<a href="${0}">${0}</a>', $params['content']);
 }

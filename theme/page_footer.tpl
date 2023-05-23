@@ -75,8 +75,6 @@
 		<script>
 		  $.noConflict();
 		</script>
-        
-        <script>setInterval(xajax_CSRF, 15000);</script>
 
         <!-- Cron -->
         <script type="text/javascript" src="theme/js/cron.js"></script>
