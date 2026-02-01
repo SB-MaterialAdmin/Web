@@ -1423,33 +1423,37 @@ function UpdateGroupPermissionCheckBoxes()
 		setTimeout("xajax_UpdateGroupPermissions(document.getElementById('grouptype').value)",1000);
 }
 
-function changePage(newPage, type, advSearch, advType)
-{		
-	nextPage = newPage.options[newPage.selectedIndex].value
-	if(advSearch!="" && advType !="") { 
-		var searchlink = "&advSearch="+advSearch+"&advType="+advType; 
-	} else { 
-		var searchlink =""; 
+function changePage(newPage, type, advSearch, advType, searchText = "")
+{
+	nextPage = newPage.options[newPage.selectedIndex].value;
+
+	var searchlink = "";
+	if (searchText != "") {
+		searchlink = "&searchText=" + encodeURIComponent(searchText);
+	} else if (advSearch != "" && advType != "") {
+		searchlink = "&advSearch=" + encodeURIComponent(advSearch) +
+					 "&advType=" + encodeURIComponent(advType);
 	}
-	 if (nextPage != 0)
-	 {
-		if(type == "A")
-            window.location = "index.php?p=admin&c=admins"+searchlink+"&page="+nextPage;
-		if(type == "B")
-            window.location = "index.php?p=banlist"+searchlink+"&page="+nextPage;
-		if(type == "C")
-            window.location = "index.php?p=commslist"+searchlink+"&page="+nextPage;
-		if(type == "L")
-            window.location = "index.php?p=admin&c=settings"+searchlink+"&page="+nextPage+"#^2";
-        if(type == "P")
-            window.location = "index.php?p=admin&c=bans&ppage="+nextPage+"#^1";
-        if(type == "PA")
-            window.location = "index.php?p=admin&c=bans&papage="+nextPage+"#^1~p1";
-        if(type == "S")
-            window.location = "index.php?p=admin&c=bans&spage="+nextPage+"#^2";
-        if(type == "SA")
-            window.location = "index.php?p=admin&c=bans&sapage="+nextPage+"#^2~s1";
-	 }
+
+	if (nextPage != 0)
+	{
+		if (type == "A")
+			window.location = "index.php?p=admin&c=admins"+searchlink+"&page="+nextPage;
+		if (type == "B")
+			window.location = "index.php?p=banlist"+searchlink+"&page="+nextPage;
+		if (type == "C")
+			window.location = "index.php?p=commslist"+searchlink+"&page="+nextPage;
+		if (type == "L")
+			window.location = "index.php?p=admin&c=settings"+searchlink+"&page="+nextPage+"#^2";
+		if (type == "P")
+			window.location = "index.php?p=admin&c=bans&ppage="+nextPage+"#^1";
+		if (type == "PA")
+			window.location = "index.php?p=admin&c=bans&papage="+nextPage+"#^1~p1";
+		if (type == "S")
+			window.location = "index.php?p=admin&c=bans&spage="+nextPage+"#^2";
+		if (type == "SA")
+			window.location = "index.php?p=admin&c=bans&sapage="+nextPage+"#^2~s1";
+	}
 }
 
 function ShowKickBox(check, type)
