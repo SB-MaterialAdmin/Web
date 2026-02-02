@@ -1425,7 +1425,7 @@ function UpdateGroupPermissionCheckBoxes()
 
 function changePage(newPage, type, advSearch, advType, searchText = "")
 {
-	nextPage = newPage.options[newPage.selectedIndex].value;
+	var nextPage = newPage.options[newPage.selectedIndex].value;
 
 	var searchlink = "";
 	if (searchText != "") {
@@ -1435,10 +1435,11 @@ function changePage(newPage, type, advSearch, advType, searchText = "")
 					 "&advType=" + encodeURIComponent(advType);
 	}
 
-	if (nextPage != 0)
-	{
+	if (nextPage != 0) {
 		if (type == "A")
 			window.location = "index.php?p=admin&c=admins"+searchlink+"&page="+nextPage;
+		if (type == "AE")
+			window.location = "index.php?p=admin&showexpiredadmins=true&c=admins"+searchlink+"&page="+nextPage;
 		if (type == "B")
 			window.location = "index.php?p=banlist"+searchlink+"&page="+nextPage;
 		if (type == "C")
