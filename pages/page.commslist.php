@@ -715,7 +715,7 @@ if ($pages > 1) {
 	$ban_nav_p .= '<select class="form-control" onchange="' . $jsCodeSafe . '" style="display:inline-block; width:50px;">';
 
 	for ($i = 1; $i <= $pages; $i++) {
-		$selected = (isset($_GET["page"]) && $i == $page) ? ' selected="selected"' : '';
+		$selected = ($i == $page) ? ' selected="selected"' : '';
 		$ban_nav_p .= '<option value="' . $i . '"' . $selected . '>&nbsp;' . $i . '</option>';
 	}
 
