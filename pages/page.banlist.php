@@ -712,19 +712,32 @@ if (strlen($next) > 0)
 	$ban_nav .= '<li>'.$next.'</li>';
 }
 
+$ban_nav_p = "";
 $ban_nav .= '</ul>&nbsp;'; 
 
-$pages = ceil($BanCount/$BansPerPage);
-if($pages > 1) {
-	$ban_nav_p = ' / Страница: <div class="select" style="display: inline-block;"><select class="form-control" onchange="changePage(this,\'B\',\''.(isset($_GET['advSearch']) ? $_GET['advSearch'] : '').'\',\''.(isset($_GET['advType']) ? $_GET['advType'] : '').'\');" style="display: inline-block;width: 50px;">';
-	for($i=1;$i<=$pages;$i++)
-	{
-		if(isset($_GET["page"]) && $i == $page) {
-			$ban_nav_p .= '<option value="' . $i . '" selected="selected">&nbsp;' . $i . '</option>';
-			continue;
-		}
-		$ban_nav_p .= '<option value="' . $i . '">&nbsp;' . $i . '</option>';
+$pages = ceil($BanCount / $BansPerPage);
+
+if ($pages > 1) {
+	$advSearchParam = isset($_GET['advSearch']) ? (string)$_GET['advSearch'] : '';
+	$advTypeParam = isset($_GET['advType']) ? (string)$_GET['advType'] : '';
+	$searchTextParam = isset($_GET['searchText']) ? (string)$_GET['searchText'] : '';
+
+	$advSearchJs = json_encode($advSearchParam, JSON_HEX_QUOT | JSON_HEX_TAG);
+	$advTypeJs = json_encode($advTypeParam, JSON_HEX_QUOT | JSON_HEX_TAG);
+	$searchTextJs = json_encode($searchTextParam, JSON_HEX_QUOT | JSON_HEX_TAG);
+
+	$jsCode = "changePage(this, 'B', " . $advSearchJs . ", " . $advTypeJs . ", " . $searchTextJs . ");";
+	$jsCodeSafe = htmlspecialchars($jsCode, ENT_QUOTES, 'UTF-8');
+
+	$ban_nav_p = ' / Страница: ';
+	$ban_nav_p .= '<div class="select" style="display: inline-block;">';
+	$ban_nav_p .= '<select class="form-control" onchange="' . $jsCodeSafe . '" style="display: inline-block;width: 50px;">';
+
+	for ($i = 1; $i <= $pages; $i++) {
+		$selected = ($i == $page) ? ' selected="selected"' : '';
+		$ban_nav_p .= '<option value="' . $i . '"' . $selected . '>&nbsp;' . $i . '</option>';
 	}
+
 	$ban_nav_p .= '</select></div>&nbsp;';
 }
 

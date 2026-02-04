@@ -146,31 +146,39 @@ else
 //=================[ Start Layout ]==================================
 //$admin_nav = 'displaying&nbsp;'.$AdminsStart.'&nbsp;-&nbsp;'.$AdminsEnd.'&nbsp;of&nbsp;'.$admin_count.'&nbsp;results';
 
-$pages = ceil($admin_count/$AdminsPerPage);
-if($pages > 1) {
-	if (isset($_GET['showexpiredadmins']))
-		$admin_nav_p = ' / Страницы: <select class="form-control" onchange="window.location=\'index.php?p=admin&c=admins&showexpiredadmins=true&page=\' + $(\'PageChanger\').value;" style="display: inline-block;width: 40px;" id="PageChanger">';
-	else
-		$admin_nav_p = ' / Страницы: <select class="form-control" onchange="changePage(this,\'A\',\''.$_GET['advSearch'].'\',\''.$_GET['advType'].'\');" style="display: inline-block;width: 40px;">';
-	
-	for($i=1;$i<=$pages;$i++) {
-		if($i==$_GET["page"]) {
-			$admin_nav_p .= '<option value="' . $i . '" selected="selected">' . $i . '</option>';
-			continue;
-		}
-		$admin_nav_p .= '<option value="' . $i . '">' . $i . '</option>';
+$admin_nav_p = "";
+$pages = ceil($admin_count / $AdminsPerPage);
+
+if ($pages > 1) {
+	$advSearchParam = isset($_GET['advSearch']) ? (string)$_GET['advSearch'] : '';
+	$advTypeParam = isset($_GET['advType']) ? (string)$_GET['advType'] : '';
+
+	$advSearchJs = json_encode($advSearchParam, JSON_HEX_QUOT | JSON_HEX_TAG);
+	$advTypeJs = json_encode($advTypeParam, JSON_HEX_QUOT | JSON_HEX_TAG);
+
+	$admin_nav_p = ' / Страницы: ';
+
+	$pageType = (isset($_GET['showexpiredadmins'])) ? 'AE' : 'A';
+	$jsCode = "changePage(this, '" . $pageType . "', " . $advSearchJs . ", " . $advTypeJs . ");";
+	$jsCodeSafe = htmlspecialchars($jsCode, ENT_QUOTES, 'UTF-8');
+
+	$admin_nav_p .= '<select class="form-control" onchange="' . $jsCodeSafe . '" style="display:inline-block; width:40px;">';
+
+	for ($i = 1; $i <= $pages; $i++) {
+		$selected = ($i == $page) ? ' selected="selected"' : '';
+		$admin_nav_p .= '<option value="' . $i . '"' . $selected . '>&nbsp;' . $i . '</option>';
 	}
+
 	$admin_nav_p .= '</select>&nbsp;';
 }
 
 $admin_nav = '<ul class="pagination">';
 	
-if (strlen($prev) > 0)
-{
+if (strlen($prev) > 0) {
 	$admin_nav .= '<li>'.$prev.'</li>';
 }
-if (strlen($next) > 0)
-{
+
+if (strlen($next) > 0) {
 	$admin_nav .= '<li>'.$next.'</li>';
 }
 
