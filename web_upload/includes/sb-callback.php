@@ -2468,9 +2468,15 @@ function ChangeAdminsInfos($aid, $vk, $skype)
 {
 	global $userbank;
 	$objResponse = new xajaxResponse();
-	$aid = (int)$aid;
 
-	if($aid != $userbank->aid && !$userbank->is_logged_in())
+	// Бессмыслица какая-то: функция используется только на странице
+	// редактирования своего аккаунта, но при этом зачем-то принимает админский
+	// айдишник.
+	// 
+	// Чтобы не ломать как-либо фронтенд, $aid функция продолжает принимать, но
+	// не использует.
+	$aid = $userbank->aid;
+	if(!$userbank->is_logged_in())
 	{
 		$objResponse->redirect("index.php?p=login&m=no_access", 0);
 		$log = new CSystemLog("w", "Ошибка доступа", $_SERVER["REMOTE_ADDR"] . " пытался сменить vk или skype, не имея на это прав.");
@@ -2480,13 +2486,13 @@ function ChangeAdminsInfos($aid, $vk, $skype)
 	$vk = RemoveCode($vk);
 	$vk = str_replace(array("http://","https://","/","vk.com"), "", $vk);
 	$skype = RemoveCode($skype);
-	
-	$GLOBALS['db']->Execute("UPDATE `".DB_PREFIX."_admins` SET `vk` = '".$vk."', `skype` = '".$skype."' WHERE `aid` = ?", array((int)$aid));
-	$admname = $GLOBALS['db']->GetRow("SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = ?", array((int)$aid));
+
+	$GLOBALS['db']->Execute("UPDATE `".DB_PREFIX."_admins` SET `vk` = ?, `skype` = ? WHERE `aid` = ?", array($vk, $skype, (int)$aid));
 	$objResponse->addScript("ShowBox('Информация', 'Ваши данные были успешно обновлены!', 'green', 'index.php?p=account');");
-	$log = new CSystemLog("m", "Данные связи изменены", "У адмнистратора ".$admname['user']." успешно были изменены данные на (vk: ".$vk.", skype: ".$skype.")");
+	$log = new CSystemLog("m", "Данные связи изменены", "Администратор успешно изменил данные о себе на (vk: ".$vk.", skype: ".$skype.")");
 	return $objResponse;
 }
+
 function ChangePassword($aid, $pass)
 {
 	global $userbank;
