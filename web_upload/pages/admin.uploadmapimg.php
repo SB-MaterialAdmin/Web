@@ -47,9 +47,10 @@ if(isset($_POST['upload']))
 		if ($curfile['error'] != 0 || $curfile['type'] != "image/jpeg")
 			$message .= sprintf("Не удалось загрузить файл %s. Причина: %s.", $curfile['name'], getReasonByCode(($curfile['type'] != "image/jpeg")?100500:$curfile['error'], "JPG"));
 		else {
-			move_uploaded_file($curfile['tmp_name'], SB_MAP_LOCATION."/".$curfile['name']);
-			$log = new CSystemLog("m", "Изображение карты загружено", "Новое изображение карты загружено: ".htmlspecialchars($curfile['name']));
-			$message .= sprintf("Файл %s загружен.", $curfile['name']); // $curfile['name']
+			$filename = explode('.', $curfile)[0] . '.jpg';
+			move_uploaded_file($curfile['tmp_name'], SB_MAP_LOCATION."/".$filename);
+			$log = new CSystemLog("m", "Изображение карты загружено", "Новое изображение карты загружено: ".htmlspecialchars($filename));
+			$message .= sprintf("Файл %s загружен.", $filename); // $curfile['name']
 		}
 		$message .= "\\n";
 	}
