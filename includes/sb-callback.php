@@ -2474,25 +2474,38 @@ function ChangeAdminsInfos($aid, $vk, $skype)
 {
   global $userbank;
   $objResponse = new xajaxResponse();
-  $aid = (int)$aid;
+  $aidSafe = (int)$aid;
 
-  if($aid != $userbank->aid && !$userbank->is_logged_in())
-  {
+  if (!$userbank->is_logged_in() || $aidSafe != $userbank->aid) {
     $objResponse->redirect("index.php?p=login&m=no_access", 0);
     $log = new CSystemLog("w", "Ошибка доступа", $_SERVER["REMOTE_ADDR"] . " пытался сменить vk или skype, не имея на это прав.");
     return $objResponse;
   }
 
-  $vk = RemoveCode($vk);
-  $vk = str_replace(array("http://","https://","/","vk.com"), "", $vk);
-  $skype = RemoveCode($skype);
+  $vkSafe = RemoveCode($vk);
+  $vkSafe = str_replace(array("http://", "https://", "/", "vk.com"), "", $vkSafe);
+  $skypeSafe = RemoveCode($skype);
   
-  $GLOBALS['db']->Execute("UPDATE `".DB_PREFIX."_admins` SET `vk` = '".$vk."', `skype` = '".$skype."' WHERE `aid` = ?", array((int)$aid));
-  $admname = $GLOBALS['db']->GetRow("SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = ?", array((int)$aid));
-  $objResponse->addScript("ShowBox('Информация', 'Ваши данные были успешно обновлены!', 'green', 'index.php?p=account');");
-  $log = new CSystemLog("m", "Данные связи изменены", "У адмнистратора ".$admname['user']." успешно были изменены данные на (vk: ".$vk.", skype: ".$skype.")");
+  $GLOBALS['db']->Execute("UPDATE `" . DB_PREFIX . "_admins` SET `vk` = ?, `skype` = ? WHERE `aid` = ?", array($vkSafe, $skypeSafe, $aidSafe));
+
+  // Adodb bug, with function Affected_Rows =(
+  //if ($GLOBALS['db']->Affected_Rows() < 1) {
+    //$objResponse->addScript("ShowBox('Ошибка', 'Не удалось обновить данные!', 'red', 'index.php?p=account');");
+  //} else {
+    $admname = $GLOBALS['db']->GetRow("SELECT user FROM `" . DB_PREFIX . "_admins` WHERE aid = ?", array($aidSafe));
+    $admnameSafe = RemoveCode($admname);
+
+    $objResponse->addScript("ShowBox('Информация', 'Ваши данные были успешно обновлены!', 'green', 'index.php?p=account');");
+    
+    $log = new CSystemLog("m", "Данные связи изменены", 
+      "У администратора " . $admnameSafe . 
+      " успешно были изменены данные на (vk: " . $vkSafe . ", skype: " . $skypeSafe . ")"
+    );
+  //}
+
   return $objResponse;
 }
+
 function ChangePassword($aid, $pass)
 {
   global $userbank;
