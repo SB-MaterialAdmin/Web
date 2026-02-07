@@ -51,10 +51,13 @@ $reasonOptions = ['bans', 'unban', 'comms', 'remove_comms'];
 	
 	// search
 	$where = "";
-	if(isset($_GET['advSearch']))
+	$searchlink = "";
+	if (isset($_GET['advSearch']))
 	{
 		// Escape the value, but strip the leading and trailing quote
-		$value = substr($GLOBALS['db']->qstr($_GET['advSearch'], get_magic_quotes_gpc()), 1, -1);
+		$value = $GLOBALS['db']->qstr($_GET['advSearch'], false);
+		$value = substr($value, 1, -1);
+
 		$type = $_GET['advType'];
 		switch($type)
 		{
@@ -83,8 +86,6 @@ $reasonOptions = ['bans', 'unban', 'comms', 'remove_comms'];
 		}
 		$searchlink = "&advSearch=".$_GET['advSearch']."&advType=".$_GET['advType'];
 	}
-	else
-		$searchlink = "";
 	
 	$list_start = ($page-1) * intval($GLOBALS['config']['banlist.bansperpage']);
 	$list_end = $list_start + intval($GLOBALS['config']['banlist.bansperpage']);

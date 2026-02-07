@@ -90,10 +90,13 @@ else
 			{
 				$page = intval($_GET['page']);
 			}
-			if(isset($_GET['advSearch']))
+			
+			if (isset($_GET['advSearch']))
 			{
 				// Escape the value, but strip the leading and trailing quote
-				$value = substr($GLOBALS['db']->qstr($_GET['advSearch'], get_magic_quotes_gpc()), 1, -1);
+				$value = $GLOBALS['db']->qstr($_GET['advSearch'], false);
+				$value = substr($value, 1, -1);
+
 				$type = $_GET['advType'];
 				switch($type)
 				{

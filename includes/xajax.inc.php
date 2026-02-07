@@ -1224,18 +1224,6 @@ class xajax
 					$aArray[$key] = $this->_decodeUTF8Data($value);
 				}
 			}
-			// If magic quotes is on, then we need to strip the slashes from the
-			// array values because of the parse_str pass which adds slashes
-			if (get_magic_quotes_gpc() == 1) {
-				$newArray = array();
-				foreach ($aArray as $sKey => $sValue) {
-					if (is_string($sValue))
-						$newArray[$sKey] = stripslashes($sValue);
-					else
-						$newArray[$sKey] = $sValue;
-				}
-				$aArray = $newArray;
-			}
 		}
 		
 		return $aArray;
