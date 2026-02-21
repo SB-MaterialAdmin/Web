@@ -22,9 +22,17 @@
 - **[Плагин (новый)](https://github.com/SB-MaterialAdmin/NewServer/archive/master.zip)**
 - **[Плагин (старый)](https://github.com/SB-MaterialAdmin/OldServer/archive/master.zip)**
 
-[Список всех планируемых изменений (TODO)](https://github.com/SB-MaterialAdmin/Web/wiki/TODO)
+### Безопасность
+SourceBans Material Admin во многом, наследуя код не самой свежей версии SourceBans++, может быть подвержен разным уязвимостям.
+
+В случае обнаружения каких-либо уязвимостей, пишите, пожалуйста, на e-mail kruzefag@gmail.com
+
+#### Обнаруженные уязвимости
+
+- [SQL-инъекция в методе обновления контактов + RCE в загрузке изображений карт](https://gist.github.com/ng-dst/ca6663a4107fd39eaba1be2cb1d52b51), существуют почти с самого начала. Сообщено было 29.10.2025.
 
 Авторы: [AS.^TRO](http://hlmod.ru/members/79776/), [SAZONISCHE](http://hlmod.ru/members/57554/), [XaH JoB](http://hlmod.ru/members/81268/), [Vampir](http://hlmod.ru/members/17369/), [gibs](http://hlmod.ru/members/46233/), [CrazyHackGUT](http://hlmod.ru/members/72654/)
+
 
 [Скриншоты](http://imgur.com/a/5PMoj)
 
