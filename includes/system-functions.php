@@ -719,41 +719,75 @@ function PageDie()
 	die();
 }
 
-function GetMapImage(string $map, ?string $game = null, array $extensions = ['jpg', 'png', 'webp']) : string
+/**
+ * Re-encodes an image to strip potentially malicious metadata
+ * 
+ * @param string $filePath Path to the image file
+ * @param int $imageType IMAGETYPE_* constant (IMAGETYPE_JPEG, IMAGETYPE_PNG, IMAGETYPE_WEBP)
+ * @return bool Returns true if re-encoding succeeded, false otherwise
+ */
+function reencodeImage(string $filePath, int $imageType): bool
 {
-    // Sanitize inputs: remove any characters that are not letters, numbers, underscore, dash, dot
-    // This prevents directory traversal and other injection.
-    $safe_map = preg_replace('/[^a-zA-Z0-9._-]/', '', $map);
-    if ($game !== null) {
-        $safe_game = preg_replace('/[^a-zA-Z0-9._-]/', '', $game);
-    } else {
-        $safe_game = '';
+    if (!extension_loaded('gd')) {
+        return false;
     }
 
-    // Base directory for map images (filesystem path)
+    $img = null;
+
+    switch ($imageType) {
+        case IMAGETYPE_JPEG:
+            if (function_exists('imagecreatefromjpeg')) {
+                $img = @imagecreatefromjpeg($filePath);
+                if ($img) imagejpeg($img, $filePath, 90);
+            }
+            break;
+        case IMAGETYPE_PNG:
+            if (function_exists('imagecreatefrompng')) {
+                $img = @imagecreatefrompng($filePath);
+                if ($img) imagepng($img, $filePath, 9);
+            }
+            break;
+        case IMAGETYPE_WEBP:
+            if (function_exists('imagecreatefromwebp')) {
+                $img = @imagecreatefromwebp($filePath);
+                if ($img) imagewebp($img, $filePath, 80);
+            }
+            break;
+    }
+
+    if (!$img) {
+        return false;
+    }
+
+    imagedestroy($img);
+
+    return true;
+}
+
+function GetMapImage(string $map, ?string $game = null, array $extensions = ALLOW_GAMEMAPS_EXT): string
+{
+    // Filesystem path for maps
     $base_dir = rtrim(SB_MAP_LOCATION, '/') . '/';
+    // Relative URL path for browser
+    $url_prefix = SB_MAP_URL;
 
-    // Relative URL prefix (adjust if your images are served from a different base)
-    $url_prefix = rtrim(str_replace($_SERVER['DOCUMENT_ROOT'], '', SB_MAP_LOCATION), '/') . '/';
-
-    // Search for existing file
+    // First, check in game folder if provided
     foreach ($extensions as $ext) {
-        // First try in game subfolder if applicable
-        if ($safe_game) {
-            $fs_path = $base_dir . $safe_game . '/' . $safe_map . '.' . $ext;
-            if (file_exists($fs_path)) {
-                return $url_prefix . $safe_game . '/' . $safe_map . '.' . $ext;
+        if ($game !== null && $game !== '') {
+            $fs_path = $base_dir . $game . '/' . $map . '.' . $ext;
+            if (is_file($fs_path)) {
+                return $url_prefix . $game . '/' . $map . '.' . $ext;
             }
         }
 
-        // Then try in root maps folder
-        $fs_path = $base_dir . $safe_map . '.' . $ext;
-        if (file_exists($fs_path)) {
-            return $url_prefix . $safe_map . '.' . $ext;
+        // Then check in root maps folder
+        $fs_path = $base_dir . $map . '.' . $ext;
+        if (is_file($fs_path)) {
+            return $url_prefix . $map . '.' . $ext;
         }
     }
 
-    // Fallback to nomap.jpg (make sure nomap.jpg exists in the maps folder)
+    // Fallback if no file found
     return $url_prefix . 'nomap.jpg';
 }
 

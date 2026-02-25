@@ -41,7 +41,25 @@ define('TEMPLATES_PATH', ROOT . 'pages');
 define('INCLUDES_PATH', ROOT . 'includes');
 define('SB_DEMO_LOCATION','demos');
 define('SB_ICON_LOCATION','images/games');
-define('SB_MAP_LOCATION', ROOT . 'images/maps');
+
+// Relative URL for browser (no leading slash)
+define('SB_MAP_URL', 'images/maps/');
+
+// Full filesystem path (ROOT + SB_MAP_URL), ensure single slash between them
+define('SB_MAP_LOCATION', rtrim(ROOT, '/') . '/' . SB_MAP_URL);
+
+// Permitted image extensions for game maps.
+define('ALLOWED_GAMEMAPS_TYPES', [
+    IMAGETYPE_JPEG => 'jpg',
+    IMAGETYPE_PNG  => 'png',
+    IMAGETYPE_WEBP => 'webp'
+]);
+
+define('ALLOW_GAMEMAPS_EXT', array_map('strtolower', array_values(ALLOWED_GAMEMAPS_TYPES)));
+define('MAX_GAMEMAPS_SIZE_BYTES', 5 * 1024 * 1024); // 5 MB
+define('MAX_GAMEMAPS_WIDTH', 4096);
+define('MAX_GAMEMAPS_HEIGHT', 4096);
+
 define('SB_ICONS', ROOT . SB_ICON_LOCATION);
 define('SB_DEMOS', USER_DATA . SB_DEMO_LOCATION);
 
