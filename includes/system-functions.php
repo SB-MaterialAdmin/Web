@@ -719,35 +719,44 @@ function PageDie()
 	die();
 }
 
-function GetMapImage($map, $game=false)
+function GetMapImage(string $map, ?string $game = null, array $extensions = ['jpg', 'png', 'webp']) : string
 {
-	if($game){
-		if(@file_exists(SB_MAP_LOCATION . "/".$game."/" . $map . ".jpg"))
-			$map_icon = "images/maps/".$game."/" . $map . ".jpg";
-		else{
-			if(@file_exists(SB_MAP_LOCATION . "/" . $map . ".jpg"))
-				$map_icon = "images/maps/" . $map . ".jpg";
-			else
-				$map_icon = "images/maps/nomap.jpg";
-		}
-	}else{
-		if(@file_exists(SB_MAP_LOCATION . "/" . $map . ".jpg"))
-			$map_icon = "images/maps/" . $map . ".jpg";
-		else
-			$map_icon = "images/maps/nomap.jpg";
-	}
-	return $map_icon;
+    // Sanitize inputs: remove any characters that are not letters, numbers, underscore, dash, dot
+    // This prevents directory traversal and other injection.
+    $safe_map = preg_replace('/[^a-zA-Z0-9._-]/', '', $map);
+    if ($game !== null) {
+        $safe_game = preg_replace('/[^a-zA-Z0-9._-]/', '', $game);
+    } else {
+        $safe_game = '';
+    }
+
+    // Base directory for map images (filesystem path)
+    $base_dir = rtrim(SB_MAP_LOCATION, '/') . '/';
+
+    // Relative URL prefix (adjust if your images are served from a different base)
+    $url_prefix = rtrim(str_replace($_SERVER['DOCUMENT_ROOT'], '', SB_MAP_LOCATION), '/') . '/';
+
+    // Search for existing file
+    foreach ($extensions as $ext) {
+        // First try in game subfolder if applicable
+        if ($safe_game) {
+            $fs_path = $base_dir . $safe_game . '/' . $safe_map . '.' . $ext;
+            if (file_exists($fs_path)) {
+                return $url_prefix . $safe_game . '/' . $safe_map . '.' . $ext;
+            }
+        }
+
+        // Then try in root maps folder
+        $fs_path = $base_dir . $safe_map . '.' . $ext;
+        if (file_exists($fs_path)) {
+            return $url_prefix . $safe_map . '.' . $ext;
+        }
+    }
+
+    // Fallback to nomap.jpg (make sure nomap.jpg exists in the maps folder)
+    return $url_prefix . 'nomap.jpg';
 }
 
-/*
-function GetMapImage($map)
-{
-	if(@file_exists(SB_MAP_LOCATION . "/" . $map . ".jpg"))
-		return "images/maps/" . $map . ".jpg";
-	else
-		return "images/maps/nomap.jpg";
-}
-*/
 function CheckExt($filename, $ext)
 {
 	if (is_array($ext)) {

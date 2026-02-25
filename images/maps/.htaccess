@@ -1,0 +1,6 @@
+php_flag engine off
+RemoveHandler .php .phtml .php3 .php4 .php5 .php7 .phps
+<FilesMatch "\.(php|phtml|php3|php4|php5|php7|phps|cgi|pl|asp|aspx|py|rb|sh)$">
+    Order Deny,Allow
+    Deny from all
+</FilesMatch>
