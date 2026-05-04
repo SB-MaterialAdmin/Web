@@ -91,6 +91,7 @@ class ADODB_mysqli extends ADOConnection {
 	 * @var bool True if the last executed statement is a SELECT {@see _query()}
 	 */
 	private $isSelectStatement = false;
+    private $databaseName;
 
 	/**
 	 * ADODB_mysqli constructor.
@@ -1475,6 +1476,7 @@ class ADORecordSet_mysqli extends ADORecordSet{
 
 	/** @var mysqli_result result link identifier */
 	var $_queryID;
+    var $adodbFetchMode;
 
 	function __construct($queryID, $mode = false)
 	{

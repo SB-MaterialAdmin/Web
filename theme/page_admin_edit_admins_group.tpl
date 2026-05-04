@@ -53,7 +53,10 @@
 				&nbsp;
 				{sb_button text="Назад" onclick="history.go(-1)" icon="<i class='zmdi zmdi-undo'></i>" class="bgm-red btn-icon-text" id="aback"}
 			</div>
-        {$server_script}
+
+			{if !empty($server_script)}
+				{$server_script}
+			{/if}
 		</div>
 	</div>		
 </form>

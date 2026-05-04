@@ -131,7 +131,7 @@ class xajaxResponse
 	 */
 	function setOutputEntities($bOption)
 	{
-		$this->bOutputEntities = (boolean)$bOption;
+		$this->bOutputEntities = (bool)$bOption;
 		return $this;
 	}
 	

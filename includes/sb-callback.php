@@ -1012,6 +1012,8 @@ function AddAdmin_pay($mask, $srv_mask, $a_name, $a_steam, $a_email, $a_password
       }
     }
   }
+
+  // #FIXME PLS undefined var $type
   // If they didnt type a steamid
   if ($type == 0)
   {
@@ -1443,6 +1445,7 @@ function AddAdmin($mask, $srv_mask, $a_name, $a_steam, $a_email, $a_password, $a
     }
   }
 
+  // #FIXME PLS undefined var $type
   // If they didnt type a steamid
   if ($type == 0)
   {
@@ -3151,7 +3154,7 @@ function RefreshServer($sid)
   return $objResponse;
 }
 
-function RehashAdmins_pay($server, $do=0, $card)
+function RehashAdmins_pay(string $server, string $card, int $do=0) : xajaxResponse
 {
   $card = RemoveCode($card);
   $card = preg_replace("/[^0-9]/", "", $card);
@@ -3168,7 +3171,7 @@ function RehashAdmins_pay($server, $do=0, $card)
   $servers = explode(",",$server);
   if(sizeof($servers)>0) {
     if(sizeof($servers)-1 > $do)
-      $objResponse->addScriptCall("xajax_RehashAdmins_pay", $server, $do+1, $card);
+      $objResponse->addScriptCall("xajax_RehashAdmins_pay", $server, $card, $do+1);
 
     $serv = $GLOBALS['db']->GetRow("SELECT ip, port, rcon FROM ".DB_PREFIX."_servers WHERE sid = '".(int)$servers[$do]."';");
     if(empty($serv['rcon'])) {
@@ -3825,6 +3828,9 @@ function AddBlock($nickname, $type, $steam, $length, $reason)
 
   $objResponse->addScript("ShowBlockBox('".$steam."', '".(int)$type."', '".(int)$len."');");
   $objResponse->addScript("TabToReload();");
+
+  //$kickit = isset($GLOBALS['config']['config.enablekickit']) && $GLOBALS['config']['config.enablekickit'] == "1";
+  $kickit = false;
   $log = new CSystemLog("m", "Блок добавлен", "Блок (" . $steam . ") был добавлен, причина: $reason, срок: $length", true, $kickit);
   return $objResponse;
 }

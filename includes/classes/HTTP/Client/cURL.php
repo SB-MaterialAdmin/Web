@@ -29,7 +29,6 @@ class cURL extends AbstractClient {
     $response->Status       = curl_getinfo($curl, CURLINFO_HTTP_CODE);
     $response->ContentType  = curl_getinfo($curl, CURLINFO_CONTENT_TYPE);
 
-    curl_close($curl);
     return $response;
   }
 }

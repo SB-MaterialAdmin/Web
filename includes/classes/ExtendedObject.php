@@ -30,15 +30,15 @@ abstract class ExtendedObject implements \ArrayAccess {
      */
     abstract public function remove($key);
 
-    public function offsetExists($offset)       { return $this->exists($offset);    }
-    public function __isset($offset)            { return $this->exists($offset);    }
+    public function offsetExists(mixed $offset) : bool       { return $this->exists($offset);    }
+    public function __isset(mixed $offset) : bool           { return $this->exists($offset);    }
 
-    public function offsetUnset($offset)        { $this->remove($offset);           }
-    public function __unset($offset)            { $this->remove($offset);           }
+    public function offsetUnset(mixed $offset) : void       { $this->remove($offset);           }
+    public function __unset(mixed $offset) : void           { $this->remove($offset);           }
 
-    public function offsetGet($offset)          { return $this->get($offset);       }
-    public function __get($offset)              { return $this->get($offset);       }
+    public function offsetGet(mixed $offset) : mixed          { return $this->get($offset);       }
+    public function __get(mixed $offset) : mixed             { return $this->get($offset);       }
 
-    public function offsetSet($offset, $value)  { $this->set($offset, $value);      }
-    public function __set($offset, $value)      { $this->set($offset, $value);      }
+    public function offsetSet(mixed $offset, mixed $value) : void  { $this->set($offset, $value);      }
+    public function __set(mixed $offset, mixed $value) : void     { $this->set($offset, $value);      }
 }

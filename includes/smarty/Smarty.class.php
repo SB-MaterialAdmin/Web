@@ -561,6 +561,7 @@ class Smarty
      * @var string
      */
     var $_cache_including = false;
+    var $_cache_include_info;
 
     /**#@-*/
     /**

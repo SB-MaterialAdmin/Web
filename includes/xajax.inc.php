@@ -240,7 +240,7 @@ class xajax
 	{
 		$sVar = 'b' . ucfirst($name);
 		if (array_key_exists($sVar, get_object_vars($this))) {
-			$this->$sVar = (boolean)$value;
+			$this->$sVar = (bool)$value;
 		}
 		else {
 			trigger_error("The flag \"$name\" could not be found", E_USER_ERROR);

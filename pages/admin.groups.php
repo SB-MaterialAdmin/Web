@@ -31,6 +31,8 @@ global $userbank, $theme;
 echo '<div id="admin-page-content">';
 
 // web groups
+$web_group_admins = [];
+$web_group_count = [];
 $web_group_list = $GLOBALS['db']->GetAll("SELECT * FROM `" . DB_PREFIX . "_groups` WHERE type != '3'");
 for($i=0;$i<count($web_group_list);$i++)
 {
@@ -41,6 +43,9 @@ for($i=0;$i<count($web_group_list);$i++)
 }
 
 // Server admin groups
+$server_admin_group_admins = [];
+$server_admin_group_count = [];
+$server_admin_group_overrides = [];
 $server_admin_group_list = $GLOBALS['db']->GetAll("SELECT * FROM `" . DB_PREFIX . "_srvgroups`") ;
 for($i=0;$i<count($server_admin_group_list);$i++)
 {

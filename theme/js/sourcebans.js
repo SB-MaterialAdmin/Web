@@ -1488,12 +1488,12 @@ function ShowRehashBox_pay(servers, title, msg, color, redir, card)
 	{
 		ShowBox(title, msg, color, 'index.php?p=account', false);
 		$('dialog-control').setStyle('display', 'none');
-		//xajax_RehashAdmins_pay(servers, 0, card);
+		//xajax_RehashAdmins_pay(servers, card, 0);
 	}else{
 		msg = msg + '<br /><hr /><i>Обновление данных администратора и группы по всем связанным серверам...</i><div id="rehashDiv" name="rehashDiv" width="100%"></div>';
 		ShowBox(title, msg, color, '', false);
 		$('dialog-control').setStyle('display', 'none');
-		xajax_RehashAdmins_pay(servers, 0, card);
+		xajax_RehashAdmins_pay(servers, card, 0);
 	}
 }
 

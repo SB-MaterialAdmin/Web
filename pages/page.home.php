@@ -204,8 +204,8 @@ $theme->assign('listing_block',  $GLOBALS['config']['config.home.comms']);
 require(TEMPLATES_PATH . "/page.servers.php"); //Set theme vars from servers page
 
 $theme->assign('dashboard_lognopopup', (isset($GLOBALS['config']['dash.lognopopup']) && $GLOBALS['config']['dash.lognopopup'] == "1"));
-$theme->assign('dashboard_title',  stripslashes($GLOBALS['config']['dash.intro.title']));
-$theme->assign('dashboard_text',  stripslashes($GLOBALS['config']['dash.intro.text']));
+$theme->assign('dashboard_title',  stripslashes($GLOBALS['config']['dash.intro.title'] ?? ''));
+$theme->assign('dashboard_text',  stripslashes($GLOBALS['config']['dash.intro.text'] ?? ''));
 $theme->assign('dashboard_info_block',  $GLOBALS['config']['dash.info_block']);
 $theme->assign('dashboard_info_block_text',  $GLOBALS['config']['dash.info_block_text']);
 $theme->assign('dashboard_info_block_text_p',  $GLOBALS['config']['dash.info_block_text_t']);
