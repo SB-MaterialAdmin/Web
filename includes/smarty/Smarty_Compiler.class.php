@@ -73,6 +73,7 @@ class Smarty_Compiler extends Smarty {
 
     var $_strip_depth           =   0;
     var $_additional_newline    =   "\n";
+    var $_dvar_math_regexp = "";
 
     /**#@-*/
     /**

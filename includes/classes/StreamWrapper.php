@@ -6,7 +6,8 @@ class StreamWrapper {
      */
     protected static $virtualHosts = [];
     protected static $hooks = [];
-
+    public $context; // Fix smarty warning
+    
     public static function addVirtualHost($host, $path)
     {
         self::$virtualHosts[$host] = $path;
