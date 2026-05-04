@@ -174,10 +174,9 @@ if (isset($_POST['upload'])) {
 	}
 
 	// XSS
-	$alertsSafe = RemoveCode(implode("\\n", $alerts));
-
-	// Prepare JS alert
-	$message .= '<script>alert("' . $alertsSafe . '"); self.close();</script>';
+    $alertsSafe = json_encode(implode("\n", $alerts), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
+    // Prepare JS alert
+    $message .= '<script>alert(' . $alertsSafe . '); self.close();</script>';
 }
 
 // XSS
