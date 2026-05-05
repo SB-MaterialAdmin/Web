@@ -33,7 +33,7 @@ $ADODB_PERF_MIN = 0.05; // log only if >= minimum number of secs to run
 function adodb_getmem()
 {
 	if (function_exists('memory_get_usage'))
-		return (integer) ((memory_get_usage()+512)/1024);
+		return (int) ((memory_get_usage()+512)/1024);
 
 	$pid = getmypid();
 
@@ -49,7 +49,7 @@ function adodb_getmem()
 	if (sizeof($output) == 0) return 0;
 
 	$memarr = explode(' ',$output[0]);
-	if (sizeof($memarr)>=2) return (integer) $memarr[1];
+	if (sizeof($memarr)>=2) return (int) $memarr[1];
 
 	return 0;
 }
@@ -237,6 +237,9 @@ class adodb_perf {
 	var $createTableSQL = false;
 	var $maxLength = 2000;
 
+	/** @var array Settings data. */
+	var $settings = [];
+
     // Sets the tablename to be used
     static function table($newtable = false)
     {
@@ -358,7 +361,7 @@ Committed_AS:   348732 kB
 		if (!$info) return false;
 
 		if (strncmp(PHP_OS,'WIN',3)==0) {
-			return (integer) $info[0];
+			return (int) $info[0];
 		}else {
 			if (empty($this->_lastLoad)) {
 				sleep(1);
@@ -598,7 +601,7 @@ Committed_AS:   348732 kB
 		$arr[0] = (float)$this->DBParameter('data cache hit ratio');
 		$arr[1] = (float)$this->DBParameter('data reads');
 		$arr[2] = (float)$this->DBParameter('data writes');
-		$arr[3] = (integer) $this->DBParameter('current connections');
+		$arr[3] = (int) $this->DBParameter('current connections');
 		return $arr;
 	}
 
@@ -704,7 +707,7 @@ Committed_AS:   348732 kB
 	 else $do = 'stats';
 
 	if (isset($_GET['nsql'])) {
-		if ($_GET['nsql'] > 0) $nsql = $_SESSION['ADODB_PERF_SQL'] = (integer) $_GET['nsql'];
+		if ($_GET['nsql'] > 0) $nsql = $_SESSION['ADODB_PERF_SQL'] = (int) $_GET['nsql'];
 	}
 	echo "<title>ADOdb Performance Monitor on $app</title><body bgcolor=white>";
 	if ($do == 'viewsql') $form = "<td><form># SQL:<input type=hidden value=viewsql name=do> <input type=text size=4 name=nsql value=$nsql><input type=submit value=Go></td></form>";
@@ -973,7 +976,7 @@ Committed_AS:   348732 kB
 					rs2html($rs);
 				}
 			} else {
-				$e1 = (integer) $this->conn->ErrorNo();
+				$e1 = (int) $this->conn->ErrorNo();
 				$e2 = $this->conn->ErrorMsg();
 				if (($e1) || ($e2)) {
 					if (empty($e1)) $e1 = '-1'; // postgresql fix
@@ -1014,7 +1017,7 @@ Committed_AS:   348732 kB
      *      <code>ADODB_OPT_LOW</code> for CPU-less optimization
      *      Default is LOW <code>ADODB_OPT_LOW</code>
      * @author Markus Staab
-     * @return Returns <code>true</code> on success and <code>false</code> on error
+     * @return bool true on success, false on error
      */
     function OptimizeTables()
     {
@@ -1045,7 +1048,7 @@ Committed_AS:   348732 kB
      *      <code>ADODB_OPT_LOW</code> for CPU-less optimization
      *      Default is LOW <code>ADODB_OPT_LOW</code>
      * @author Markus Staab
-     * @return Returns <code>true</code> on success and <code>false</code> on error
+	 * @return bool true on success, false on error
      */
     function OptimizeTable( $table, $mode = ADODB_OPT_LOW)
     {
@@ -1059,7 +1062,7 @@ Committed_AS:   348732 kB
      * optimize each using <code>optmizeTable()</code>
      *
      * @author Markus Staab
-     * @return Returns <code>true</code> on success and <code>false</code> on error
+	 * @return bool true on success, false on error
      */
     function optimizeDatabase()
     {

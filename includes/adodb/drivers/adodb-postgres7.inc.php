@@ -117,8 +117,8 @@ class ADODB_postgres7 extends ADODB_postgres64 {
 	{
 		$nrows = (int) $nrows;
 		$offset = (int) $offset;
-		$offsetStr = ($offset >= 0) ? " OFFSET ".((integer)$offset) : '';
-		$limitStr  = ($nrows >= 0)  ? " LIMIT ".((integer)$nrows) : '';
+		$offsetStr = ($offset >= 0) ? " OFFSET ".((int)$offset) : '';
+		$limitStr  = ($nrows >= 0)  ? " LIMIT ".((int)$nrows) : '';
 		if ($secs2cache)
 			$rs = $this->CacheExecute($secs2cache,$sql."$limitStr$offsetStr",$inputarr);
 		else
@@ -231,7 +231,7 @@ class ADODB_postgres7 extends ADODB_postgres64 {
 		}
 		// check if no data returned, then no need to create real recordset
 		if ($rez && pg_num_fields($rez) <= 0) {
-			if (is_resource($this->_resultid) && get_resource_type($this->_resultid) === 'pgsql result') {
+			if ($this->_resultid !== false) {
 				pg_free_result($this->_resultid);
 			}
 			$this->_resultid = $rez;

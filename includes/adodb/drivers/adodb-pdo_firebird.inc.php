@@ -24,21 +24,13 @@
 /**
  * Class ADODB_pdo_firebird
  */
-class ADODB_pdo_firebird extends ADODB_pdo
+class ADODB_pdo_firebird extends ADODB_pdo_base
 {
 	public $dialect = 3;
 	public $metaTablesSQL = "select lower(rdb\$relation_name) from rdb\$relations where rdb\$relation_name not like 'RDB\$%'";
 	public $metaColumnsSQL = "select lower(a.rdb\$field_name), a.rdb\$null_flag, a.rdb\$default_source, b.rdb\$field_length, b.rdb\$field_scale, b.rdb\$field_sub_type, b.rdb\$field_precision, b.rdb\$field_type from rdb\$relation_fields a, rdb\$fields b where a.rdb\$field_source = b.rdb\$field_name and a.rdb\$relation_name = '%s' order by a.rdb\$field_position asc";
 
 	var $arrayClass = 'ADORecordSet_array_pdo_firebird';
-
-	function _init($parentDriver)
-	{
-		$this->pdoDriver = $parentDriver;
-		//$parentDriver->_bindInputArray = true;
-		//$parentDriver->hasTransactions = false; // // should be set to false because of PDO SQLite driver not supporting changing autocommit mode
-		//$parentDriver->hasInsertID = true;
-	}
 
 	/**
 	 * Gets the version iformation from the server
@@ -243,12 +235,6 @@ class ADODB_pdo_firebird extends ADODB_pdo
 		return $this->Execute("DROP SEQUENCE $seqname");
 	}
 
-
-	public function _affectedrows()
-	{
-		return fbird_affected_rows($this->_transactionID ? $this->_transactionID : $this->_connectionID);
-	}
-
 	public function genId($seqname = 'adodbseq', $startID = 1)
 	{
 		$getnext = ("SELECT Gen_ID($seqname,1) FROM RDB\$DATABASE");
@@ -259,7 +245,7 @@ class ADODB_pdo_firebird extends ADODB_pdo
 			$rs = $this->execute($getnext);
 		}
 		if ($rs && !$rs->EOF) {
-			$this->genID = (integer)reset($rs->fields);
+			$this->genID = (int)reset($rs->fields);
 		} else {
 			$this->genID = 0; // false
 		}
@@ -273,8 +259,8 @@ class ADODB_pdo_firebird extends ADODB_pdo
 
 	public function selectLimit($sql, $nrows = -1, $offset = -1, $inputarr = false, $secs = 0)
 	{
-		$nrows = (integer)$nrows;
-		$offset = (integer)$offset;
+		$nrows = (int)$nrows;
+		$offset = (int)$offset;
 		$str = 'SELECT ';
 		if ($nrows >= 0) {
 			$str .= "FIRST $nrows ";

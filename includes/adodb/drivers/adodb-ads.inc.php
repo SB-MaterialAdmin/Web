@@ -97,7 +97,7 @@ class ADODB_ads extends ADOConnection
 			$this->_connectionID = ads_connect($argDSN, $argUsername, $argPassword, $this->curmode);
 		}
 		$this->_errorMsg = $this->getChangedErrorMsg($last_php_error);
-		if (isset($this->connectStmt)) {
+		if ($this->connectStmt) {
 			$this->Execute($this->connectStmt);
 		}
 
@@ -127,7 +127,7 @@ class ADODB_ads extends ADOConnection
 		if ($this->_connectionID && $this->autoRollback) {
 			@ads_rollback($this->_connectionID);
 		}
-		if (isset($this->connectStmt)) {
+		if ($this->connectStmt) {
 			$this->Execute($this->connectStmt);
 		}
 
@@ -371,7 +371,7 @@ class ADODB_ads extends ADOConnection
 	*/
 	function ODBCTypes($t)
 	{
-		switch ((integer)$t) {
+		switch ((int)$t) {
 			case 1:
 			case 12:
 			case 0:
@@ -564,7 +564,6 @@ class ADODB_ads extends ADOConnection
 		return array($sql, $stmt, false);
 	}
 
-	/* returns queryID or false */
 	function _query($sql, $inputarr = false)
 	{
 		$last_php_error = $this->resetLastError();

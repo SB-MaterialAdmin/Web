@@ -208,10 +208,6 @@ class ADODB_ado extends ADOConnection {
 		return empty($arr) ? $false : $arr;
 	}
 
-
-
-
-	/* returns queryID or false */
 	function _query($sql,$inputarr=false)
 	{
 
@@ -411,7 +407,7 @@ class ADORecordSet_ado extends ADORecordSet {
 		//	$rs->AbsolutePosition->$row-2;
 		//	return true;
 		if ($this->_currentRow > $row) return false;
-		@$rs->Move((integer)$row - $this->_currentRow-1); //adBookmarkFirst
+		@$rs->Move((int)$row - $this->_currentRow-1); //adBookmarkFirst
 		return true;
 	}
 
@@ -504,7 +500,7 @@ class ADORecordSet_ado extends ADORecordSet {
 			$t = $fieldobj->type;
 			$len = $fieldobj->max_length;
 		}
-		
+
 		if (array_key_exists($t,$this->connection->customActualTypes))
 			return  $this->connection->customActualTypes[$t];
 

@@ -103,7 +103,7 @@ class ADODB_csv extends ADOConnection {
 		$at = strpos($err,'::::');
 		if ($at === false) {
 			$this->_errorMsg = $err;
-			$this->_errorNo = (integer)$err;
+			$this->_errorNo = (int)$err;
 		} else {
 			$this->_errorMsg = substr($err,$at+4,1024);
 			$this->_errorNo = -9999;
@@ -159,7 +159,7 @@ class ADODB_csv extends ADOConnection {
 		$at = strpos($err,'::::');
 		if ($at === false) {
 			$this->_errorMsg = $err;
-			$this->_errorNo = (integer)$err;
+			$this->_errorNo = (int)$err;
 		} else {
 			$this->_errorMsg = substr($err,$at+4,1024);
 			$this->_errorNo = -9999;
@@ -199,7 +199,7 @@ class ADODB_csv extends ADOConnection {
 	}
 } // class
 
-class ADORecordset_csv extends ADORecordset {
+class ADORecordset_csv extends ADORecordSet {
 
 	function _close()
 	{
