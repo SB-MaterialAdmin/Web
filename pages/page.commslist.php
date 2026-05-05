@@ -282,7 +282,8 @@ if(isset($_GET['advSearch']))
 			$where = "WHERE CO.name LIKE ?";
 			$advcrit = array("%$value%");
 		break;
-		case "banid":
+        case "bid":
+        case "banid":
 			$where = "WHERE CO.bid = ?";
 			$advcrit = array($value);
 		break;
@@ -349,11 +350,7 @@ if(isset($_GET['advSearch']))
 			$where = "WHERE CO.sid=?";
 			$advcrit = array($value);
 		break;
-		case "bid":
-			$where = "WHERE CO.bid = ?";
-			$advcrit = array($value);
-		break;
-		case "comment":
+        case "comment":
 			if($userbank->is_admin())
 			{
 				$where = "WHERE CM.type ='C' AND CM.commenttxt LIKE ?";

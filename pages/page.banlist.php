@@ -273,6 +273,7 @@ if(isset($_GET['advSearch']))
 			$where = "WHERE BA.name LIKE ?";
 			$advcrit = array("%$value%");
 		break;
+        case "bid":
 		case "banid":
 			$where = "WHERE BA.bid = ?";
 			$advcrit = array($value);
@@ -355,10 +356,6 @@ if(isset($_GET['advSearch']))
 		break;
 		case "nodemo":
 			$where = "WHERE BA.aid = ? AND NOT EXISTS (SELECT DM.demid FROM ".DB_PREFIX."_demos AS DM WHERE DM.demid = BA.bid)";
-			$advcrit = array($value);
-		break;
-		case "bid":
-			$where = "WHERE BA.bid = ?";
 			$advcrit = array($value);
 		break;
 		case "comment":

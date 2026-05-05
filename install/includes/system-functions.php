@@ -39,7 +39,7 @@ if(!defined("IN_SB")){echo "You should not be here. Only follow links!";die();}
 
 
 function substr_utf($string, $start = 0, $length = null) {
-$start = (integer) $start >= 0 ? (integer) $start : 0;
+$start = (int) $start >= 0 ? (int) $start : 0;
 if(is_null($length)) 
 	$length = strlen_utf($string) - $start;
     return substr($string, $start, $length); 
@@ -67,7 +67,7 @@ function clean($str) {
 function is_valid_email($user_email) {
 	$chars = EMAIL_FORMAT;
 	if(strstr($user_email, '@') && strstr($user_email, '.')) {
-		return (boolean) preg_match($chars, $user_email);
+		return (bool) preg_match($chars, $user_email);
 	}else{
 		return false;
 	}

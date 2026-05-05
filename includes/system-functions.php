@@ -36,7 +36,7 @@ if(!defined("IN_SB")){echo "You should not be here. Only follow links!";die();}
 * @return string
 */
 function substr_utf($string, $start = 0, $length = null) {
-$start = (integer) $start >= 0 ? (integer) $start : 0;
+$start = (int) $start >= 0 ? (int) $start : 0;
 if(is_null($length))
 	$length = strlen_utf($string) - $start;
     return substr($string, $start, $length);
@@ -64,7 +64,7 @@ function clean($str) {
 function is_valid_email($user_email) {
 	$chars = EMAIL_FORMAT;
 	if(strstr($user_email, '@') && strstr($user_email, '.')) {
-		return (boolean) preg_match($chars, $user_email);
+		return (bool) preg_match($chars, $user_email);
 	}else{
 		return false;
 	}
@@ -1291,15 +1291,15 @@ function normalize_files_array($files = []) {
 
 function getReasonByCode($code, $frmt) {
         switch ($code) {
-                case 1:      return "Размер файла превысил допустимый размер";
-                case 2:      return "Размер файла превысил допустимый размер";
-                case 3:      return "Файл был получен лишь частично";
-                case 4:      return "Файл не был загружен";
-                case 6:      return "Отсутствует временная папка для загрузок";
-                case 7:      return "Нет прав на запись";
-                case 8:      return "Расширение PHP остановило загрузку файла принудительно";
-                case 100500: return "Файл должен быть в формате ".$frmt;
-                default:     return "Неизвестно";
+            case 2:
+            case 1:      return "Размер файла превысил допустимый размер";
+            case 3:      return "Файл был получен лишь частично";
+            case 4:      return "Файл не был загружен";
+            case 6:      return "Отсутствует временная папка для загрузок";
+            case 7:      return "Нет прав на запись";
+            case 8:      return "Расширение PHP остановило загрузку файла принудительно";
+            case 100500: return "Файл должен быть в формате ".$frmt;
+            default:     return "Неизвестно";
         }
 }
 
