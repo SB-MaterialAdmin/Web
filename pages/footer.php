@@ -42,7 +42,10 @@ $theme->assign('THEME_LINK', VersionController::$URLs['GitHub']);
 $theme->assign('SB_VERSION', SB_VERSION);
 
 $theme->assign('show_gendata',      ($GLOBALS['config']['page.footer.allow_show_data'] == "1"));
-$theme->assign('gendata_queries',   $GLOBALS['db']->Queries);
+
+// Unknown var Queries (adodb)
+//$theme->assign('gendata_queries',   $GLOBALS['db']->Queries);
+
 $theme->assign('gendata_time',      round($totaltime, 2));
 
 $theme->assign('splash_screen',     ($GLOBALS['config']['theme.splashscreen'] == "1"));

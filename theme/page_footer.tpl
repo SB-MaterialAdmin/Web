@@ -15,7 +15,7 @@
             {if $show_gendata}
             <ul class="f-menu">
                 <li>Сгенерировано за {$gendata_time} секунд</li>
-                <li>Выполнено {$gendata_queries} запросов к БД</li>
+                {*<li>Выполнено {$gendata_queries} запросов к БД</li>*}
             </ul>
             {/if}
         </footer>
