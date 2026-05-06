@@ -97,12 +97,18 @@ function BuildPageHeader()
  */
 function BuildSubMenu()
 {
-	global $theme;
-	$theme->left_delimiter = '<!--{';
-	$theme->right_delimiter = '}-->';
-	$theme->display('submenu.tpl');
-	$theme->left_delimiter = '{';
-	$theme->right_delimiter = '}';
+    global $theme;
+
+    $oldLeft = $theme->getLeftDelimiter();
+    $oldRight = $theme->getRightDelimiter();
+
+    $theme->setLeftDelimiter('<!--{');
+    $theme->setRightDelimiter('}-->');
+
+    $theme->display('submenu.tpl');
+
+    $theme->setLeftDelimiter($oldLeft);
+    $theme->setRightDelimiter($oldRight);
 }
 
 /**

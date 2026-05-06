@@ -2,17 +2,19 @@
 global $theme;
 
 // Подгрузка самого нужного плагина
-require_once(INCLUDES_PATH . "/smarty/plugins/function.help_icon.php");
+//require_once(INCLUDES_PATH . "/smarty/plugins/function.help_icon.php");
 
 // Регистрация функций
-$theme->register_function("display_material_checkbox", "materialdesign_checkbox");
-$theme->register_function("display_material_input", "materialdesign_input");
-$theme->register_function("display_header", "materialdesign_cardheader");
-$theme->register_function("display_alert", "materialdesign_alert");
-$theme->register_function('steamid_format', 'steamid_format');
-$theme->register_block("render_material_body", "materialdesign_body");
-$theme->register_block('highlight_links', 'highlight_links_block');
-$theme->register_function('highlight_links', 'highlight_links_fn');
+$theme->registerPlugin(Smarty\Smarty::PLUGIN_FUNCTION, 'display_material_checkbox', 'materialdesign_checkbox');
+$theme->registerPlugin(Smarty\Smarty::PLUGIN_FUNCTION, 'display_material_input', 'materialdesign_input');
+$theme->registerPlugin(Smarty\Smarty::PLUGIN_FUNCTION, 'display_header', 'materialdesign_cardheader');
+$theme->registerPlugin(Smarty\Smarty::PLUGIN_FUNCTION, 'display_alert', 'materialdesign_alert');
+$theme->registerPlugin(Smarty\Smarty::PLUGIN_FUNCTION, 'steamid_format', 'steamid_format');
+$theme->registerPlugin(Smarty\Smarty::PLUGIN_FUNCTION, 'highlight_links', 'highlight_links_fn');
+
+$theme->registerPlugin(Smarty\Smarty::PLUGIN_BLOCK, 'render_material_body', 'materialdesign_body');
+$theme->registerPlugin(Smarty\Smarty::PLUGIN_BLOCK, 'highlight_links', 'highlight_links_block');
+
 
 // Создание каллбэков функций
 function materialdesign_checkbox($params, &$smarty) {

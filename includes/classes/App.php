@@ -1,6 +1,6 @@
 <?php
 
-define('SMARTY_SRC_PATH', __DIR__ . '/includes/smarty/');
+define('SMARTY_SRC_PATH', INCLUDES_PATH . '/smarty/');
 
 spl_autoload_register(function ($class_name) {
 	$prefix = 'Smarty\\';
