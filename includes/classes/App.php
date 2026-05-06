@@ -1,5 +1,22 @@
 <?php
 
+define('SMARTY_SRC_PATH', __DIR__ . '/includes/smarty/');
+
+spl_autoload_register(function ($class_name) {
+	$prefix = 'Smarty\\';
+	$len = strlen($prefix);
+	if (strncmp($prefix, $class_name, $len) !== 0) {
+		return;
+	}
+
+	$relative_class = substr($class_name, $len);
+	$file = SMARTY_SRC_PATH . str_replace('\\', '/', $relative_class) . '.php';
+
+	if (file_exists($file)) {
+		require $file;
+	}
+});
+
 class App {
     /**
      * @var CSmarty
@@ -40,15 +57,13 @@ class App {
     {
         if (!self::$templater)
         {
-            require(INCLUDES_PATH . '/smarty/Smarty.class.php');
-
-            $templater = new Smarty();
-            $templater->error_reporting   = E_ALL ^ E_NOTICE;
-            $templater->use_sub_dirs      = false;
-            $templater->compile_id        = "TCache";
-            $templater->caching           = false;
-            $templater->template_dir      = 'sb://theme/';
-            $templater->compile_dir       = SB_THEME_COMPILE;
+            $templater = new \Smarty\Smarty();
+			$templater->setTemplateDir('sb://theme/');
+			$templater->setCompileDir(SB_THEME_COMPILE);
+			$templater->setErrorReporting(E_ALL & ~E_NOTICE);
+			$templater->setUseSubDirs(false);
+			$templater->setCompileId('TCache');
+			$templater->setCaching(false);
 
             $templater->assign('SITE_ADDRESS',  SB_WP_URL);
             $templater->assign('SBConfig',      ReplaceArrayKeyNames(self::options(), '.', '_'));
