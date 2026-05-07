@@ -10,10 +10,11 @@
 				{foreach from=$othercomments item=com}
 				<li class="media">
 					<a href="#" class="tvh-user pull-left">
-						{foreach from=$admlist item=adm}
-							{if $adm.aid == $com.aid}
-								<img class="img-responsive" style="width: 46px;height: 46px;border-radius: 50%;" src="{$com.avatar}" alt="">
-							{/if}
+						{foreach $admlist as $adm}
+						    {if $adm.aid == $com.aid}
+						        <img class="img-responsive" style="width: 46px; height: 46px; border-radius: 50%;" src="{$com.avatar|escape:'htmlall'}" alt="">
+						        {break}
+						    {/if}
 						{/foreach}
 					</a>
 					<div class="media-body">

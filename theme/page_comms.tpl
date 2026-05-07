@@ -10,11 +10,12 @@
 				{foreach from=$othercomments item=com}
 					<li class="media">
 						<a href="#" class="tvh-user pull-left">
-							{foreach from=$admlist item=adm}
-							{if $adm.aid == $com.aid}
-								<img class="img-responsive" style="width: 46px;height: 46px;border-radius: 50%;" src="{$com.avatar}" alt="">
-							{/if}
-						{/foreach}
+							{foreach $admlist as $adm}
+							    {if $adm.aid == $com.aid}
+							        <img class="img-responsive" style="width: 46px; height: 46px; border-radius: 50%;" src="{$com.avatar|escape:'htmlall'}" alt="">
+							        {break}
+							    {/if}
+							{/foreach}
 						</a>
 						<div class="media-body">
 						<strong class="d-block">{$com.comname}</strong>
@@ -309,10 +310,11 @@
 													{foreach from=$ban.commentdata item=commenta}
 													<div class="media">
 														<a href="#" class="pull-left">
-															{foreach from=$admlist item=adm}
-																{if $adm.aid == $commenta.aid}
-																	<img src="{$commenta.avatar}" alt="" class="lv-img-sm">
-																{/if}
+															{foreach $admlist as $adm}
+															    {if $adm.aid == $commenta.aid}
+															        <img src="{$commenta.avatar|escape:'htmlall'}" alt="" class="lv-img-sm">
+															        {break}
+															    {/if}
 															{/foreach}
 														</a>
 								 
