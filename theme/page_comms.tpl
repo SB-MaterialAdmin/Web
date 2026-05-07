@@ -84,7 +84,7 @@
 							{if empty($ban.player)}
 								<i>имя игрока скрыто</i>
 							{else}
-								{$ban.player|escape:'html'|stripslashes}
+								{$ban.player|escape:'htmlall'}
 							{/if}
 						</div>
 						{if $view_comments && $ban.commentdata != "Нет" && $ban.commentdata|@count > 0}
@@ -153,7 +153,7 @@
 												{if empty($ban.player)}
 													<i>имя игрока скрыто.</i>
 												{else}
-													{$ban.player|escape:'html'|stripslashes}
+													{$ban.player|escape:'htmlall'}
 												{/if}
 											</div>
 										</div>

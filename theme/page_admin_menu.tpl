@@ -22,10 +22,10 @@
 									<b>{if $menu.enabled == "1"}Да{else}Нет{/if}</b> / <mark data-toggle="tooltip" data-placement="right" title="" data-original-title="Приоритет ссылки"> {$menu.priority} </mark>
 								</td>
 								<td>
-									{$menu.text|escape:'html'|stripslashes}
+									{$menu.text|escape:'htmlall'}
 								</td>
 								<td>
-									{$menu.description|escape:'html'|stripslashes}
+									{$menu.description|escape:'htmlall'}
 								</td>
 								<td>
 									<a href="{$menu.url}">{$menu.url}</a>

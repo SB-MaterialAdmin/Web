@@ -96,9 +96,9 @@
 					<td>
 						<div style="float:left;">{if not $nocountryshow}{$ban.country_icon}{/if}
 							{if empty($ban.player)}
-							<i>имя игрока не указано</i>
+								<i>имя игрока не указано</i>
 							{else}
-							{$ban.player|escape:'html'|stripslashes}
+								{$ban.player|escape:'htmlall'}
 							{/if}
 						</div>
 						{if $ban.demo_available}
@@ -106,7 +106,7 @@
 							<i class="zmdi zmdi-videocam"></i>
 						</div>
 						{/if}
-						{if $view_comments && $ban.commentdata != "Нет" && $ban.commentdata|@count > 0}
+						{if $view_comments && isset($ban.commentdata) && is_array($ban.commentdata) && $ban.commentdata|@count > 0}
 						<div style="float:right;padding-right: 5px;">
 							{$ban.commentdata|@count} <img src="theme/img/comm.png" alt="Comments" title="Комментарии" style="height:14px;width:14px;" />
 						</div>
@@ -115,16 +115,17 @@
 					{if !$hideadminname}
 					<td class="text-center">
 						{if !empty($ban.admin)}
-						{$ban.admin|escape:'html'}
+							{$ban.admin|escape:'html'}
 						{else}
-						<i>Администратор снят</i>
+							<i>Администратор снят</i>
 						{/if}
 					</td>
 					{/if}
-					<td class="{$ban.class}">{if not $ban.ub_reason}
-						{$ban.banlength}
+					<td class="{$ban.class}">
+						{if not $ban.ub_reason}
+							{$ban.banlength}
 						{else}
-						{$ban.ub_reason}
+							{$ban.ub_reason}
 						{/if}
 					</td>
 				</tr>
@@ -143,33 +144,41 @@
 
 										<ul class="dropdown-menu dropdown-menu-right">
 											{if $view_bans}
-											{if $ban.unbanned && $ban.reban_link != false}
-											<li>{$ban.reban_link}</li>
-											{/if}
-											<li>{$ban.blockcomm_link}</li>
-											{if $ban.demo_available}
-											<li>{$ban.demo_link}</li>
-											{/if}
-											<li>{$ban.addcomment}</li>
-											{if $ban.type == 0}
-											{if $groupban}
-											<li>{$ban.groups_link}</li>
-											{/if}
-											{if $friendsban}
-											<li>{$ban.friend_ban_link}</li>
-											{/if}
-											{/if}
-											{if ($ban.view_edit && !$ban.unbanned)} 
-											<li>{$ban.edit_link}</li>
-											{/if}
-											{if ($ban.unbanned == false && $ban.view_unban)}
-											<li>{$ban.unban_link}</li>
-											{/if}
-											{if $ban.view_delete}
-											<li>{$ban.delete_link}</li>
-											{/if}
+												{if $ban.unbanned && $ban.reban_link != false}
+													<li>{$ban.reban_link}</li>
+												{/if}
+
+												<li>{$ban.blockcomm_link}</li>
+
+												{if $ban.demo_available}
+													<li>{$ban.demo_link}</li>
+												{/if}
+												
+												<li>{$ban.addcomment}</li>{*CHECKMEPLS only for admin, not working for users???*}
+
+												{if $ban.type == 0}
+													{if $groupban}
+														<li>{$ban.groups_link}</li>
+													{/if}
+		
+													{if $friendsban}
+														<li>{$ban.friend_ban_link}</li>
+													{/if}
+												{/if}
+	
+												{if ($ban.view_edit && !$ban.unbanned)} 
+													<li>{$ban.edit_link}</li>
+												{/if}
+	
+												{if ($ban.unbanned == false && $ban.view_unban)}
+													<li>{$ban.unban_link}</li>
+												{/if}
+	
+												{if $ban.view_delete}
+													<li>{$ban.delete_link}</li>
+												{/if}
 											{else}
-											<li>{$ban.demo_link}</li>
+												<li>{$ban.demo_link}</li>
 											{/if}
 										</ul>
 									</li>
@@ -185,9 +194,9 @@
 										<label class="col-sm-4 control-label"><i class="zmdi zmdi-circle-o text-left"></i>  Игрок</label>
 										<div class="col-sm-8">
 											{if empty($ban.player)}
-											<i>имя игрока не указано.</i>
+												<i>имя игрока не указано.</i>
 											{else}
-											{$ban.player|escape:'html'|stripslashes}
+												{$ban.player|escape:'htmlall'}
 											{/if}
 										</div>
 									</div>
@@ -281,7 +290,7 @@
 										<label class="col-sm-4 control-label"><i class="zmdi zmdi-circle-o text-left"></i> Причина бана</label>
 										<div class="col-sm-8">
 											{highlight_links}
-												{$ban.reason|escape:'html'}
+												{$ban.reason|escape:'html'}{*CHECKMEPLS*}
 											{/highlight_links}
 										</div>
 									</div>
@@ -319,9 +328,9 @@
 															<h4 class="modal-title">
 																Список блокировок игрока: 
 																{if empty($ban.player)}
-																<i><del>Скрыто :(</del></i>
+																	<i><del>Скрыто :(</del></i>
 																{else}
-																{$ban.player|escape:'html'|stripslashes}
+																	{$ban.player|escape:'htmlall'}
 																{/if}
 															</h4>
 														</div>
@@ -386,15 +395,16 @@
 									<!-- COMMENT CODik-->
 									<hr class="m-t-10 m-b-10" />
 									<div class="wall-comment-list">
-										{if $ban.commentdata != "Нет"}
+										{if isset($ban.commentdata) && is_array($ban.commentdata)}
 										<div class="wcl-list">
 											{foreach from=$ban.commentdata item=commenta}
 											<div class="media">
 												<a href="#" class="pull-left">
-													{foreach from=$admlist item=adm}
-														{if $adm.aid == $commenta.aid}
-															<img src="{$commenta.avatar}" alt="" class="lv-img-sm">
-														{/if}
+													{foreach $admlist as $adm}
+													    {if $adm.aid == $commenta.aid}
+													        <img src="{$commenta.avatar|escape:'htmlall'}" alt="" class="lv-img-sm">
+													        {break}
+													    {/if}
 													{/foreach}
 												</a>
 
@@ -470,7 +480,9 @@
             		</div>
             		{/if}
             		<div class="col-sm-3 p-r-0 text-right" style="float:right;">
-            			<button class="btn bgm-bluegray waves-effect" onclick="window.location.href='index.php?p=banlist&hideinactive={if $hidetext_darf == '1'}true{else}false{/if}{$searchlink|htmlspecialchars}'">{$hidetext}&nbsp;баны</button>
+						<button class="btn bgm-bluegray waves-effect" onclick="window.location.href='index.php?p=banlist&hideinactive={if $hidetext_darf == '1'}true{else}false{/if}{$searchlink|escape:'url'}'">
+							{$hidetext|escape:'htmlall'}&nbsp;баны
+						</button>
             		</div>
             	</div>
             </div>&nbsp;

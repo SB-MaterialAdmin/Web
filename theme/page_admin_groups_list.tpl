@@ -145,7 +145,7 @@
                                     <ul class="clist clist-star">
                                         {if $server_overrides_list[$smarty.foreach.server_admin_group.index]|@count > 0}
                                             {foreach from=$server_overrides_list[$smarty.foreach.server_admin_group.index] item=override}
-                                        <li><b>{if $override.access == "allow"}Разрешён{else}Запрещён{/if}</b> доступ к {if $override.type == "command"}команде{else}группе команд{/if} <b>{$override.name|htmlspecialchars}</b></li>
+                                        <li><b>{if $override.access == "allow"}Разрешён{else}Запрещён{/if}</b> доступ к {if $override.type == "command"}команде{else}группе команд{/if} <b>{$override.name|escape:'htmlall'}</b></li>
                                             {/foreach}
                                         {else}
                                         <li>Переназначений <b>нет</b>.</li>
