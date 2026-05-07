@@ -139,7 +139,9 @@ BuildPageTabs();
 BuildSubMenu();
 BuildContHeader();
 BuildBreadcrumbs();
-if(!empty($page))
+
+if(!empty($page)) {
 	include $page;
+}
+
 include_once(TEMPLATES_PATH . '/footer.php');
-?>

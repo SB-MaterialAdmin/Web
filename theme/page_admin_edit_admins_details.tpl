@@ -35,7 +35,7 @@
 					<label for="password" class="col-sm-3 control-label">Пароль</label>
 					<div class="col-sm-9">
 						<div class="fg-line">
-							<input type="password" TABINDEX=4 class="form-control" id="password" name="password" placeholder="Введите данные" {*value="{$password}*}">
+							<input type="password" TABINDEX=4 class="form-control" id="password" name="password" placeholder="Введите данные">
 						</div>
 						<div id="password.msg"></div>
 					</div>
@@ -44,7 +44,7 @@
 					<label for="password2" class="col-sm-3 control-label">Повторите пароль</label>
 					<div class="col-sm-9">
 						<div class="fg-line">
-							<input type="password" TABINDEX=5 class="form-control" id="password2" name="password2" placeholder="Введите данные" {*value="{$password2}*}">
+							<input type="password" TABINDEX=5 class="form-control" id="password2" name="password2" placeholder="Введите данные">
 						</div>
 						<div id="password.msg"></div>
 					</div>

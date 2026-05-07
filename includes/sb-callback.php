@@ -211,8 +211,7 @@ function LostPassword($email)
   $objResponse = new xajaxResponse();
   $q = $GLOBALS['db']->GetRow("SELECT * FROM `" . DB_PREFIX . "_admins` WHERE `email` = ?", array($email));
 
-  if(!$q[0])
-  {
+  if (!$q) {
     $objResponse->addScript("ShowBox('Ошибка', 'Введенный Вами адрес e-mail не найден в базе', 'red', '', true);");
       return $objResponse;
   }
@@ -3146,10 +3145,15 @@ function RefreshServer($sid)
 {
   $objResponse = new xajaxResponse();
   $sid = (int)$sid;
-  session_start();
+
+  session_status() === PHP_SESSION_ACTIVE ?: session_start();
+
   $data = $GLOBALS['db']->GetRow("SELECT ip, port FROM `".DB_PREFIX."_servers` WHERE sid = ?;", array($sid));
-  if (isset($_SESSION['getInfo.' . $data['ip'] . '.' . $data['port']]) && is_array($_SESSION['getInfo.' . $data['ip'] . '.' . $data['port']]))
+  
+  if (isset($_SESSION['getInfo.' . $data['ip'] . '.' . $data['port']]) && is_array($_SESSION['getInfo.' . $data['ip'] . '.' . $data['port']])) {
     unset($_SESSION['getInfo.' . $data['ip'] . '.' . $data['port']]);
+}
+
   $objResponse->addScript("xajax_ServerHostPlayers('".$sid."');");
   return $objResponse;
 }
@@ -3831,6 +3835,7 @@ function AddBlock($nickname, $type, $steam, $length, $reason)
 
   //$kickit = isset($GLOBALS['config']['config.enablekickit']) && $GLOBALS['config']['config.enablekickit'] == "1";
   $kickit = false;
+  
   $log = new CSystemLog("m", "Блок добавлен", "Блок (" . $steam . ") был добавлен, причина: $reason, срок: $length", true, $kickit);
   return $objResponse;
 }

@@ -8,7 +8,7 @@ global $userbank, $theme;
 		echo '<div id="0" style="display:none;">Доступ запрещен!</div>';
 	} else {
 		
-		if(($_GET['o'] == "del") && isset($_GET['o'])){
+		if (isset($_GET['o']) && $_GET['o'] == "del"){
 			if(!isset($_GET['id']) || !is_numeric($_GET['id'])){
 				echo '<script>setTimeout(\'ShowBox("Ошибка", "ID бана не указан!", "red", "index.php");\', 1200);</script>';
 				PageDie();

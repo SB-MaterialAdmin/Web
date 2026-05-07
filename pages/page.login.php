@@ -39,7 +39,8 @@ if(isset($_GET['m']) && $_GET['m'] == "no_access")
 
 	
 //$theme->assign('redir', "DoLogin('".(isset($_SESSION['q'])?$_SESSION['q']:'')."');");
-$theme->assign('redir', "DoLogin('p=account'); '".(isset($_SESSION['q'])?$_SESSION['q']:'')."';");
+$session_token = (isset($_SESSION['q'])) ? $_SESSION['q'] : '';
+$theme->assign('redir', "DoLogin('p=account'); '" . $session_token . "';");
 
 // === Authorization by type - START ===
 /**

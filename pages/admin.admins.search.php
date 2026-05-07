@@ -141,7 +141,7 @@ $serverflags[] = ["name" => "[r] Дополнительный флаг 4", "flag
 $serverflags[] = ["name" => "[s] Дополнительный флаг 5", "flag" => "SM_CUSTOM5"];
 $serverflags[] = ["name" => "[t] Дополнительный флаг 6", "flag" => "SM_CUSTOM6"];
 
-if($_GET['showexpiredadmins'] == 'true') {
+if (!empty($_GET['showexpiredadmins']) && $_GET['showexpiredadmins'] == 'true') {
 	$plus_adm = "1";
 }else {
 	$plus_adm = "";

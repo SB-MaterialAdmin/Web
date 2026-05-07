@@ -466,7 +466,9 @@ while (!$res->EOF)
 		$data['admin_authid'] = stripslashes($res->fields['admin_authid']);
 		$data['admin_skype'] = stripslashes($res->fields['admin_skype']);
 	}
+
 	$data['reason'] = stripslashes($res->fields['ban_reason']);
+
 	$data['ban_length'] = $res->fields['ban_length'] == 0 ? 'Навсегда' : SecondsToString(intval($res->fields['ban_length']));
 
 // Custom "listtable_1_banned" & "listtable_1_permanent" addition entries

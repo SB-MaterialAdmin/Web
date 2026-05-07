@@ -194,8 +194,9 @@ function BuildPageTabs()
 	foreach ($items as &$item)
 		AddTab($item['text'], $item['url'], $item['description'], ($item['newtab']=="1"));
 
-	if ($userbank->is_admin())
+	if ($userbank->is_admin()) {
 		AddTab("<i class='zmdi zmdi-star zmdi-hc-fw'></i> Админ-Панель", "index.php?p=admin", "Панель для администраторов. Управление серверами, администраторами, настройками.");
+	}
 
 		include INCLUDES_PATH . "/CTabsMenu.php";
 
@@ -219,6 +220,7 @@ function BuildPageTabs()
 			$submenu->addMenuItem("Меню", 0,"", "index.php?p=admin&amp;c=menu", true);
 		if($userbank->HasAccess( ADMIN_OWNER|ADMIN_LIST_MODS|ADMIN_ADD_MODS|ADMIN_EDIT_MODS|ADMIN_DELETE_MODS))
 			$submenu->addMenuItem("Моды", 0,"", "?p=admin&amp;c=mods", true);
+
 		SubMenu( $submenu->getMenuArray() );
 }
 
@@ -706,7 +708,7 @@ function FetchIp($ip)
 	if (!$handle)
 		return "zz";
 
-	while (($ipdata = fgetcsv($handle, 4096)) !== FALSE) {
+	while (($ipdata = fgetcsv($handle, 4096, ',', '"', '\\')) !== false) {
 		// If line is comment or IP is out of range
 		if ($ipdata[0][0] == '#' || $ip < $ipdata[0] || $ip > $ipdata[1])
 			continue;
@@ -1698,18 +1700,20 @@ function getRequestType() {
 
 // Own implementation for filter_input()
 // INPUT_SESSION not yet implemented.
-function filterInput($type, $name, $filter = FILTER_DEFAULT, $options = []) {
-  if ($type != INPUT_SESSION)
-    return filter_input($type, $name, $filter, $options);
+function filterInput($type, $name, $filter = FILTER_DEFAULT, $options = [])
+{
+	if ($type != INPUT_SESSION)
+		return filter_input($type, $name, $filter, $options);
 
-  if (!isset($_SESSION[$name]))
-    return FALSE;
+	if (!isset($_SESSION[$name]))
+		return FALSE;
 
-  $data = $_SESSION[$name];
-  return filter_var($data, $filter, $options);
+	$data = $_SESSION[$name];
+	return filter_var($data, $filter, $options);
 }
 
-function clearSystemPath($path) {
+function clearSystemPath($path)
+{
   return str_replace(ROOT, '/', $path);
 }
 

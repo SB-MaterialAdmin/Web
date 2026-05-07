@@ -410,16 +410,16 @@ $theme->assign('user', $a_name);
 $theme->assign('authid', $a_steam);
 $theme->assign('email', $a_email);
 // ADM TIME //
-$theme->assign('expired_text', $a_expired_text);
+$theme->assign('expired_text', $a_expired_text ?? '');
 // ADM TIME //
 // ADM comment //
-$theme->assign('comment', $a_comment);
+$theme->assign('comment', $a_comment ?? '');
 // ADM comment //
 // ADM vk //
-$theme->assign('vk', $a_vk);
+$theme->assign('vk', $a_vk ?? '');
 // ADM vk //
 // ADM skype //
-$theme->assign('skype', $a_skype);
+$theme->assign('skype', $a_skype ?? '');
 // ADM skype //
 $theme->assign('a_spass', $a_serverpass);
 
