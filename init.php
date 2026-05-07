@@ -26,11 +26,20 @@
 // *************************************************************************
 
 // ---------------------------------------------------
-// Disable error output
+// Enable|Disable error output
 // ---------------------------------------------------
-ini_set('display_startup_errors', 0);
-ini_set('display_errors', 0);
-error_reporting(0);
+define('SB_PHP_DEBUG', false);
+
+if (SB_PHP_DEBUG) {
+	ini_set('display_errors', 1);
+	ini_set('display_startup_errors', 1);
+} else {
+	ini_set('display_startup_errors', 0);
+	ini_set('display_errors', 0);
+}
+
+error_reporting(-1); // E_ERROR | E_WARNING | E_PARSE | E_NOTICE
+ini_set('log_errors', 1);
 
 // ---------------------------------------------------
 //  Directories
