@@ -30,7 +30,7 @@
               </a>
               <ul class="dropdown-menu dropdown-menu-right">
                 <li><a href="#" onclick="xajax_SetupBan({$sub.subid});return false;">Забанить</a></li>
-                <li>{if $permissions_editsub}<a href="#" onclick="RemoveSubmission({$sub.subid}, '{$sub.name|stripslashes|stripquotes}', '1');return false;">Удалить</a>{/if}</li>
+                <li>{if $permissions_editsub}<a href="#" onclick="RemoveSubmission({$sub.subid}, '{$sub.name|escape:'javascript'}', '1');return false;">Удалить</a>{/if}</li>
                 <li><a href="index.php?p=admin&c=bans&o=email&type=s&id={$sub.subid}">Контакты</a></li>
               </ul>
             </li>

@@ -31,11 +31,11 @@
                 {if $sub.archiv != "2" and $sub.archiv != "3"}
                 <li><a href="#" onclick="xajax_SetupBan({$sub.subid});">Забанить</a></li>
                 {if $permissions_editsub}
-                <li><a href="#" onclick="RemoveSubmission({$sub.subid}, '{$sub.name|stripslashes|stripquotes}', '2');">Восстановить</a></li>
+                <li><a href="#" onclick="RemoveSubmission({$sub.subid}, '{$sub.name|escape:'javascript'}', '2');">Восстановить</a></li>
                 {/if}
                 {/if}
                 {if $permissions_editsub}
-                <li><a href="#" onclick="RemoveSubmission({$sub.subid}, '{$sub.name|stripslashes|stripquotes}', '0');">Удалить</a></li>
+                <li><a href="#" onclick="RemoveSubmission({$sub.subid}, '{$sub.name|escape:'javascript'}', '0');">Удалить</a></li>
                 {/if}   
                 <li><a href="index.php?p=admin&c=bans&o=email&type=s&id={$sub.subid}">Контакты</a></li>           
               </ul>
