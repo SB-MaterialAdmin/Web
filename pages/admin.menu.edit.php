@@ -13,17 +13,19 @@ else {
       $on_act = (isset($_POST['on_link']) && $_POST['on_link'] == "on" ? 1 : 0);
 	  $new_tab = (isset($_POST['onNewTab']) && $_POST['onNewTab'] == "on" ? 1 : 0);
 
-	  $DB->Prepare('UPDATE
-        `{{prefix}}menu`
-      SET
-        `text` = :text,
-        `description` = :description,
-        `url` = :url,
-        `enabled` = :enabled,
-        `newtab` = :newtab,
-        `priority` = :priority
-      WHERE
-        `id` = :id');
+      $DB->Prepare('
+		  UPDATE
+			`{{prefix}}menu`
+		  SET
+			`text` = :text,
+			`description` = :description,
+			`url` = :url,
+			`enabled` = :enabled,
+			`newtab` = :newtab,
+			`priority` = :priority
+		  WHERE
+			`id` = :id'
+	  );
 
       $DB->BindMultipleData([
         'id'          => $_GET['id'],
@@ -55,9 +57,11 @@ else {
     $theme->assign('prior', $list_menu['priority']);
     $theme->assign('enab', $list_menu['enabled']);
     $theme->assign('system', ($list_menu['system']==1));
-    $theme->left_delimiter = "{";
-    $theme->right_delimiter = "}";
+
+    $theme->setLeftDelimiter('{');
+    $theme->setRightDelimiter('}');
     $theme->display('page_admin_menu_edit.tpl');
+
     echo "<script>$('on_link').checked = ".(int)$list_menu['enabled'].";</script>";
     echo "<script>$('onNewTab').checked = ".(int)$list_menu['newtab']."</script>";
   }

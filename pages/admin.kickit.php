@@ -132,9 +132,14 @@ $theme->assign('servers', $serverlinks);
 $theme->assign('xajax_functions',  $xajax->printJavascript("../theme/js", "xajax.js"));
 $theme->assign('check', $_GET["check"]);// steamid or ip address
 
-$theme->left_delimiter = "-{";
-$theme->right_delimiter = "}-";
+
+$oldLeft = $theme->getLeftDelimiter();
+$oldRight = $theme->getRightDelimiter();
+
+$theme->setLeftDelimiter('-{');
+$theme->setRightDelimiter('}-');
+
 $theme->display('page_kickit.tpl');
-$theme->left_delimiter = "{";
-$theme->right_delimiter = "}";
-?>
+
+$theme->setLeftDelimiter($oldLeft);
+$theme->setRightDelimiter($oldRight);
