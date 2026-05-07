@@ -58,6 +58,9 @@ $theme->assign('cron_token',        $_SESSION['CronToken']);
 $custom = BuildPath(false, 'theme', 'css', 'custom.css');
 $theme->assign('custom_css',        file_exists($custom) ? @filemtime($custom) : 0);
 
+$custom_js = BuildPath(false, 'theme', 'js', 'custom', 'custom_scripts.js');
+$theme->assign('custom_js', file_exists($custom_js) ? @filemtime($custom_js) : 0);
+
 $theme->display('page_footer.tpl');
 
 if(isset($_GET['p']))
@@ -67,8 +70,6 @@ if(isset($_GET['c']))
 if(isset($_GET['p']) && $_GET['p'] != "login")
 	$_SESSION['q'] = $_SERVER['QUERY_STRING'];
 
-
-	
 if(defined('DEVELOPER_MODE')) {
 		echo('<div class="container" style="padding-bottom: 100px;"><div class="card">');
 		echo('<div class="card-header"><h2>Режим отладки SourceBans</h2></div><div class="card-body card-padding">Активен режим отладки SourceBans. Для отключения, снимите галочку с пункта "Режим отладки" в настройках SourceBans или закомментируйте строчку <pre>define(\'DEVELOPER_MODE\', true);</pre> в <i>config.php</i></div>');

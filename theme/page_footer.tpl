@@ -76,15 +76,18 @@
 		  $.noConflict();
 		</script>
         
-        <script>setInterval(xajax_CSRF, 15000);</script>
-
         <!-- Cron -->
         <script type="text/javascript" src="theme/js/cron.js"></script>
         <script type="text/javascript">RunCron("{$cron_token}");</script>
         
+        <!-- Custom JS -->
+        {if $custom_js > 0}
+            <script src="theme/js/custom/custom_scripts.js"></script>
+        {/if}
+	
+		<!-- Custom CSS -->
         {if $custom_css > 0}
             <link rel="stylesheet" href="theme/css/custom.css">
         {/if}
-        <!-- Custom CSS -->
 	{*/body*}
 {*/html*}
