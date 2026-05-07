@@ -642,7 +642,9 @@ function RedirectJS($url)
 
 function RemoveCode($text)
 {
-	return htmlspecialchars(strip_tags($text));
+	$text = (string)$text;
+	$text = strip_tags($text);
+	return htmlspecialchars($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
 }
 
 function SecondsToString($sec, $textual=true)
