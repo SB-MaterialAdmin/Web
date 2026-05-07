@@ -1600,18 +1600,21 @@ function GetRequesterSteam() {
   return $_SESSION['steam'];
 }
 
-function BuildPath($append_slash = true) {
-  $arg_count = func_num_args();
-  $args = func_get_args();
-  unset($args[0]);
+function BuildPath($append_slash = true)
+{
+    $parts = func_get_args();
+    $append_slash = array_shift($parts);
+   
+	$path = implode(DIRECTORY_SEPARATOR, array_map(function($p) {
+        return trim($p, '/\\');
+    }, $parts));
 
-  $result = (PHP_SHLIB_SUFFIX !== 'dll') ? '/' : '';
-
-  foreach ($args as $arg)
-    $result .= (($args[1] == $arg) ? '' : '/') . trim($arg, "/\\");
-  if ($append_slash)
-    $result .= '/';
-  return $result;
+    if ($append_slash && $path !== '') {
+        $path .= DIRECTORY_SEPARATOR;
+    }
+	
+	echo $path . "<br>";
+    return $path;
 }
 
 function ProcessSteamRequest($InterfaceName, $FunctionName, $Version, $Params, $RequireKey = false, $IsPOST = false) {
