@@ -607,20 +607,19 @@ while (!$res->EOF)
 											(SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = C.editaid) AS editname
 											FROM `".DB_PREFIX."_comments` AS C
 											WHERE type = 'B' AND bid = '".$data['ban_id']."' ORDER BY added desc");
+		$arr_comments = array();
 
-		if($commentres->RecordCount()>0) {
-			$comment = array();
+		if ($commentres->RecordCount() > 0) {
 			$morecom = 0;
 			while(!$commentres->EOF) {
 				$cdata = array();
 				$cdata['morecom'] = ($morecom==1?true:false);
-				if($commentres->fields['aid'] == $userbank->GetAid() || $userbank->HasAccess(ADMIN_OWNER)) {
+				if ($commentres->fields['aid'] == $userbank->GetAid() || $userbank->HasAccess(ADMIN_OWNER)) {
 					$cdata['editcomlink'] = "<a href=\"index.php?p=banlist&comment=".$data['ban_id']."&ctype=B&cid=".$commentres->fields['cid'].$pagelink."\"> Редактировать</a>";
-					if($userbank->HasAccess(ADMIN_OWNER)) {
+					if ($userbank->HasAccess(ADMIN_OWNER)) {
 						$cdata['delcomlink'] = "<a href=\"#\" target=\"_self\" onclick=\"RemoveComment(".$commentres->fields['cid'].",'B',".(isset($_GET["page"])?$page:-1).");\">Удалить</a>";
 					}
-				}
-				else {
+				} else {
 					$cdata['editcomlink'] = "none";
 					$cdata['delcomlink'] = "none";
 				}
@@ -634,24 +633,22 @@ while (!$res->EOF)
 				$cdata['aid'] = $commentres->fields['aid'];
 				$cdata['avatar'] = GetUserAvatar($userbank->GetAdmin($commentres->fields['aid'])['authid']);
 
-				if(!empty($commentres->fields['edittime'])) {
+				if (!empty($commentres->fields['edittime'])) {
 					$cdata['edittime'] = SBDate($dateformat, $commentres->fields['edittime']);
 					$cdata['editname'] = $commentres->fields['editname'];
-				}
-				else {
+				} else {
 					$cdata['edittime'] = "none";
 					$cdata['editname'] = "none";
 				}
 
 				$morecom = 1;
-				array_push($comment,$cdata);
 				$commentres->MoveNext();
 			}
 		}
-		else
-			$comment = "Нет";
 
-		$data['commentdata'] = $comment;
+		if (count($arr_comments) > 0) {
+			$data['commentdata'] = $arr_comments;
+		}
 	}
 
 
@@ -798,8 +795,10 @@ if(isset($_GET["comment"])) {
 }
 $theme->assign('view_comments',$view_comments);
 $theme->assign('comment', (isset($_GET["comment"])&&$view_comments?$_GET["comment"]:false));
+
 $admlist = $userbank->GetAllAdmins();
 $theme->assign('admlist', $admlist);
+
 //----------------------------------------
 
 unset($_SESSION['CountryFetchHndl']);

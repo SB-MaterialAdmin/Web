@@ -504,8 +504,9 @@ while (!$res->EOF)
 	$data['layer_id'] = 'layer_'.$res->fields['ban_id'];
 	// Запрос текущего статуса игрока для рисования ссылки на мьют или гаг
 	$alrdybnd = $GLOBALS['db']->Execute("SELECT count(bid) as count FROM `".DB_PREFIX."_comms` WHERE authid = '".$data['steamid']."' AND RemovedBy IS NULL AND type = '".$data['type']."' AND (length = 0 OR ends > UNIX_TIMESTAMP());");
-	if($alrdybnd->fields['count']==0)
-	{
+	
+	$data['reban_link'] = false;
+	if ($alrdybnd->fields['count'] == 0) {
 		switch($data['type'])
 		{
 		case 1:
@@ -611,6 +612,7 @@ while (!$res->EOF)
 				$cdata['commenttxt'] = str_replace("\n", "<br />", $cdata['commenttxt']);
 				// Parse links and wrap them in a <a href=""></a> tag to be easily clickable
 				$cdata['commenttxt'] = preg_replace('@(https?://([-\w\.]+)+(:\d+)?(/([\w/_\.]*(\?\S+)?)?)?)@', '<a href="$1" target="_blank">$1</a>', $cdata['commenttxt']);
+
 				$cdata['aid'] = $commentres->fields['aid'];
 				$cdata['avatar'] = GetUserAvatar($userbank->GetAdmin($commentres->fields['aid'])['authid']);
 				
@@ -771,8 +773,10 @@ if(isset($_GET["comment"])) {
 }
 $theme->assign('view_comments',$view_comments);
 $theme->assign('comment', (isset($_GET["comment"])?$_GET["comment"]:false));
+
 $admlist = $userbank->GetAllAdmins();
 $theme->assign('admlist', $admlist);
+
 //----------------------------------------
 
 unset($_SESSION['CountryFetchHndl']);
