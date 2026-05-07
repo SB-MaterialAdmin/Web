@@ -11,7 +11,7 @@
 					<th width="5%"  class="text-center">Иконка</th>
 					<th width="2%"  class="text-center">Универсальный SteamID</th>
 					{if $permission_editmods || $permission_deletemods}
-					<th class="text-right">Действия</th>
+						<th class="text-right">Действия</th>
 					{/if}
 				</tr>
 				{foreach $mod_list as $mod}
@@ -33,6 +33,6 @@
 					</tr>
 				{/foreach}
 			</tbody>
-	</table>
+		</table>
 	</div>
 {/if}
