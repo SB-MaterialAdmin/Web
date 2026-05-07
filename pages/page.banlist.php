@@ -642,6 +642,7 @@ while (!$res->EOF)
 				}
 
 				$morecom = 1;
+				array_push($arr_comments,$cdata);
 				$commentres->MoveNext();
 			}
 		}
