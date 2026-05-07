@@ -415,6 +415,11 @@ function CommunityID($steamid_id) /*: string*/
 }
 while (!$res->EOF) {
 	$data = array();
+	$delimiter = "";
+
+	$mute_count = (int)$res->fields['mute_count'];
+	$gag_count = (int)$res->fields['gag_count'];
+	$history_count = $mute_count + $gag_count;
 
 	$data['ban_id'] = $res->fields['ban_id'];
 
@@ -526,9 +531,6 @@ while (!$res->EOF) {
 			break;
 		}
 	}
-	else
-		$data['reban_link'] = false;
-
 
 	$data['edit_link'] = CreateLinkR('Редактировать',"index.php?p=admin&c=comms&o=edit".$pagelink."&id=".$res->fields['ban_id']."&key=".$_SESSION['banlist_postkey']);
 
@@ -563,6 +565,25 @@ while (!$res->EOF) {
 	//$data['mod_icon'] = '<img src="images/games/' .$modicon . '" alt="MOD" border="0" align="absmiddle" />&nbsp;' . $data['type_icon'];
 	$data['mod_icon'] = '<img src="images/games/' .$modicon . '" alt="MOD" border="0" align="absmiddle" />&nbsp;';
 	
+	switch ((int)$data['type']) {
+		case 1:
+			$data['type_icon'] = '<img src="images/type_v.png" alt="Микрофон" border="0" align="absmiddle" />';
+			$mute_count = $mute_count - 1;
+			break;
+		case 2:
+			$data['type_icon'] = '<img src="images/type_c.png" alt="Чат" border="0" align="absmiddle" />';
+			$gag_count = $gag_count - 1;
+			break;
+		case 3:
+			$data['type_icon'] = '<img src="images/type_silence.png" alt="Микрофон и чат" border=0 align="absmiddle" />';
+			$gag_count -= 1;
+			$mute_count -= 1;
+			break;
+		default:
+			$data['type_icon'] = '<img src="images/country/zz.gif" alt="Неизвестный тип блока" border="0" align="absmiddle" />';
+			break;
+	}
+
 	$data['type_icon_p'] = $data['type_icon'];
 	
     if($history_count > 1)
