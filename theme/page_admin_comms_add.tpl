@@ -52,7 +52,7 @@
 					<select class="selectpicker" id="listReason" name="listReason" onChange="changeReason(this[this.selectedIndex].value);">
 						<option value="" selected> -- Выберите причину -- </option>
 						{if $customreason}
-							{foreach from="$customreason" item="creason"}
+							{foreach from=$customreason item=creason}
 								<option value="{$creason}">{$creason}</option>
 							{/foreach}
 						{/if}

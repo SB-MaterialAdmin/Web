@@ -7,7 +7,7 @@
                 <th width="70%" class="text-left">Имя</th>
                 <th class="text-right">Статус</th>
             </tr>
-            {foreach from="$modlist" item="mod"}
+            {foreach from=$modlist item=mod}
             <tr id="{$mod.folder}">
                 <td class="text-center"><img src="{$mirror}{$mirror_iconsdir}{$mod.icon}"></td>
                 <td class="text-left">{$mod.name|htmlspecialchars}</td>

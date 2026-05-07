@@ -7,10 +7,10 @@
 		</div>
 		<div class="tv-comments">
 			<ul class="tvc-lists">
-				{foreach from="$othercomments" item="com"}
+				{foreach from=$othercomments item=com}
 				<li class="media">
 					<a href="#" class="tvh-user pull-left">
-						{foreach from="$admlist" item="adm"}
+						{foreach from=$admlist item=adm}
 							{if $adm.aid == $com.aid}
 								<img class="img-responsive" style="width: 46px;height: 46px;border-radius: 50%;" src="{$com.avatar}" alt="">
 							{/if}
@@ -390,7 +390,7 @@
 											{foreach from=$ban.commentdata item=commenta}
 											<div class="media">
 												<a href="#" class="pull-left">
-													{foreach from="$admlist" item="adm"}
+													{foreach from=$admlist item=adm}
 														{if $adm.aid == $commenta.aid}
 															<img src="{$commenta.avatar}" alt="" class="lv-img-sm">
 														{/if}

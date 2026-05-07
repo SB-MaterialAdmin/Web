@@ -12,7 +12,7 @@
 					<th width="2%"  class="text-center">Универсальный SteamID</th>{if $permission_editmods || $permission_deletemods}
 					<th class="text-right">Действия</th>{/if}
 				</tr>
-				{foreach from="$mod_list" item="mod" name="gaben"}
+				{foreach from=$mod_list item=mod name=gaben}
 				<tr id="mid_{$mod.mid}">
 				<td class="text-left">{$mod.name|htmlspecialchars}</td>
 				<td class="text-center">{$mod.modfolder|htmlspecialchars}</td>

@@ -13,7 +13,7 @@
     <th>Ник</th>
     <th>Steam ID</th>
   </thead>
-  {foreach from="$submission_list" item="sub"}
+  {foreach from=$submission_list item=sub}
   <tr id="sid_{$sub.subid}" class="opener" {if $sub.hostname == ""}onclick="xajax_ServerHostPlayers('{$sub.server}', 'id', 'sub{$sub.subid}');"{/if} onmouseout="this.className='tbl_out'" onmouseover="this.className='tbl_hover'" style="cursor: pointer;">
     <td>{$sub.name}</td>
     <td>{if $sub.SteamId!=""}{$sub.SteamId}{else}{$sub.sip}{/if}</td>

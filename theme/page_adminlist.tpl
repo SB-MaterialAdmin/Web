@@ -1,4 +1,4 @@
-{foreach from="$games" item="game"}
+{foreach from=$games item=game}
 {if $game.servers > 0}
 {assign var="currgame" value=$game.mid}
 <div class="card">
@@ -12,7 +12,7 @@
 	<div class="card-body card-padding">	
 		<table id="data-table-command" class="table table-striped table-vmiddle">
 			<thead>
-				{foreach from="$server_list" item="server"}
+				{foreach from=$server_list item=server}
                     {if $server.modid == $currgame}
                     {if $server.admincount > 0}
                     {assign var="adminlist" value=$server.adminlist}
@@ -37,7 +37,7 @@
 										</tr>
 									</thead>
 									<tbody id="adminlist">
-                                        {foreach from="$adminlist" item="admin"}
+                                        {foreach from=$adminlist item=admin}
 										<tr>
 											<td><img src="{$admin.avatar}" style="width: 20px; height: 20px; border-radius: 25px;" /> <a href="https://steamcommunity.com/profiles/{$admin.authid}">{$admin.user}</a></td>
 											<td>{if $admin.srv_group != ""}{$admin.srv_group}{else}Нет группы\Индивид. права{/if}</td>

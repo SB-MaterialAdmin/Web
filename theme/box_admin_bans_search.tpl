@@ -240,7 +240,7 @@
 								<td class="p-b-5">
 									<div class="col-sm-12 p-r-0 p-l-0 select">
 										<select class="form-control" id="ban_admin" onmouseup="$('admin').checked = true">
-											{foreach from="$admin_list" item="admin}
+											{foreach from=$admin_list item=admin}
 												<option label="{$admin.user}" value="{$admin.aid}">  {$admin.user}</option>
 											{/foreach}
 										</select>
@@ -265,7 +265,7 @@
 								<div class="col-sm-12 p-t-5 p-r-0 p-l-0 select">
 									<select class="form-control" id="server" onmouseup="$('where_banned').checked = true">
 										<option label="Web Бан" value="0">Web Бан</option>
-										{foreach from="$server_list" item="server}
+										{foreach from=$server_list item=server}
 											<option value="{$server.sid}" id="ss{$server.sid}">  Получение адреса... ({$server.ip}:{$server.port})</option>
 										{/foreach}
 									</select>

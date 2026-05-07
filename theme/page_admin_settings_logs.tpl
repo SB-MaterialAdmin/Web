@@ -17,7 +17,7 @@
             <td width="" height="16" class="listtable_top"><b>Дата/Время</b></td>
         </tr>
 
-{foreach from="$log_items" item="log"}
+{foreach from=$log_items item=log}
         <tr class="opener" onmouseout="this.className='tbl_out'" onmouseover="this.className='tbl_hover'" style="cursor: pointer;">
             <td height="16" align="center" class="listtable_1">{$log.type_img}</td>
             <td height="16" class="listtable_1">{$log.title}</td>

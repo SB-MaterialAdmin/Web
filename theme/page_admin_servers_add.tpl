@@ -56,7 +56,7 @@
 						{if !$edit_server}
 		        		<option value="-2">Выберите из списка...</option>
 						{/if}
-							{foreach from="$modlist" item="mod"}
+							{foreach from=$modlist item=mod}
 								<option value='{$mod.mid}'>{$mod.name}</option>
 							{/foreach}
 		        	</select>
@@ -89,7 +89,7 @@
 				<label class="col-sm-3 control-label">{help_icon title="Группы сервера" message="Выберите группы серверов. Используется для добавления администраторов на группу игровых серверов"} Группы серверов:</label>
 				<div class="col-sm-9">
 							<table width="100%" valign="left" id="group.details">
-								{foreach from="$grouplist" item="group"}
+								{foreach from=$grouplist item=group}
 									<tr>
 										<td>
 											<div class="checkbox m-b-15">
