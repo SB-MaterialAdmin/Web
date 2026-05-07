@@ -57,6 +57,8 @@ class App {
     {
         if (!self::$templater)
         {
+            require_once SMARTY_SRC_PATH . 'functions.php';
+
             $templater = new \Smarty\Smarty();
 			$templater->setTemplateDir('sb://theme/');
 			$templater->setCompileDir(SB_THEME_COMPILE);
