@@ -14,7 +14,7 @@
 		</ul>
 		{if $btn_rem}<br>{$btn_rem}{/if}
 	</div>
-	{php} require (TEMPLATES_PATH . "/admin.admins.search.php");{/php}
+	{include file="box_admin_admins_search.tpl"}
 	
 	<div class="table-responsive" id="banlist">
 		<table cellspacing="0" cellpadding="0" class="table table-striped">

@@ -2,7 +2,7 @@
     <h2 align="left">Системный лог {$clear_logs} <small>Щёлкните курсором мыши по нужному событию, дабы раскрыть больше подробностей о нём.</small></h2>
 </div>
 <div class="card-body">
-{php} require (TEMPLATES_PATH . "/admin.log.search.php");{/php}
+    {include file="box_admin_log_search.tpl"}
 </div>
 <div class="card-body card-padding">
 <div id="banlist-nav">{$page_numbers}</div>

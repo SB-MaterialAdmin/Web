@@ -158,4 +158,4 @@ $theme->assign('admsrvflag_list', $serverflags);
 $theme->assign('can_editadmin', $userbank->HasAccess(ADMIN_EDIT_ADMINS|ADMIN_OWNER));
 $theme->assign('can_warn', $userbank->HasAccess(ADMIN_ISSUE_WARNS_ADMINS|ADMIN_OWNER));
 
-$theme->display('box_admin_admins_search.tpl');
+//$theme->display('box_admin_admins_search.tpl'); // include in page_admin_admins_list.tpl
