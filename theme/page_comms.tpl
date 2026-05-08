@@ -7,14 +7,15 @@
 		</div>
 		<div class="tv-comments">
 			<ul class="tvc-lists">
-				{foreach from="$othercomments" item="com"}
+				{foreach from=$othercomments item=com}
 					<li class="media">
 						<a href="#" class="tvh-user pull-left">
-							{foreach from="$admlist" item="adm"}
-							{if $adm.aid == $com.aid}
-								<img class="img-responsive" style="width: 46px;height: 46px;border-radius: 50%;" src="{$com.avatar}" alt="">
-							{/if}
-						{/foreach}
+							{foreach $admlist as $adm}
+							    {if $adm.aid == $com.aid}
+							        <img class="img-responsive" style="width: 46px; height: 46px; border-radius: 50%;" src="{$com.avatar|escape:'htmlall'}" alt="">
+							        {break}
+							    {/if}
+							{/foreach}
 						</a>
 						<div class="media-body">
 						<strong class="d-block">{$com.comname}</strong>
@@ -83,7 +84,7 @@
 							{if empty($ban.player)}
 								<i>имя игрока скрыто</i>
 							{else}
-								{$ban.player|escape:'html'|stripslashes}
+								{$ban.player|escape:'htmlall'}
 							{/if}
 						</div>
 						{if $view_comments && $ban.commentdata != "Нет" && $ban.commentdata|@count > 0}
@@ -152,7 +153,7 @@
 												{if empty($ban.player)}
 													<i>имя игрока скрыто.</i>
 												{else}
-													{$ban.player|escape:'html'|stripslashes}
+													{$ban.player|escape:'htmlall'}
 												{/if}
 											</div>
 										</div>
@@ -309,10 +310,11 @@
 													{foreach from=$ban.commentdata item=commenta}
 													<div class="media">
 														<a href="#" class="pull-left">
-															{foreach from="$admlist" item="adm"}
-																{if $adm.aid == $commenta.aid}
-																	<img src="{$commenta.avatar}" alt="" class="lv-img-sm">
-																{/if}
+															{foreach $admlist as $adm}
+															    {if $adm.aid == $commenta.aid}
+															        <img src="{$commenta.avatar|escape:'htmlall'}" alt="" class="lv-img-sm">
+															        {break}
+															    {/if}
 															{/foreach}
 														</a>
 								 
@@ -396,9 +398,14 @@
 <script type="text/javascript">window.addEvent('domready', function(){	
 InitAccordion('tr.opener', 'div.opener', 'content');
 {/literal}
-{if $view_bans}
-$('tickswitch').value=0;
-{/if}
+    {* This code is used to select several fields in the table for action on them (delete, etc.) *}
+    {* This code is not implemented on this page, apparently it only works in bans *}
+
+	{*
+	{if $view_bans}
+	$('tickswitch').value=0;
+	{/if}
+	*}
 {literal}
 }); 
 </script>

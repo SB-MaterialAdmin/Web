@@ -88,6 +88,7 @@
         $theme->assign('port', 	'');
         $theme->assign('rcon', 	'');
         $theme->assign('modid', '');
+		$theme->assign('priority', '0');
 		
 		$theme->assign('submit_text', "Добавить сервер");
 	?>

@@ -2,7 +2,7 @@
     <h2 align="left">Системный лог {$clear_logs} <small>Щёлкните курсором мыши по нужному событию, дабы раскрыть больше подробностей о нём.</small></h2>
 </div>
 <div class="card-body">
-{php} require (TEMPLATES_PATH . "/admin.log.search.php");{/php}
+    {include file="box_admin_log_search.tpl"}
 </div>
 <div class="card-body card-padding">
 <div id="banlist-nav">{$page_numbers}</div>
@@ -17,7 +17,7 @@
             <td width="" height="16" class="listtable_top"><b>Дата/Время</b></td>
         </tr>
 
-{foreach from="$log_items" item="log"}
+{foreach from=$log_items item=log}
         <tr class="opener" onmouseout="this.className='tbl_out'" onmouseover="this.className='tbl_hover'" style="cursor: pointer;">
             <td height="16" align="center" class="listtable_1">{$log.type_img}</td>
             <td height="16" class="listtable_1">{$log.title}</td>

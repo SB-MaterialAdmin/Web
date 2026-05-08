@@ -7,7 +7,7 @@ ignore_user_abort(true);
 set_time_limit(0);
 
 $CronToken = filterInput(INPUT_GET, 'token', FILTER_SANITIZE_STRING);
-if ($CronToken != $_SESSION['CronToken']) {
+if (empty($_SESSION['CronToken']) || $CronToken != $_SESSION['CronToken']) {
   echo(json_encode([
     'result'  => false,
     'code'    => 1,

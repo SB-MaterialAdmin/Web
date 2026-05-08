@@ -444,8 +444,10 @@ else
 		$theme->display('page_admin_settings_theme.tpl');	
 	echo '</div>';
 	#########/[Settings Page]###############
-	
+
 	#########[Logs Page]###############
+    require (TEMPLATES_PATH . "/admin.log.search.php");
+
 	echo '<div id="2" style="display:none;">';
 		if($userbank->HasAccess(ADMIN_OWNER))
 			$theme->assign('clear_logs', "( <a href='javascript:ClearLogs();'>Очистить лог</a> )");

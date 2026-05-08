@@ -105,7 +105,7 @@
 						<div class="col-sm-9">
 							<div class="checkbox">
 								<table width="100%" valign="left" id="group.details">
-										{foreach from="$server_list" item="server"}
+										{foreach from=$server_list item=server}
 											<tr>
 												<td>
 													<div class="checkbox m-b-15">

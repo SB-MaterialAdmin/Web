@@ -170,11 +170,17 @@ $theme->assign('ban_reason', $res['reason']);
 $theme->assign('ban_authid', trim($res['authid']));
 $theme->assign('customreason', ((isset($GLOBALS['config']['bans.customreasons'])&&$GLOBALS['config']['bans.customreasons']!="")?unserialize($GLOBALS['config']['bans.customreasons']):false));
 
-$theme->left_delimiter = "-{";
-$theme->right_delimiter = "}-";
+
+$oldLeft = $theme->getLeftDelimiter();
+$oldRight = $theme->getRightDelimiter();
+
+$theme->setLeftDelimiter('-{');
+$theme->setRightDelimiter('}-');
+
 $theme->display('page_admin_edit_comms.tpl');
-$theme->left_delimiter = "{";
-$theme->right_delimiter = "}";
+
+$theme->setLeftDelimiter($oldLeft);
+$theme->setRightDelimiter($oldRight);
 ?>
 <script type="text/javascript">window.addEvent('domready', function(){
 <?php echo $errorScript; ?>

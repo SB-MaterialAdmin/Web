@@ -69,8 +69,14 @@ $theme->assign('warnings_enabled',		$GLOBALS['config']['admin.warns'] == "1");
 $theme->assign('max_warnings',			$GLOBALS['config']['admin.warns.max']);
 $theme->assign('warnings',				$GLOBALS['db']->GetAll("SELECT `reason`, `expires` FROM `" . DB_PREFIX . "_warns` WHERE (`expires` > ? OR `expires` = 0) AND `arecipient` = ?;", array(time(), $userbank->GetAid())));
 
-$theme->left_delimiter = "-{";
-$theme->right_delimiter = "}-";
+
+$oldLeft = $theme->getLeftDelimiter();
+$oldRight = $theme->getRightDelimiter();
+
+$theme->setLeftDelimiter('-{');
+$theme->setRightDelimiter('}-');
+
 $theme->display('page_youraccount.tpl');
-$theme->left_delimiter = "{";
-$theme->right_delimiter = "}";
+
+$theme->setLeftDelimiter($oldLeft);
+$theme->setRightDelimiter($oldRight);

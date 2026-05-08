@@ -25,7 +25,7 @@
 								<td class="p-b-5">
 									<div class="col-sm-6 p-t-5 p-r-0 p-l-0">
 										<select class="selectpicker" id="admin" onmouseup="$('admin_').checked = true">
-											{foreach from="$admin_list" item="admin}
+											{foreach from=$admin_list item=admin}
 												<option label="{$admin.user}" value="{$admin.aid}">{$admin.user}</option>
 											{/foreach}
 										</select>

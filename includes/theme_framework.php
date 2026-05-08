@@ -1,20 +1,45 @@
 <?php
 global $theme;
 
-// Подгрузка самого нужного плагина
-require_once(INCLUDES_PATH . "/smarty/plugins/function.help_icon.php");
-
 // Регистрация функций
-$theme->register_function("display_material_checkbox", "materialdesign_checkbox");
-$theme->register_function("display_material_input", "materialdesign_input");
-$theme->register_function("display_header", "materialdesign_cardheader");
-$theme->register_function("display_alert", "materialdesign_alert");
-$theme->register_function('steamid_format', 'steamid_format');
-$theme->register_block("render_material_body", "materialdesign_body");
-$theme->register_block('highlight_links', 'highlight_links_block');
-$theme->register_function('highlight_links', 'highlight_links_fn');
+$theme->registerPlugin(Smarty\Smarty::PLUGIN_FUNCTION, 'display_material_checkbox', 'materialdesign_checkbox');
+$theme->registerPlugin(Smarty\Smarty::PLUGIN_FUNCTION, 'display_material_input', 'materialdesign_input');
+$theme->registerPlugin(Smarty\Smarty::PLUGIN_FUNCTION, 'display_header', 'materialdesign_cardheader');
+$theme->registerPlugin(Smarty\Smarty::PLUGIN_FUNCTION, 'display_alert', 'materialdesign_alert');
+$theme->registerPlugin(Smarty\Smarty::PLUGIN_FUNCTION, 'steamid_format', 'steamid_format');
+//$theme->registerPlugin(Smarty\Smarty::PLUGIN_FUNCTION, 'highlight_links_fn', 'highlight_links_fn');
+$theme->registerPlugin(Smarty\Smarty::PLUGIN_FUNCTION, 'sb_button', 'smarty_function_sb_button');
+$theme->registerPlugin(Smarty\Smarty::PLUGIN_FUNCTION, 'help_icon', 'smarty_function_help_icon');
+
+$theme->registerPlugin(Smarty\Smarty::PLUGIN_BLOCK, 'render_material_body', 'materialdesign_body');
+$theme->registerPlugin(Smarty\Smarty::PLUGIN_BLOCK, 'highlight_links', 'highlight_links_block');
+
+$theme->registerPlugin(Smarty\Smarty::PLUGIN_MODIFIER, 'unserialize', function($string) {
+    return unserialize($string);
+});
 
 // Создание каллбэков функций
+function smarty_function_help_icon($params, &$smarty)
+{
+    $style = $params['style'] ?? "";
+    return '<img border="0" align="absbottom" src="images/help.png" style="float:left;'.$style.'" data-trigger="hover" data-toggle="popover" data-placement="top" data-content="' .  $params['message'] . '" title="" data-original-title="' .  $params['title'] . '">&nbsp;&nbsp;';
+}
+
+function smarty_function_sb_button($params, &$smarty) {
+    $text   = $params['text']   ?? '';
+    $click  = $params['onclick'] ?? '';
+    $class  = $params['class']  ?? '';
+    $id     = $params['id']     ?? '';
+    $icon   = $params['icon']   ?? '';
+    $submit = $params['submit'] ?? false;
+
+    $type = $submit ? 'submit' : 'button';
+
+    //$button = "<input type='$type' onclick=\"$click\" name='$id' class='btn $class' onmouseover='ButtonOver(\"$id\")' onmouseout='ButtonOver(\"$id\")' id='$id' value='$text'>";
+    $button = "<button type='$type' onclick=\"$click\" name='$id' class='btn $class waves-effect' onmouseover='ButtonOver(\"$id\")' onmouseout='ButtonOver(\"$id\")' id='$id' value='$text'>$icon$text</button>";
+    return $button;
+}
+
 function materialdesign_checkbox($params, &$smarty) {
     if (!isset($params["name"]) || !isset($params["help_title"]) || !isset($params["help_text"]))
         return "";
@@ -48,9 +73,11 @@ function materialdesign_input($params, &$smarty) {
     return $str;
 }
 
-function materialdesign_cardheader($params, &$smarty) {
-    if (!isset($params['title']))
+function materialdesign_cardheader($params, &$smarty)
+{
+    if (!isset($params['title'])) {
         return "";
+	}
 
     $str  = '<div class="card-header"><h2>'.$params['title'];
     $str .= (isset($params['text']))?"<small>".$params['text']."</small>":"";
@@ -59,51 +86,61 @@ function materialdesign_cardheader($params, &$smarty) {
     return $str;
 }
 
-function materialdesign_alert($params, &$smarty) {
+function materialdesign_alert($params, &$smarty)
+{
     return sprintf('<div class="alert alert-info" role="alert">%s</div>', $params['text']);
 }
 
-function materialdesign_body($params, $content, &$smarty) {
+function materialdesign_body($params, $content, &$smarty)
+{
     $out = '<div class="card-body';
-    if ($params['padding'])
-        $out .= " card-padding";
-    if ($params['clearfix'])
+
+	if ($params['padding']) {
+		$out .= " card-padding";
+	}
+
+    if ($params['clearfix']) {
         $out .= " clearfix";
+	}
+
     $out .= '">'.$content."</div>";
-    
     return $out;
 }
 
 function steamid_format($params, &$smarty)
 {
-    $format = $params['format'] ?: 'v2';
-    $steamId = $params['steamid'] ?: 'STEAM_ID_CONSOLE';
-    $gameId = $params['gameid'] ?: 0;
-    $fallback = $params['fallback'] ?: '';
+    $format = (!empty($params['format'])) ? $params['format'] : 'v2';
+    $steamId = (!empty($params['steamid'])) ? $params['steamid'] : 'STEAM_ID_CONSOLE';
+    $gameId = (!empty($params['gameid'])) ? $params['gameid'] : 0;
+    $fallback = (!empty($params['fallback'])) ? $params['fallback'] : '';
 
-    if (!in_array($format, ['v2', 'v3', 'CommunityID', 'AccountID']))
-    {
+    if (!in_array($format, ['v2', 'v3', 'CommunityID', 'AccountID'])) {
         trigger_error('Unknown SteamID format: ' . $format);
         return $fallback;
     }
 
-    try
-    {
+    try {
         $steamId = CSteamId::factory($steamId, $gameId);
         return $steamId->{$format};
-    }
-    catch (\Exception $e)
-    {
+    } catch (\Exception $e) {
         return $fallback;
     }
 }
 
 function highlight_links_block($params, $content, &$smarty, &$repeat)
 {
+    if ($repeat) {
+        return;
+    }
+
     return highlight_links_fn(['content' => $content], $smarty);
 }
 
 function highlight_links_fn($params, &$smarty)
 {
+	if (empty($params['content'])) {
+		return "";
+	}
+
     return preg_replace('/\w{1,}:\/\/\S{1,}/', '<a href="${0}">${0}</a>', $params['content']);
 }

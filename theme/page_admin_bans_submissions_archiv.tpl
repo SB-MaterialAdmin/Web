@@ -12,7 +12,7 @@
     <th>Ник</th>
     <th>Steam ID</th>
   </thead>
-  {foreach from="$submission_list_archiv" item="sub"}
+  {foreach from=$submission_list_archiv item=sub}
   <tr id="asid_{$sub.subid}" class="opener opener4 tbl_out" {if $sub.hostname == ""}onclick="xajax_ServerHostPlayers('{$sub.server}', 'id', 'suba{$sub.subid}');"{/if} onmouseout="this.className='tbl_out'" onmouseover="this.className='tbl_hover'" style="cursor: pointer;">
     <td>{$sub.name}</td>
     <td>{if $sub.SteamId!=""}{$sub.SteamId}{else}{$sub.sip}{/if}</td>
@@ -31,11 +31,11 @@
                 {if $sub.archiv != "2" and $sub.archiv != "3"}
                 <li><a href="#" onclick="xajax_SetupBan({$sub.subid});">Забанить</a></li>
                 {if $permissions_editsub}
-                <li><a href="#" onclick="RemoveSubmission({$sub.subid}, '{$sub.name|stripslashes|stripquotes}', '2');">Восстановить</a></li>
+                <li><a href="#" onclick="RemoveSubmission({$sub.subid}, '{$sub.name|escape:'javascript'}', '2');">Восстановить</a></li>
                 {/if}
                 {/if}
                 {if $permissions_editsub}
-                <li><a href="#" onclick="RemoveSubmission({$sub.subid}, '{$sub.name|stripslashes|stripquotes}', '0');">Удалить</a></li>
+                <li><a href="#" onclick="RemoveSubmission({$sub.subid}, '{$sub.name|escape:'javascript'}', '0');">Удалить</a></li>
                 {/if}   
                 <li><a href="index.php?p=admin&c=bans&o=email&type=s&id={$sub.subid}">Контакты</a></li>           
               </ul>
@@ -149,9 +149,14 @@
 <script type="text/javascript">window.addEvent('domready', function(){  
   InitAccordion('tr.opener', 'div.opener', 'content');
   {/literal}
-  {if $view_bans}
-  $('tickswitch').value=0;
-  {/if}
+        {* This code is used to select several fields in the table for action on them (delete, etc.) *}
+        {* This code is not implemented on this page, apparently it only works in bans *}
+
+        {*
+        {if $view_bans}
+        $('tickswitch').value=0;
+        {/if}
+        *}
   {literal}
 }); 
 </script>

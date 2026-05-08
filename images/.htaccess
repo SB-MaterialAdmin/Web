@@ -1,0 +1,25 @@
+# Disable execution of any scripts (both CGI and module)
+<FilesMatch "\.(php|phtml|php3|php4|php5|php7|phps|cgi|pl|py|rb|asp|aspx|sh|bat)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Disable CGI script execution (in case the above .htaccess rules don't work)
+Options -ExecCGI
+
+# If PHP runs as a module, additionally disable it
+<IfModule mod_php7.c>
+    php_flag engine off
+</IfModule>
+<IfModule mod_php8.c>
+    php_flag engine off
+</IfModule>
+
+# Remove PHP handlers (for module)
+RemoveHandler .php .phtml .php3 .php4 .php5 .php7 .phps
+
+# Deny access to .htaccess
+<Files .htaccess>
+    Order Allow,Deny
+    Deny from all
+</Files>

@@ -117,7 +117,7 @@
 					<div class="col-sm-9">
 						<div class="checkbox">
 							<table width="100%" valign="left" id="group.details">
-								{foreach from="$group_list" item="group"}
+								{foreach from=$group_list item=group}
 									<tr>
 										<td>
 											<div class="checkbox m-b-15">
@@ -129,7 +129,7 @@
 										</td>
 									</tr>
 								{/foreach}
-								{foreach from="$server_list" item="server"}
+								{foreach from=$server_list item=server}
 									<tr>
 										<td>
 											<div class="checkbox m-b-15">
@@ -166,7 +166,7 @@
 												<option value="n">Новая группа</option>
 											</optgroup>
 											<optgroup label="Группы">
-												{foreach from="$server_admin_group_list" item="server_wg"}
+												{foreach from=$server_admin_group_list item=server_wg}
 													<option value='{$server_wg.id}'>{$server_wg.name}</option>
 												{/foreach}
 											</optgroup>
@@ -189,7 +189,7 @@
 												<option value="n">Новая группа</option>
 											</optgroup>
 											<optgroup label="Группы">
-												{foreach from="$server_group_list" item="server_g"}
+												{foreach from=$server_group_list item=server_g}
 													<option value='{$server_g.gid}'>{$server_g.name}</option>
 												{/foreach}
 											</optgroup>

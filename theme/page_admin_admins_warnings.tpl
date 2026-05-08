@@ -13,7 +13,7 @@
 			<th style="width: 12%;" class="text-right">Действия</th>
 		</tr>
 		
-		{foreach from="$Warnings" item="warning"}
+		{foreach from=$Warnings item=warning}
 		<tr{if $warning.expired} class="warning"{/if}>
 			<td>{$warning.id}</td>
 			<td><strong>{$warning.from|escape}</strong></td>

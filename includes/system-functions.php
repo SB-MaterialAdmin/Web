@@ -97,12 +97,18 @@ function BuildPageHeader()
  */
 function BuildSubMenu()
 {
-	global $theme;
-	$theme->left_delimiter = '<!--{';
-	$theme->right_delimiter = '}-->';
-	$theme->display('submenu.tpl');
-	$theme->left_delimiter = '{';
-	$theme->right_delimiter = '}';
+    global $theme;
+
+    $oldLeft = $theme->getLeftDelimiter();
+    $oldRight = $theme->getRightDelimiter();
+
+    $theme->setLeftDelimiter('<!--{');
+    $theme->setRightDelimiter('}-->');
+
+    $theme->display('submenu.tpl');
+
+    $theme->setLeftDelimiter($oldLeft);
+    $theme->setRightDelimiter($oldRight);
 }
 
 /**
@@ -188,8 +194,9 @@ function BuildPageTabs()
 	foreach ($items as &$item)
 		AddTab($item['text'], $item['url'], $item['description'], ($item['newtab']=="1"));
 
-	if ($userbank->is_admin())
+	if ($userbank->is_admin()) {
 		AddTab("<i class='zmdi zmdi-star zmdi-hc-fw'></i> Админ-Панель", "index.php?p=admin", "Панель для администраторов. Управление серверами, администраторами, настройками.");
+	}
 
 		include INCLUDES_PATH . "/CTabsMenu.php";
 
@@ -213,6 +220,7 @@ function BuildPageTabs()
 			$submenu->addMenuItem("Меню", 0,"", "index.php?p=admin&amp;c=menu", true);
 		if($userbank->HasAccess( ADMIN_OWNER|ADMIN_LIST_MODS|ADMIN_ADD_MODS|ADMIN_EDIT_MODS|ADMIN_DELETE_MODS))
 			$submenu->addMenuItem("Моды", 0,"", "?p=admin&amp;c=mods", true);
+
 		SubMenu( $submenu->getMenuArray() );
 }
 
@@ -634,7 +642,9 @@ function RedirectJS($url)
 
 function RemoveCode($text)
 {
-	return htmlspecialchars(strip_tags($text));
+	$text = (string)$text;
+	$text = strip_tags($text);
+	return htmlspecialchars($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
 }
 
 function SecondsToString($sec, $textual=true)
@@ -700,7 +710,7 @@ function FetchIp($ip)
 	if (!$handle)
 		return "zz";
 
-	while (($ipdata = fgetcsv($handle, 4096)) !== FALSE) {
+	while (($ipdata = fgetcsv($handle, 4096, ',', '"', '\\')) !== false) {
 		// If line is comment or IP is out of range
 		if ($ipdata[0][0] == '#' || $ip < $ipdata[0] || $ip > $ipdata[1])
 			continue;
@@ -810,7 +820,7 @@ function ShowBox($title, $msg, $color, $redir="", $noclose=false)
 {
 	echo "<script>ShowBox('$title', '$msg', '$color', '$redir', $noclose);</script>";
 }
-function ShowBox_ajx($title, $msg, $color, $redir="", $noclose=false, &$response)
+function ShowBox_ajx(&$response, $title, $msg, $color, $redir="", $noclose=false)
 {
 	$response->AddScript("ShowBox('$title', '$msg', '$color', '$redir', $noclose);");
 }
@@ -1592,18 +1602,21 @@ function GetRequesterSteam() {
   return $_SESSION['steam'];
 }
 
-function BuildPath($append_slash = true) {
-  $arg_count = func_num_args();
-  $args = func_get_args();
-  unset($args[0]);
+function BuildPath($append_slash = true)
+{
+    $parts = func_get_args();
+    $append_slash = array_shift($parts);
+   
+	$path = implode(DIRECTORY_SEPARATOR, array_map(function($p) {
+        return trim($p, '/\\');
+    }, $parts));
 
-  $result = (PHP_SHLIB_SUFFIX !== 'dll') ? '/' : '';
-
-  foreach ($args as $arg)
-    $result .= (($args[1] == $arg) ? '' : '/') . trim($arg, "/\\");
-  if ($append_slash)
-    $result .= '/';
-  return $result;
+    if ($append_slash && $path !== '') {
+        $path .= DIRECTORY_SEPARATOR;
+    }
+	
+	echo $path . "<br>";
+    return $path;
 }
 
 function ProcessSteamRequest($InterfaceName, $FunctionName, $Version, $Params, $RequireKey = false, $IsPOST = false) {
@@ -1692,18 +1705,20 @@ function getRequestType() {
 
 // Own implementation for filter_input()
 // INPUT_SESSION not yet implemented.
-function filterInput($type, $name, $filter = FILTER_DEFAULT, $options = []) {
-  if ($type != INPUT_SESSION)
-    return filter_input($type, $name, $filter, $options);
+function filterInput($type, $name, $filter = FILTER_DEFAULT, $options = [])
+{
+	if ($type != INPUT_SESSION)
+		return filter_input($type, $name, $filter, $options);
 
-  if (!isset($_SESSION[$name]))
-    return FALSE;
+	if (!isset($_SESSION[$name]))
+		return FALSE;
 
-  $data = $_SESSION[$name];
-  return filter_var($data, $filter, $options);
+	$data = $_SESSION[$name];
+	return filter_var($data, $filter, $options);
 }
 
-function clearSystemPath($path) {
+function clearSystemPath($path)
+{
   return str_replace(ROOT, '/', $path);
 }
 

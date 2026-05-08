@@ -13,7 +13,7 @@
       		<th width="20%" class="text-center">Steam ID</th>
             <th width="20%" class="text-center">Действие</th>
 		</tr>
-		{foreach from="$protest_list_archiv" item="protest"}
+		{foreach from=$protest_list_archiv item=protest}
 		<tr>
             <td class="text-center">{if $protest.archiv!=2}<a href="./index.php?p=banlist{if $protest.authid!=""}&advSearch={$protest.authid}&advType=steamid{else}&advSearch={$protest.ip}&advType=ip{/if}" title="Показать бан">{$protest.name}</a>{else}<i><font color="#677882">бан удалён</font></i>{/if}</td>
             <td class="text-center">{if $protest.authid!=""}<a href="https://steamcommunity.com/profiles/{$protest.commid}">{$protest.authid}</a>{else}{$protest.ip}{/if}</td>

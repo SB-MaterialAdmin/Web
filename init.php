@@ -26,11 +26,20 @@
 // *************************************************************************
 
 // ---------------------------------------------------
-// Disable error output
+// Enable|Disable error output
 // ---------------------------------------------------
-ini_set('display_startup_errors', 0);
-ini_set('display_errors', 0);
-error_reporting(0);
+define('SB_PHP_DEBUG', false);
+
+if (SB_PHP_DEBUG) {
+	ini_set('display_errors', 1);
+	ini_set('display_startup_errors', 1);
+} else {
+	ini_set('display_startup_errors', 0);
+	ini_set('display_errors', 0);
+}
+
+error_reporting(-1); // E_ERROR | E_WARNING | E_PARSE | E_NOTICE
+ini_set('log_errors', 1);
 
 // ---------------------------------------------------
 //  Directories
@@ -176,8 +185,10 @@ include_once(INCLUDES_PATH . "/adodb/adodb-errorhandler.inc.php");
 $GLOBALS['db'] = ADONewConnection("mysqli://".DB_USER.':'.DB_PASS.'@'.DB_HOST.':'.DB_PORT.'/'.DB_NAME);
 $GLOBALS['log'] = new CSystemLog();
 
-if( !is_object($GLOBALS['db']) )
-				die();
+if (!is_object($GLOBALS['db']))
+{
+	die();
+}
 				
 $mysql_server_info = $GLOBALS['db']->ServerInfo();
 $GLOBALS['db_version'] = $mysql_server_info['version'];
@@ -335,7 +346,7 @@ $expires = defined('SB_SESSION_EXPIRES') ? constant('SB_SESSION_EXPIRES') : 8640
 $path = defined('SB_SESSION_PATH') ? constant('SB_SESSION_PATH') : '/';
 $domain = parse_url(constant('SB_WP_URL'), PHP_URL_HOST) ?: $_SERVER['SERVER_NAME'];
 $secureOnly = (strtolower(parse_url(constant('SB_WP_URL'), PHP_URL_SCHEME)) == 'https')
-    || $_SERVER['HTTPS'] == 'on' || $_SERVER['SERVER_PORT'] === 443;
+    || (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') || $_SERVER['SERVER_PORT'] === 443;
 
 \SessionManager::setupParameters(\SessionManager::getSessionName($domain),
     $expires, $path, $domain, $secureOnly);
@@ -344,8 +355,8 @@ $secureOnly = (strtolower(parse_url(constant('SB_WP_URL'), PHP_URL_SCHEME)) == '
 // ---------------------------------------------------
 // Setup our user manager
 // ---------------------------------------------------
-$aid   = $_SESSION['admin_id'] ?: -1;
-$hash  = $_SESSION['admin_hash'] ?: '';
+$aid = (!empty($_SESSION['admin_id'])) ? $_SESSION['admin_id'] : -1;
+$hash = (!empty($_SESSION['admin_hash'])) ? $_SESSION['admin_hash'] : '';
 
 \UserManager::init($aid, $hash);
 $userbank = \UserManager::getInstance(); // for old code.

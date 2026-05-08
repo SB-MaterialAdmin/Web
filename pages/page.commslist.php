@@ -401,13 +401,25 @@ if (!$res)
 
 $view_comments = false;
 $bans = array();
-function CommunityID($steamid_id){
-	$parts = explode(':', str_replace('STEAM_', '' ,$steamid_id)); 
-	return bcadd(bcadd('76561197960265728', $parts['1']), bcmul($parts['2'], '2')); 
-}
-while (!$res->EOF)
+
+// The administrator may have already been deleted, or if the server issued a ban,
+// then the STEAM_ID_SERVER string is passed here, we need to check whether we received the SteamId correctly
+function CommunityID($steamid_id) /*: string*/
 {
+	$valid_steamid = preg_match("/^(STEAM_[0-1]?)(:([0-1]):(\d{0,9})?)?$/", $steamid_id, $matches);
+	if (!$valid_steamid) {
+		return "";
+	}
+
+	return bcadd(bcadd('76561197960265728', $matches[3]), bcmul($matches[4], '2'));
+}
+while (!$res->EOF) {
 	$data = array();
+	$delimiter = "";
+
+	$mute_count = (int)$res->fields['mute_count'];
+	$gag_count = (int)$res->fields['gag_count'];
+	$history_count = $mute_count + $gag_count;
 
 	$data['ban_id'] = $res->fields['ban_id'];
 
@@ -504,8 +516,9 @@ while (!$res->EOF)
 	$data['layer_id'] = 'layer_'.$res->fields['ban_id'];
 	// Запрос текущего статуса игрока для рисования ссылки на мьют или гаг
 	$alrdybnd = $GLOBALS['db']->Execute("SELECT count(bid) as count FROM `".DB_PREFIX."_comms` WHERE authid = '".$data['steamid']."' AND RemovedBy IS NULL AND type = '".$data['type']."' AND (length = 0 OR ends > UNIX_TIMESTAMP());");
-	if($alrdybnd->fields['count']==0)
-	{
+	
+	$data['reban_link'] = false;
+	if ($alrdybnd->fields['count'] == 0) {
 		switch($data['type'])
 		{
 		case 1:
@@ -518,9 +531,6 @@ while (!$res->EOF)
 			break;
 		}
 	}
-	else
-		$data['reban_link'] = false;
-
 
 	$data['edit_link'] = CreateLinkR('Редактировать',"index.php?p=admin&c=comms&o=edit".$pagelink."&id=".$res->fields['ban_id']."&key=".$_SESSION['banlist_postkey']);
 
@@ -555,6 +565,25 @@ while (!$res->EOF)
 	//$data['mod_icon'] = '<img src="images/games/' .$modicon . '" alt="MOD" border="0" align="absmiddle" />&nbsp;' . $data['type_icon'];
 	$data['mod_icon'] = '<img src="images/games/' .$modicon . '" alt="MOD" border="0" align="absmiddle" />&nbsp;';
 	
+	switch ((int)$data['type']) {
+		case 1:
+			$data['type_icon'] = '<img src="images/type_v.png" alt="Микрофон" border="0" align="absmiddle" />';
+			$mute_count = $mute_count - 1;
+			break;
+		case 2:
+			$data['type_icon'] = '<img src="images/type_c.png" alt="Чат" border="0" align="absmiddle" />';
+			$gag_count = $gag_count - 1;
+			break;
+		case 3:
+			$data['type_icon'] = '<img src="images/type_silence.png" alt="Микрофон и чат" border=0 align="absmiddle" />';
+			$gag_count -= 1;
+			$mute_count -= 1;
+			break;
+		default:
+			$data['type_icon'] = '<img src="images/country/zz.gif" alt="Неизвестный тип блока" border="0" align="absmiddle" />';
+			break;
+	}
+
 	$data['type_icon_p'] = $data['type_icon'];
 	
     if($history_count > 1)
@@ -611,6 +640,7 @@ while (!$res->EOF)
 				$cdata['commenttxt'] = str_replace("\n", "<br />", $cdata['commenttxt']);
 				// Parse links and wrap them in a <a href=""></a> tag to be easily clickable
 				$cdata['commenttxt'] = preg_replace('@(https?://([-\w\.]+)+(:\d+)?(/([\w/_\.]*(\?\S+)?)?)?)@', '<a href="$1" target="_blank">$1</a>', $cdata['commenttxt']);
+
 				$cdata['aid'] = $commentres->fields['aid'];
 				$cdata['avatar'] = GetUserAvatar($userbank->GetAdmin($commentres->fields['aid'])['authid']);
 				
@@ -771,8 +801,10 @@ if(isset($_GET["comment"])) {
 }
 $theme->assign('view_comments',$view_comments);
 $theme->assign('comment', (isset($_GET["comment"])?$_GET["comment"]:false));
+
 $admlist = $userbank->GetAllAdmins();
 $theme->assign('admlist', $admlist);
+
 //----------------------------------------
 
 unset($_SESSION['CountryFetchHndl']);

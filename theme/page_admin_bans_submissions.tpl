@@ -13,7 +13,7 @@
     <th>Ник</th>
     <th>Steam ID</th>
   </thead>
-  {foreach from="$submission_list" item="sub"}
+  {foreach from=$submission_list item=sub}
   <tr id="sid_{$sub.subid}" class="opener" {if $sub.hostname == ""}onclick="xajax_ServerHostPlayers('{$sub.server}', 'id', 'sub{$sub.subid}');"{/if} onmouseout="this.className='tbl_out'" onmouseover="this.className='tbl_hover'" style="cursor: pointer;">
     <td>{$sub.name}</td>
     <td>{if $sub.SteamId!=""}{$sub.SteamId}{else}{$sub.sip}{/if}</td>
@@ -30,7 +30,7 @@
               </a>
               <ul class="dropdown-menu dropdown-menu-right">
                 <li><a href="#" onclick="xajax_SetupBan({$sub.subid});return false;">Забанить</a></li>
-                <li>{if $permissions_editsub}<a href="#" onclick="RemoveSubmission({$sub.subid}, '{$sub.name|stripslashes|stripquotes}', '1');return false;">Удалить</a>{/if}</li>
+                <li>{if $permissions_editsub}<a href="#" onclick="RemoveSubmission({$sub.subid}, '{$sub.name|escape:'javascript'}', '1');return false;">Удалить</a>{/if}</li>
                 <li><a href="index.php?p=admin&c=bans&o=email&type=s&id={$sub.subid}">Контакты</a></li>
               </ul>
             </li>
@@ -128,9 +128,13 @@
 <script type="text/javascript">window.addEvent('domready', function(){  
   InitAccordion('tr.opener', 'div.opener', 'content');
   {/literal}
-  {if $view_bans}
-  $('tickswitch').value=0;
-  {/if}
+        {* This code is used to select several fields in the table for action on them (delete, etc.) *}
+        {* This code is not implemented on this page, apparently it only works in bans *}
+        {*
+        {if $view_bans}
+        $('tickswitch').value=0;
+        {/if}
+        *}
   {literal}
 }); 
 </script>

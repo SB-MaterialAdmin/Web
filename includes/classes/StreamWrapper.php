@@ -7,6 +7,7 @@ class StreamWrapper {
     protected static $virtualHosts = [];
     protected static $hooks = [];
     public $context; // Fix smarty warning
+	public $path; // Fix smarty warning
     
     public static function addVirtualHost($host, $path)
     {
@@ -15,7 +16,7 @@ class StreamWrapper {
 
     public static function addHook($host, \Closure $hook)
     {
-        if (!in_array($host, self::$hooks))
+        if (!isset(self::$hooks[$host]))
         {
             self::$hooks[$host] = [];
         }
@@ -42,11 +43,14 @@ class StreamWrapper {
         }
     }
 
-    public function stream_open($path, $mode, $options, &$opened_path) {
-        $opened_path = $this->resolveToRealPath($path);
+    public function stream_open($path, $mode, $options, &$opened_path)
+    {
+        $realPath = $this->resolveToRealPath($path);
+        $this->path = $realPath;
+        $opened_path = $realPath;
         $this->stream = fopen($opened_path, $mode, true);
 
-        return true;
+        return $this->stream !== false;
     }
 
     public function stream_read($count) {
@@ -88,4 +92,14 @@ class StreamWrapper {
         
         return $path;
     }
+
+	public function stream_stat() // Fix smarty warning
+	{
+		$realPath = $this->realPath ?? $this->path;
+		if (file_exists($realPath)) {
+			return stat($realPath);
+		}
+		
+		return false;
+	}
 }

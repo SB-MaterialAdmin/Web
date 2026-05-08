@@ -39,7 +39,8 @@ if(isset($_GET['m']) && $_GET['m'] == "no_access")
 
 	
 //$theme->assign('redir', "DoLogin('".(isset($_SESSION['q'])?$_SESSION['q']:'')."');");
-$theme->assign('redir', "DoLogin('p=account'); '".(isset($_SESSION['q'])?$_SESSION['q']:'')."';");
+$session_token = (isset($_SESSION['q'])) ? $_SESSION['q'] : '';
+$theme->assign('redir', "DoLogin('p=account'); '" . $session_token . "';");
 
 // === Authorization by type - START ===
 /**
@@ -54,11 +55,17 @@ $theme->assign('steam_allowed', ($at != 1));
 $theme->assign('login_allowed', ($at != 2));
 // === Authorization by type -  END  ===
 
-$theme->left_delimiter = "-{";
-$theme->right_delimiter = "}-";
+
+$oldLeft = $theme->getLeftDelimiter();
+$oldRight = $theme->getRightDelimiter();
+
+$theme->setLeftDelimiter('-{');
+$theme->setRightDelimiter('}-');
+
 $theme->display('page_login.tpl');
-$theme->left_delimiter = "{";
-$theme->right_delimiter = "}";
+
+$theme->setLeftDelimiter($oldLeft);
+$theme->setRightDelimiter($oldRight);
 ?>
 </div>
 </div>

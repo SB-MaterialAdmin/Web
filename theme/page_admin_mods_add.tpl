@@ -16,7 +16,7 @@
 			<div class="form-group m-b-5">
 				<label for="icon" class="col-sm-3 control-label">{help_icon title="Upload Icon" message="Загрузить иконку" message="Кликните тут, чтобы загрузить иконку МОДа."}Загрузить иконку</label>
 				<div class="col-sm-9">
-					{sb_button text="Загрузить иконку МОДа" onclick="childWindow=open('pages/admin.uploadicon.php','upload','resizable=yes,width=300,height=130');" class="save" id="upload"}
+					{sb_button text="Загрузить иконку МОДа" onclick="childWindow=open('pages/admin.uploadicon.php','upload','resizable=yes,width=300,height=130');" class="save btn-primary" id="upload"}
 				</div>
 				<p id="icon.msg" style="color:#CC0000;"></p>
 				<input type="hidden" id="icon_hid" name="icon_hid" />

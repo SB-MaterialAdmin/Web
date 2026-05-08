@@ -206,6 +206,7 @@ while (!$res->EOF)
 	$res->MoveNext();
 }
 
+require (TEMPLATES_PATH . "/admin.admins.search.php");
 
 echo '<div id="0" style="display:none;">';
 	$theme->assign('checked_if', $checked);

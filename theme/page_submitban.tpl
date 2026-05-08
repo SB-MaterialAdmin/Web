@@ -60,7 +60,7 @@
 				<div class="col-sm-3">
 				<select class="selectpicker" id="server" name="server">
 						<option value="-1">Выберите сервер</option>
-						{foreach from="$server_list" item="server}
+						{foreach from=$server_list item=server}
 							<option value="{$server.sid}" {if $server_selected == $server.sid}selected{/if}>{$server.HostName}</option>
 						{/foreach}
 						<option value="0">Другой сервер, не представленный здесь</option>

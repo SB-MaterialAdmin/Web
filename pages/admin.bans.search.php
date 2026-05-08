@@ -48,6 +48,7 @@ $theme->assign('is_admin', $userbank->is_admin());
 $theme->assign('admin_list', $admin_list);
 $theme->assign('server_list', $servers);
 $theme->assign('server_script', $serverscript);
+$theme->assign('hideadminname', (isset($GLOBALS['config']['banlist.hideadminname']) && $GLOBALS['config']['banlist.hideadminname'] == "1"));
 
 $theme->display('box_admin_bans_search.tpl');
 ?>

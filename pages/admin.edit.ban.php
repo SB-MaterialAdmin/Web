@@ -267,11 +267,18 @@ $theme->assign('ban_ip', $res['ip']);
 $theme->assign('ban_demo', (!empty($res['dname'])?"<b>".$res['dname']."</b>":""));
 $theme->assign('customreason', ((isset($GLOBALS['config']['bans.customreasons'])&&$GLOBALS['config']['bans.customreasons']!="")?unserialize($GLOBALS['config']['bans.customreasons']):false));
 
-$theme->left_delimiter = "-{";
-$theme->right_delimiter = "}-";
+
+$oldLeft = $theme->getLeftDelimiter();
+$oldRight = $theme->getRightDelimiter();
+
+$theme->setLeftDelimiter('-{');
+$theme->setRightDelimiter('}-');
+
 $theme->display('page_admin_edit_ban.tpl');
-$theme->left_delimiter = "{";
-$theme->right_delimiter = "}";
+
+$theme->setLeftDelimiter($oldLeft);
+$theme->setRightDelimiter($oldRight);
+
 ?>
 <script type="text/javascript">window.addEvent('domready', function(){
 <?php echo $errorScript; ?>

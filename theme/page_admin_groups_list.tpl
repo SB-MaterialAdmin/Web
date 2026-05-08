@@ -14,7 +14,7 @@
                 </tr>
             </thead>
             <tbody>
-                {foreach from="$web_group_list item=group name=web_group}
+                {foreach from=$web_group_list item=group name=web_group}
                 <tr id="gid_{$group.gid}" onmouseout="this.className='opener'" onmouseover="this.className='info opener'" class="opener" style="cursor:">
                     <td class="text-left">{$group.name}</td>
                     <td class="text-center">{$web_admins[$smarty.foreach.web_group.index]}</td>
@@ -37,7 +37,7 @@
                                     <td height="16" class="listtable_1">
                                         <p class="c-blue">Кто в группе</p>
                                         <ul class="clist clist-star">
-                                            {foreach from=$web_admins_list[$smarty.foreach.web_group.index] item="web_admin"}
+                                            {foreach from=$web_admins_list[$smarty.foreach.web_group.index] item=web_admin}
                                             <li>
                                                 {if $permission_editadmin}<a href="#admin_w{$web_admin.aid}" data-toggle="modal">{/if}
                                                     {$web_admin.user}
@@ -84,7 +84,7 @@
             </tr>
         </thead>
         <tbody>
-        {foreach from="$server_group_list" item="group" name="server_admin_group"}
+        {foreach from=$server_group_list item=group name=server_admin_group}
             <tr id="gid_{$group.id}" onmouseout="this.className='opener'" onmouseover="this.className='info opener'" class="opener" style="cursor: pointer;">
                 <td class="text-left" height='16'>{$group.name}</td>
                 <td class="text-center" height='16'>{$server_admins[$smarty.foreach.server_admin_group.index]}</td>
@@ -114,7 +114,7 @@
                                 <td height="16" class="listtable_1">
                                     <p class="c-blue">Кто в группе</p>
                                     <ul class="clist clist-star">
-                                        {foreach from=$server_admins_list[$smarty.foreach.server_admin_group.index] item="server_admin"}
+                                        {foreach from=$server_admins_list[$smarty.foreach.server_admin_group.index] item=server_admin}
                                         <li>
                                             {if $permission_editadmin}<a href="#admin_s{$server_admin.aid}" data-toggle="modal">{/if}
                                                 {$server_admin.user}
@@ -144,8 +144,8 @@
                                     <p class="c-blue">Переназначения</p>
                                     <ul class="clist clist-star">
                                         {if $server_overrides_list[$smarty.foreach.server_admin_group.index]|@count > 0}
-                                            {foreach from=$server_overrides_list[$smarty.foreach.server_admin_group.index] item="override"}
-                                        <li><b>{if $override.access == "allow"}Разрешён{else}Запрещён{/if}</b> доступ к {if $override.type == "command"}команде{else}группе команд{/if} <b>{$override.name|htmlspecialchars}</b></li>
+                                            {foreach from=$server_overrides_list[$smarty.foreach.server_admin_group.index] item=override}
+                                        <li><b>{if $override.access == "allow"}Разрешён{else}Запрещён{/if}</b> доступ к {if $override.type == "command"}команде{else}группе команд{/if} <b>{$override.name|escape:'htmlall'}</b></li>
                                             {/foreach}
                                         {else}
                                         <li>Переназначений <b>нет</b>.</li>
@@ -174,7 +174,7 @@
             </tr>
         </thead>
         <tbody>
-        {foreach from="$server_list" item="group" name="servers_group"}
+        {foreach from=$server_list item=group name=servers_group}
             <tr id="gid_{$group.gid}" onmouseout="this.className='opener'" onmouseover="this.className='info opener'" class="opener" style="cursor: pointer;">
                 <td class="text-left" height='16'>{$group.name}</td>
                 <td class="text-center" height='16'>{$server_list[$smarty.foreach.servers_group.index].servers|@count}</td>
@@ -197,7 +197,7 @@
                             <p class="c-blue">Сервера в группе</p>
                             <ul class="clist clist-star">
                                 {if $server_list[$smarty.foreach.servers_group.index].servers|@count > 0}
-                                {foreach from=$server_list[$smarty.foreach.servers_group.index].servers item="server"}
+                                {foreach from=$server_list[$smarty.foreach.servers_group.index].servers item=server}
                                     <li id="servername_{$server[0]}">Пожалуйста, подождите, идёт загрузка имени сервера...</li>
                                     <script type="text/javascript">
                                         xajax_ServerHostProperty({$server[0]}, "servername_{$server[0]}", "innerHTML", 100);

@@ -93,7 +93,7 @@
 							<td class="p-b-5">
 								<div class="col-sm-12 p-r-0 p-l-0">
 									<select class="selectpicker" id="webgroup" onmouseup="$('webgroup_').checked = true">
-										{foreach from="$webgroup_list" item="webgrp"}
+										{foreach from=$webgroup_list item=webgrp}
 											<option label="{$webgrp.name}" value="{$webgrp.gid}">{$webgrp.name}</option>
 										{/foreach}
 									</select>
@@ -115,7 +115,7 @@
 							<td class="p-b-5">
 								<div class="col-sm-12 p-r-0 p-l-0">
 									<select class="selectpicker" id="srvadmgroup" onmouseup="$('srvadmgroup_').checked = true;" onblur="$('srvadmgroup_').checked = true;">
-										{foreach from="$srvadmgroup_list" item="srvadmgrp"}
+										{foreach from=$srvadmgroup_list item=srvadmgrp}
 											<option label="{$srvadmgrp.name}" value="{$srvadmgrp.name}">{$srvadmgrp.name}</option>
 										{/foreach}
 									</select>
@@ -137,7 +137,7 @@
 							<td class="p-b-5">
 								<div class="col-sm-12 p-r-0 p-l-0 select">
 									<select class="form-control" id="srvgroup" onmouseup="$('srvgroup_').checked = true">
-										{foreach from="$srvgroup_list" item="srvgrp"}
+										{foreach from=$srvgroup_list item=srvgrp}
 											<option label="{$srvgrp.name}" value="{$srvgrp.gid}">{$srvgrp.name}</option>
 										{/foreach}
 									</select>
@@ -159,7 +159,7 @@
 							<td class="p-b-5">
 								<div class="col-sm-12 p-r-0 p-l-0 select">
 									<select class="form-control" id="admwebflag" onmouseup="$('admwebflags_').checked = true" onblur="getMultiple(this, 1);" size="5" multiple>
-										{foreach from="$admwebflag_list" item="admwebflag"}
+										{foreach from=$admwebflag_list item=admwebflag}
 											<option label="{$admwebflag.name}" value="{$admwebflag.flag}">{$admwebflag.name}</option>
 										{/foreach}
 									</select>
@@ -181,7 +181,7 @@
 							<td class="p-b-5">
 								<div class="col-sm-12 p-r-0 p-l-0 select">
 									<select class="form-control" id="admwebflag" name="admsrvflag" onmouseup="$('admsrvflags_').checked = true" onblur="getMultiple(this, 2);" size="5" multiple>
-										{foreach from="$admsrvflag_list" item="admsrvflag"}
+										{foreach from=$admsrvflag_list item=admsrvflag}
 											<option label="{$admsrvflag.name}" value="{$admsrvflag.flag}">{$admsrvflag.name}</option>
 										{/foreach}
 									</select>
@@ -203,7 +203,7 @@
 							<td class="p-b-5">
 								<div class="col-sm-12 p-r-0 p-l-0 select">
 									<select class="form-control" id="server" onmouseup="$('admin_on_').checked = true">
-										{foreach from="$server_list" item="server}
+										{foreach from=$server_list item=server}
 											<option value="{$server.sid}" id="ss{$server.sid}">Получение имени сервера... ({$server.ip}:{$server.port})</option>
 										{/foreach}
 									</select>

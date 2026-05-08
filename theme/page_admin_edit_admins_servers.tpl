@@ -15,7 +15,7 @@
 											<td><b><i>Вам нужно добавить сервер или группу серверов, прежде, чем вы сможете настроить разрешения админов сервера</i></b></td>
 										</tr>
 								{else}
-									{foreach from="$group_list" item="group"}
+									{foreach from=$group_list item=group}
 										<tr>
 											<td>
 												<div class="checkbox m-b-15">
@@ -27,7 +27,7 @@
 											</td>
 										</tr>
 									{/foreach}
-									{foreach from="$server_list" item="server"}
+									{foreach from=$server_list item=server}
 										<tr>
 											<td>
 												<div class="checkbox m-b-15">
@@ -53,11 +53,11 @@
 		      			{sb_button text="Назад" onclick="history.go(-1)" icon="<i class='zmdi zmdi-undo'></i>" class="bgm-red btn-icon-text" id="aback"}
 			</div>
 			<script>
-			{foreach from="$assigned_servers" item="asrv"}
+			{foreach from=$assigned_servers item=asrv}
 				if($('server_{$asrv.0}'))$('server_{$asrv.0}').checked = true;
 				if($('group_{$asrv[1]}'))$('group_{$asrv[1]}').checked = true;
 			{/foreach}
-			{foreach from="$server_list" item="server"}
+			{foreach from=$server_list item=server}
 				xajax_ServerHostPlayers({$server.sid}, "id", "server_host_{$server.sid}");
 			{/foreach}
 			</script>

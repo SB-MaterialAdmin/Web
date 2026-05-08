@@ -199,12 +199,14 @@ class CSystemLog {
 		return -1;
 	}
 	
-	function FormatArgument($arg) {
+	function FormatArgument($arg)
+	{
 		$et = $this->GetEntryType($arg);
 		$log = htmlentities((($et==2)?$this->PrepareArray($arg):(($et == 0)?"'".$arg."'":($et==3?sprintf("Object %s", get_class($arg)):$arg))));
 		
-		if (strlen($log) > 256)
-			$log = sprintf("%s...%s", substr($log_prepared, 0, 256), ($et==0)?"'":"");
+		if (strlen($log) > 256) {
+			$log = sprintf("%s...%s", substr($log, 0, 256), ($et == 0) ? "'" : "");
+		}
 		
 		return $log;
 	}

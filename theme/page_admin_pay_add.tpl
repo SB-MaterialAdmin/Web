@@ -32,7 +32,7 @@
 				<label class="col-sm-3 control-label text-right">{help_icon title="Группа" message="Выберите группу. Данная группа будет выдана админу, который активирует данный ваучер."} Группа(сервер)</label>
 				<div class="col-sm-9 p-t-10">
 						<table>
-								{foreach from="$server_admin_group_list" item="server_wg"}
+								{foreach from=$server_admin_group_list item=server_wg}
 								<tr>
 										<td>
 											<label for="dd_{$server_wg.id}_dd" class="radio radio-inline m-r-20 p-t-0">
@@ -57,7 +57,7 @@
 				<label class="col-sm-3 control-label text-right">{help_icon title="Группа" message="Выберите группу. Данная группа будет выдана админу, который активирует данный ваучер."} Группа(веб)</label>
 				<div class="col-sm-9 p-t-10">
 						<table>
-								{foreach from="$server_group_list" item="server_g"}
+								{foreach from=$server_group_list item=server_g}
 								<tr>
 										<td>
 											<label for="dp_{$server_g.gid}_pd" class="radio radio-inline m-r-20 p-t-0">
@@ -82,7 +82,7 @@
 				<label class="col-sm-3 control-label text-right">{help_icon title="Сервер" message="Выберите сервер(а), на котором администратор будет иметь права. Если никакой сервер не будет выбран(включая 'Без сервера'), пользователь сам сможет выбрать себе сервер при активации Ваучера."} Сервер</label>
 				<div class="col-sm-9 p-t-5">
 						<table>
-								{foreach from="$server_list" item="server"}
+								{foreach from=$server_list item=server}
 									<tr>
 										<td>
 											<div class="checkbox">

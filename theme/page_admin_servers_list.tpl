@@ -17,7 +17,7 @@
 					<td class="front-module-header" width="5%" height='16'><strong>МОД</strong></td>
 					<td class="front-module-header" height='16'><strong>Действия</strong></td>
 				</thead>
-				{foreach from="$server_list" item="server"}
+				{foreach from=$server_list item=server}
 				
 				<script>xajax_ServerHostPlayers({$server.sid});</script>
 				<tr id="sid_{$server.sid}" {if $server.enabled==0}style="background-color:#eaeaea" title="Отключен"{/if}>

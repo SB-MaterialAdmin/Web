@@ -18,7 +18,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						{foreach from="$card_list" item="card"}
+						{foreach from=$card_list item=card}
 							<tr>
 								<td>
 									{$card.aid}

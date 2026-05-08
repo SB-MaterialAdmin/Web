@@ -158,12 +158,12 @@ class CUserManager
     if(!isset($this->admins[$aid]))
       $this->GetUserArray($aid);
       
-    if($password == $this->admins[$aid]['password'])
+    if($password === $this->admins[$aid]['password'])
     {
       $GLOBALS['db']->Execute("UPDATE `" . DB_PREFIX . "_admins` SET `lastvisit` = UNIX_TIMESTAMP() WHERE `aid` = '$aid'");
       return true;
     }
-    else 
+
       return false;
   }
   

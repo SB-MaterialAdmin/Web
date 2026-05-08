@@ -13,7 +13,7 @@
       		<th width="20%" class="text-center">Steam ID</th>
            	<th width="20%" class="text-center">Действие</th>
 		</tr>
-		{foreach from="$protest_list" item="protest"}
+		{foreach from=$protest_list item=protest}
 		<tr>
             <td class="text-center"><a href="./index.php?p=banlist&advSearch={$protest.authid}&advType=steamid" title="Показать бан">{$protest.name}</a></td>
             <td class="text-center">{if $protest.authid!=""}<a href="https://steamcommunity.com/profiles/{$protest.commid}">{$protest.authid}</a>{else}{$protest.ip}{/if}</td>

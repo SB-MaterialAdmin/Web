@@ -14,7 +14,7 @@
 		</ul>
 		{if $btn_rem}<br>{$btn_rem}{/if}
 	</div>
-	{php} require (TEMPLATES_PATH . "/admin.admins.search.php");{/php}
+	{include file="box_admin_admins_search.tpl"}
 	
 	<div class="table-responsive" id="banlist">
 		<table cellspacing="0" cellpadding="0" class="table table-striped">
@@ -24,7 +24,7 @@
 				<th>Группа доступа к ВЕб-панели</th>
 				<th class="text-right">Истекает</th>
 			</tr>
-			{foreach from="$admins" item="admin"}
+			{foreach from=$admins item=admin}
 				<tr onmouseout="this.className='opener'" onmouseover="this.className='info opener'" class="opener" style="cursor: pointer;">
 					<td>
 						{$admin.user} / <mark data-toggle="tooltip" data-placement="right" title="" data-original-title="Имммунитет администратора">{$admin.immunity}</mark>

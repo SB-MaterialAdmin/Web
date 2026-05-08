@@ -141,7 +141,7 @@ $serverflags[] = ["name" => "[r] Дополнительный флаг 4", "flag
 $serverflags[] = ["name" => "[s] Дополнительный флаг 5", "flag" => "SM_CUSTOM5"];
 $serverflags[] = ["name" => "[t] Дополнительный флаг 6", "flag" => "SM_CUSTOM6"];
 
-if($_GET['showexpiredadmins'] == 'true') {
+if (!empty($_GET['showexpiredadmins']) && $_GET['showexpiredadmins'] == 'true') {
 	$plus_adm = "1";
 }else {
 	$plus_adm = "";
@@ -158,4 +158,4 @@ $theme->assign('admsrvflag_list', $serverflags);
 $theme->assign('can_editadmin', $userbank->HasAccess(ADMIN_EDIT_ADMINS|ADMIN_OWNER));
 $theme->assign('can_warn', $userbank->HasAccess(ADMIN_ISSUE_WARNS_ADMINS|ADMIN_OWNER));
 
-$theme->display('box_admin_admins_search.tpl');
+//$theme->display('box_admin_admins_search.tpl'); // include in page_admin_admins_list.tpl
