@@ -13,6 +13,7 @@
 					
 					if($check_sys != "1"){
 						$gg_check_sys = $GLOBALS['db']->Execute("DELETE FROM `" . DB_PREFIX . "_menu` WHERE id = '".(int)$_GET['id']."'");
+
 						if($gg_check_sys)
 							AddScriptWithReload(sprintf("setTimeout(function() { %s; }, 1350);", generateMsgBoxJS("Успех!", "Ссылка была успешно удалена!", "green", "", true)), "index.php?p=admin&c=menu");
 					}else

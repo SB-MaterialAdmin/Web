@@ -1615,7 +1615,6 @@ function BuildPath($append_slash = true)
         $path .= DIRECTORY_SEPARATOR;
     }
 	
-	echo $path . "<br>";
     return $path;
 }
 

@@ -778,6 +778,7 @@ if(isset($_GET["comment"])) {
 		$coment['commenttxt'] = str_replace("\n", "<br />", $cotherdata->fields['commenttxt']);
 		// Parse links and wrap them in a <a href=""></a> tag to be easily clickable
 		$coment['commenttxt'] = preg_replace('@(https?://([-\w\.]+)+(:\d+)?(/([\w/_\.]*(\?\S+)?)?)?)@', '<a href="$1" target="_blank">$1</a>', $coment['commenttxt']);
+
 		$coment['aid'] = $cotherdata->fields['aid'];
 		$coment['avatar'] = GetUserAvatar($userbank->GetAdmin($cotherdata->fields['aid'])['authid']);
 
