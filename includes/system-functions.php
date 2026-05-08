@@ -820,7 +820,7 @@ function ShowBox($title, $msg, $color, $redir="", $noclose=false)
 {
 	echo "<script>ShowBox('$title', '$msg', '$color', '$redir', $noclose);</script>";
 }
-function ShowBox_ajx($title, $msg, $color, $redir="", $noclose=false, &$response)
+function ShowBox_ajx(&$response, $title, $msg, $color, $redir="", $noclose=false)
 {
 	$response->AddScript("ShowBox('$title', '$msg', '$color', '$redir', $noclose);");
 }
