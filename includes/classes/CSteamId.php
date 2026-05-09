@@ -1,6 +1,7 @@
 <?php
 
-class CSteamId {
+class CSteamId
+{
   private static $_cache = [];
 
   public $IsEmulated = false;
@@ -9,6 +10,7 @@ class CSteamId {
   public $AccountID;
   public $v2;
   public $v3;
+  public string $steamIdClean;
 
   public static function factory($sid, $GameID = 0) {
     $AccountID = self::ResolveToAccountID($sid);
@@ -21,6 +23,7 @@ class CSteamId {
       $CacheEntry->AccountID    = $AccountID;
       $CacheEntry->v3           = sprintf('[U:1:%d]', $AccountID);
       $CacheEntry->v2           = sprintf('STEAM_%d:%d:%d', $GameID, ($AccountID % 2), $AccountID / 2);
+      $CacheEntry->steamIdClean = sprintf('%d:%d', ($AccountID % 2), $AccountID / 2);
 
       if ($AccountID > 2147483647) {
         $CacheEntry->IsEmulated = true;

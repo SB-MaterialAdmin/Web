@@ -1012,53 +1012,38 @@ function AddAdmin_pay($mask, $srv_mask, $a_name, $a_steam, $a_email, $a_password
     }
   }
 
-  // #FIXME PLS undefined var $type
-  // If they didnt type a steamid
-  if ($type == 0)
-  {
-    if(empty($a_steam))
-    {
-      $error++;
-      $objResponse->addAssign("steam.msg", "innerHTML", "Введите Steam ID или Community ID");
-      $objResponse->addScript("$('steam.msg').setStyle('display', 'block');");
-    }
-    else
-    {
-      try
-      {
-        $a_steam = \CSteamId::factory($a_steam)->v2;
-      }
-      catch (\Exception $e)
-      {
+  if (empty($a_steam)) {
+    $error++;
+    $objResponse->addAssign("steam.msg", "innerHTML", "Введите Steam ID или Community ID");
+    $objResponse->addScript("$('steam.msg').setStyle('display', 'block');");
+  } else {
+    try {
+      $steamIdFactory = \CSteamId::factory($a_steam);
+      $a_steam = $steamIdFactory->v2;
+      $steamIdClean = $steamIdFactory->steamIdClean;
+
+      $steamIdFormat0 = "STEAM_0:{$steamIdClean}";
+      $steamIdFormat1 = "STEAM_1:{$steamIdClean}";
+
+      if (is_taken("admins", "authid", $steamIdFormat0) || is_taken("admins", "authid", $steamIdFormat1)) {
+        // TODO: Внедрить сюда продление админа вместо вывода
+        // ошибки, если группа совпадает при неистёкшей админке.
+        $admins = $userbank->GetAllAdmins();
+        foreach ($admins as $admin) {
+          if ($admin['authid'] == $steamIdFormat0 || $admin['authid'] == $steamIdFormat1) {
+            $name = $admin['user'];
+            break;
+          }
+        }
+
         $error++;
-        $objResponse->addAssign("steam.msg", "innerHTML", "Введите действительный Steam ID или Community ID");
+        $objResponse->addAssign("steam.msg", "innerHTML", "Этот Steam ID уже используется одним из администраторов!");
         $objResponse->addScript("$('steam.msg').setStyle('display', 'block');");
       }
-    }
-  }
-  else
-  {
-    // TODO: Внедрить сюда продление админа вместо вывода
-    // ошибки, если группа совпадает при неистёкшей админке.
-    if(is_taken("admins", "authid", $a_steam))
-    {
-      $admins = $userbank->GetAllAdmins();
-      foreach($admins as $admin)
-      {
-        if($admin['authid'] == $a_steam)
-        {
-          $name = $admin['user'];
-          break;
-        }
-      }
+    } catch (\Exception $e) {
       $error++;
-      $objResponse->addAssign("steam.msg", "innerHTML", "Этот Steam ID уже используется одним из администраторов!");
+      $objResponse->addAssign("steam.msg", "innerHTML", "Введите действительный Steam ID или Community ID");
       $objResponse->addScript("$('steam.msg').setStyle('display', 'block');");
-    }
-    else
-    {
-      $objResponse->addAssign("steam.msg", "innerHTML", "");
-      $objResponse->addScript("$('steam.msg').setStyle('display', 'none');");
     }
   }
   
@@ -1320,23 +1305,26 @@ function AddAdmin_pay($mask, $srv_mask, $a_name, $a_steam, $a_email, $a_password
 
   //$q_del = $GLOBALS['db']->Execute("DELETE FROM `" . DB_PREFIX . "_vay4er` WHERE `value` = '".$a_code."'");
   $q_del = $GLOBALS['db']->Execute("UPDATE `" . DB_PREFIX . "_vay4er` SET `value` = '".$a_code."', `activ` = '0' WHERE `value` = '".$a_code."'");
-  if($q_del){
+  if ($q_del) {
     // Add the admin
     $web_gruop_id = $GLOBALS['db']->GetOne("SELECT `group_web` FROM ".DB_PREFIX."_vay4er WHERE `value` = '".$a_code."'");
-    $web_gruop_sql = $GLOBALS['db']->GetOne("SELECT `gid` FROM ".DB_PREFIX."_groups WHERE `name` = '".$web_gruop_id."'");
-    if($web_gruop_id == "" || $web_gruop_sql == "" ){
-      $web_gruop_sql = "0";
+    $web_gruop_sql = $GLOBALS['db']->GetOne("SELECT `gid` FROM ".DB_PREFIX."_groups WHERE `name` = ?", [$web_gruop_id]);
+    if ($web_gruop_sql === false || $web_gruop_sql === null || $web_gruop_sql === '') {
+      $web_gruop_sql = -1;
     }
+
     $server_admin_group = $GLOBALS['db']->GetOne("SELECT `group_srv` FROM ".DB_PREFIX."_vay4er WHERE `value` = '".$a_code."'");
-    if($server_admin_group == ""){
-      $web_gruop_sql = "";
+    if ($server_admin_group == "") {
+      $server_admin_group = "";
     }
+
     $aid = $userbank->AddAdmin($a_name, $a_steam, $a_password, $a_email, $web_gruop_sql, $mask, $server_admin_group, $srv_mask, $immunity, $a_serverpass, $pay_days_sql, $skype, '', $vk);
     setcookie("aid", $aid, time()+LOGIN_COOKIE_LIFETIME);
     setcookie("password", $GLOBALS['db']->GetOne("SELECT `password` FROM `".DB_PREFIX."_admins` WHERE `aid` = '".$aid."'"), time()+LOGIN_COOKIE_LIFETIME);
-  }else{
+  } else {
     exit();
   }
+
   if($aid > -1)
   {
     // Grant permissions to the selected server groups
@@ -1382,6 +1370,7 @@ function AddAdmin_pay($mask, $srv_mask, $a_name, $a_steam, $a_email, $a_password
   {
     $objResponse->addScript("ShowBox('Ваучер', 'Ошибка при активации ваучера. Свяжитесь с главной администрацией, для проверки лога на наличие SQL ошибок.', 'red', 'index.php');");
   }
+  return $objResponse;
 }
 
 
@@ -1444,51 +1433,38 @@ function AddAdmin($mask, $srv_mask, $a_name, $a_steam, $a_email, $a_password, $a
     }
   }
 
-  // #FIXME PLS undefined var $type
-  // If they didnt type a steamid
-  if ($type == 0)
-  {
-    if(empty($a_steam))
-    {
-      $error++;
-      $objResponse->addAssign("steam.msg", "innerHTML", "Введите Steam ID или Community ID");
-      $objResponse->addScript("$('steam.msg').setStyle('display', 'block');");
-    }
-    else
-    {
-      try
-      {
-        $a_steam = \CSteamId::factory($a_steam)->v2;
-      }
-      catch (\Exception $e)
-      {
+  if (empty($a_steam)) {
+    $error++;
+    $objResponse->addAssign("steam.msg", "innerHTML", "Введите Steam ID или Community ID");
+    $objResponse->addScript("$('steam.msg').setStyle('display', 'block');");
+  } else {
+    try {
+      $steamIdFactory = \CSteamId::factory($a_steam);
+      $a_steam = $steamIdFactory->v2;
+      $steamIdClean = $steamIdFactory->steamIdClean;
+
+      $steamIdFormat0 = "STEAM_0:{$steamIdClean}";
+      $steamIdFormat1 = "STEAM_1:{$steamIdClean}";
+
+      if (is_taken("admins", "authid", $steamIdFormat0) || is_taken("admins", "authid", $steamIdFormat1)) {
+        // TODO: Внедрить сюда продление админа вместо вывода
+        // ошибки, если группа совпадает при неистёкшей админке.
+        $admins = $userbank->GetAllAdmins();
+        foreach ($admins as $admin) {
+          if ($admin['authid'] == $steamIdFormat0 || $admin['authid'] == $steamIdFormat1) {
+            $name = $admin['user'];
+            break;
+          }
+        }
+
         $error++;
-        $objResponse->addAssign("steam.msg", "innerHTML", "Введите действительный Steam ID или Community ID");
+        $objResponse->addAssign("steam.msg", "innerHTML", "Этот Steam ID уже используется одним из администраторов!");
         $objResponse->addScript("$('steam.msg').setStyle('display', 'block');");
       }
-    }
-  }
-  else
-  {
-    if(is_taken("admins", "authid", $a_steam))
-    {
-      $admins = $userbank->GetAllAdmins();
-      foreach($admins as $admin)
-      {
-        if($admin['authid'] == $a_steam)
-        {
-          $name = $admin['user'];
-          break;
-        }
-      }
+    } catch (\Exception $e) {
       $error++;
-      $objResponse->addAssign("steam.msg", "innerHTML", "Этот Steam ID уже используется одним из администраторов!");
+      $objResponse->addAssign("steam.msg", "innerHTML", "Введите действительный Steam ID или Community ID");
       $objResponse->addScript("$('steam.msg').setStyle('display', 'block');");
-    }
-    else
-    {
-      $objResponse->addAssign("steam.msg", "innerHTML", "");
-      $objResponse->addScript("$('steam.msg').setStyle('display', 'none');");
     }
   }
   
@@ -1835,6 +1811,7 @@ function AddAdmin($mask, $srv_mask, $a_name, $a_steam, $a_email, $a_password, $a
   {
     $objResponse->addScript("ShowBox('Пользователь не добавлен', 'Ошибка при добавлении админа в базу данных. Проверьте лог на наличие SQL ошибок.', 'red', 'index.php?p=admin&c=admins');");
   }
+  return $objResponse;
 }
 
 function ServerHostPlayers($sid, $type="servers", $obId="", $tplsid="", $open="", $inHome=false, $trunchostname=48)
