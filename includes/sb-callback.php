@@ -2222,8 +2222,9 @@ function AddBan($nickname, $type, $steam, $ip, $length, $dfile, $dname, $reason,
   }
   
   $steam = trim($steam);
-  
   $error = 0;
+  $steamIdClean = "";
+
   // If they didnt type a steamid
   if ($type == 0)
   {
@@ -2237,7 +2238,9 @@ function AddBan($nickname, $type, $steam, $ip, $length, $dfile, $dname, $reason,
     {
       try
       {
-        $steam = \CSteamId::factory($steam)->v2;
+        $steamIdFactory = \CSteamId::factory($steam);
+        $steam = $steamIdFactory ->v2;
+        $steamIdClean = $steamIdFactory->steamIdClean;
       }
       catch (\Exception $e)
       {
@@ -2285,25 +2288,29 @@ function AddBan($nickname, $type, $steam, $ip, $length, $dfile, $dname, $reason,
 
   // prune any old bans
   PruneBans();
-  if((int)$type==0) {
-    // Check if the new steamid is already banned
-    $chk = $GLOBALS['db']->GetRow("SELECT count(bid) AS count FROM ".DB_PREFIX."_bans WHERE authid = ? AND (length = 0 OR ends > UNIX_TIMESTAMP()) AND RemovedBy IS NULL AND type = '0'", array($steam));
 
-    if(intval($chk[0]) > 0)
-    {
+  if ((int)$type==0) {
+    $steamIdFormat0 = "STEAM_0:{$steamIdClean}";
+    $steamIdFormat1 = "STEAM_1:{$steamIdClean}";
+
+    // Check if the new steamid is already banned
+    $chk = $GLOBALS['db']->GetRow("SELECT count(bid) AS count FROM ".DB_PREFIX."_bans WHERE (authid = ? OR authid = ?) AND (length = 0 OR ends > UNIX_TIMESTAMP()) AND RemovedBy IS NULL AND type = '0'", array($steamIdFormat0, $steamIdFormat1));
+
+    if (intval($chk[0]) > 0) {
       $objResponse->addScript("ShowBox('Ошибка', 'SteamID: $steam уже забанен.', 'red', '', true);");
       return $objResponse;
     }
         
-        // Check if player is immune
-        $admchk = $userbank->GetAllAdmins();
-        foreach($admchk as $admin)
-            if($admin['authid'] == $steam && $userbank->GetProperty('srv_immunity') < $admin['srv_immunity'])
-            {
-                $objResponse->addScript("ShowBox('Ошибка', 'SteamID: админ ".$admin['user']." ($steam) под иммунитетом.', 'red', '', true);");
-                return $objResponse;
-            }
+    // Check if player is immune
+    $admchk = $userbank->GetAllAdmins();
+    foreach($admchk as $admin) {
+      if (($admin['authid'] == $steamIdFormat0 || $admin['authid'] == $steamIdFormat1) && $userbank->GetProperty('srv_immunity') < $admin['srv_immunity']) {
+          $objResponse->addScript("ShowBox('Ошибка', 'SteamID: админ ".$admin['user']." ($steam) под иммунитетом.', 'red', '', true);");
+          return $objResponse;
+      }
+    }
   }
+
   if((int)$type==1) {
     $chk = $GLOBALS['db']->GetRow("SELECT count(bid) AS count FROM ".DB_PREFIX."_bans WHERE ip = ? AND (length = 0 OR ends > UNIX_TIMESTAMP()) AND RemovedBy IS NULL AND type = '1'", array($ip));
 
@@ -2337,6 +2344,7 @@ function AddBan($nickname, $type, $steam, $ip, $length, $dfile, $dname, $reason,
     $GLOBALS['db']->Execute("INSERT INTO ".DB_PREFIX."_demos(demid,demtype,filename,origname)
                  VALUES(?,'U', '', ?)", array((int)$subid, $udemo));
   }
+
   if($fromsub) {
     $submail = $GLOBALS['db']->Execute("SELECT name, email FROM ".DB_PREFIX."_submissions WHERE subid = '" . (int)$fromsub . "'");
     // Send an email when ban is accepted
