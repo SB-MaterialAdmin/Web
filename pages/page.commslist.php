@@ -369,6 +369,14 @@ if(isset($_GET['advSearch']))
 			$advcrit = array();
 		break;
 	}
+	
+	if (empty($where)) {
+		if (isset($_SESSION["hideinactive"])) {
+			$hideinactive = $hideinactiven;
+		} else {
+			ShowBox("Ошибка", "Некорректный поиск, не удалось выбрать параметры поиска. Попробуйте снова.", "red", "index.php?p=commslist", true);
+		}
+	}
 
 		$res = $GLOBALS['db']->Execute(
 			"SELECT CO.bid ban_id, CO.type, CO.authid, CO.name player_name, created ban_created, ends ban_ends, length ban_length, reason ban_reason, CO.ureason unban_reason, CO.aid, AD.gid AS gid, adminIp, CO.sid ban_server, RemovedOn, RemovedBy, RemoveType row_type,

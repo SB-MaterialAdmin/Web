@@ -239,7 +239,7 @@ if (isset($_GET['searchText']))
 
 	$res_count = $GLOBALS['db']->Execute("SELECT count(BA.bid) FROM ".DB_PREFIX."_bans AS BA WHERE ".$search_ips."BA.authid LIKE ? OR BA.name LIKE ? OR BA.reason LIKE ?" . $hideinactive
 										,array_merge($search_array, array($search,$search,$search)));
-$searchlink = "&searchText=".$_GET["searchText"];
+    $searchlink = "&searchText=".$_GET["searchText"];
 }
 elseif(!isset($_GET['advSearch']))
 {
@@ -377,12 +377,15 @@ if(isset($_GET['advSearch']))
 			$advcrit = array();
 		break;
 	}
-	
-	// Make sure we got a "WHERE" clause there, if we add the hide inactive condition
-	if(empty($where) && isset($_SESSION["hideinactive"]))
-	{
-		$hideinactive = $hideinactiven;
-	}
+
+    // Make sure we got a "WHERE" clause there, if we add the hide inactive condition
+    if (empty($where)) {
+        if (isset($_SESSION["hideinactive"])) {
+            $hideinactive = $hideinactiven;
+        } else {
+            ShowBox("Ошибка", "Некорректный поиск, не удалось выбрать параметры поиска. Попробуйте снова.", "red", "index.php?p=banlist", true);
+        }
+    }
 	
 		$res = $GLOBALS['db']->Execute(
 				    	"SELECT BA.bid ban_id, BA.type, BA.ip ban_ip, BA.authid, BA.name player_name, created ban_created, ends ban_ends, length ban_length, reason ban_reason, BA.ureason unban_reason, BA.aid, AD.gid AS gid, adminIp, BA.sid ban_server, country ban_country, RemovedOn, RemovedBy, RemoveType row_type,
