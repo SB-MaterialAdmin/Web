@@ -198,16 +198,27 @@ class CSystemLog {
 		if ($type == "object") return 3;
 		return -1;
 	}
-	
-	function FormatArgument($arg)
+
+	private function FormatArgument($arg) : string
 	{
 		$et = $this->GetEntryType($arg);
-		$log = htmlentities((($et==2)?$this->PrepareArray($arg):(($et == 0)?"'".$arg."'":($et==3?sprintf("Object %s", get_class($arg)):$arg))));
-		
+
+		if ($et == 2) {
+			$value = $this->PrepareArray($arg);
+		} else if ($et == 0) {
+			$value = "'" . $arg . "'";
+		} else if ($et == 3) {
+			$value = sprintf("Object %s", get_class($arg));
+		} else {
+			$value = $arg;
+		}
+
+		$log = htmlentities((string)$value);
+
 		if (strlen($log) > 256) {
 			$log = sprintf("%s...%s", substr($log, 0, 256), ($et == 0) ? "'" : "");
 		}
-		
+
 		return $log;
 	}
 	
