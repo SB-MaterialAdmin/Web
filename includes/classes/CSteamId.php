@@ -41,11 +41,12 @@ class CSteamId
 
   private static function ResolveToAccountID($sid) {
     if (strncmp('STEAM_', $sid, 6) == 0) {
-      $parts = explode(':', $sid);
-      if (count($parts) != 3)
-        return -1;
+        $validSteamId = preg_match("/^(STEAM_[0-1]?)(:([0-1]):(\d{0,9})?)?$/", $sid, $steamIdParts);
+        if (!$validSteamId) {
+            return -1;
+        }
 
-      return intval($parts[2] * 2) + intval($parts[1]);
+        return intval($steamIdParts[4] * 2) + intval($steamIdParts[3]);
     }
 
     if (strncmp('[U:1', $sid, 4) == 0) {
