@@ -9,13 +9,13 @@
 ### [![GitHub release](https://img.shields.io/github/release/SB-MaterialAdmin/Web.svg?style=flat-square)](https://github.com/SB-MaterialAdmin/Web/releases/tag/release_1154) [![GitHub license](https://img.shields.io/badge/license-GPLv3-blue.svg?style=flat-square)](https://raw.githubusercontent.com/SB-MaterialAdmin/Web/master/docs/licenses/GPLv3.txt) [![GitHub license](https://img.shields.io/badge/license-CC_BY--NC--SA_3.0-blue.svg?style=flat-square)](https://creativecommons.org/licenses/by-nc-sa/3.0/) [![GitHub forks](https://img.shields.io/github/forks/SB-MaterialAdmin/Web.svg?style=flat-square)](https://github.com/SB-MaterialAdmin/Web/network) [![GitHub stars](https://img.shields.io/github/stars/SB-MaterialAdmin/Web.svg?style=flat-square)](https://github.com/SB-MaterialAdmin/Web/stargazers) [![GitHub issues](https://img.shields.io/github/issues/SB-MaterialAdmin/Web.svg?style=flat-square)](https://travis-ci.org/SB-MaterialAdmin/Web)
 
 ### Системные требования:
-- **Рекомендуется использовать PHP версии 7.4 или выше для обеспечения оптимальной производительности, безопасности и совместимости с современными веб-серверами.**
+- **Рекомендуется использовать PHP версии 8.0 или выше для обеспечения оптимальной производительности, безопасности и совместимости с современными веб-серверами.**
 
 ### Важно:
 
-- **PHP версии ниже 5.6 не поддерживаются.**
+- **PHP версии ниже 7.4 не поддерживаются.**
 
-- **Тестирование ведется на PHP 8.3. Проект стремится поддерживать актуальные версии для максимальной безопасности и производительности.**
+- **Тестирование ведется на PHP 8.5. Проект стремится поддерживать актуальные версии для максимальной безопасности и производительности.**
 
 ### Ссылки на загрузку:
 - **[Веб-панель (1.1.5.4)](https://github.com/SB-MaterialAdmin/Web/archive/release_1154.zip)**
