@@ -1703,17 +1703,13 @@ function getRequestType() {
 }
 
 // Own implementation for filter_input()
-// INPUT_SESSION not yet implemented.
 function filterInput($type, $name, $filter = FILTER_DEFAULT, $options = [])
 {
-	if ($type != INPUT_SESSION)
-		return filter_input($type, $name, $filter, $options);
+    if ($type === 'session') {
+        return isset($_SESSION[$name]) ? filter_var($_SESSION[$name], $filter, $options) : false;
+    }
 
-	if (!isset($_SESSION[$name]))
-		return FALSE;
-
-	$data = $_SESSION[$name];
-	return filter_var($data, $filter, $options);
+    return filter_input($type, $name, $filter, $options);
 }
 
 function clearSystemPath($path)

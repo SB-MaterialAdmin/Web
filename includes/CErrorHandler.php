@@ -25,12 +25,14 @@ class CErrorHandler {
         self::StartOutputBuffer();
         self::$m_bIsAlreadyInit = true;
     }
-    
+
     private static function CloseOutputBuffer($bRender) {
-        if ($bRender)
-            ob_end_flush();
-        else
-            ob_end_clean();
+        if (ob_get_level() > 0) {
+            if ($bRender)
+                ob_end_flush();
+            else
+                ob_end_clean();
+        }
     }
     
     private static function StartOutputBuffer() {
