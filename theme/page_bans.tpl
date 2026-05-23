@@ -153,8 +153,10 @@
 												{if $ban.demo_available}
 													<li>{$ban.demo_link}</li>
 												{/if}
-												
-												<li>{$ban.addcomment}</li>{*CHECKMEPLS only for admin, not working for users???*}
+
+												{if isset($ban.addcomment)}
+													<li>{$ban.addcomment}</li>{*CHECKMEPLS only for admin, not working for users???*}
+												{/if}
 
 												{if $ban.type == 0}
 													{if $groupban}
