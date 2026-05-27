@@ -232,16 +232,18 @@ class CUserManager
   
   function GetAdmin($aid=-2)
   {
-    if($aid == -2)
+    if ($aid == -2)
       $aid = $this->aid;
-    if($aid < 0)
-      return false;  
+
+    if ($aid < 0)
+      return false;
       
     $aid = (int)$aid;
     
     if(!isset($this->admins[$aid]))
       $this->GetUserArray($aid);
-    return $this->admins[$aid];
+
+    return $this->admins[$aid] ?? false;
   }
   
   

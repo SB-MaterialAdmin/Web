@@ -634,7 +634,10 @@ while (!$res->EOF)
 				// Parse links and wrap them in a <a href=""></a> tag to be easily clickable
 				$cdata['commenttxt'] = preg_replace('@(https?://([-\w\.]+)+(:\d+)?(/([\w/_\.]*(\?\S+)?)?)?)@', '<a href="$1" target="_blank">$1</a>', $cdata['commenttxt']);
 				$cdata['aid'] = $commentres->fields['aid'];
-				$cdata['avatar'] = GetUserAvatar($userbank->GetAdmin($commentres->fields['aid'])['authid']);
+
+                $admin = $userbank->GetAdmin($commentres->fields['aid']);
+                $authid = (is_array($admin) && isset($admin['authid'])) ? $admin['authid'] : '';
+                $cdata['avatar'] = GetUserAvatar($authid);
 
 				if (!empty($commentres->fields['edittime'])) {
 					$cdata['edittime'] = SBDate($dateformat, $commentres->fields['edittime']);
@@ -777,7 +780,10 @@ if(isset($_GET["comment"])) {
 		// Parse links and wrap them in a <a href=""></a> tag to be easily clickable
 		$coment['commenttxt'] = preg_replace('@(https?://([-\w\.]+)+(:\d+)?(/([\w/_\.]*(\?\S+)?)?)?)@', '<a href="$1" target="_blank">$1</a>', $coment['commenttxt']);
 		$coment['aid'] = $cotherdata->fields['aid'];
-		$coment['avatar'] = GetUserAvatar($userbank->GetAdmin($cotherdata->fields['aid'])['authid']);
+
+        $admin = $userbank->GetAdmin($cotherdata->fields['aid']);
+        $authid = (is_array($admin) && isset($admin['authid'])) ? $admin['authid'] : '';
+        $coment['avatar'] = GetUserAvatar($authid);
 
 		if($cotherdata->fields['editname']!="") {
 			$coment['edittime'] = SBDate($dateformat, $cotherdata->fields['edittime']);
