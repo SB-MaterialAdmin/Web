@@ -70,9 +70,15 @@ foreach($admins AS $admin)
 	}
 	
 	$admin['email_profile'] = $userbank->GetProperty("email", $admin['aid']);
-  $admin['communityid_profile'] = CSteamId::factory(
-    $userbank->GetProperty('authid', $admin['aid'])
-  )->CommunityID;
+
+    $authid = $userbank->GetProperty('authid', $admin['aid']);
+    try {
+        $admin['communityid_profile'] = $authid ? CSteamId::factory($authid)->CommunityID : '';
+    } catch (InvalidArgumentException $e) {
+        $admin['communityid_profile'] = '';
+        error_log("Ошибка конвертации SteamID для администратора aid={$admin['aid']}, authid={$authid}: " . $e->getMessage());
+    }
+
 	$admin['steam_id_amd'] = $userbank->GetProperty("authid", $admin['aid']);
 	// Add contakt
 	
