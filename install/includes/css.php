@@ -25,13 +25,14 @@
 //
 // *************************************************************************
 
-if(strstr($_SERVER['HTTP_USER_AGENT'], "MSIE 6.0"))
+$userAgent = $_SERVER['HTTP_USER_AGENT'] ?? '';
+if(strstr($userAgent, "MSIE 6.0"))
 	$agent = "IE6";
-elseif(strstr($_SERVER['HTTP_USER_AGENT'], "MSIE 7.0"))
+elseif(strstr($userAgent, "MSIE 7.0"))
 	$agent = "IE7";
-elseif(strstr($_SERVER['HTTP_USER_AGENT'], "Firefox/2"))
+elseif(strstr($userAgent, "Firefox/2"))
 	$agent = "FF2";
-elseif(strstr($_SERVER['HTTP_USER_AGENT'], "Firefox/1"))
+elseif(strstr($userAgent, "Firefox/1"))
 	$agent = "FF1";
 else 
 	$agent = "other";

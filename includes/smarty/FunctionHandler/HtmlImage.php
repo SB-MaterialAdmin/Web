@@ -132,7 +132,8 @@ class HtmlImage extends Base {
 			}
 		}
 		if (isset($params['dpi'])) {
-			if (strstr($_SERVER['HTTP_USER_AGENT'], 'Mac')) {
+            $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? '';
+			if (strstr($userAgent, 'Mac')) {
 				// FIXME: (rodneyrehm) wrong dpi assumption
 				// don't know who thought this up… even if it was true in 1998, it's definitely wrong in 2011.
 				$dpi_default = 72;

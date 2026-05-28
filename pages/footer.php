@@ -50,8 +50,10 @@ $theme->assign('gendata_time',      round($totaltime, 2));
 
 $theme->assign('splash_screen',     ($GLOBALS['config']['theme.splashscreen'] == "1"));
 
-if (!isset($_SESSION['CronToken']))
-  $_SESSION['CronToken'] = md5(time() . uniqid($_SERVER['HTTP_USER_AGENT'], true));
+if (!isset($_SESSION['CronToken'])) {
+    $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? '';
+    $_SESSION['CronToken'] = md5(time() . uniqid($userAgent, true));
+}
 
 $theme->assign('cron_token',        $_SESSION['CronToken']);
 

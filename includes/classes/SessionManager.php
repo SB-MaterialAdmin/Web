@@ -38,8 +38,9 @@ class SessionManager
                 $_SESSION = [];
                 self::regenerateSession();
 
+                $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? '';
                 $_SESSION = [
-                    'user_agent' => hash('sha256', $_SERVER['HTTP_USER_AGENT']),
+                    'user_agent' => hash('sha256', $userAgent),
                     'expires' => time() + self::$expires
                 ];
             } else if ((rand(1, 100) <= 10) && !isset($_POST['xajax']))
@@ -75,7 +76,8 @@ class SessionManager
         if (!isset($_SESSION['user_agent']))
             return false;
 
-        if ($_SESSION['user_agent'] !== hash('sha256', $_SERVER['HTTP_USER_AGENT']))
+        $currentUserAgent = $_SERVER['HTTP_USER_AGENT'] ?? '';
+        if ($_SESSION['user_agent'] !== hash('sha256', $currentUserAgent))
             return false;
 
         return true;
