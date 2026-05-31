@@ -157,34 +157,50 @@
 												{/if}
 											</div>
 										</div>
-										<div class="form-group col-sm-12 m-b-10">
-											<label class="col-sm-4 control-label"><i class="zmdi zmdi-star text-left"></i> Steam ID</label>
-											<div class="col-sm-8">
-												{if empty($ban.steamid)}
-													<i>Steam ID игрока скрыт.</i>
-												{else}
-													{$ban.steamid}
-												{/if}
+
+										{* Умная проверка SteamID *}
+										{if empty($ban.steamid)}
+											<div class="form-group col-sm-12 m-b-10">
+												<label class="col-sm-4 control-label"><i class="zmdi zmdi-star text-left"></i> Steam ID</label>
+												<div class="col-sm-8">
+													<i>SteamID игрока не указан.</i>
+												</div>
 											</div>
-										</div>
-										<div class="form-group col-sm-12 m-b-10">
-											<label class="col-sm-4 control-label"><i class="zmdi zmdi-star text-left"></i> Steam3 ID</label>
-											<div class="col-sm-8">
-												{if empty($ban.steamid)}
-													<i>Steam3 ID игрока скрыт.</i>
-												{else}
-													<a href="http://steamcommunity.com/profiles/{$ban.steamid3}" target="_blank">{$ban.steamid3}</a>
-												{/if}
-											</div>
-										</div>
-										{if $ban.type == 0}
-										<div class="form-group col-sm-12 m-b-10">
-											<label class="col-sm-4 control-label"><i class="zmdi zmdi-star text-left"></i> Steam Community</label>
-											<div class="col-sm-8">
-												<a href="http://steamcommunity.com/profiles/{$ban.communityid}" target="_blank">{$ban.communityid}</a>
-											</div>
-										</div>
+										{else}
+											{capture assign="community_id"}{steamid_format steamid=$ban.steamid format="CommunityID" fallback=""}{/capture}
+											{if !empty($community_id)}
+												{* Валидный SteamID *}
+												<div class="form-group col-sm-12 m-b-10">
+													<label class="col-sm-4 control-label"><i class="zmdi zmdi-star text-left"></i> Steam ID</label>
+													<div class="col-sm-8">
+														{steamid_format steamid=$ban.steamid format="v2" fallback=$ban.steamid|escape:'htmlall'}
+													</div>
+												</div>
+												<div class="form-group col-sm-12 m-b-10">
+													<label class="col-sm-4 control-label"><i class="zmdi zmdi-star text-left"></i> Steam3 ID</label>
+													<div class="col-sm-8">
+														<a href="http://steamcommunity.com/profiles/{$community_id}" target="_blank">
+															{steamid_format steamid=$ban.steamid format="v3" fallback=$ban.steamid|escape:'htmlall'}
+														</a>
+													</div>
+												</div>
+												<div class="form-group col-sm-12 m-b-10">
+													<label class="col-sm-4 control-label"><i class="zmdi zmdi-star text-left"></i> Steam Community</label>
+													<div class="col-sm-8">
+														<a href="http://steamcommunity.com/profiles/{$community_id}" target="_blank">{$community_id}</a>
+													</div>
+												</div>
+											{else}
+												{* Невалидный SteamID – выводим исходную строку *}
+												<div class="form-group col-sm-12 m-b-10">
+													<label class="col-sm-4 control-label"><i class="zmdi zmdi-star text-left"></i> Steam ID (невалидный)</label>
+													<div class="col-sm-8">
+														{$ban.steamid|escape:'htmlall'}
+													</div>
+												</div>
+											{/if}
 										{/if}
+
 										<div class="form-group col-sm-12 m-b-10">
 											<label class="col-sm-4 control-label"><i class="zmdi zmdi-star text-left"></i> Был выдан</label>
 											<div class="col-sm-8">

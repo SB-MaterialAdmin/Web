@@ -462,15 +462,15 @@ while (!$res->EOF)
 	if(isset($GLOBALS['config']['banlist.hideadminname']) && $GLOBALS['config']['banlist.hideadminname'] == "1" && !$userbank->is_admin())
 		$data['admin'] = false;
 	else{
-		$data['admin'] = stripslashes($res->fields['admin_name']);
-		$data['admin_comm'] = stripslashes($res->fields['admin_comm']);
-		$data['admin_gid'] = stripslashes($res->fields['gid']);
-		$data['admin_vk'] = stripslashes($res->fields['admin_vk']);
-		$data['admin_authid'] = stripslashes($res->fields['admin_authid']);
-		$data['admin_skype'] = stripslashes($res->fields['admin_skype']);
+		$data['admin'] = stripslashes($res->fields['admin_name'] ?? '');
+		$data['admin_comm'] = stripslashes($res->fields['admin_comm'] ?? '');
+		$data['admin_gid'] = stripslashes($res->fields['gid'] ?? '');
+		$data['admin_vk'] = stripslashes($res->fields['admin_vk'] ?? '');
+		$data['admin_authid'] = stripslashes($res->fields['admin_authid'] ?? '');
+		$data['admin_skype'] = stripslashes($res->fields['admin_skype'] ?? '');
 	}
 
-	$data['reason'] = stripslashes($res->fields['ban_reason']);
+	$data['reason'] = stripslashes($res->fields['ban_reason'] ?? '');
 
 	$data['ban_length'] = $res->fields['ban_length'] == 0 ? 'Навсегда' : SecondsToString(intval($res->fields['ban_length']));
 

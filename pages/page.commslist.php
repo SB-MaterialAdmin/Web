@@ -369,7 +369,6 @@ if(isset($_GET['advSearch']))
 			$advcrit = array();
 		break;
 	}
-	
 
 	if (empty($where)) {
 		if (isset($_SESSION["hideinactive"])) {
@@ -470,15 +469,19 @@ while (!$res->EOF) {
 	if(isset($GLOBALS['config']['banlist.hideadminname']) && $GLOBALS['config']['banlist.hideadminname'] == "1" && !$userbank->is_admin())
 		$data['admin'] = false;
 	else{
-		$data['admin'] = stripslashes($res->fields['admin_name']);
-		$data['admin_comm'] = stripslashes($res->fields['admin_comm']);
-		$data['admin_gid'] = stripslashes($res->fields['gid']);
-		$data['admin_vk'] = stripslashes($res->fields['admin_vk']);
-		$data['admin_authid'] = stripslashes($res->fields['admin_authid']);
-		$data['admin_authid_link'] = CommunityID($data['admin_authid']);
-		$data['admin_skype'] = stripslashes($res->fields['admin_skype']);
+		$data['admin'] = stripslashes($res->fields['admin_name'] ?? '');
+		$data['admin_comm'] = stripslashes($res->fields['admin_comm'] ?? '');
+		$data['admin_gid'] = stripslashes($res->fields['gid'] ?? '');
+		$data['admin_vk'] = stripslashes($res->fields['admin_vk'] ?? '');
+		$data['admin_authid'] = stripslashes($res->fields['admin_authid'] ?? '');
+
+		// The administrator may have already been deleted, or if the server issued a ban,
+		// then the STEAM_ID_SERVER string is passed here, we need to check whether we received the SteamId correctly
+		$data['admin_authid_link'] = getSteamIdLong($data['admin_authid']) ?: '';
+
+		$data['admin_skype'] = stripslashes($res->fields['admin_skype'] ?? '');
 	}
-	$data['reason'] = stripslashes($res->fields['ban_reason']);
+	$data['reason'] = stripslashes($res->fields['ban_reason'] ?? '');
 
 	$data['ban_length'] = $res->fields['ban_length'] == 0 ? 'Навсегда' : SecondsToString(intval($res->fields['ban_length']));
 
@@ -525,8 +528,8 @@ while (!$res->EOF) {
 	$data['layer_id'] = 'layer_'.$res->fields['ban_id'];
 	// Запрос текущего статуса игрока для рисования ссылки на мьют или гаг
 	$alrdybnd = $GLOBALS['db']->Execute("SELECT count(bid) as count FROM `".DB_PREFIX."_comms` WHERE authid = '".$data['steamid']."' AND RemovedBy IS NULL AND type = '".$data['type']."' AND (length = 0 OR ends > UNIX_TIMESTAMP());");
-	
 	$data['reban_link'] = false;
+	
 	if ($alrdybnd->fields['count'] == 0) {
 		switch($data['type'])
 		{
