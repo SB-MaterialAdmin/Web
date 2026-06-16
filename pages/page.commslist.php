@@ -477,7 +477,7 @@ while (!$res->EOF) {
 
 		// The administrator may have already been deleted, or if the server issued a ban,
 		// then the STEAM_ID_SERVER string is passed here, we need to check whether we received the SteamId correctly
-		$data['admin_authid_link'] = getSteamIdLong($data['admin_authid']) ?: '';
+		$data['admin_authid_link'] = CommunityID($data['admin_authid']) ?: '';
 
 		$data['admin_skype'] = stripslashes($res->fields['admin_skype'] ?? '');
 	}
